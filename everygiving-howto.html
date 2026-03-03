@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>How to Fundraise on Every Giving — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Nunito+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --primary:#02A95C;--primary-dark:#017A42;--primary-light:#E8FBF2;
+  --navy:#16233A;--text:#1A2B3C;--muted:#6B7C93;
+  --border:#E8EDF3;--bg:#F8FAFC;--r:14px;
+  --shadow:0 2px 16px rgba(22,35,58,.07);
+  --shadow-hover:0 8px 32px rgba(22,35,58,.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito Sans',sans-serif;background:#fff;color:var(--text);line-height:1.6;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:66px;box-shadow:0 1px 8px rgba(22,35,58,.06);}
+.logo{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.45rem;color:var(--primary);}
+.nav-r{display:flex;gap:9px;}
+.btn-in{padding:8px 17px;border-radius:22px;font-size:.85rem;font-weight:700;color:var(--text);background:transparent;border:1.5px solid var(--border);cursor:pointer;transition:all .15s;font-family:'Nunito Sans',sans-serif;}
+.btn-in:hover{border-color:var(--primary);color:var(--primary);}
+.btn-start{padding:9px 20px;border-radius:22px;font-size:.85rem;font-weight:700;color:#fff;background:var(--primary);border:none;cursor:pointer;transition:all .2s;font-family:'Nunito Sans',sans-serif;}
+.btn-start:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(2,169,92,.3);}
+
+/* HERO */
+.page-hero{background:linear-gradient(135deg,var(--navy) 0%,#1e3a5f 100%);padding:72px 5%;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:340px;height:340px;background:radial-gradient(circle,rgba(2,169,92,.15) 0%,transparent 70%);}
+.page-hero::after{content:'';position:absolute;bottom:-60px;left:10%;width:220px;height:220px;background:radial-gradient(circle,rgba(2,169,92,.08) 0%,transparent 70%);}
+.hero-inner{max-width:760px;margin:0 auto;position:relative;z-index:2;}
+.hero-breadcrumb{display:flex;align-items:center;gap:7px;font-size:.75rem;color:rgba(255,255,255,.45);margin-bottom:18px;}
+.hero-breadcrumb span{color:rgba(255,255,255,.7);}
+.hero-breadcrumb .sep{color:rgba(255,255,255,.25);}
+.page-hero h1{font-family:'Nunito',sans-serif;font-size:clamp(2rem,4vw,2.9rem);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:14px;}
+.page-hero h1 em{color:#6ee7b7;font-style:normal;}
+.hero-sub{font-size:.98rem;color:rgba(255,255,255,.68);line-height:1.72;margin-bottom:28px;max-width:580px;}
+.hero-steps-row{display:flex;gap:8px;flex-wrap:wrap;}
+.hero-step-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:7px 14px;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.75);cursor:pointer;transition:all .2s;}
+.hero-step-pill:hover{background:rgba(2,169,92,.2);border-color:rgba(2,169,92,.4);color:#fff;}
+.hero-step-pill .num{width:20px;height:20px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#fff;flex-shrink:0;}
+
+/* LAYOUT */
+.page-layout{max-width:1160px;margin:0 auto;padding:52px 5% 80px;display:grid;grid-template-columns:1fr 300px;gap:52px;align-items:start;}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:82px;}
+.sb-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
+.sb-hdr{background:var(--primary);padding:14px 18px;}
+.sb-hdr-title{font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;color:#fff;}
+.sb-body{padding:8px 6px;}
+.sb-link{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+.sb-link:hover,.sb-link.active{background:var(--primary-light);color:var(--primary-dark);}
+.sb-link-num{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:var(--muted);flex-shrink:0;}
+.sb-link.active .sb-link-num{background:var(--primary);border-color:var(--primary);color:#fff;}
+.sb-progress{padding:14px 18px 18px;}
+.sb-prog-title{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.sb-prog-track{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:6px;}
+.sb-prog-fill{height:100%;background:linear-gradient(90deg,var(--primary-dark),var(--primary));border-radius:100px;width:0%;transition:width .8s ease;}
+.sb-prog-label{font-size:.72rem;color:var(--muted);}
+.sb-cta{background:linear-gradient(135deg,var(--primary-dark),var(--primary));border-radius:var(--r);padding:20px;text-align:center;}
+.sb-cta-title{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;color:#fff;margin-bottom:6px;}
+.sb-cta-sub{font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:14px;line-height:1.5;}
+.sb-cta-btn{width:100%;background:#fff;color:var(--primary);border:none;border-radius:8px;padding:11px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.sb-cta-btn:hover{background:var(--primary-light);}
+
+/* CONTENT SECTIONS */
+.guide-section{margin-bottom:56px;scroll-margin-top:90px;}
+.section-num{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:10px;}
+.section-num-circle{width:22px;height:22px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#fff;}
+h2{font-family:'Nunito',sans-serif;font-size:1.65rem;font-weight:900;color:var(--navy);letter-spacing:-.5px;margin-bottom:12px;line-height:1.2;}
+.section-intro{font-size:.95rem;color:var(--muted);line-height:1.75;margin-bottom:24px;}
+.section-intro strong{color:var(--text);}
+
+/* STEPS IN SECTION */
+.step-list{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.step-item{display:flex;gap:14px;padding:18px;background:#fff;border:1.5px solid var(--border);border-radius:var(--r);transition:all .2s;cursor:default;}
+.step-item:hover{border-color:rgba(2,169,92,.3);box-shadow:var(--shadow);transform:translateX(3px);}
+.step-item.done{border-color:rgba(2,169,92,.35);background:var(--primary-light);}
+.si-icon{width:40px;height:40px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:all .2s;}
+.step-item.done .si-icon{background:var(--primary);}
+.si-body{flex:1;}
+.si-title{font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.si-desc{font-size:.81rem;color:var(--muted);line-height:1.55;}
+.si-check{width:20px;height:20px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;cursor:pointer;transition:all .2s;flex-shrink:0;margin-top:2px;background:#fff;}
+.step-item.done .si-check{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;}
+
+/* VIDEO TUTORIAL CARD */
+.video-card{background:var(--navy);border-radius:var(--r);overflow:hidden;margin:20px 0;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);}
+.video-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.vc-thumb{height:160px;background:linear-gradient(135deg,#1e3a5f,#2d5a8e);display:flex;align-items:center;justify-content:center;position:relative;}
+.vc-play{width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.4);backdrop-filter:blur(4px);transition:all .2s;}
+.video-card:hover .vc-play{background:var(--primary);border-color:var(--primary);}
+.vc-play-icon{font-size:1.3rem;margin-left:3px;}
+.vc-duration{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.6);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:4px;}
+.vc-body{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.vc-title{font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;color:#fff;margin-bottom:2px;}
+.vc-sub{font-size:.72rem;color:rgba(255,255,255,.5);}
+.vc-badge{background:rgba(2,169,92,.2);border:1px solid rgba(2,169,92,.3);color:#6ee7b7;font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;}
+
+/* TIP BOX */
+.tip-box{background:var(--primary-light);border:1.5px solid rgba(2,169,92,.2);border-radius:var(--r);padding:18px 20px;margin:20px 0;display:flex;gap:12px;}
+.tb-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px;}
+.tb-title{font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;color:var(--primary-dark);margin-bottom:4px;}
+.tb-desc{font-size:.81rem;color:var(--primary-dark);opacity:.8;line-height:1.55;}
+.tb-link{color:var(--primary-dark);font-weight:700;text-decoration:underline;cursor:pointer;}
+
+/* SHARE METHODS */
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.share-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:18px;transition:all .2s;cursor:pointer;}
+.share-card:hover{border-color:var(--primary);box-shadow:var(--shadow);transform:translateY(-2px);}
+.sc-icon{font-size:1.6rem;margin-bottom:10px;display:block;}
+.sc-title{font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.sc-desc{font-size:.78rem;color:var(--muted);line-height:1.5;}
+.sc-tag{display:inline-block;margin-top:8px;font-size:.68rem;font-weight:700;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:100px;}
+
+/* DONATION TRACKER MOCK */
+.tracker-mock{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin:20px 0;}
+.tm-header{background:var(--bg);border-bottom:1px solid var(--border);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;}
+.tm-h-title{font-family:'Nunito',sans-serif;font-size:.83rem;font-weight:800;color:var(--navy);}
+.tm-h-count{font-size:.72rem;color:var(--muted);}
+.donor-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);transition:background .15s;}
+.donor-row:last-child{border-bottom:none;}
+.donor-row:hover{background:var(--bg);}
+.dr-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;border:1px solid var(--border);}
+.dr-name{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.dr-msg{font-size:.72rem;color:var(--muted);line-height:1.4;}
+.dr-right{margin-left:auto;text-align:right;}
+.dr-amt{font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;color:var(--primary);}
+.dr-time{font-size:.65rem;color:var(--muted);margin-top:1px;}
+.dr-thanks{background:var(--primary-light);border:1px solid rgba(2,169,92,.2);border-radius:6px;padding:3px 8px;font-size:.65rem;font-weight:700;color:var(--primary-dark);margin-top:4px;cursor:pointer;display:inline-block;}
+.dr-thanks:hover{background:rgba(2,169,92,.2);}
+
+/* UPDATE POST MOCK */
+.update-compose{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:18px;margin:20px 0;}
+.uc-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.uc-avatar{width:34px;height:34px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;}
+.uc-label{font-size:.82rem;font-weight:700;color:var(--navy);}
+.uc-sub{font-size:.7rem;color:var(--muted);}
+.uc-textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:'Nunito Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;resize:none;min-height:80px;transition:border-color .2s;line-height:1.5;}
+.uc-textarea:focus{border-color:var(--primary);}
+.uc-textarea::placeholder{color:#b0bbc8;}
+.uc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+.uc-attach{display:flex;gap:7px;}
+.uc-att-btn{display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border);border-radius:7px;padding:6px 11px;font-size:.72rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Nunito Sans',sans-serif;}
+.uc-att-btn:hover{border-color:var(--primary);color:var(--primary);}
+.uc-post-btn{background:var(--primary);color:#fff;border:none;border-radius:7px;padding:8px 18px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;}
+.uc-post-btn:hover{background:var(--primary-dark);}
+
+/* PROGRESS INDICATOR in content */
+.progress-indicator{display:flex;gap:4px;margin-bottom:32px;}
+.pi-seg{flex:1;height:4px;background:var(--border);border-radius:100px;transition:background .4s;}
+.pi-seg.done{background:var(--primary);}
+.pi-seg.active{background:var(--primary);opacity:.5;}
+
+/* DIVIDER */
+.section-divider{height:1px;background:var(--border);margin:48px 0;}
+
+/* READ MORE LINKS */
+.read-more{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s;padding:8px 0;}
+.read-more:hover{gap:10px;}
+
+/* RESPONSIVE */
+@media(max-width:960px){.page-layout{grid-template-columns:1fr;}.sidebar{position:static;display:grid;grid-template-columns:1fr 1fr;gap:12px;}.sb-cta{grid-column:1/-1;}}
+@media(max-width:640px){.share-grid{grid-template-columns:1fr;}.hero-steps-row{flex-direction:column;}.sidebar{grid-template-columns:1fr;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.guide-section{animation:fadeUp .5s ease both;}
+.guide-section:nth-child(1){animation-delay:.05s;}
+.guide-section:nth-child(2){animation-delay:.15s;}
+.guide-section:nth-child(3){animation-delay:.25s;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">EveryGiving</a>
+  <div class="nav-r">
+    <button class="btn-in" onclick="location.href='everygiving-auth.html'">Sign in</button>
+    <button class="btn-start" onclick="location.href='everygiving-create.html'">Start a fundraiser</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-inner">
+    <div class="hero-breadcrumb">
+      <span onclick="location.href='index.html'" style="cursor:pointer;">Home</span>
+      <span class="sep">›</span>
+      <span>How it works</span>
+    </div>
+    <h1>How to fundraise on <em>Every Giving</em></h1>
+    <p class="hero-sub">Everything you need to know — from starting your campaign to managing donations and sharing your story across Ghana and beyond.</p>
+    <div class="hero-steps-row">
+      <div class="hero-step-pill" onclick="document.getElementById('step1').scrollIntoView({behavior:'smooth'})"><div class="num">1</div> Start your fundraiser</div>
+      <div class="hero-step-pill" onclick="document.getElementById('step2').scrollIntoView({behavior:'smooth'})"><div class="num">2</div> Share with friends</div>
+      <div class="hero-step-pill" onclick="document.getElementById('step3').scrollIntoView({behavior:'smooth'})"><div class="num">3</div> Manage donations</div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="page-layout">
+
+  <!-- MAIN CONTENT -->
+  <div>
+
+    <!-- PROGRESS -->
+    <div class="progress-indicator" id="progress">
+      <div class="pi-seg active" id="ps1"></div>
+      <div class="pi-seg" id="ps2"></div>
+      <div class="pi-seg" id="ps3"></div>
+    </div>
+
+    <!-- ── SECTION 1 ── -->
+    <div class="guide-section" id="step1">
+      <div class="section-num"><div class="section-num-circle">1</div> Step One</div>
+      <h2>Start your fundraiser</h2>
+      <p class="section-intro">The first step in starting your fundraising journey is just that — <strong>starting</strong>. Once you've created your Every Giving account, your campaign will be live and ready to receive donations in minutes. Here's exactly what to do:</p>
+
+      <div class="step-list">
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">🎯</div>
+          <div class="si-body">
+            <div class="si-title">Set your fundraiser goal</div>
+            <div class="si-desc">How much are you looking to raise? Be realistic but ambitious. Remember — you can easily change your goal if you meet your initial target. Most successful campaigns on Every Giving set a specific, justified amount.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">✍️</div>
+          <div class="si-body">
+            <div class="si-title">Tell your story</div>
+            <div class="si-desc">Why are you fundraising? Tell your audience what the money is for, who it will help, and why it matters. Be specific — mention names, amounts, and what happens when you reach your goal. Specific stories raise 3× more.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">📸</div>
+          <div class="si-body">
+            <div class="si-title">Add a relevant photo or video</div>
+            <div class="si-desc">A real, authentic photo tells your story better than words. Campaigns with photos raise significantly more than those without. A short video is even better — record yourself explaining why you need help.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">🪪</div>
+          <div class="si-body">
+            <div class="si-title">Get verified for maximum trust</div>
+            <div class="si-desc">Upload your Ghana Card and any supporting documents (hospital bill, school fees letter, etc.). Verified campaigns display a green ✓ badge and raise 3× more than unverified ones. Verification takes just 24 hours.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">🚀</div>
+          <div class="si-body">
+            <div class="si-title">Set your campaign live</div>
+            <div class="si-desc">Once you're happy with everything, hit publish and your campaign goes live instantly. You'll get a shareable link — copy it and you're ready to start sharing with the world.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="playVideo('How to Create a Campaign on Every Giving')">
+        <div class="vc-thumb">
+          <div class="vc-play"><span class="vc-play-icon">▶</span></div>
+          <div class="vc-duration">3:24</div>
+        </div>
+        <div class="vc-body">
+          <div><div class="vc-title">Watch: How to create your first campaign</div><div class="vc-sub">Step-by-step walkthrough · 3 min 24 sec</div></div>
+          <div class="vc-badge">▶ Watch now</div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tb-icon">💡</div>
+        <div>
+          <div class="tb-title">Pro tip — write your story like you're texting a close friend</div>
+          <div class="tb-desc">Don't be formal. Be honest, personal, and direct. Tell donors exactly what the money will be used for and what happens if you don't reach your goal. <span class="tb-link">Read our fundraising story guide →</span></div>
+        </div>
+      </div>
+
+      <div class="read-more" onclick="location.href='everygiving-create.html'">Start your fundraiser now →</div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- ── SECTION 2 ── -->
+    <div class="guide-section" id="step2">
+      <div class="section-num"><div class="section-num-circle">2</div> Step Two</div>
+      <h2>Share with friends — and strangers</h2>
+      <p class="section-intro">An important part of any successful fundraising journey is <strong>sharing your page with everyone you can</strong> — friends, colleagues, family in the diaspora, church members, neighbours! The more you share, the more you raise. Here's how:</p>
+
+      <div class="share-grid">
+        <div class="share-card">
+          <span class="sc-icon">💬</span>
+          <div class="sc-title">WhatsApp (Most powerful in Ghana)</div>
+          <div class="sc-desc">Send your campaign link to every group chat you're in — family, church, old school, work. WhatsApp is how most Ghanaians share news. A single share in a busy group can bring dozens of donors.</div>
+          <div class="sc-tag">📱 Tap "Share" → WhatsApp</div>
+        </div>
+        <div class="share-card">
+          <span class="sc-icon">📧</span>
+          <div class="sc-title">Send emails</div>
+          <div class="sc-desc">Send your campaign link to family and friends with a short personal introduction. A warm, personal email from you will always outperform a generic group message.</div>
+          <div class="sc-tag">✉️ Personal intro works best</div>
+        </div>
+        <div class="share-card">
+          <span class="sc-icon">📘</span>
+          <div class="sc-title">Facebook</div>
+          <div class="sc-desc">Post regular updates on your timeline and in relevant Facebook groups. Ask friends to share your post — each share reaches a whole new network of potential donors.</div>
+          <div class="sc-tag">👥 Ask friends to share</div>
+        </div>
+        <div class="share-card">
+          <span class="sc-icon">📸</span>
+          <div class="sc-title">Instagram & TikTok</div>
+          <div class="sc-desc">Share your campaign photo as an Instagram story or post. Add the campaign link to your bio. TikTok videos telling your story directly can go viral and reach thousands overnight.</div>
+          <div class="sc-tag">🎥 Video stories work best</div>
+        </div>
+        <div class="share-card">
+          <span class="sc-icon">📱</span>
+          <div class="sc-title">SMS & phone calls</div>
+          <div class="sc-desc">Don't underestimate a simple text message or phone call to close family. A personal ask is often more powerful than any social media post. Text your campaign link with a short message.</div>
+          <div class="sc-tag">📲 Direct = most effective</div>
+        </div>
+        <div class="share-card">
+          <span class="sc-icon">🖨️</span>
+          <div class="sc-title">Posters with QR code</div>
+          <div class="sc-desc">Print a simple poster with your campaign photo and a QR code linking to your page. Put them up at church, the hospital waiting room, community notice boards, and local shops.</div>
+          <div class="sc-tag">🏷️ Every Giving generates QR free</div>
+        </div>
+      </div>
+
+      <div class="video-card" onclick="playVideo('How to Share Your Campaign for Maximum Reach')">
+        <div class="vc-thumb" style="background:linear-gradient(135deg,#1a4a2e,#0d6e3f);">
+          <div class="vc-play"><span class="vc-play-icon">▶</span></div>
+          <div class="vc-duration">2:48</div>
+        </div>
+        <div class="vc-body">
+          <div><div class="vc-title">Watch: How to share your campaign for maximum reach</div><div class="vc-sub">WhatsApp, Facebook, posters & more · 2 min 48 sec</div></div>
+          <div class="vc-badge">▶ Watch now</div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tb-icon">🔁</div>
+        <div>
+          <div class="tb-title">The 3-day rule — share again on day 1, 3, and 7</div>
+          <div class="tb-desc">Most donations come within the first week. Share your campaign on Day 1 when it's fresh, Day 3 with a progress update, and Day 7 with a final push. Each share re-activates people who saw it but forgot. <span class="tb-link">Read our social media sharing guide →</span></div>
+        </div>
+      </div>
+
+      <div class="read-more">Learn more about sharing strategies →</div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- ── SECTION 3 ── -->
+    <div class="guide-section" id="step3">
+      <div class="section-num"><div class="section-num-circle">3</div> Step Three</div>
+      <h2>Manage donations & keep donors engaged</h2>
+      <p class="section-intro">Once donations start coming in, your job isn't done. <strong>Acknowledging donors and posting updates</strong> is what turns a one-time donor into a repeat supporter — and keeps your campaign alive and growing.</p>
+
+      <!-- DONOR TRACKER MOCKUP -->
+      <div class="tracker-mock">
+        <div class="tm-header">
+          <div class="tm-h-title">💚 Recent donors</div>
+          <div class="tm-h-count">47 donations · ₵21,600 raised</div>
+        </div>
+        <div class="donor-row">
+          <div class="dr-avatar" style="background:#E8FBF2;">🇬🇧</div>
+          <div>
+            <div class="dr-name">Kofi A. — London, UK</div>
+            <div class="dr-msg">"Stay strong Kwame. Praying for a full recovery 🙏"</div>
+            <div class="dr-thanks" onclick="thankDonor(this)">💚 Send thanks</div>
+          </div>
+          <div class="dr-right"><div class="dr-amt">₵500</div><div class="dr-time">2 hours ago</div></div>
+        </div>
+        <div class="donor-row">
+          <div class="dr-avatar" style="background:#EEF3FF;">🙏</div>
+          <div>
+            <div class="dr-name">Anonymous donor</div>
+            <div class="dr-msg">"May God heal you completely."</div>
+            <div class="dr-thanks" onclick="thankDonor(this)">💚 Send thanks</div>
+          </div>
+          <div class="dr-right"><div class="dr-amt">₵200</div><div class="dr-time">5 hours ago</div></div>
+        </div>
+        <div class="donor-row">
+          <div class="dr-avatar" style="background:#FFF8EB;">⛪</div>
+          <div>
+            <div class="dr-name">Church of Pentecost — Tema</div>
+            <div class="dr-msg">"Our congregation stands with the Osei family."</div>
+            <div class="dr-thanks" onclick="thankDonor(this)">💚 Send thanks</div>
+          </div>
+          <div class="dr-right"><div class="dr-amt">₵2,000</div><div class="dr-time">Yesterday</div></div>
+        </div>
+      </div>
+
+      <div class="step-list">
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">💚</div>
+          <div class="si-body">
+            <div class="si-title">Say thank you to every donor</div>
+            <div class="si-desc">Every Giving has built-in thank you tools — tap "Send thanks" next to any donation. A personalised thank you message makes donors feel valued and more likely to share your campaign with others.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">📢</div>
+          <div class="si-body">
+            <div class="si-title">Post milestone updates</div>
+            <div class="si-desc">When you hit 25%, 50%, 75% of your goal — post an update! Celebrate with your donors. Tell them what the progress means and re-energise people who haven't donated yet. Updates appear on your campaign page.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">📄</div>
+          <div class="si-body">
+            <div class="si-title">Upload receipts & evidence</div>
+            <div class="si-desc">When money is used — upload the receipt. Hospital payment confirmation, school fees receipt, building materials invoice. This builds massive trust and often triggers a second wave of donations from people watching.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+        <div class="step-item" onclick="toggleStep(this)">
+          <div class="si-icon">🙏</div>
+          <div class="si-body">
+            <div class="si-title">Post a final thank you when done</div>
+            <div class="si-desc">When your campaign ends or goal is met, post a final update with photos and a heartfelt thank you. Donors who gave deserve to know the outcome. This also builds your reputation for future campaigns.</div>
+          </div>
+          <div class="si-check"></div>
+        </div>
+      </div>
+
+      <!-- POST UPDATE -->
+      <div style="margin-bottom:8px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;color:var(--navy);">📝 Post an update to your donors</div>
+      <div class="update-compose">
+        <div class="uc-header">
+          <div class="uc-avatar">AO</div>
+          <div><div class="uc-label">Abena Osei</div><div class="uc-sub">Update for: Help Kwame fund his kidney surgery</div></div>
+        </div>
+        <textarea class="uc-textarea" placeholder="Share an update with your donors — how is the campaign going? Any news about the surgery? Your supporters want to hear from you..." id="updateTA"></textarea>
+        <div class="uc-footer">
+          <div class="uc-attach">
+            <button class="uc-att-btn">📸 Add photo</button>
+            <button class="uc-att-btn">📎 Add receipt</button>
+          </div>
+          <button class="uc-post-btn" onclick="postUpdate()">Post update →</button>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tb-icon">📅</div>
+        <div>
+          <div class="tb-title">Post at least one update per week</div>
+          <div class="tb-desc">Campaigns that post weekly updates raise 2× more on average. Even a short "We're at 60% — thank you so much!" keeps your campaign alive in donors' minds and encourages them to share again.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL CTA -->
+    <div style="background:linear-gradient(135deg,var(--primary-dark),var(--primary));border-radius:20px;padding:40px;text-align:center;margin-top:20px;">
+      <div style="font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:8px;">Ready to start? 🚀</div>
+      <div style="font-size:.9rem;color:rgba(255,255,255,.75);margin-bottom:22px;line-height:1.6;">You now know everything you need. Create your free campaign and start raising money today.</div>
+      <button style="background:#fff;color:var(--primary);border:none;padding:13px 30px;border-radius:28px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;cursor:pointer;transition:all .2s;" onclick="location.href='everygiving-create.html'" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Start your fundraiser — it's free →</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-card">
+      <div class="sb-hdr"><div class="sb-hdr-title">📋 In this guide</div></div>
+      <div class="sb-body">
+        <div class="sb-link active" onclick="goTo('step1',this)"><div class="sb-link-num">1</div> Start your fundraiser</div>
+        <div class="sb-link" onclick="goTo('step2',this)"><div class="sb-link-num">2</div> Share with friends</div>
+        <div class="sb-link" onclick="goTo('step3',this)"><div class="sb-link-num">3</div> Manage donations</div>
+      </div>
+      <div class="sb-progress">
+        <div class="sb-prog-title">Your reading progress</div>
+        <div class="sb-prog-track"><div class="sb-prog-fill" id="readProgress"></div></div>
+        <div class="sb-prog-label" id="readLabel">Just started</div>
+      </div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-hdr" style="background:var(--navy);"><div class="sb-hdr-title">🔗 Useful links</div></div>
+      <div class="sb-body">
+        <div class="sb-link" onclick="location.href='everygiving-verification.html'"><div class="sb-link-num">🪪</div> Verification tiers</div>
+        <div class="sb-link" onclick="location.href='everygiving-create.html'"><div class="sb-link-num">✍️</div> Create campaign</div>
+        <div class="sb-link"><div class="sb-link-num">📝</div> Story writing tips</div>
+        <div class="sb-link"><div class="sb-link-num">📣</div> Sharing strategies</div>
+        <div class="sb-link"><div class="sb-link-num">💬</div> Help centre</div>
+      </div>
+    </div>
+
+    <div class="sb-cta">
+      <div class="sb-cta-title">Start raising money today</div>
+      <div class="sb-cta-sub">Free to start. Verified in 24hrs. MoMo payouts from day one.</div>
+      <button class="sb-cta-btn" onclick="location.href='everygiving-create.html'">Start a fundraiser →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="background:var(--navy);padding:28px 5%;text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;border-top:1px solid rgba(255,255,255,.06);">
+  © 2026 Every Giving. Built in Ghana 🇬🇭 ·
+  <a href="index.html" style="color:rgba(255,255,255,.4);margin:0 8px;">Home</a>
+  <a href="everygiving-create.html" style="color:rgba(255,255,255,.4);margin:0 8px;">Start fundraiser</a>
+  <a href="#" style="color:rgba(255,255,255,.4);margin:0 8px;">Terms</a>
+</footer>
+
+<script>
+function toggleStep(el){
+  el.classList.toggle('done');
+  const chk=el.querySelector('.si-check');
+  chk.textContent=el.classList.contains('done')?'✓':'';
+  updateProgress();
+}
+function updateProgress(){
+  const total=document.querySelectorAll('.step-item').length;
+  const done=document.querySelectorAll('.step-item.done').length;
+  const pct=Math.round((done/total)*100);
+  document.getElementById('readProgress').style.width=pct+'%';
+  const labels=['Just started','Good start!','Halfway there!','Almost done!','Guide complete! 🎉'];
+  const idx=Math.min(Math.floor(pct/25),4);
+  document.getElementById('readLabel').textContent=labels[idx]+' ('+pct+'%)';
+}
+function goTo(id,el){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+  el.classList.add('active');
+}
+// Track scroll for progress
+window.addEventListener('scroll',()=>{
+  const sections=['step1','step2','step3'];
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const rect=el.getBoundingClientRect();
+    if(rect.top<200){
+      document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+      document.querySelectorAll('.sb-link')[i].classList.add('active');
+      document.querySelectorAll('.pi-seg').forEach((s,j)=>{
+        s.classList.remove('done','active');
+        if(j<i)s.classList.add('done');
+        else if(j===i)s.classList.add('active');
+      });
+    }
+  });
+});
+function thankDonor(el){
+  el.textContent='✓ Thanks sent!';
+  el.style.background='var(--primary)';
+  el.style.color='#fff';
+  el.style.borderColor='var(--primary)';
+  el.style.pointerEvents='none';
+}
+function playVideo(title){alert('Video: "'+title+'" — Coming soon! We\'re filming tutorials now.');}
+function postUpdate(){
+  const ta=document.getElementById('updateTA');
+  if(!ta.value.trim()){ta.focus();ta.placeholder='Please write something first...';return;}
+  ta.value='';
+  ta.placeholder='✅ Update posted! Your donors have been notified.';
+  setTimeout(()=>{ta.placeholder='Share an update with your donors...';},3000);
+}
+</script>
+</body>
+</html>

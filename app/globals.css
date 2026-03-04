@@ -1,38 +1,124 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Nunito+Sans:wght@300;400;500;600&display=swap');
-
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #02A95C;
-  --primary-dark: #017A42;
-  --primary-light: #E8FBF2;
-  --navy: #16233A;
+@layer base {
+  html {
+    font-family: var(--font-dm-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* Better tap targets on mobile */
+  button, a {
+    @apply touch-manipulation;
+  }
+
+  /* Improve text rendering */
+  body {
+    @apply text-gray-900 antialiased;
+  }
+
+  /* Focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-green-500 ring-offset-2;
+  }
 }
 
-* { box-sizing: border-box; }
+@layer components {
+  /* Container for consistent max-width */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 
-html { scroll-behavior: smooth; }
+  /* Button styles */
+  .btn-primary {
+    @apply bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition inline-flex items-center justify-center gap-2;
+  }
 
-body {
-  font-family: 'Nunito Sans', sans-serif;
-  color: #1A2B3C;
+  .btn-secondary {
+    @apply border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-full font-semibold hover:border-gray-400 transition inline-flex items-center justify-center gap-2;
+  }
+
+  .btn-outline {
+    @apply border-2 border-green-600 text-green-600 px-6 py-3 rounded-full font-semibold hover:bg-green-50 transition;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-green {
+    @apply bg-green-100 text-green-700;
+  }
+
+  .badge-verified {
+    @apply bg-green-600 text-white;
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Nunito', sans-serif;
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-.animate-fadeUp { animation: fadeUp 0.5s ease both; }
-
-@keyframes pulse-dot {
+/* Loading skeleton animation */
+@keyframes pulse {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  50% { opacity: 0.5; }
 }
-.animate-pulse-dot { animation: pulse-dot 2s infinite; }
+
+.animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Mobile bottom sheet */
+.bottom-sheet {
+  @apply fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-xl transform transition-transform duration-300;
+}
+
+/* WhatsApp green */
+.text-whatsapp {
+  color: #25D366;
+}
+
+.bg-whatsapp {
+  background-color: #25D366;
+}
+
+/* MoMo colors */
+.text-mtn {
+  color: #ffcc00;
+}
+
+.text-vodafone {
+  color: #e60000;
+}
+
+.text-airteltigo {
+  color: #ed1c24;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+}

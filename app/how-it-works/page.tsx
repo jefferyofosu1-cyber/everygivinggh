@@ -103,55 +103,63 @@ function TutorialEmbed() {
             </button>
           ))}
         </div>
-        {/* Stage */}
-        <div className="grid md:grid-cols-5 gap-6 items-center min-h-[320px]">
-          {/* Character */}
-          <div className="md:col-span-2 flex justify-center">
-            <div className="relative w-36 h-48 md:w-44 md:h-60">
+        {/* Stage — single column on mobile, 5-col grid on desktop */}
+        <div className="flex flex-col md:grid md:grid-cols-5 gap-4 md:gap-6 md:items-center">
+
+          {/* Character + bubble stacked on mobile */}
+          <div className="md:col-span-2 flex flex-col items-center gap-3">
+            <div className="w-28 h-36 md:w-44 md:h-60 flex-shrink-0">
               <Character mood={cur.mood} holding={cur.holding} />
-              <div className={`absolute -top-2 left-full ml-3 w-44 transition-all duration-500 z-10 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-                <div className="bg-white rounded-2xl rounded-bl-sm p-3 shadow-xl border border-gray-100 relative">
-                  <div className="absolute -left-2 top-4 w-0 h-0 border-t-[6px] border-t-transparent border-r-[10px] border-r-white border-b-[6px] border-b-transparent" />
-                  <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
-                </div>
+            </div>
+            {/* Bubble below character — mobile only */}
+            <div className={`md:hidden w-full transition-all duration-500 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+              <div className="bg-white rounded-2xl p-3 shadow-lg border border-gray-100 text-center">
+                <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
               </div>
             </div>
           </div>
-          {/* Info */}
+
+          {/* Info col */}
           <div className={`md:col-span-3 transition-all duration-700 ${show.narration ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: cur.accent }}>Scene {scene + 1} of {SCENES.length}</div>
-            <h3 className="font-nunito font-black text-navy text-xl md:text-2xl tracking-tight mb-3 leading-tight">{cur.name}</h3>
-            <p className="text-gray-500 text-sm leading-relaxed mb-5">{cur.narration}</p>
-            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mb-5">
+            {/* Bubble beside character — desktop only */}
+            <div className={`hidden md:block mb-3 transition-all duration-500 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+              <div className="bg-white rounded-2xl rounded-tl-sm p-3 shadow-lg border border-gray-100 inline-block max-w-xs">
+                <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
+              </div>
+            </div>
+            <div className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: cur.accent }}>Scene {scene + 1} of {SCENES.length}</div>
+            <h3 className="font-nunito font-black text-navy text-lg md:text-2xl tracking-tight mb-2 leading-tight">{cur.name}</h3>
+            <p className="text-gray-500 text-sm leading-relaxed mb-4">{cur.narration}</p>
+            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mb-4">
               <div className="h-full rounded-full transition-all duration-100" style={{ width: `${progress}%`, backgroundColor: cur.accent }} />
             </div>
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-2 flex-wrap">
               {!playing && !completed && (
                 <button onClick={play}
-                  className="flex items-center gap-2 px-5 py-2.5 text-white font-nunito font-black rounded-xl text-sm transition-all hover:-translate-y-0.5 shadow"
+                  className="flex items-center gap-2 px-4 py-2.5 text-white font-nunito font-black rounded-xl text-sm transition-all hover:-translate-y-0.5 shadow"
                   style={{ backgroundColor: cur.accent }}>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                   Play Ama's story
                 </button>
               )}
               {playing && (
                 <>
                   <button onClick={() => { clearInterval(timerRef.current); setPlaying(false) }}
-                    className="px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Pause</button>
+                    className="px-3.5 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Pause</button>
                   {scene < SCENES.length - 1 && (
                     <button onClick={() => jump(scene + 1)}
-                      className="px-5 py-2.5 text-white font-bold rounded-xl text-sm" style={{ backgroundColor: cur.accent }}>Next</button>
+                      className="px-4 py-2.5 text-white font-bold rounded-xl text-sm" style={{ backgroundColor: cur.accent }}>Next</button>
                   )}
                 </>
               )}
               {!playing && !completed && scene > 0 && (
                 <button onClick={() => jump(scene - 1)}
-                  className="px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Back</button>
+                  className="px-3.5 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Back</button>
               )}
               {completed && (
                 <>
-                  <button onClick={play} className="px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Watch again</button>
-                  <Link href="/create" className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl text-sm transition-all">Start like Ama</Link>
+                  <button onClick={play} className="px-3.5 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Watch again</button>
+                  <Link href="/create" className="px-4 py-2.5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl text-sm transition-all">Start like Ama</Link>
                 </>
               )}
             </div>

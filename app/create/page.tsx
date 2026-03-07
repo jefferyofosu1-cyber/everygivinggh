@@ -1,273 +1,497 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
-import { createClient } from '@/lib/supabase'
-import toast from 'react-hot-toast'
+import Footer from '@/components/layout/Footer'
 
-const CATEGORIES = [
-  { value: 'medical', label: 'Medical Support', emoji: '🏥' },
-  { value: 'education', label: 'Education', emoji: '🎓' },
-  { value: 'church', label: 'Church Project', emoji: '⛪' },
-  { value: 'emergency', label: 'Emergency', emoji: '🆘' },
-  { value: 'business', label: 'Business', emoji: '💼' },
-  { value: 'community', label: 'Community', emoji: '🏡' },
+const CATEGORIES = ['Medical', 'Education', 'Church & Faith', 'Emergency', 'Business', 'Memorial', 'Community', 'Events', 'Other']
+
+const TIERS = [
+  {
+    id: 'basic',
+    name: 'Basic',
+    price: '₵20',
+    priceNum: 20,
+    badge: 'Basic Verified',
+    badgeColor: 'bg-gray-100 text-gray-600',
+    border: 'border-gray-200',
+    activeBorder: 'border-gray-500',
+    desc: 'ID upload + ID number. Basic badge.',
+    limit: 'Campaigns up to ₵5,000',
+    features: ['Ghana Card upload', 'ID number verification', 'Basic Verified badge'],
+    selfie: false,
+  },
+  {
+    id: 'standard',
+    name: 'Standard',
+    price: '₵50',
+    priceNum: 50,
+    badge: 'Verified ✓',
+    badgeColor: 'bg-primary-light text-primary-dark',
+    border: 'border-primary/30',
+    activeBorder: 'border-primary',
+    recommended: true,
+    desc: 'ID + selfie + NIA check. Full badge.',
+    limit: 'Campaigns up to ₵50,000',
+    features: ['Ghana Card upload', 'ID number verification', 'Selfie + facial recognition', 'NIA database check', 'Full Verified badge'],
+    selfie: true,
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    price: '₵100',
+    priceNum: 100,
+    badge: 'Premium ★',
+    badgeColor: 'bg-amber-50 text-amber-700',
+    border: 'border-amber-200',
+    activeBorder: 'border-amber-500',
+    desc: 'Full verification + document review.',
+    limit: 'Unlimited campaign goal',
+    features: ['Everything in Standard', 'Supporting documents reviewed', 'Premium badge + top placement', 'Dedicated support'],
+    selfie: true,
+  },
 ]
 
-const STEPS = ['Campaign details', 'Your story', 'Verification', 'Payout setup']
+type Step = 'campaign' | 'tier' | 'identity' | 'payment' | 'done'
 
 export default function CreatePage() {
   const router = useRouter()
-  const supabase = createClient()
-  const [step, setStep] = useState(1)
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [form, setForm] = useState({
-    title: '', category: '', goal_amount: '', story: '', location: '',
-    deadline: '', verification_tier: 'basic', payout_method: 'momo', momo_number: ''
+  const [step, setStep] = useState<Step>('campaign')
+  const [submitting, setSubmitting] = useState(false)
+
+  // Campaign form
+  const [campaign, setCampaign] = useState({
+    title: '', category: '', goal: '', story: '', photo: null as File | null,
   })
+  const photoRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { toast.error('Please sign in first'); router.push('/auth/login') }
-      else setUser(data.user)
-    })
-  }, [])
+  // Tier
+  const [tierId, setTierId] = useState<string>('standard')
+  const tier = TIERS.find(t => t.id === tierId)!
 
-  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }))
+  // Identity
+  const [identity, setIdentity] = useState({
+    idNumber: '',
+    idFront: null as File | null,
+    idBack: null as File | null,
+    selfie: null as File | null,
+  })
+  const idFrontRef = useRef<HTMLInputElement>(null)
+  const idBackRef = useRef<HTMLInputElement>(null)
+  const selfieRef = useRef<HTMLInputElement>(null)
 
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setImageFile(file)
-    setImagePreview(URL.createObjectURL(file))
+  // Payment (simulate)
+  const [paid, setPaid] = useState(false)
+
+  const steps: { id: Step; label: string }[] = [
+    { id: 'campaign', label: 'Campaign' },
+    { id: 'tier', label: 'Verification' },
+    { id: 'identity', label: 'ID documents' },
+    { id: 'payment', label: 'Payment' },
+  ]
+  const stepIndex = steps.findIndex(s => s.id === step)
+
+  const canNextCampaign = campaign.title && campaign.category && campaign.goal && campaign.story
+
+  const canNextIdentity = identity.idNumber && identity.idFront && identity.idBack &&
+    (tier.selfie ? !!identity.selfie : true)
+
+  const handleFileSelect = (
+    ref: React.RefObject<HTMLInputElement>,
+    field: 'idFront' | 'idBack' | 'selfie' | 'photo'
+  ) => {
+    ref.current?.click()
+  }
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: 'idFront' | 'idBack' | 'selfie'
+  ) => {
+    const file = e.target.files?.[0] || null
+    setIdentity(p => ({ ...p, [field]: file }))
   }
 
   const handleSubmit = async () => {
-    if (!user) return
-    setLoading(true)
-    try {
-      let image_url = null
-      if (imageFile) {
-        const ext = imageFile.name.split('.').pop()
-        const path = `campaigns/${user.id}-${Date.now()}.${ext}`
-        const { error: uploadErr } = await supabase.storage.from('campaign-images').upload(path, imageFile)
-        if (!uploadErr) {
-          const { data } = supabase.storage.from('campaign-images').getPublicUrl(path)
-          image_url = data.publicUrl
-        }
-      }
-      const { data, error } = await supabase.from('campaigns').insert({
-        user_id: user.id, title: form.title, story: form.story,
-        category: form.category, goal_amount: parseInt(form.goal_amount),
-        location: form.location, deadline: form.deadline || null,
-        verification_tier: form.verification_tier, image_url, status: 'pending'
-      }).select().single()
-
-      if (error) throw error
-      toast.success('Campaign submitted! We\'ll review it within 24 hours. 🎉')
-      router.push(`/campaigns/${data.id}`)
-    } catch (err: any) {
-      toast.error(err.message || 'Something went wrong')
-    }
-    setLoading(false)
+    setSubmitting(true)
+    // Simulate API call
+    await new Promise(r => setTimeout(r, 1500))
+    setStep('done')
+    setSubmitting(false)
   }
 
-  const nextStep = () => {
-    if (step === 1 && (!form.title || !form.category || !form.goal_amount)) {
-      toast.error('Please fill all required fields'); return
-    }
-    if (step === 2 && !form.story) {
-      toast.error('Please write your story'); return
-    }
-    if (step < 4) setStep(s => s + 1)
-    else handleSubmit()
+  // ── DONE SCREEN ──────────────────────────────────────────────────────────
+  if (step === 'done') {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-16">
+          <div className="max-w-lg w-full text-center">
+            <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
+              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+              <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">🎉</div>
+            </div>
+            <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
+            <p className="text-gray-500 text-sm mb-2">Your campaign and identity documents are being reviewed.</p>
+            <p className="text-gray-400 text-xs mb-8">You'll receive an email once your campaign is live. This usually takes under 10 minutes.</p>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6 text-left">
+              <div className="font-nunito font-black text-navy text-sm mb-4">What happens next</div>
+              <div className="flex flex-col gap-3">
+                {[
+                  { icon: '📧', text: 'Check your email for a verification confirmation' },
+                  { icon: '✅', text: `Your ${tier.name} verification will be processed` },
+                  { icon: '🚀', text: 'Your campaign goes live with your Verified badge' },
+                  { icon: '📱', text: 'Share on WhatsApp to start receiving donations' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                    <span>{item.icon}</span><span>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-3 justify-center">
+              <Link href="/campaigns"
+                className="px-7 py-3 bg-primary text-white font-nunito font-black rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-primary/20">
+                Browse campaigns
+              </Link>
+              <Link href="/"
+                className="px-7 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-full text-sm hover:border-primary hover:text-primary transition-all">
+                Go home
+              </Link>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    )
   }
 
   return (
     <>
       <Navbar />
-      <div className="max-w-3xl mx-auto px-5 py-10">
+      <main className="min-h-screen bg-gray-50 py-12 px-5">
+        <div className="max-w-2xl mx-auto">
 
-        {/* Progress */}
-        <div className="mb-8">
-          <div className="flex justify-between mb-3">
-            {STEPS.map((s, i) => (
-              <div key={i} className={`flex items-center gap-2 text-xs font-bold transition-colors ${i + 1 === step ? 'text-primary' : i + 1 < step ? 'text-gray-400' : 'text-gray-200'}`}>
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center font-black text-sm border-2 transition-all ${i + 1 === step ? 'bg-primary border-primary text-white' : i + 1 < step ? 'bg-gray-200 border-gray-200 text-gray-500' : 'border-gray-200 text-gray-300'}`}>
-                  {i + 1 < step ? '✓' : i + 1}
+          {/* Header */}
+          <div className="text-center mb-10">
+            <Link href="/" className="inline-block font-nunito font-black text-xl tracking-tight mb-4">
+              <span className="text-primary">Every</span><span className="text-navy">Giving</span>
+            </Link>
+            <h1 className="font-nunito font-black text-navy text-2xl mb-2">Start your campaign</h1>
+            <p className="text-gray-400 text-sm">Free to create. Verified. MoMo-native.</p>
+          </div>
+
+          {/* Progress */}
+          <div className="flex items-center gap-0 mb-10">
+            {steps.map((s, i) => (
+              <div key={s.id} className="flex items-center flex-1">
+                <div className="flex flex-col items-center flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                    i < stepIndex ? 'bg-primary text-white' :
+                    i === stepIndex ? 'bg-navy text-white ring-4 ring-navy/20' :
+                    'bg-gray-200 text-gray-400'
+                  }`}>
+                    {i < stepIndex ? '✓' : i + 1}
+                  </div>
+                  <div className={`text-xs mt-1 font-semibold ${i === stepIndex ? 'text-navy' : 'text-gray-400'}`}>{s.label}</div>
                 </div>
-                <span className="hidden md:block">{s}</span>
+                {i < steps.length - 1 && (
+                  <div className={`h-px flex-1 mx-1 mb-5 transition-all ${i < stepIndex ? 'bg-primary' : 'bg-gray-200'}`} />
+                )}
               </div>
             ))}
           </div>
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${((step - 1) / 3) * 100}%` }} />
-          </div>
-        </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          {/* ── STEP 1: CAMPAIGN DETAILS ── */}
+          {step === 'campaign' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Tell your story</h2>
+              <p className="text-gray-400 text-sm mb-7">Be honest, specific, and personal. Campaigns with real stories raise more.</p>
 
-          {/* Step 1 */}
-          {step === 1 && (
-            <div className="flex flex-col gap-5">
-              <div>
-                <h2 className="font-nunito font-black text-navy text-xl mb-1">Tell us about your campaign</h2>
-                <p className="text-gray-400 text-sm">Fill in the basic details to get started</p>
+              <div className="flex flex-col gap-5">
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Campaign title *</label>
+                  <input type="text" value={campaign.title}
+                    onChange={e => setCampaign(p => ({ ...p, title: e.target.value }))}
+                    placeholder="e.g. Help Ama pay for her kidney surgery"
+                    maxLength={80}
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all" />
+                  <div className="text-xs text-gray-300 mt-1 text-right">{campaign.title.length}/80</div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Category *</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {CATEGORIES.map(cat => (
+                      <button key={cat} type="button"
+                        onClick={() => setCampaign(p => ({ ...p, category: cat }))}
+                        className={`text-xs font-semibold px-3 py-2.5 rounded-xl border-2 transition-all text-left ${campaign.category === cat ? 'border-primary bg-primary-light text-primary-dark' : 'border-gray-100 text-gray-500 hover:border-gray-200 bg-gray-50'}`}>
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Fundraising goal (GHC) *</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
+                    <input type="number" value={campaign.goal} min="100"
+                      onChange={e => setCampaign(p => ({ ...p, goal: e.target.value }))}
+                      placeholder="5000"
+                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-8 pr-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Your story *</label>
+                  <textarea value={campaign.story} rows={6}
+                    onChange={e => setCampaign(p => ({ ...p, story: e.target.value }))}
+                    placeholder="Explain your situation in detail. Who are you raising for? What happened? How will the money be used? Be specific — donors give more when they understand the full picture."
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all resize-none" />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Campaign photo</label>
+                  <input ref={photoRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => setCampaign(p => ({ ...p, photo: e.target.files?.[0] || null }))} />
+                  <button type="button" onClick={() => photoRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-8 text-center transition-all ${campaign.photo ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}>
+                    {campaign.photo ? (
+                      <div>
+                        <div className="text-2xl mb-1">🖼️</div>
+                        <div className="text-primary font-bold text-sm">{campaign.photo.name}</div>
+                        <div className="text-gray-400 text-xs mt-1">Click to change</div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-3xl mb-2">📷</div>
+                        <div className="text-gray-500 font-semibold text-sm">Upload a photo</div>
+                        <div className="text-gray-400 text-xs mt-1">JPG or PNG. Campaigns with photos raise more.</div>
+                      </div>
+                    )}
+                  </button>
+                </div>
               </div>
 
-              <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Category <span className="text-red-400">*</span></label>
-                <div className="grid grid-cols-3 gap-2">
-                  {CATEGORIES.map(cat => (
-                    <button key={cat.value} type="button" onClick={() => setForm(f => ({ ...f, category: cat.value }))}
-                      className={`p-3 rounded-xl border-2 text-center transition-all ${form.category === cat.value ? 'border-primary bg-primary-light' : 'border-gray-100 hover:border-gray-200'}`}>
-                      <div className="text-xl mb-1">{cat.emoji}</div>
-                      <div className={`text-xs font-bold ${form.category === cat.value ? 'text-primary-dark' : 'text-gray-600'}`}>{cat.label}</div>
+              <button disabled={!canNextCampaign} onClick={() => setStep('tier')}
+                className={`w-full mt-7 py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextCampaign ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                Continue to verification →
+              </button>
+            </div>
+          )}
+
+          {/* ── STEP 2: TIER SELECTION ── */}
+          {step === 'tier' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Choose your verification tier</h2>
+              <p className="text-gray-400 text-sm mb-7">All tiers require your Ghana Card. Higher tiers unlock larger campaigns and more donor trust.</p>
+
+              <div className="flex flex-col gap-4 mb-7">
+                {TIERS.map(t => (
+                  <div key={t.id}
+                    onClick={() => setTierId(t.id)}
+                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all relative ${tierId === t.id ? `${t.activeBorder} bg-gray-50 shadow-md` : `${t.border} hover:bg-gray-50`}`}>
+                    {t.recommended && (
+                      <div className="absolute -top-2.5 left-5 bg-primary text-white text-xs font-bold px-3 py-0.5 rounded-full">Recommended</div>
+                    )}
+                    <div className="flex items-start gap-4">
+                      <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-all ${tierId === t.id ? 'border-primary bg-primary' : 'border-gray-300'}`}>
+                        {tierId === t.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <span className="font-nunito font-black text-navy text-base">{t.name}</span>
+                          <span className="font-nunito font-black text-primary text-lg">{t.price}</span>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${t.badgeColor}`}>{t.badge}</span>
+                        </div>
+                        <div className="text-gray-400 text-xs mb-2">{t.limit}</div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                          {t.features.map((f, i) => (
+                            <div key={i} className="text-xs text-gray-500 flex items-center gap-1">
+                              <span className="text-primary font-bold">✓</span> {f}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => setStep('campaign')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button onClick={() => setStep('identity')}
+                  className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20">
+                  Continue to ID upload →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 3: IDENTITY DOCUMENTS ── */}
+          {step === 'identity' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <div className="flex items-center gap-3 mb-1">
+                <h2 className="font-nunito font-black text-navy text-xl">Upload your ID documents</h2>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${tier.badgeColor}`}>{tier.name}</span>
+              </div>
+              <p className="text-gray-400 text-sm mb-7">
+                All information is encrypted and used only for identity verification. Never shared with donors.
+              </p>
+
+              <div className="flex flex-col gap-6">
+
+                {/* ID Number */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card ID number <span className="text-red-500">*</span>
+                  </label>
+                  <input type="text" value={identity.idNumber}
+                    onChange={e => setIdentity(p => ({ ...p, idNumber: e.target.value }))}
+                    placeholder="GHA-XXXXXXXXX-X"
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all font-mono tracking-wider" />
+                  <div className="text-xs text-gray-400 mt-1.5">Found on the front of your Ghana Card</div>
+                </div>
+
+                {/* ID Front */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card — front <span className="text-red-500">*</span>
+                  </label>
+                  <input ref={idFrontRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => handleFileChange(e, 'idFront')} />
+                  <button type="button" onClick={() => idFrontRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idFront ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                    {identity.idFront ? (
+                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                    ) : (
+                      <div><div className="text-2xl mb-1.5">🪪</div><div className="text-gray-500 font-semibold text-sm">Upload front of Ghana Card</div><div className="text-gray-400 text-xs mt-1">JPG or PNG. Must be clear and in focus.</div></div>
+                    )}
+                  </button>
+                </div>
+
+                {/* ID Back */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card — back <span className="text-red-500">*</span>
+                  </label>
+                  <input ref={idBackRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => handleFileChange(e, 'idBack')} />
+                  <button type="button" onClick={() => idBackRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idBack ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                    {identity.idBack ? (
+                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idBack.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                    ) : (
+                      <div><div className="text-2xl mb-1.5">🪪</div><div className="text-gray-500 font-semibold text-sm">Upload back of Ghana Card</div><div className="text-gray-400 text-xs mt-1">JPG or PNG. Must be clear and in focus.</div></div>
+                    )}
+                  </button>
+                </div>
+
+                {/* Selfie — Standard and Premium only */}
+                {tier.selfie && (
+                  <div>
+                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                      Selfie — facial match <span className="text-red-500">*</span>
+                    </label>
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3 text-xs text-amber-700">
+                      <strong>Important:</strong> Take your selfie in good lighting, facing forward. Make sure your face is clearly visible — no sunglasses or hats.
+                    </div>
+                    <input ref={selfieRef} type="file" accept="image/*" capture="user" className="hidden"
+                      onChange={e => handleFileChange(e, 'selfie')} />
+                    <button type="button" onClick={() => selfieRef.current?.click()}
+                      className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.selfie ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                      {identity.selfie ? (
+                        <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                      ) : (
+                        <div><div className="text-2xl mb-1.5">🤳</div><div className="text-gray-500 font-semibold text-sm">Take or upload a selfie</div><div className="text-gray-400 text-xs mt-1">Face forward, good lighting. Used only for ID matching.</div></div>
+                      )}
                     </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 mt-7">
+                <button onClick={() => setStep('tier')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button disabled={!canNextIdentity} onClick={() => setStep('payment')}
+                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextIdentity ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                  Continue to payment →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 4: PAYMENT ── */}
+          {step === 'payment' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Pay verification fee</h2>
+              <p className="text-gray-400 text-sm mb-7">One-time fee. Covers your identity verification and campaign badge.</p>
+
+              {/* Order summary */}
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6">
+                <div className="font-nunito font-black text-navy text-sm mb-4">Order summary</div>
+                <div className="flex flex-col gap-2.5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Campaign</span>
+                    <span className="text-navy font-semibold truncate max-w-[200px]">{campaign.title || 'My campaign'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Verification tier</span>
+                    <span className="text-navy font-semibold">{tier.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Badge</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${tier.badgeColor}`}>{tier.badge}</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-2.5 mt-1 flex justify-between font-nunito font-black">
+                    <span className="text-navy">Total</span>
+                    <span className="text-primary text-lg">{tier.price}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment method */}
+              <div className="mb-6">
+                <div className="text-xs font-bold text-navy uppercase tracking-wider mb-3">Pay with mobile money</div>
+                <div className="grid grid-cols-3 gap-3">
+                  {['MTN MoMo', 'Vodafone Cash', 'AirtelTigo'].map((method, i) => (
+                    <div key={i} className="border-2 border-gray-100 hover:border-primary rounded-xl p-3 text-center cursor-pointer transition-all text-xs font-bold text-gray-500 hover:text-primary hover:bg-primary-light">
+                      {method}
+                    </div>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Campaign title <span className="text-red-400">*</span></label>
-                <input value={form.title} onChange={set('title')} maxLength={80} placeholder="e.g. Help Kwame fund his kidney surgery at Korle Bu"
-                  className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
-                <div className="text-xs text-gray-300 text-right mt-1">{form.title.length}/80</div>
+              <div className="bg-primary-light border border-primary/15 rounded-xl p-4 mb-6 text-sm text-gray-600">
+                <strong className="text-navy">Note:</strong> After clicking "Pay & Submit", you will receive a MoMo prompt on your phone to confirm the payment of {tier.price}. Once confirmed, your campaign will be submitted for review.
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Goal amount (₵) <span className="text-red-400">*</span></label>
-                  <input type="number" value={form.goal_amount} onChange={set('goal_amount')} placeholder="30000"
-                    className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Location</label>
-                  <input value={form.location} onChange={set('location')} placeholder="Accra, Ghana"
-                    className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
-                </div>
+              <div className="flex gap-3">
+                <button onClick={() => setStep('identity')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button onClick={handleSubmit} disabled={submitting}
+                  className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 disabled:opacity-60">
+                  {submitting ? 'Submitting...' : `Pay ${tier.price} & Submit →`}
+                </button>
               </div>
 
-              <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">End date (optional)</label>
-                <input type="date" value={form.deadline} onChange={set('deadline')}
-                  className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
-              </div>
+              <p className="text-xs text-gray-300 text-center mt-4">
+                Secure payment · Encrypted · Ghana Data Protection Act compliant
+              </p>
             </div>
           )}
 
-          {/* Step 2 */}
-          {step === 2 && (
-            <div className="flex flex-col gap-5">
-              <div>
-                <h2 className="font-nunito font-black text-navy text-xl mb-1">Share your story</h2>
-                <p className="text-gray-400 text-sm">Be specific and honest — donors give more when they feel connected</p>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Your story <span className="text-red-400">*</span></label>
-                <textarea value={form.story} onChange={set('story')} rows={8}
-                  placeholder="Tell donors who needs help, why you're raising money, and exactly how the funds will be used. Be specific — mention names, amounts, and what happens if you reach your goal."
-                  className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors resize-none" />
-                <div className="text-xs text-gray-300 text-right mt-1">{form.story.length} characters</div>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Campaign photo</label>
-                <label className="border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors bg-gray-50">
-                  {imagePreview ? (
-                    <img src={imagePreview} className="h-32 object-cover rounded-lg" alt="Preview" />
-                  ) : (
-                    <>
-                      <div className="text-3xl mb-2">📸</div>
-                      <div className="text-sm font-bold text-gray-500">Click to upload photo</div>
-                      <div className="text-xs text-gray-400 mt-1">JPG, PNG up to 5MB</div>
-                    </>
-                  )}
-                  <input type="file" accept="image/*" onChange={handleImage} className="hidden" />
-                </label>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3 */}
-          {step === 3 && (
-            <div className="flex flex-col gap-5">
-              <div>
-                <h2 className="font-nunito font-black text-navy text-xl mb-1">Choose verification tier</h2>
-                <p className="text-gray-400 text-sm">Verified campaigns raise 3× more. Documents reviewed within 24 hours.</p>
-              </div>
-              {[
-                { value: 'basic', label: 'Basic — Free', desc: 'Campaign live immediately. No verification badge.', color: 'border-gray-200' },
-                { value: 'standard', label: 'Standard — ₵20', desc: 'Ghana Card verified. ✓ Verified badge. Donors trust you more.', color: 'border-primary', recommended: true },
-                { value: 'premium', label: 'Premium — ₵50', desc: 'Ghana Card + supporting docs verified. 🏆 Premium badge. Raises 3× more.', color: 'border-amber-400' },
-              ].map(tier => (
-                <div key={tier.value} onClick={() => setForm(f => ({ ...f, verification_tier: tier.value }))}
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all relative ${form.verification_tier === tier.value ? tier.color + ' bg-primary-light/30' : 'border-gray-100 hover:border-gray-200'}`}>
-                  {tier.recommended && <div className="absolute -top-2 right-3 bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">Recommended</div>}
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${form.verification_tier === tier.value ? 'bg-primary border-primary' : 'border-gray-300'}`}>
-                      {form.verification_tier === tier.value && <div className="w-2 h-2 bg-white rounded-full" />}
-                    </div>
-                    <div>
-                      <div className="font-nunito font-extrabold text-navy text-sm">{tier.label}</div>
-                      <div className="text-xs text-gray-400 mt-0.5">{tier.desc}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Step 4 */}
-          {step === 4 && (
-            <div className="flex flex-col gap-5">
-              <div>
-                <h2 className="font-nunito font-black text-navy text-xl mb-1">How do you want to get paid?</h2>
-                <p className="text-gray-400 text-sm">Funds will be sent directly to your chosen method</p>
-              </div>
-              {[
-                { value: 'momo', label: 'MTN MoMo', emoji: '📱' },
-                { value: 'vodafone', label: 'Vodafone Cash', emoji: '📲' },
-                { value: 'bank', label: 'Bank Transfer', emoji: '🏦' },
-              ].map(method => (
-                <div key={method.value} onClick={() => setForm(f => ({ ...f, payout_method: method.value }))}
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all flex items-center gap-3 ${form.payout_method === method.value ? 'border-primary bg-primary-light/30' : 'border-gray-100 hover:border-gray-200'}`}>
-                  <div className="text-2xl">{method.emoji}</div>
-                  <div className="font-nunito font-extrabold text-navy text-sm">{method.label}</div>
-                  <div className={`ml-auto w-5 h-5 rounded-full border-2 flex items-center justify-center ${form.payout_method === method.value ? 'bg-primary border-primary' : 'border-gray-300'}`}>
-                    {form.payout_method === method.value && <div className="w-2 h-2 bg-white rounded-full" />}
-                  </div>
-                </div>
-              ))}
-              <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Mobile money number / Account number</label>
-                <input value={form.momo_number} onChange={set('momo_number')} placeholder="+233 24 000 0000"
-                  className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
-              </div>
-              <div className="bg-primary-light border border-primary/20 rounded-xl p-4 text-sm text-primary-dark">
-                <strong>🔒 Your payment info is secure</strong><br />
-                Funds are released in stages after milestones are verified. You'll receive a notification when each release is processed.
-              </div>
-            </div>
-          )}
-
-          {/* Navigation */}
-          <div className="flex justify-between mt-8 pt-6 border-t border-gray-100">
-            {step > 1 ? (
-              <button onClick={() => setStep(s => s - 1)} className="px-5 py-2.5 border-2 border-gray-200 text-gray-600 font-bold rounded-xl hover:border-gray-300 transition-colors text-sm">
-                ← Back
-              </button>
-            ) : <div />}
-            <button onClick={nextStep} disabled={loading}
-              className="px-7 py-2.5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-px disabled:opacity-60 text-sm shadow">
-              {loading ? 'Submitting...' : step === 4 ? '🚀 Submit campaign' : 'Continue →'}
-            </button>
-          </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </>
   )
 }

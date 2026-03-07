@@ -17,8 +17,11 @@ export default function Footer() {
             <div className="font-nunito font-bold text-sm text-white mb-3">Fundraise</div>
             <div className="flex flex-col gap-2">
               <Link href="/create" className="text-sm text-white/50 hover:text-primary transition-colors">Start a fundraiser</Link>
-              <Link href="/how-it-works" className="text-sm text-white/50 hover:text-primary transition-colors">How it works</Link>
-              <Link href="/verification" className="text-sm text-white/50 hover:text-primary transition-colors">Verification tiers</Link>
+              <Link href="/fundraise#how-to-start" className="text-sm text-white/50 hover:text-primary transition-colors">How it works</Link>
+              <Link href="/fundraise#categories" className="text-sm text-white/50 hover:text-primary transition-colors">Fundraising categories</Link>
+              <Link href="/fundraise#team" className="text-sm text-white/50 hover:text-primary transition-colors">Team fundraising</Link>
+              <Link href="/fundraise#charity" className="text-sm text-white/50 hover:text-primary transition-colors">Charity fundraising</Link>
+              <Link href="/fundraise#corporate" className="text-sm text-white/50 hover:text-primary transition-colors">Corporate giving</Link>
             </div>
           </div>
           <div>

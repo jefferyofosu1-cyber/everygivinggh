@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -8,27 +6,32 @@ export async function GET(request: NextRequest) {
   const next = requestUrl.searchParams.get('next') ?? '/create'
 
   if (code) {
-    const cookieStore = cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
+    // Exchange code via Supabase REST API directly — no @supabase/ssr needed
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+    try {
+      const res = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=pkce`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseAnonKey,
         },
+        body: JSON.stringify({ auth_code: code }),
+      })
+
+      if (res.ok) {
+        const { access_token, refresh_token } = await res.json()
+        const response = NextResponse.redirect(new URL(next, requestUrl.origin))
+        // Set session cookies so the client picks them up
+        response.cookies.set('sb-access-token', access_token, { path: '/', httpOnly: false, sameSite: 'lax' })
+        response.cookies.set('sb-refresh-token', refresh_token, { path: '/', httpOnly: false, sameSite: 'lax' })
+        return response
       }
-    )
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
-      return NextResponse.redirect(new URL(next, requestUrl.origin))
+    } catch (_) {
+      // fall through to error redirect
     }
   }
 
-  // On failure, redirect to signup with error message
-  return NextResponse.redirect(new URL('/auth/signup?error=confirmation_failed', requestUrl.origin))
+  return NextResponse.redirect(new URL('/auth/confirm?error=1', requestUrl.origin))
 }

@@ -64,7 +64,7 @@ async function sendEmail({
   htmlContent: string
 }) {
   await brevo('/smtp/email', 'POST', {
-    sender: { name: 'Every Giving', email: 'business@everygiving.com' },
+    sender: { name: 'Every Giving', email: 'business@everygiving.org' },
     to: [to],
     subject,
     htmlContent,

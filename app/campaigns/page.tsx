@@ -39,15 +39,14 @@ function CampaignCard({ campaign }: { campaign: any }) {
   )
 }
 
-// Placeholder cards for when DB is empty
 function PlaceholderCard({ i }: { i: number }) {
   const examples = [
     { title: 'Help Ama pay for her kidney surgery', category: 'Medical', raised: 3200, goal: 8000 },
     { title: "Kofi's University Fees Appeal", category: 'Education', raised: 1500, goal: 5000 },
-    { title: 'New Roof for St. Peter\'s Church Kumasi', category: 'Church & Faith', raised: 12000, goal: 30000 },
+    { title: "New Roof for St. Peter's Church Kumasi", category: 'Church & Faith', raised: 12000, goal: 30000 },
     { title: 'Emergency funds for flood victims in Accra', category: 'Emergency', raised: 5600, goal: 10000 },
-    { title: 'Start Abena\'s seamstress business', category: 'Business', raised: 800, goal: 2000 },
-    { title: 'Funeral and burial support for Kwesi\'s family', category: 'Memorial', raised: 4200, goal: 6000 },
+    { title: "Start Abena's seamstress business", category: 'Business', raised: 800, goal: 2000 },
+    { title: "Funeral support for Kwesi's family", category: 'Memorial', raised: 4200, goal: 6000 },
   ]
   const c = examples[i % examples.length]
   const pct = Math.round((c.raised / c.goal) * 100)
@@ -81,7 +80,6 @@ export default function CampaignsPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    let query = supabase.from('campaigns').select('*').order('created_at', { ascending: false })
     supabase.from('campaigns').select('*').order('created_at', { ascending: false })
       .then(({ data }) => {
         setCampaigns(data || [])
@@ -99,8 +97,6 @@ export default function CampaignsPage() {
     <>
       <Navbar />
       <main>
-
-        {/* Header */}
         <section className="bg-navy relative overflow-hidden py-16">
           <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-4xl mx-auto px-5 text-center">
@@ -117,7 +113,6 @@ export default function CampaignsPage() {
           </div>
         </section>
 
-        {/* Category filter */}
         <div className="bg-white border-b border-gray-100 sticky top-0 z-10 overflow-x-auto">
           <div className="max-w-5xl mx-auto px-5 py-3 flex gap-2 min-w-max">
             {CATEGORIES.map(cat => (
@@ -129,7 +124,6 @@ export default function CampaignsPage() {
           </div>
         </div>
 
-        {/* Grid */}
         <section className="py-12 bg-gray-50">
           <div className="max-w-5xl mx-auto px-5">
             {loading ? (
@@ -143,10 +137,9 @@ export default function CampaignsPage() {
                 {filtered.map(c => <CampaignCard key={c.id} campaign={c} />)}
               </div>
             ) : campaigns.length === 0 ? (
-              // No campaigns in DB yet — show placeholders
               <div>
                 <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-center text-sm text-amber-700">
-                  <strong>Coming soon</strong> — No campaigns live yet. Here's a preview of what campaigns will look like.
+                  <strong>Coming soon</strong> — No campaigns live yet. Here is a preview of what campaigns will look like.
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {[...Array(6)].map((_, i) => <PlaceholderCard key={i} i={i} />)}
@@ -156,7 +149,7 @@ export default function CampaignsPage() {
               <div className="text-center py-16">
                 <div className="text-4xl mb-3">🔍</div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No campaigns found</div>
-                <p className="text-gray-400 text-sm mb-5">Try a different search term or category.</p>
+                <p className="text-gray-400 text-sm mb-5">Try a different search or category.</p>
                 <button onClick={() => { setSearch(''); setCategory('All') }}
                   className="bg-primary text-white font-nunito font-black text-sm px-6 py-3 rounded-full">
                   Clear filters
@@ -166,7 +159,6 @@ export default function CampaignsPage() {
           </div>
         </section>
 
-        {/* CTA */}
         <section className="py-12 bg-white border-t border-gray-100">
           <div className="max-w-3xl mx-auto px-5 text-center">
             <div className="font-nunito font-black text-navy text-2xl mb-2">Need to raise money?</div>
@@ -177,7 +169,6 @@ export default function CampaignsPage() {
             </Link>
           </div>
         </section>
-
       </main>
       <Footer />
     </>

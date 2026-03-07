@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 
-const CATEGORIES = ['Medical', 'Education', 'Church & Faith', 'Emergency', 'Business', 'Memorial', 'Community', 'Events', 'Other']
+const CATEGORIES = ['Medical', 'Emergency', 'Education', 'Charity', 'Faith', 'Community', 'Environment', 'Business', 'Family', 'Sports', 'Events', 'Competition', 'Travel', 'Volunteer', 'Wishes', 'Memorial', 'Other']
 
 const TIERS = [
   {

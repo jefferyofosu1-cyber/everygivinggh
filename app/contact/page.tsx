@@ -54,7 +54,7 @@ export default function ContactPage() {
               We're here to help.
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-md">
-              We respond to all enquiries within 2 business days. For urgent payout issues, include your campaign name and registered phone number.
+              We respond to all enquiries within 2 business days. For urgent payout issues, include your campaign name and registered phone number in your message.
             </p>
           </div>
         </section>
@@ -76,7 +76,7 @@ export default function ContactPage() {
                   <a href="mailto:business@everygiving.org" className="text-primary text-sm font-semibold hover:underline">
                     business@everygiving.org
                   </a>
-                  <div className="text-gray-400 text-xs mt-2 leading-relaxed">We reply within 2 business days. For urgent payout issues we prioritise same-day responses.</div>
+                  <div className="text-gray-400 text-xs mt-2 leading-relaxed">We reply within 2 business days. Urgent payout issues are prioritised for same-day resolution.</div>
                 </div>
 
                 {/* Response times */}
@@ -128,7 +128,7 @@ export default function ContactPage() {
                         <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
                       </div>
                       <div className="font-nunito font-black text-navy text-xl mb-2">Message sent</div>
-                      <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">Your email app should have opened with your message ready. We'll get back to you within 2 business days.</p>
+                      <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">Your email app should have opened with your message ready. We will respond within 2 business days.</p>
                       <button onClick={() => setFormState('idle')}
                         className="text-primary text-sm font-bold hover:underline">
                         Send another message
@@ -185,7 +185,7 @@ export default function ContactPage() {
                             value={message}
                             onChange={e => setMessage(e.target.value)}
                             rows={5}
-                            placeholder="Describe your issue or question in as much detail as possible…"
+                            placeholder="Describe your issue or question in as much detail as possible. Include your campaign name if relevant."
                             className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all resize-none"
                           />
                         </div>

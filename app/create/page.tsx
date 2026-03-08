@@ -141,8 +141,8 @@ export default function CreatePage() {
             <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">🎉</div>
           </div>
           <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
-          <p className="text-gray-500 text-sm mb-2">Check your email — we've sent a confirmation to your inbox.</p>
-          <p className="text-gray-400 text-xs mb-8 max-w-sm mx-auto leading-relaxed">Your campaign and ID documents are under review. We'll email you once it's live — usually within 2 hours.</p>
+          <p className="text-gray-500 text-sm mb-2">Check your email — a confirmation has been sent to your inbox.</p>
+          <p className="text-gray-400 text-xs mb-8 max-w-sm mx-auto leading-relaxed">Your campaign and identity documents are under review. We will email you once it is approved — typically within 2 hours.</p>
           <div className="flex flex-col gap-3">
             {[
               { icon:'📧', text:'Check your email for confirmation' },
@@ -186,12 +186,12 @@ export default function CreatePage() {
           {step === 'campaign' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
               <h2 className="font-nunito font-black text-navy text-2xl mb-1">Tell your story</h2>
-              <p className="text-gray-400 text-sm mb-7">Be specific and honest — campaigns with detailed stories raise significantly more.</p>
+              <p className="text-gray-400 text-sm mb-7">Be specific and honest. Campaigns with detailed, personal stories raise significantly more.</p>
               <div className="flex flex-col gap-5">
                 <div>
                   <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Campaign title <span className="text-red-400">*</span></label>
                   <input type="text" value={campaign.title} onChange={e => setCampaign(p=>({...p,title:e.target.value}))}
-                    placeholder="e.g. Help me pay for my mother's surgery at Korle Bu"
+                    placeholder="e.g. Help cover my mother's surgery costs at Korle Bu Teaching Hospital"
                     className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all" />
                 </div>
                 <div>
@@ -217,7 +217,7 @@ export default function CreatePage() {
                 <div>
                   <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Your story <span className="text-red-400">*</span></label>
                   <textarea rows={5} value={campaign.story} onChange={e => setCampaign(p=>({...p,story:e.target.value}))}
-                    placeholder="Tell donors who you are, what happened, why you need help, and exactly how the money will be used. Be specific and personal — people give more when they connect with your story."
+                    placeholder="Tell donors who you are, what happened, why you need help, and exactly how the money will be used. Specificity builds trust — and trust drives donations."
                     className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none" />
                   <div className={`text-xs mt-1 ${campaign.story.length < 30 ? 'text-gray-300' : 'text-primary'}`}>{campaign.story.length} characters {campaign.story.length < 30 ? `(write at least ${30 - campaign.story.length} more)` : '✓'}</div>
                 </div>
@@ -232,8 +232,8 @@ export default function CreatePage() {
           {/* ── STEP 2: TIER ── */}
           {step === 'tier' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Choose your verification level</h2>
-              <p className="text-gray-400 text-sm mb-7">Higher verification = more trust = more donations. The verification fee is a one-time payment.</p>
+              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Choose your verification tier</h2>
+              <p className="text-gray-400 text-sm mb-7">Higher verification builds more trust — and more trust means more donations. The verification fee is a one-time payment, not a recurring charge.</p>
               <div className="flex flex-col gap-3 mb-7">
                 {TIERS.map(t => (
                   <div key={t.id} onClick={() => setTierId(t.id)}
@@ -272,12 +272,12 @@ export default function CreatePage() {
           {/* ── STEP 3: IDENTITY ── */}
           {step === 'identity' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Upload your ID document</h2>
-              <p className="text-gray-400 text-sm mb-7">All documents are encrypted and used only for identity verification. Never shared with donors.</p>
+              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Upload your identity document</h2>
+              <p className="text-gray-400 text-sm mb-7">All documents are encrypted and used solely for identity verification. They are never shared with donors or third parties.</p>
 
               {/* Step 1: choose ID type */}
               <div className="mb-6">
-                <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-3">Select your ID type <span className="text-red-400">*</span></label>
+                <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-3">Select your ID document type <span className="text-red-400">*</span></label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {ID_TYPES.map(id => (
                     <button key={id.id} type="button" onClick={() => setIdTypeId(id.id)}
@@ -360,7 +360,7 @@ export default function CreatePage() {
           {step === 'payment' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
               <h2 className="font-nunito font-black text-navy text-2xl mb-1">Pay verification fee</h2>
-              <p className="text-gray-400 text-sm mb-7">One-time payment. Covers your identity verification and campaign badge.</p>
+              <p className="text-gray-400 text-sm mb-7">One-time payment. Covers your full identity verification and campaign verification badge.</p>
               <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6">
                 <div className="font-nunito font-black text-navy text-sm mb-4">Order summary</div>
                 <div className="flex flex-col gap-2.5 text-sm">
@@ -382,7 +382,7 @@ export default function CreatePage() {
                 </div>
               </div>
               <div className="bg-primary-light border border-primary/15 rounded-xl p-4 mb-6 text-sm text-gray-600">
-                <strong className="text-navy">Note:</strong> After clicking "Pay & Submit", you will receive a MoMo prompt on your phone to confirm {tier.price}. Once paid, your campaign goes to our review team.
+                <strong className="text-navy">Note:</strong> After tapping "Pay & Submit", a MoMo prompt will appear on your phone to authorise {tier.price}. Once confirmed, your campaign goes straight to our review team.
               </div>
               {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 mb-4 text-sm">{error}</div>}
               <div className="flex gap-3">
@@ -392,7 +392,7 @@ export default function CreatePage() {
                   {submitting ? 'Submitting…' : `Pay ${tier.price} & Submit →`}
                 </button>
               </div>
-              <p className="text-xs text-gray-300 text-center mt-4">Secure · Encrypted · Ghana Data Protection Act compliant</p>
+              <p className="text-xs text-gray-300 text-center mt-4">Encrypted · Secure · Ghana Data Protection Act 2012 compliant</p>
             </div>
           )}
 

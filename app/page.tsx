@@ -129,12 +129,12 @@ export default function HomePage() {
             {/* Left — text + search */}
             <div className="pb-14 md:pb-20 pr-0 md:pr-12 flex flex-col justify-center">
               <h1 className="font-nunito font-black text-[#1A2B3C] text-5xl md:text-[4rem] leading-[1.02] tracking-tight mb-4" style={{letterSpacing:-2}}>
-                Ghana's home<br />
-                for trusted<br />
-                <span className="text-[#02A95C]">fundraising</span>
+                Raise money with
+                confidence in<br />
+                <span className="text-[#02A95C]">Ghana</span>
               </h1>
               <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-md">
-                Ghana Card verified. MoMo native. The only platform where donors know exactly who they're giving to.
+                Every fundraiser is identity-verified. Every donation lands in your MoMo wallet the same day. Zero platform fees — always.
               </p>
 
               {/* Search bar — GoFundMe style */}
@@ -213,10 +213,10 @@ export default function HomePage() {
         <section className="border-y border-gray-100 bg-gray-50 py-5">
           <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-8 text-xs font-semibold text-gray-400">
             {[
-              { icon: '🪪', text: 'Ghana Card identity verified' },
+              { icon: '🪪', text: 'Identity verified' },
               { icon: '📱', text: 'MTN · Vodafone · AirtelTigo' },
-              { icon: '⚡', text: 'Same-day MoMo payout' },
-              { icon: '💸', text: '2% + ₵0.25 fee — no platform fee' },
+              { icon: '⚡', text: 'Same-day MoMo payouts' },
+              { icon: '💸', text: '2% + ₵0.25 per donation · 0% platform fee' },
               { icon: '🔒', text: 'Encrypted & secure' },
             ].map((t, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -234,13 +234,13 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto px-6 text-center">
             <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-4" style={{fontFamily:'DM Mono, monospace'}}>Impact so far</p>
             <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl md:text-4xl mb-12 tracking-tight" style={{letterSpacing:-1}}>
-              Ghanaians helping Ghanaians
+              The numbers speak for themselves
             </h2>
             <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
               {[
-                { val: `₵${raised >= 1000000 ? (raised/1000000).toFixed(1)+'M' : raised.toLocaleString()}`, label: 'Total raised', sub: 'and counting' },
-                { val: campaignCount.toLocaleString()+'+', label: 'Campaigns funded', sub: 'across 17 categories' },
-                { val: donors.toLocaleString()+'+', label: 'Generous donors', sub: 'all across Ghana' },
+                { val: `₵${raised >= 1000000 ? (raised/1000000).toFixed(1)+'M' : raised.toLocaleString()}`, label: 'Total raised', sub: 'and growing' },
+                { val: campaignCount.toLocaleString()+'+', label: 'Campaigns funded', sub: 'across 17 causes' },
+                { val: donors.toLocaleString()+'+', label: 'Generous donors', sub: 'right across Ghana' },
               ].map((s, i) => (
                 <div key={i}>
                   <div className="font-nunito font-black text-[#02A95C] text-4xl md:text-5xl leading-none mb-2">{s.val}</div>
@@ -293,15 +293,15 @@ export default function HomePage() {
             <div className="text-center mb-14">
               <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Simple process</p>
               <h2 className="font-nunito font-black text-[#1A2B3C] text-4xl tracking-tight" style={{letterSpacing:-1}}>
-                Start fundraising in minutes
+                From idea to funded — in three steps
               </h2>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { n:'1', img: P.phone, title: 'Start your campaign', desc: 'Create your fundraiser in minutes. Add your title, goal, story and photo. No tech skills needed.', cta:'Start free →', href:'/create' },
-                { n:'2', img: P.accra, title: 'Verify your identity', desc: 'Upload your Ghana Card, Passport or Driver\'s Licence. Identity verification builds donor trust instantly.', cta:'See how →', href:'/verification' },
-                { n:'3', img: P.giving, title: 'Share and receive MoMo', desc: 'Share on WhatsApp. Every donation arrives directly to your MTN MoMo, Vodafone or AirtelTigo wallet.', cta:'Learn more →', href:'/how-it-works' },
+                { n:'1', img: P.phone, title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo. Under 15 minutes — no technical skills required.', cta:'Start free →', href:'/create' },
+                { n:'2', img: P.accra, title: 'Verify your identity', desc: 'Upload your Ghana Card or accepted ID. Verified fundraisers raise 3× more — because donors trust people whose identity is confirmed.', cta:'See how →', href:'/verification' },
+                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Every donation goes straight to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet — same day.', cta:'Learn more →', href:'/how-it-works' },
               ].map((step, i) => (
                 <div key={i} className="group">
                   <div className="relative rounded-2xl overflow-hidden h-52 mb-5 shadow-sm">
@@ -397,13 +397,14 @@ export default function HomePage() {
             <div>
               <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Built for Ghana</p>
               <h2 className="font-nunito font-black text-[#1A2B3C] text-4xl tracking-tight mb-6" style={{letterSpacing:-1}}>
-                Everything GoFundMe<br />doesn't have
+                Built for Ghana.
+                <span className="text-[#02A95C]">Unlike anything else.</span>
               </h2>
               <div className="flex flex-col gap-6">
                 {[
-                  { icon:'🪪', title:'Ghana Card verification', desc:'Every fundraiser confirms their identity with a government-issued ID before going live. Donors give 3× more to verified campaigns.' },
-                  { icon:'📱', title:'Built for mobile money', desc:'MTN MoMo, Vodafone Cash and AirtelTigo built in from day one. No bank account required. Donations arrive same day.' },
-                  { icon:'💸', title:'Honest, transparent fees', desc:'Only 2% + ₵0.25 per donation — automatically deducted. No platform fee. No monthly bills. No surprises. Ever.' },
+                  { icon:'🪪', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns — and now they have a reason to trust you.' },
+                  { icon:'📱', title:'Built for mobile money from day one', desc:'MTN MoMo, Vodafone Cash, and AirtelTigo are built into the platform from the ground up. No bank account needed. Donations land same day.' },
+                  { icon:'💸', title:'Honest fees — no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-5">
                     <div className="w-12 h-12 bg-[#f0fdf6] border border-[#02A95C]/15 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">{item.icon}</div>
@@ -437,14 +438,15 @@ export default function HomePage() {
             <div className="text-center mb-12">
               <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Real stories</p>
               <h2 className="font-nunito font-black text-white text-4xl tracking-tight" style={{letterSpacing:-1}}>
-                People just like you<br />raised money here
+                Real people.
+                <span className="text-[#02A95C]">Real results.</span>
               </h2>
             </div>
 
             <div className="grid md:grid-cols-3 gap-5">
               {[
-                { name:'Ama Korantema', location:'Accra', raised:'₵18,500', cat:'Medical', quote:'I raised ₵18,500 in 3 weeks. Strangers donated because they could see my Ghana Card was verified. EveryGiving made people trust me.', img: P.hero },
-                { name:'Pastor Isaac Asare', location:'Kumasi', raised:'₵42,000', cat:'Faith', quote:'Our church needed a new roof. I shared the campaign in 5 WhatsApp groups. In two months we had more than enough. The Verified badge was everything.', img: P.faith },
+                { name:'Ama Korantema', location:'Accra', raised:'₵18,500', cat:'Medical', quote:'I raised ₵18,500 in three weeks. Strangers donated because they could see my identity was verified. EveryGiving gave them a reason to trust me.', img: P.hero },
+                { name:'Pastor Isaac Asare', location:'Kumasi', raised:'₵42,000', cat:'Faith', quote:'Our church needed a new roof. I shared the campaign across five WhatsApp groups and in two months we had more than we needed. The Verified badge changed everything.', img: P.faith },
                 { name:'Adjoa Mensah', location:'Tema', raised:'₵9,200', cat:'Education', quote:'My daughter got into university but we couldn\'t pay the fees. In two weeks, 67 people donated. She started school. I still cry when I think about it.', img: P.education },
               ].map((t, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
@@ -471,14 +473,14 @@ export default function HomePage() {
             <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Transparent pricing</p>
             <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl tracking-tight mb-3" style={{letterSpacing:-1}}>Simple, honest fees</h2>
             <p className="text-gray-500 text-base mb-10 max-w-lg mx-auto leading-relaxed">
-              One small transaction fee per donation — automatically deducted. No platform fee. No monthly bill. You never have to worry about paying us.
+              One transaction fee per donation — automatically deducted so you never receive a bill. No platform fee. No monthly charges. Nothing hidden.
             </p>
 
             <div className="grid md:grid-cols-3 gap-4 mb-8">
               {[
-                { icon:'🎯', title:'0% platform fee', desc:'We never charge a platform fee. Starting a campaign is always completely free.' },
-                { icon:'💸', title:'2% + ₵0.25 per donation', desc:'The only cost. Automatically deducted from each donation before it reaches the fundraiser.' },
-                { icon:'📱', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Your money arrives same day.' },
+                { icon:'🎯', title:'0% platform fee', desc:'We never charge a platform fee. Creating a campaign is always completely free.' },
+                { icon:'💸', title:'2% + ₵0.25 per donation', desc:'The only cost. Deducted automatically from each donation before it reaches the fundraiser.' },
+                { icon:'📱', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Your money arrives the same day.' },
               ].map((item, i) => (
                 <div key={i} className="bg-[#f8fafb] border border-gray-100 rounded-2xl p-6 text-left">
                   <div className="text-3xl mb-3">{item.icon}</div>
@@ -489,7 +491,7 @@ export default function HomePage() {
             </div>
 
             <Link href="/fees" className="text-[#02A95C] font-bold text-sm hover:underline">
-              Calculate exactly what you'll receive with our fee calculator →
+              Calculate exactly what you'll receive →
             </Link>
           </div>
         </section>
@@ -503,22 +505,22 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-[#1A2B3C]/85" />
           <div className="relative max-w-2xl mx-auto px-6 text-center">
             <h2 className="font-nunito font-black text-white text-5xl tracking-tight mb-4" style={{letterSpacing:-2}}>
-              Start your campaign<br /><span className="text-[#02A95C]">today</span>
+              Create your campaign<br /><span className="text-[#02A95C]">today</span>
             </h2>
             <p className="text-white/60 text-lg mb-8 leading-relaxed">
-              Free to create. Ghana Card verified in minutes.<br />MoMo donations from day one.
+              Free to create. Verified in minutes.<br />Donations straight to your MoMo.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/create"
                 className="px-10 py-4 bg-[#02A95C] hover:bg-[#028a4a] text-white font-nunito font-black rounded-full transition-all hover:-translate-y-0.5 shadow-2xl shadow-[#02A95C]/30 text-base">
-                Start a campaign — it's free →
+                Start a campaign — free →
               </Link>
               <Link href="/donate"
                 className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-full transition-all text-base">
                 Donate to a campaign
               </Link>
             </div>
-            <p className="text-white/30 text-xs mt-6">No credit card needed · No platform fee · Ghana Card verified</p>
+            <p className="text-white/30 text-xs mt-6">No credit card · No platform fee · Identity verified</p>
           </div>
         </section>
 

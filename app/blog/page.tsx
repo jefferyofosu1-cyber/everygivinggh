@@ -6,8 +6,8 @@ const POSTS = [
   {
     slug: 'how-to-write-a-fundraising-story',
     category: 'Tips',
-    title: 'How to write a fundraising story that makes people give',
-    excerpt: 'Your story is your most powerful fundraising tool. Here is how to write one that builds trust, creates emotion and moves people to donate.',
+    title: 'How to write a fundraising story that moves people to give',
+    excerpt: 'Your story is your most powerful fundraising asset. Here is how to write one that builds trust, creates genuine emotion, and moves people to act.',
     readTime: '5 min read',
     date: 'March 2026',
     emoji: '✍️',
@@ -16,8 +16,8 @@ const POSTS = [
   {
     slug: 'why-verification-matters',
     category: 'Verification',
-    title: 'Why Ghana Card verification makes your campaign raise more',
-    excerpt: 'Donors in Ghana are cautious — and rightfully so. See the data on how verified campaigns compare to unverified ones.',
+    title: 'Why verification makes your campaign raise more',
+    excerpt: 'Donors are cautious — and rightfully so. Here is the data on how verified campaigns perform compared to unverified ones.',
     readTime: '4 min read',
     date: 'March 2026',
     emoji: '🪪',
@@ -26,7 +26,7 @@ const POSTS = [
   {
     slug: 'whatsapp-fundraising-guide',
     category: 'Sharing',
-    title: 'The complete guide to fundraising on WhatsApp in Ghana',
+    title: 'The complete guide to fundraising on WhatsApp',
     excerpt: 'WhatsApp is Ghana\'s most powerful fundraising channel. Here is how to share your campaign the right way and get people to actually donate.',
     readTime: '6 min read',
     date: 'February 2026',
@@ -37,7 +37,7 @@ const POSTS = [
     slug: 'medical-fundraising-ghana',
     category: 'Medical',
     title: 'How to raise money for medical bills in Ghana',
-    excerpt: 'Medical campaigns are the most common — and the most urgent. Step-by-step guide for hospital bills, surgery and treatment costs.',
+    excerpt: 'Medical campaigns are the most common — and the most urgent. A step-by-step guide for hospital bills, surgery, and treatment costs.',
     readTime: '5 min read',
     date: 'February 2026',
     emoji: '🏥',
@@ -46,7 +46,7 @@ const POSTS = [
   {
     slug: 'church-fundraising-guide',
     category: 'Faith',
-    title: 'Church fundraising in Ghana: building projects, missions and tithes',
+    title: 'Church fundraising in Ghana: building projects, missions, and ministry',
     excerpt: 'Faith-based campaigns are among the most successful on the platform. Here\'s how to structure your church fundraiser for maximum results.',
     readTime: '4 min read',
     date: 'January 2026',
@@ -56,8 +56,8 @@ const POSTS = [
   {
     slug: 'education-fundraising',
     category: 'Education',
-    title: 'Raising school fees: a guide for students and families',
-    excerpt: 'University fees, school books, WASSCE levies — education campaigns work when they are specific, verified and widely shared.',
+    title: 'Raising school fees: a guide for students and their families',
+    excerpt: 'University fees, school books, WASSCE levies — education campaigns succeed when they are specific, verified, and actively shared.',
     readTime: '4 min read',
     date: 'January 2026',
     emoji: '🎓',
@@ -66,8 +66,8 @@ const POSTS = [
   {
     slug: 'team-fundraising-tips',
     category: 'Team',
-    title: '7 ways to get your team to actually share your campaign',
-    excerpt: 'Creating a team campaign is easy. Getting everyone to actually participate is the hard part. Here are 7 tactics that work.',
+    title: '7 ways to get your team to actually share — not just like',
+    excerpt: 'Creating a team campaign is straightforward. Getting everyone to genuinely participate is harder. Here are 7 tactics that actually work.',
     readTime: '3 min read',
     date: 'December 2025',
     emoji: '👥',
@@ -76,7 +76,7 @@ const POSTS = [
   {
     slug: 'first-48-hours',
     category: 'Strategy',
-    title: 'What to do in the first 48 hours of your campaign',
+    title: 'What to do in the first 48 hours',
     excerpt: 'The first two days are the most critical. Campaigns that gain momentum early are far more likely to hit their goal. Here\'s your hour-by-hour plan.',
     readTime: '5 min read',
     date: 'December 2025',
@@ -101,9 +101,9 @@ export default function BlogPage() {
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-block bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5">Fundraising blog</div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-4" style={{ letterSpacing: -1 }}>
-              Tips, stories<br />and resources
+              Tips, stories<br />and guides
             </h1>
-            <p className="text-white/50 text-sm max-w-lg mx-auto">Everything you need to raise money effectively in Ghana. Written by the Every Giving team.</p>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">Practical guides, fundraising tactics, and real stories — written by the EveryGiving team.</p>
           </div>
         </section>
 

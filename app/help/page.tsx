@@ -18,12 +18,12 @@ const FAQS = [
   {
     cat: 'fundraisers',
     q: 'How do I start a campaign?',
-    a: 'Click "Start fundraiser" at the top of the page. Fill in your story, set your goal amount, upload a photo, and choose a category. The whole process takes about 5 minutes. Your campaign will be reviewed and go live once you complete identity verification.',
+    a: 'Click "Start a campaign" at the top of the page. Fill in your story, set your goal, upload a photo, and choose a category. The whole process takes under 5 minutes. Your campaign goes live once you complete identity verification.',
   },
   {
     cat: 'fundraisers',
     q: 'Is Every Giving really free?',
-    a: 'Yes — completely. We charge 0% platform fees on all donations. Every cedi your donors give goes directly to you. We do not take a percentage of your fundraising, ever. Note that your mobile money network operator (MTN, Vodafone, AirtelTigo) may charge their standard transfer fees on withdrawals — these are set by the networks and are outside our control.',
+    a: 'Yes — completely. EveryGiving charges 0% platform fees on all donations. Every cedi your donors give goes directly to you. Note that your mobile money operator (MTN, Vodafone, AirtelTigo) may charge standard transfer fees on withdrawals. These are set by the networks and are outside our control.',
   },
   {
     cat: 'fundraisers',
@@ -33,24 +33,24 @@ const FAQS = [
   {
     cat: 'fundraisers',
     q: 'What happens if I don\'t reach my goal?',
-    a: 'You keep everything you raise. Every Giving uses a keep-what-you-raise model — there is no minimum target you need to hit before you can withdraw your funds. If you raise ₵500 of a ₵5,000 goal, that ₵500 is yours.',
+    a: 'You keep everything you raise. EveryGiving uses a keep-what-you-raise model — no minimum target, no penalty. If you raise ₵500 of a ₵5,000 goal, that ₵500 is yours to withdraw immediately.',
   },
   {
     cat: 'fundraisers',
     q: 'Can I edit my campaign after it goes live?',
-    a: 'Yes. You can update your campaign story, photos, and goal amount at any time from your dashboard. We encourage fundraisers to post regular updates — campaigns with updates raise significantly more than those that go silent after launch.',
+    a: 'Yes. Update your story, photos, and goal at any time from your dashboard. Campaigns that post regular updates raise significantly more than those that go quiet after launch.',
   },
   {
     cat: 'fundraisers',
     q: 'How do I share my campaign?',
-    a: 'From your campaign page, tap the Share button. We generate a pre-written WhatsApp message with your campaign link ready to send. You can also copy your link and share it on Facebook, X, or anywhere else. Campaigns shared in the first 24 hours after launch raise significantly more.',
+    a: 'From your campaign page, tap Share. We generate a ready-made WhatsApp message with your campaign link. You can also copy the link for Facebook, X, or anywhere else. Campaigns shared within the first 24 hours raise significantly more.',
   },
 
   // VERIFICATION
   {
     cat: 'verification',
     q: 'Why do I need to verify my identity?',
-    a: 'Verification is what makes Every Giving different from simply sending MoMo requests to strangers. When donors see a Verified badge on your campaign, they know your identity has been confirmed against the NIA database. Verified campaigns raise more money because donors can give with confidence.',
+    a: 'Verification is what sets EveryGiving apart from simply sending MoMo requests. When donors see a Verified badge, they know your identity has been confirmed against the NIA database. Verified campaigns raise more — because donors give with confidence.',
   },
   {
     cat: 'verification',
@@ -60,17 +60,17 @@ const FAQS = [
   {
     cat: 'verification',
     q: 'How long does verification take?',
-    a: 'Verification is fully automated and typically completes in under 10 minutes. In some cases where the NIA database is slow to respond, it may take up to 24 hours. You will receive an email notification as soon as your verification is complete.',
+    a: 'Verification is fully automated and typically completes in under 10 minutes. In rare cases where the NIA database is slow to respond, it may take up to 24 hours. You will receive an email the moment verification is complete.',
   },
   {
     cat: 'verification',
     q: 'My verification failed — what do I do?',
-    a: 'Common reasons for failure include: photo quality is too low, the Ghana Card is expired, the name on your account does not match your Ghana Card exactly, or lighting was too dark for the selfie. Try again with better lighting and a clearer photo. If you continue to have issues, email business@everygiving.org with your name and we will investigate.',
+    a: 'Common reasons for failure: photo quality is too low, the ID is expired, the name on your account doesn't exactly match your ID, or the selfie lighting was too dark. Retry with better lighting and a clearer photo. If the issue persists, email business@everygiving.org and we will investigate.',
   },
   {
     cat: 'verification',
     q: 'Is my Ghana Card data safe?',
-    a: 'Yes. Your identity documents are transmitted using encrypted connections (HTTPS/TLS) and processed by our verification partner under strict data protection agreements. Your raw ID images are not stored permanently on our servers after verification completes. See our Privacy Policy for full details.',
+    a: 'Yes. Identity documents are transmitted over encrypted connections (HTTPS/TLS) and processed under strict data protection agreements. Raw ID images are not stored on our servers after verification completes. See our Privacy Policy for full details.',
   },
   {
     cat: 'verification',
@@ -87,7 +87,7 @@ const FAQS = [
   {
     cat: 'payments',
     q: 'What mobile money networks do you support?',
-    a: 'We support MTN Mobile Money, Vodafone Cash, and AirtelTigo Money. Donors can pay using any of these networks, and fundraisers can receive payouts to any of these networks.',
+    a: 'We support MTN Mobile Money, Vodafone Cash, and AirtelTigo Money. Donors can pay and fundraisers can receive on any of these networks.',
   },
   {
     cat: 'payments',
@@ -97,12 +97,12 @@ const FAQS = [
   {
     cat: 'payments',
     q: 'Can donors get a refund?',
-    a: 'Donations are generally non-refundable as they are voluntary contributions. Refunds may be considered at our discretion in cases of documented fraud or if a campaign is removed for violating our terms. If you believe you have donated to a fraudulent campaign, contact us immediately at business@everygiving.org.',
+    a: 'Donations are generally non-refundable as they are voluntary contributions. Refunds may be considered in cases of documented fraud or if a campaign is removed for violating our terms. If you believe you have donated to a fraudulent campaign, contact us immediately at business@everygiving.org.',
   },
   {
     cat: 'payments',
     q: 'Are there any fees on withdrawals?',
-    a: 'Every Giving charges 0% on withdrawals. However, your mobile money network operator may charge their standard transaction fees for transfers to your wallet. These fees are set by MTN, Vodafone, or AirtelTigo and are outside our control.',
+    a: 'EveryGiving charges 0% on withdrawals. Your mobile money operator may charge standard transfer fees — these are set by MTN, Vodafone, or AirtelTigo and are outside our control.',
   },
 
   // DONORS
@@ -114,39 +114,39 @@ const FAQS = [
   {
     cat: 'donors',
     q: 'Can I donate anonymously?',
-    a: 'Yes. When making a donation, tick the "Donate anonymously" option. Your name will appear as "Anonymous Donor" on the public campaign page. Your identity is still recorded in our system for fraud prevention purposes but is not shown to the fundraiser or other donors.',
+    a: 'Yes. Tick "Donate anonymously" when making your donation. Your name appears as "Anonymous Donor" on the campaign page. Your identity is still recorded internally for fraud prevention — but is never shown to the fundraiser or other donors.',
   },
   {
     cat: 'donors',
     q: 'Do I need an account to donate?',
-    a: 'No. You can donate as a guest without creating an account. However, creating an account allows you to track your giving history, receive updates from campaigns you have supported, and get a receipt for your donation.',
+    a: 'No. You can donate as a guest without an account. Creating an account lets you track your giving history, receive campaign updates, and access your donation receipts.',
   },
   {
     cat: 'donors',
     q: 'Will I receive a receipt for my donation?',
-    a: 'Yes. A receipt is sent to your email address after every donation. The receipt includes the campaign name, fundraiser name, amount donated, date, and transaction reference number.',
+    a: 'Yes. A receipt is emailed to you after every donation, including the campaign name, fundraiser name, amount, date, and transaction reference.',
   },
 
   // ACCOUNT
   {
     cat: 'account',
     q: 'How do I reset my password?',
-    a: 'On the login page, click "Forgot password". Enter your registered email address and we will send you a password reset link. The link expires after 24 hours. If you do not receive the email, check your spam folder or contact business@everygiving.org.',
+    a: 'Click "Forgot password" on the login page. Enter your registered email and we will send a reset link. The link expires after 24 hours. If you don't receive it, check your spam folder or email business@everygiving.org.',
   },
   {
     cat: 'account',
     q: 'Can I change my registered mobile money number?',
-    a: 'Yes. Go to your account settings and update your mobile money number. For security, changes to your payout number require re-verification of your identity. This protects you from someone changing your payout details without your knowledge.',
+    a: 'Yes. Update your MoMo number in account settings. For security, changes to your payout number require identity re-verification — protecting you from unauthorised changes.',
   },
   {
     cat: 'account',
     q: 'How do I delete my account?',
-    a: 'Email business@everygiving.org with the subject line "Account deletion request" from your registered email address. We will process your request within 5 business days. Note that we are required by law to retain certain financial records for up to 7 years even after account deletion. See our Privacy Policy for details.',
+    a: 'Email business@everygiving.org with subject line "Account deletion request" from your registered email. We will process it within 5 business days. Note: we are legally required to retain certain financial records for up to 7 years post-deletion. See our Privacy Policy for details.',
   },
   {
     cat: 'account',
     q: 'Can I have more than one campaign running at a time?',
-    a: 'Yes. Verified fundraisers can run multiple campaigns simultaneously. Each campaign must be for a distinct, legitimate cause and comply with our Terms and Conditions.',
+    a: 'Yes. Verified fundraisers can run multiple campaigns at once. Each campaign must be for a distinct, legitimate cause and comply with our Terms and Conditions.',
   },
 ]
 
@@ -201,7 +201,7 @@ export default function HelpPage() {
             <h1 className="font-nunito font-black text-white text-3xl md:text-5xl tracking-tight mb-4 leading-tight" style={{ letterSpacing: -1 }}>
               How can we help?
             </h1>
-            <p className="text-white/40 text-sm mb-8">Common questions about fundraising, verification, and payments on Every Giving.</p>
+            <p className="text-white/40 text-sm mb-8">Common questions about fundraising, verification, and payments on EveryGiving.</p>
 
             {/* Search */}
             <div className="relative max-w-lg mx-auto">

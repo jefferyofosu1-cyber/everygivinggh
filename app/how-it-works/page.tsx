@@ -174,42 +174,42 @@ const STEPS = [
   {
     n: '01',
     title: 'Tell your story',
-    description: 'Share what you are raising money for — medical bills, education, emergencies, church projects, or community causes. Be specific about the amount you need and why.',
-    tip: 'Campaigns with a clear story and a photo raise significantly more than those without.',
+    description: 'Describe what you are raising money for — medical bills, school fees, emergencies, church projects, or community causes. Be specific about the amount needed and why.',
+    tip: 'Campaigns with a clear story and a strong photo raise significantly more.',
     time: '5 minutes',
   },
   {
     n: '02',
     title: 'Set your goal',
     description: 'Choose a fundraising target. You keep every cedi donated regardless of whether you reach your goal. There is no platform fee — 100% of donations go directly to you.',
-    tip: 'Most successful campaigns set a specific, realistic goal with a clear deadline.',
+    tip: 'Set a specific, realistic goal. The most successful campaigns give donors a clear target to rally behind.',
     time: '1 minute',
   },
   {
     n: '03',
     title: 'Verify your identity',
-    description: 'Upload your Ghana Card and take a selfie. Our system automatically matches your face to your ID and cross-checks the NIA database. No manual review needed.',
-    tip: 'Verified campaigns receive more donations because donors trust the fundraiser is real.',
+    description: 'Upload your Ghana Card and take a selfie. Our system automatically matches your face to your ID and cross-checks the NIA database — no manual review, typically under 10 minutes.',
+    tip: 'Verified campaigns raise more. Donors give when they know the person is real.',
     time: 'Under 10 minutes',
   },
   {
     n: '04',
     title: 'Share with your network',
     description: 'Send your campaign link to friends, family, and your community. Share on WhatsApp, Facebook, and Instagram. The first 48 hours are the most important — start with your closest supporters.',
-    tip: 'Campaigns shared on WhatsApp in the first 24 hours raise significantly more than those that are not.',
+    tip: 'Campaigns shared on WhatsApp in the first 24 hours raise significantly more. Start sharing the moment you go live.',
     time: 'Ongoing',
   },
   {
     n: '05',
     title: 'Watch donations come in',
-    description: 'Get notified every time someone donates. Post updates to thank your supporters and show progress. Donors who receive updates are more likely to share your campaign with others.',
-    tip: 'Post at least one update per week to keep momentum going.',
+    description: 'Get notified with every donation. Post updates to thank supporters and show progress — donors who see updates are far more likely to share your campaign.',
+    tip: 'Post at least one update per week to maintain momentum.',
     time: 'Live tracking',
   },
   {
     n: '06',
     title: 'Receive your money',
-    description: 'Funds are transferred directly to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet. You can withdraw at any time — even before reaching your goal. Zero platform fees, always.',
+    description: 'Donations are transferred directly to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet. Withdraw at any time — even before reaching your goal. Zero platform fees, always.',
     tip: 'Same-day payouts once your campaign is verified and active.',
     time: 'Same day',
   },
@@ -218,19 +218,19 @@ const STEPS = [
 const FAQS = [
   {
     q: 'How much does it cost to use Every Giving?',
-    a: 'Nothing. Every Giving charges 0% platform fee. Every cedi donated goes directly to the campaign organiser. We are funded through optional premium verification tiers — not by taking a cut of donations.',
+    a: 'Nothing. EveryGiving charges 0% platform fees. Every cedi donated goes directly to the fundraiser. We are funded through optional verification tiers — not by taking a cut of donations.',
   },
   {
     q: 'How long does verification take?',
-    a: 'Our automatic system verifies your Ghana Card and selfie in under 10 minutes. There is no manual review — the process is fully automated using facial recognition and NIA database cross-checking.',
+    a: 'Our automated system verifies your Ghana Card and selfie in under 10 minutes. The process is fully automated using facial recognition and NIA database cross-referencing — no manual review.',
   },
   {
-    q: 'What if I do not reach my goal?',
-    a: 'You keep everything you raise regardless of whether you hit your target. Every Giving uses a keep-what-you-raise model — there is no penalty for not reaching your goal.',
+    q: 'What if I don't reach my goal?',
+    a: 'You keep everything you raise. EveryGiving uses a keep-what-you-raise model — there is no penalty and no minimum threshold.',
   },
   {
     q: 'How do donors pay?',
-    a: 'Donors can pay using MTN MoMo, Vodafone Cash, AirtelTigo, or debit or credit card. All payment methods are available to anyone in Ghana and internationally.',
+    a: 'Donors can pay via MTN MoMo, Vodafone Cash, AirtelTigo, or debit/credit card — available to anyone in Ghana and internationally.',
   },
   {
     q: 'When do I receive the money?',
@@ -238,7 +238,7 @@ const FAQS = [
   },
   {
     q: 'Is my personal information safe?',
-    a: "Your Ghana Card and selfie are used only for identity verification. They are encrypted, never shared with donors or third parties, and handled in compliance with Ghana's Data Protection Act.",
+    a: "Your Ghana Card and selfie are used solely for identity verification — encrypted, never shared with donors or third parties, and handled in full compliance with Ghana's Data Protection Act.",
   },
 ]
 
@@ -256,7 +256,7 @@ export default function HowItWorksPage() {
               Simple. Fast. Free.
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-5 leading-tight">
-              How Every Giving works
+              How EveryGiving works
             </h1>
             <p className="text-white/60 text-base leading-relaxed max-w-xl mx-auto mb-8">
               From creating your campaign to receiving money in your MoMo wallet — the complete process, step by step.
@@ -281,7 +281,7 @@ export default function HowItWorksPage() {
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-center mb-8">
               <h2 className="font-nunito font-black text-navy text-2xl md:text-3xl tracking-tight mb-2">See it in action</h2>
-              <p className="text-gray-400 text-sm">Follow Ama's journey from idea to funded in 60 seconds</p>
+              <p className="text-gray-400 text-sm">Follow Ama's journey from idea to funded — in 60 seconds</p>
             </div>
             <TutorialEmbed />
           </div>
@@ -325,10 +325,10 @@ export default function HowItWorksPage() {
           <div className="relative max-w-3xl mx-auto px-5 text-center">
             <div className="font-nunito font-black text-white text-6xl md:text-8xl mb-3">0%</div>
             <h2 className="font-nunito font-black text-white text-2xl md:text-3xl mb-4 tracking-tight">
-              Platform fee. Always.
+              platform fee. Ever.
             </h2>
             <p className="text-white/75 text-sm leading-relaxed max-w-lg mx-auto mb-8">
-              Every Giving will never charge a percentage of your donations. Every cedi your donors give goes directly to you. We are funded through optional verification services — not by taking your money.
+              EveryGiving will never take a percentage of your donations. Every cedi your donors give goes directly to you. We are funded through optional verification services — not your fundraising.
             </p>
             <Link href="/create"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary font-nunito font-black rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">
@@ -342,7 +342,7 @@ export default function HowItWorksPage() {
           <div className="max-w-3xl mx-auto px-5">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-3">Common questions</h2>
-              <p className="text-gray-400 text-sm">Everything you need to know before starting</p>
+              <p className="text-gray-400 text-sm">Everything you need to know before you start</p>
             </div>
             <div className="flex flex-col gap-4">
               {FAQS.map((faq, i) => (
@@ -361,9 +361,9 @@ export default function HowItWorksPage() {
             <h2 className="font-nunito font-black text-navy text-xl mb-6 text-center">Explore more</h2>
             <div className="grid md:grid-cols-3 gap-4">
               {[
-                { href: '/verification', title: 'How verification works', desc: 'Learn how identity verification protects donors and helps fundraisers raise more.' },
+                { href: '/verification', title: 'How verification works', desc: 'Learn how identity verification protects donors and helps fundraisers raise significantly more.' },
                 { href: '/about', title: 'About Every Giving', desc: 'Our mission, values, and why we built this platform for Ghana.' },
-                { href: '/campaigns', title: 'Browse campaigns', desc: 'See real verified campaigns raising money across Ghana right now.' },
+                { href: '/campaigns', title: 'Browse campaigns', desc: 'Explore verified campaigns raising money across Ghana right now.' },
               ].map((link, i) => (
                 <Link key={i} href={link.href}
                   className="bg-gray-50 hover:bg-primary-light border-2 border-gray-100 hover:border-primary rounded-2xl p-5 transition-all group">
@@ -377,9 +377,9 @@ export default function HowItWorksPage() {
 
         {/* Final CTA */}
         <section className="py-16 bg-navy text-center px-5">
-          <h2 className="font-nunito font-black text-white text-2xl mb-3">Ready to start raising money?</h2>
+          <h2 className="font-nunito font-black text-white text-2xl mb-3">Ready to start raising?</h2>
           <p className="text-white/50 text-sm mb-7 max-w-sm mx-auto">
-            Free to create. Verified in minutes. Zero platform fees.
+            Free to start. Verified in minutes. Zero platform fees.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">
             <Link href="/create"

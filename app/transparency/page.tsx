@@ -19,7 +19,7 @@ export default function TransparencyPage() {
               Nothing to hide.
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-lg mx-auto">
-              Every Giving operates with full transparency. This page shows exactly how the platform works, where money goes, and how we protect users.
+              EveryGiving operates with full transparency. This page explains exactly how the platform works, where money goes, and how we protect everyone who uses it.
             </p>
           </div>
         </section>
@@ -31,12 +31,12 @@ export default function TransparencyPage() {
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-10">How Every Giving works</h2>
             <div className="grid md:grid-cols-2 gap-5">
               {[
-                { icon: '₵', title: '0% platform fee on donations', body: 'Every Giving charges nothing on donations. If someone donates ₵100, the fundraiser receives ₵100 minus only any fees charged by the mobile money network operator. We do not take a cut.' },
+                { icon: '₵', title: '0% platform fee on donations', body: 'EveryGiving charges nothing on donations. If a donor gives ₵100, the fundraiser receives ₵100 minus only the standard MoMo network fee. We take no cut — ever.' },
                 { icon: '🔒', title: 'Identity verified against NIA', body: 'Every fundraiser\'s identity is checked against the National Identification Authority database using their Ghana Card. Donors can see the Verified badge as proof.' },
                 { icon: '👁', title: 'Every donation is visible', body: 'Donors can see all contributions on a campaign page. The total raised, the goal, and individual donations are all publicly visible. No hidden numbers.' },
-                { icon: '⚡', title: 'Same-day MoMo payouts', body: 'We do not hold fundraiser money. Donations flow directly to the registered mobile money wallet the same day they are received.' },
-                { icon: '🛡', title: 'Fraud is reported to authorities', body: 'Any campaign found to be fraudulent is removed immediately. We report fraud to the Ghana Police Service and EOCO. Fraudsters are not simply banned — they are reported.' },
-                { icon: '📊', title: 'No advertising or data selling', body: 'Every Giving products are ad-free. We do not sell user data to advertisers or any third party. Our business model is the verification fee, not user data.' },
+                { icon: '⚡', title: 'Same-day MoMo payouts', body: 'We never hold fundraiser money. Donations flow directly to the registered MoMo wallet the same day they are received.' },
+                { icon: '🛡', title: 'Fraud is reported to authorities', body: 'Any fraudulent campaign is removed immediately. We report fraud to the Ghana Police Service and EOCO. Fraudsters are not simply banned — they are reported to the authorities.' },
+                { icon: '📊', title: 'No ads. No data selling. Ever.', body: 'EveryGiving is entirely ad-free. We do not sell user data to advertisers or any third party. Our business model is the verification fee — not your data.' },
               ].map((item, i) => (
                 <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                   <div className="text-2xl mb-3">{item.icon}</div>
@@ -52,7 +52,7 @@ export default function TransparencyPage() {
         <section className="py-16 bg-gray-50 border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Fee breakdown</div>
-            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Exactly what you pay and why</h2>
+            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Exactly what you pay, and why</h2>
             <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm mb-8">
               <table className="w-full text-sm">
                 <thead>
@@ -65,11 +65,11 @@ export default function TransparencyPage() {
                 </thead>
                 <tbody>
                   {[
-                    { fee: 'Platform fee on donations', amount: '₵0 (0%)', by: 'No one', purpose: 'Every Giving charges nothing on donations' },
-                    { fee: 'Basic verification', amount: '₵20 one-time', by: 'Fundraiser', purpose: 'ID upload + ID number check + Basic badge' },
+                    { fee: 'Platform fee on donations', amount: '₵0 (0%)', by: 'No one', purpose: 'EveryGiving charges nothing on donations' },
+                    { fee: 'Basic verification', amount: '₵20 one-time', by: 'Fundraiser', purpose: 'ID upload + number check + Basic badge' },
                     { fee: 'Standard verification', amount: '₵50 one-time', by: 'Fundraiser', purpose: 'Full ID + selfie + NIA check + Verified badge' },
-                    { fee: 'Premium verification', amount: '₵100 one-time', by: 'Fundraiser', purpose: 'Full check + doc review + Premium badge' },
-                    { fee: 'MoMo transfer fees', amount: 'Set by network', by: 'Fundraiser (on withdrawal)', purpose: 'Charged by MTN/Vodafone/AirtelTigo — not us' },
+                    { fee: 'Premium verification', amount: '₵100 one-time', by: 'Fundraiser', purpose: 'Full check + document review + Premium badge' },
+                    { fee: 'MoMo transfer fees', amount: 'Set by network', by: 'Fundraiser (on withdrawal)', purpose: 'Set by MTN/Vodafone/AirtelTigo — not by us' },
                     { fee: 'Account creation', amount: '₵0', by: 'No one', purpose: 'Creating an account is always free' },
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
@@ -93,10 +93,10 @@ export default function TransparencyPage() {
             <div className="flex flex-col gap-4 max-w-2xl">
               {[
                 { step: '1', title: 'Fundraiser uploads Ghana Card', desc: 'Front and back photo of their National Identification Card, plus manually entering their ID number.' },
-                { step: '2', title: 'NIA database check', desc: 'The ID number and card details are cross-referenced against the National Identification Authority database.' },
-                { step: '3', title: 'Facial matching (Standard & Premium)', desc: 'A live selfie is compared against the photo on the Ghana Card using facial recognition. Liveness detection prevents photo spoofing.' },
-                { step: '4', title: 'Document review (Premium only)', desc: 'Supporting documents like hospital admission letters are reviewed manually by our team before the Premium badge is awarded.' },
-                { step: '5', title: 'Badge awarded', desc: 'Once verified, the appropriate badge is displayed on the campaign. Donors can see the badge and what tier of verification it represents.' },
+                { step: '2', title: 'NIA database check', desc: 'The ID number and document details are cross-referenced against the National Identification Authority (NIA) database.' },
+                { step: '3', title: 'Facial matching (Standard & Premium)', desc: 'A live selfie is compared against the photo on the ID document using facial recognition. Liveness detection prevents photo spoofing.' },
+                { step: '4', title: 'Document review (Premium only)', desc: 'Supporting documents — such as hospital admission letters — are reviewed manually by our team before the Premium badge is granted.' },
+                { step: '5', title: 'Badge awarded', desc: 'Once verified, the appropriate badge appears on the campaign. Donors can see the badge and understand exactly what level of verification it represents.' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-4">
                   <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center flex-shrink-0">

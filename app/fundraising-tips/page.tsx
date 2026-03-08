@@ -5,15 +5,15 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 
 const TIPS = [
-  { n:'01', icon:'📸', title:'Add a real photo', tag:'Most impactful', body:'Campaigns with a clear personal photo raise significantly more. Use a real photo of yourself or the person you\'re raising for. Avoid stock photos — donors can tell immediately.', stat:'68%', statLabel:'more raised with a photo' },
-  { n:'02', icon:'✍️', title:'Tell the full story', tag:'Writing', body:'Explain who you are, what happened, why you need help, and exactly how the money will be used. "I need ₵8,000 for my daughter\'s surgery at Korle Bu" beats "help me please" every time.', stat:'3×', statLabel:'more trust with specific details' },
-  { n:'03', icon:'🪪', title:'Get verified first', tag:'Trust', body:'Donors give significantly more to verified campaigns. Upload your ID and complete verification before sharing. The Verified badge is the single most important trust signal.', stat:'3×', statLabel:'more raised by verified campaigns' },
-  { n:'04', icon:'📱', title:'Share on WhatsApp immediately', tag:'Sharing', body:'The first 48 hours are critical. Share your link in every WhatsApp group you\'re in — write a personal message, not just a link drop. Early momentum is everything.', stat:'48h', statLabel:'most critical window to share' },
-  { n:'05', icon:'🔄', title:'Post updates regularly', tag:'Momentum', body:'Campaigns that post updates raise more. Show donors the money is being used well. Even a short "We\'re 40% there — thank you!" keeps momentum going.', stat:'2×', statLabel:'more raised by campaigns with updates' },
-  { n:'06', icon:'🎯', title:'Set a realistic goal', tag:'Strategy', body:'Campaigns that reach 30% in the first week almost always hit their target. Set a goal you can achieve — you can always raise more. Too high a goal looks like failure.', stat:'30%', statLabel:'in week 1 predicts success' },
-  { n:'07', icon:'🙏', title:'Thank every donor personally', tag:'Relationships', body:'When someone donates, send them a personal WhatsApp thank you. Donors who feel appreciated become your biggest advocates and often share your campaign further.', stat:'5×', statLabel:'more shares from thanked donors' },
-  { n:'08', icon:'📣', title:'Ask people to share, not just donate', tag:'Growth', body:'Most people can\'t donate but can share. Explicitly say "even if you can\'t give, please share." One share from the right person can unlock 10 new donors.', stat:'1 share', statLabel:'can reach 50+ new people' },
-  { n:'09', icon:'📊', title:'Show evidence and proof', tag:'Credibility', body:'Upload a photo of the hospital bill, school fees invoice, or doctor\'s letter. Evidence removes doubt. Transparency builds trust that translates directly into more donations.', stat:'73%', statLabel:'donors want to see proof' },
+  { n:'01', icon:'📸', title:'Use a real, personal photo', tag:'Most impactful', body:'Campaigns with a clear personal photo raise significantly more. Use a real photo of yourself or the person you\'re raising for. Avoid stock photos — donors can tell immediately.', stat:'68%', statLabel:'more raised with a photo' },
+  { n:'02', icon:'✍️', title:'Tell a complete story', tag:'Writing', body:'Explain who you are, what happened, why you need help, and exactly how the money will be used. "I need ₵8,000 for my daughter\'s surgery at Korle Bu" beats "help me please" every time.', stat:'3×', statLabel:'more trust with specific details' },
+  { n:'03', icon:'🪪', title:'Verify before you share', tag:'Trust', body:'Donors give significantly more to verified campaigns. Upload your ID and complete verification before sharing. The Verified badge is the single most important trust signal.', stat:'3×', statLabel:'more raised by verified campaigns' },
+  { n:'04', icon:'📱', title:'Share on WhatsApp within the first hour', tag:'Sharing', body:'The first 48 hours are critical. Share your link in every WhatsApp group you\'re in — write a personal message, not just a link drop. Early momentum is everything.', stat:'48h', statLabel:'most critical window to share' },
+  { n:'05', icon:'🔄', title:'Post updates consistently', tag:'Momentum', body:'Campaigns that post updates raise more. Show donors the money is being used well. Even a short "We\'re 40% there — thank you!" keeps momentum going.', stat:'2×', statLabel:'more raised by campaigns with updates' },
+  { n:'06', icon:'🎯', title:'Set a goal you can realistically hit', tag:'Strategy', body:'Campaigns that reach 30% in the first week almost always hit their target. Set a goal you can achieve — you can always raise more. Too high a goal looks like failure.', stat:'30%', statLabel:'in week 1 predicts success' },
+  { n:'07', icon:'🙏', title:'Thank every donor — personally', tag:'Relationships', body:'When someone donates, send them a personal WhatsApp thank you. Donors who feel appreciated become your biggest advocates and often share your campaign further.', stat:'5×', statLabel:'more shares from thanked donors' },
+  { n:'08', icon:'📣', title:'Ask specifically for shares, not just donations', tag:'Growth', body:'Most people can\'t donate but can share. Explicitly say "even if you can\'t give, please share." One share from the right person can unlock 10 new donors.', stat:'1 share', statLabel:'can reach 50+ new people' },
+  { n:'09', icon:'📊', title:'Show evidence and documentation', tag:'Credibility', body:'Upload a photo of the hospital bill, school fees invoice, or doctor\'s letter. Evidence removes doubt. Transparency builds trust that translates directly into more donations.', stat:'73%', statLabel:'donors want to see proof' },
 ]
 
 // 60-second animation — each tip shown for ~6.5s
@@ -89,7 +89,7 @@ export default function FundraisingTipsPage() {
               How to raise more,<br /><span className="text-primary">faster</span>
             </h1>
             <p className="text-white/50 text-sm max-w-xl mx-auto leading-relaxed mb-7">
-              9 proven tips from the most successful campaigns on Every Giving. Watch the 60-second animated guide, or scroll through below.
+              9 proven tactics from the most successful campaigns on EveryGiving. Watch the 60-second animated guide or read through below.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-xs text-white/30">
               <span>3× more raised by verified campaigns</span>
@@ -225,8 +225,8 @@ export default function FundraisingTipsPage() {
 
         {/* CTA */}
         <section className="py-14 bg-primary text-center px-5">
-          <h2 className="font-nunito font-black text-white text-3xl mb-3">Apply these tips from day one</h2>
-          <p className="text-white/70 text-sm mb-7">Free to start. Verified in minutes. MoMo-native.</p>
+          <h2 className="font-nunito font-black text-white text-3xl mb-3">Apply these from day one</h2>
+          <p className="text-white/70 text-sm mb-7">Free to start. Verified in minutes. Donations straight to your MoMo.</p>
           <Link href="/create" className="inline-block bg-white text-primary font-nunito font-black px-10 py-4 rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">
             Create your campaign →
           </Link>

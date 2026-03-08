@@ -16,13 +16,13 @@ const TIERS = [
     checks: [
       'Email confirmed',
       'Phone number verified',
-      'Ghana Card upload required',
+      'ID document upload required',
       'ID number required',
       'Basic Verified badge',
     ],
-    note: 'Good for small personal campaigns',
+    note: 'Ideal for smaller personal campaigns',
     noteColor: 'bg-gray-50 text-gray-500',
-    limit: 'Campaigns up to ₵5,000',
+    limit: 'Campaign goal up to ₵5,000',
   },
   {
     tier: 'Standard',
@@ -36,12 +36,12 @@ const TIERS = [
       'Everything in Basic',
       'Selfie matched via facial recognition',
       'NIA database cross-check',
-      'Full Verified badge on campaign',
-      'Priority in search results',
+      'Full Verified badge on your campaign',
+      'Priority placement in search results',
     ],
-    note: 'Most popular — highest donor confidence',
+    note: 'Most popular · highest donor confidence',
     noteColor: 'bg-primary-light text-primary-dark',
-    limit: 'Campaigns up to ₵50,000',
+    limit: 'Campaign goal up to ₵50,000',
   },
   {
     tier: 'Premium',
@@ -54,11 +54,11 @@ const TIERS = [
     checks: [
       'Everything in Standard',
       'Supporting documents reviewed',
-      'Hospital bill / admission letter accepted',
+      'Hospital bill or admission letter accepted',
       'Premium badge + top listing placement',
       'Dedicated campaign support',
     ],
-    note: 'Best for campaigns above ₵50,000',
+    note: 'Recommended for campaigns above ₵50,000',
     noteColor: 'bg-amber-50 text-amber-700',
     limit: 'Unlimited campaign goal',
   },
@@ -80,10 +80,10 @@ export default function VerificationPage() {
               Identity verification
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-5 leading-tight">
-              Verified fundraisers<br />raise more money
+              Verified fundraisers<br />raise more
             </h1>
             <p className="text-white/60 text-base leading-relaxed max-w-xl mx-auto">
-              Your Ghana Card confirms you are who you say you are. Donors trust verified campaigns — and give more to them.
+              Your Ghana Card proves you are who you say you are. Donors trust verified fundraisers — and consistently give more to them.
             </p>
           </div>
         </section>
@@ -93,23 +93,23 @@ export default function VerificationPage() {
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">What verification requires</h2>
-              <p className="text-gray-400 text-sm">All tiers require identity documents. The tier you choose determines how deeply your documents are verified.</p>
+              <p className="text-gray-400 text-sm">All tiers require identity documents. Your chosen tier determines the depth of verification — and the level of trust it signals to donors.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-5">
               {[
                 {
-                  n: '01', title: 'Ghana Card upload',
-                  desc: 'Upload a clear photo of the front of your Ghana Card. Your ID number must be visible. This is required for all verification tiers.',
+                  n: '01', title: 'ID document upload',
+                  desc: 'Upload a clear photo of the front of your ID document. The ID number must be fully visible. Required for all tiers.',
                   required: 'Required for all tiers',
                 },
                 {
                   n: '02', title: 'Enter your ID number',
-                  desc: 'Manually type your Ghana Card ID number. This is cross-referenced against your uploaded card to confirm accuracy.',
+                  desc: 'Type your ID number exactly as it appears on your document. This is cross-referenced with your uploaded card to confirm accuracy.',
                   required: 'Required for all tiers',
                 },
                 {
                   n: '03', title: 'Selfie (Standard & Premium)',
-                  desc: 'Take a live selfie using your phone camera. Our facial recognition matches your face to the photo on your Ghana Card for deeper verification.',
+                  desc: 'Take a live selfie on your phone. Our facial recognition matches your face to the photo on your ID for a deeper level of verification.',
                   required: 'Standard & Premium only',
                 },
               ].map((step, i) => (
@@ -131,7 +131,7 @@ export default function VerificationPage() {
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-center mb-10">
               <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">Choose your verification tier</h2>
-              <p className="text-gray-400 text-sm">All tiers require your Ghana Card. Higher tiers unlock larger campaigns and more donor trust.</p>
+              <p className="text-gray-400 text-sm">All tiers require valid ID. Higher tiers unlock larger campaign goals and greater donor confidence.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
               {TIERS.map((tier, i) => (
@@ -167,7 +167,7 @@ export default function VerificationPage() {
             <div className="mt-8 text-center">
               <Link href="/create"
                 className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-9 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/25 text-sm">
-                Start a campaign and choose your tier →
+                Start your campaign and choose your tier →
               </Link>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function VerificationPage() {
           <div className="max-w-3xl mx-auto px-5 text-center">
             <h3 className="font-nunito font-black text-navy text-xl mb-3">Your data is protected</h3>
             <p className="text-gray-400 text-sm leading-relaxed max-w-lg mx-auto mb-5">
-              Your Ghana Card and selfie are used only for identity verification. We never share this data with donors or third parties. All documents are encrypted and handled in compliance with Ghana's Data Protection Act 2012.
+              Your ID documents and selfie are used solely for identity verification. We never share this data with donors or third parties. All documents are encrypted and handled in full compliance with Ghana's Data Protection Act 2012.
             </p>
             <div className="flex flex-wrap justify-center gap-5 text-xs text-gray-400">
               <span>✓ End-to-end encrypted</span>

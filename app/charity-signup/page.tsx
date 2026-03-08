@@ -9,12 +9,12 @@ type OrgType = 'charity' | 'ngo' | 'church' | 'school' | 'hospital' | 'community
 
 const ORG_TYPES: { id: OrgType; label: string; icon: string; desc: string }[] = [
   { id: 'charity', label: 'Registered Charity', icon: '🤲', desc: 'Officially registered with Ghana\'s Department of Social Welfare' },
-  { id: 'ngo', label: 'NGO / Non-profit', icon: '🌍', desc: 'Non-governmental organisation registered in Ghana' },
+  { id: 'ngo', label: 'NGO / Non-profit', icon: '🌍', desc: 'Registered non-governmental organisation in Ghana' },
   { id: 'church', label: 'Church / Faith org', icon: '⛪', desc: 'Registered church, mosque or faith-based organisation' },
   { id: 'school', label: 'School / University', icon: '🎓', desc: 'Accredited educational institution' },
   { id: 'hospital', label: 'Hospital / Clinic', icon: '🏥', desc: 'Licensed medical facility or health organisation' },
   { id: 'community', label: 'Community group', icon: '🏘', desc: 'Formally organised community group or association' },
-  { id: 'corporate', label: 'Corporate / Business', icon: '💼', desc: 'Company running a CSR or charitable programme' },
+  { id: 'corporate', label: 'Corporate / Business', icon: '💼', desc: 'Company operating a CSR or charitable giving programme' },
 ]
 
 export default function CharitySignupPage() {
@@ -73,9 +73,9 @@ export default function CharitySignupPage() {
             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
             <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">✉️</div>
           </div>
-          <h1 className="font-nunito font-black text-navy text-3xl mb-3">Application received!</h1>
+          <h1 className="font-nunito font-black text-navy text-3xl mb-3">Application received</h1>
           <p className="text-gray-500 text-sm mb-2">Check your email at <strong className="text-navy">{form.email}</strong></p>
-          <p className="text-gray-400 text-xs mb-8 leading-relaxed">Confirm your email to activate your organisation account. Our team will review your registration within 2 business days.</p>
+          <p className="text-gray-400 text-xs mb-8 leading-relaxed">Confirm your email to activate your organisation account. Our team will review your application within 2 business days.</p>
           <Link href="/" className="text-primary text-sm font-bold hover:underline">← Go to homepage</Link>
         </div>
       </div>
@@ -97,7 +97,7 @@ export default function CharitySignupPage() {
               Register your organisation
             </h1>
             <p className="text-white/50 text-sm leading-relaxed max-w-lg mx-auto">
-              Charities, NGOs, churches, schools and organisations get a dedicated verified page, bulk campaign tools and a donation tracker — all free.
+              Charities, NGOs, churches, schools, and organisations receive a dedicated verified page, multi-campaign tools, and a full donation dashboard — all free.
             </p>
           </div>
         </section>
@@ -127,7 +127,7 @@ export default function CharitySignupPage() {
           {step === 'type' && (
             <div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
               <h2 className="font-nunito font-black text-navy text-xl mb-1">What type of organisation are you?</h2>
-              <p className="text-gray-400 text-sm mb-6">This determines what verification documents we will need.</p>
+              <p className="text-gray-400 text-sm mb-6">This determines which verification documents we will need from you.</p>
               <div className="grid grid-cols-1 gap-3 mb-7">
                 {ORG_TYPES.map(org => (
                   <button key={org.id} type="button" onClick={() => setOrgType(org.id)}

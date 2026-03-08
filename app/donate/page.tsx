@@ -74,10 +74,10 @@ export default function DonatePage() {
               Give with <span className="text-primary">confidence</span>
             </h1>
             <p className="text-white/50 text-base mb-8 max-w-xl mx-auto leading-relaxed">
-              Every campaign on Every Giving is Ghana Card verified. The person you are giving to is real. Your money goes directly to their MoMo wallet.
+              Every campaign on EveryGiving is identity-verified. The person you are giving to is real, confirmed against the NIA database. Your donation goes directly to their MoMo wallet.
             </p>
             <div className="flex flex-wrap justify-center gap-2">
-              {['🪪 Identity verified', '📱 MoMo direct', '🔒 Secure', '2% + ₵0.25 fee only'].map((item, i) => (
+              {['🪪 Identity verified', '📱 MoMo direct', '🔒 Secure', '2% + ₵0.25 transaction fee only'].map((item, i) => (
                 <span key={i} className="bg-white/10 border border-white/15 text-white/70 text-xs font-semibold px-4 py-2 rounded-full">{item}</span>
               ))}
             </div>
@@ -123,7 +123,7 @@ export default function DonatePage() {
               <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
                 <div className="text-4xl mb-3">💚</div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No campaigns yet</div>
-                <p className="text-gray-400 text-sm">Check back soon or start your own.</p>
+                <p className="text-gray-400 text-sm">Check back soon — or start your own campaign.</p>
               </div>
             )}
           </div>
@@ -135,9 +135,9 @@ export default function DonatePage() {
             <h2 className="font-nunito font-black text-navy text-2xl mb-8">How donating works</h2>
             <div className="grid md:grid-cols-3 gap-5">
               {[
-                { icon: '🔍', title: 'Choose a campaign', desc: 'Browse verified campaigns. Every person has confirmed their Ghana Card identity.' },
-                { icon: '📱', title: 'Pay by MoMo', desc: 'Select MTN, Vodafone or AirtelTigo. A MoMo prompt appears on your phone.' },
-                { icon: '✅', title: 'Donation received', desc: 'The fundraiser gets the money directly. You get a confirmation instantly.' },
+                { icon: '🔍', title: 'Choose a campaign', desc: 'Browse verified campaigns. Every fundraiser has confirmed their identity — you know exactly who you're giving to.' },
+                { icon: '📱', title: 'Pay by MoMo', desc: 'Choose MTN MoMo, Vodafone Cash, or AirtelTigo. A payment prompt appears instantly on your phone.' },
+                { icon: '✅', title: 'Donation received', desc: 'The fundraiser receives the money directly. You receive a confirmation and receipt instantly.' },
               ].map((step, i) => (
                 <div key={i}>
                   <div className="w-12 h-12 bg-primary-light rounded-2xl flex items-center justify-center text-xl mx-auto mb-3">{step.icon}</div>

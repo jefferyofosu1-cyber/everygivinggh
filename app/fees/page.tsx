@@ -34,7 +34,7 @@ export default function FeesPage() {
               Let's do the<br /><span className="text-primary">math together</span>
             </h1>
             <p className="text-white/50 text-sm max-w-xl mx-auto leading-relaxed">
-              No hidden fees. No surprises. We charge a small transaction fee on each donation — automatically deducted so you never have to worry about a bill.
+              No hidden charges. No surprises. We deduct a small transaction fee from each donation automatically — so you never receive a bill.
             </p>
           </div>
         </section>
@@ -44,7 +44,7 @@ export default function FeesPage() {
           <div className="max-w-2xl mx-auto px-5">
             <div className="text-center mb-8">
               <div className="text-xs font-bold uppercase tracking-widest text-primary mb-2" style={{fontFamily:'DM Mono, monospace'}}>Live calculator</div>
-              <h2 className="font-nunito font-black text-navy text-3xl">See exactly what happens to every donation</h2>
+              <h2 className="font-nunito font-black text-navy text-3xl">See exactly what happens to every cedi donated</h2>
             </div>
 
             {/* Amount slider */}
@@ -171,12 +171,12 @@ export default function FeesPage() {
             <h2 className="font-nunito font-black text-navy text-2xl text-center mb-8">Fee questions answered</h2>
             <div className="flex flex-col gap-4">
               {[
-                { q:'When is the fee deducted?', a:'Automatically at the moment a donation is made. The fundraiser receives the net amount directly to their MoMo wallet. There are no bills to pay later.' },
-                { q:'Is there a platform fee on top?', a:'No. The only fee is the 2% + ₵0.25 transaction fee per donation. No monthly fee, no withdrawal fee, no setup fee, no platform fee. Ever.' },
-                { q:'What does the fee cover?', a:'Payment processing costs (MoMo provider fees), platform maintenance and hosting, identity verification infrastructure, and customer support. We operate transparently.' },
-                { q:'Do donors see the fee?', a:'Yes — when a donor types an amount, they see the breakdown live: how much goes to the fundraiser and how much is the transaction fee. Full transparency.' },
-                { q:'What if I want to cover the fee for the fundraiser?', a:'You can — just add the fee amount on top of what you want the fundraiser to receive. For example, donate ₵102.30 so the fundraiser receives exactly ₵100.' },
-                { q:'Is the verification tier fee refundable?', a:'No — verification fees cover the cost of reviewing your documents and are non-refundable. However, if your campaign is rejected, we will work with you to resolve any issues.' },
+                { q:'When is the fee deducted?', a:'At the moment a donation is made. The fundraiser receives the net amount directly in their MoMo wallet. No invoices, no bills, no follow-ups.' },
+                { q:'Is there a platform fee on top?', a:'No. The only charge is the 2% + ₵0.25 transaction fee per donation. No monthly fee. No withdrawal fee. No setup fee. No platform fee. Ever.' },
+                { q:'What does the fee cover?', a:'The fee covers payment processing (MoMo provider fees), platform maintenance, identity verification infrastructure, and customer support. We operate with full transparency.' },
+                { q:'Do donors see the fee?', a:'Yes. As a donor types an amount, they see the breakdown in real time: how much reaches the fundraiser and how much is the transaction fee. Full transparency, always.' },
+                { q:'What if I want to cover the fee for the fundraiser?', a:'You can. Simply add the fee on top of the amount you want the fundraiser to receive. For example, donate ₵102.30 and the fundraiser receives exactly ₵100.' },
+                { q:'Is the verification tier fee refundable?', a:'No. Verification fees cover the cost of reviewing your documents and are non-refundable. If your campaign is rejected, we will work with you to understand and resolve the issue.' },
               ].map((faq, i) => (
                 <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
                   <div className="font-nunito font-black text-navy text-sm mb-2">{faq.q}</div>
@@ -190,7 +190,7 @@ export default function FeesPage() {
         {/* CTA */}
         <section className="py-14 bg-primary text-center px-5">
           <h2 className="font-nunito font-black text-white text-3xl mb-3">No surprises. Ever.</h2>
-          <p className="text-white/70 text-sm mb-7">Start your campaign for free. Only pay when donations come in.</p>
+          <p className="text-white/70 text-sm mb-7">Free to start. You only contribute when donations come in.</p>
           <Link href="/create" className="inline-block bg-white text-primary font-nunito font-black px-10 py-4 rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">
             Start your campaign →
           </Link>

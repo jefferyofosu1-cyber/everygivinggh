@@ -46,7 +46,7 @@ function SuccessContent() {
           Thank you{name ? `, ${name}` : ''}!
         </h1>
         <p className="text-gray-500 mb-6">
-          Your donation of <strong className="text-primary font-black">₵{amount || '...'}</strong> has been received
+          Your donation of <strong className="text-primary font-black">₵{amount || '...'}</strong> is on its way
         </p>
 
         {campaign && (
@@ -67,9 +67,9 @@ function SuccessContent() {
 
         {/* Share section */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
-          <div className="font-nunito font-black text-navy text-lg mb-2">🚀 Now help them raise more!</div>
+          <div className="font-nunito font-black text-navy text-lg mb-2">Help them reach their goal</div>
           <p className="text-sm text-gray-400 mb-5">
-            Campaigns that get shared raise <strong className="text-navy">4× more money</strong>. Share this now!
+            Campaigns that are shared raise <strong className="text-navy">4× more money</strong>. Share it now.
           </p>
           <div className="flex flex-col gap-3">
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"

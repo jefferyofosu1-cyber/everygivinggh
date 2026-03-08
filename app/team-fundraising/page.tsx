@@ -17,7 +17,7 @@ export default function TeamFundraisingPage() {
               Raise more<br /><span className="text-primary">together</span>
             </h1>
             <p className="text-white/50 text-base max-w-xl mx-auto leading-relaxed mb-8">
-              Team fundraising lets a group of people rally around a single campaign. Everyone shares, everyone contributes — and the total raised is far higher than one person acting alone.
+              Team fundraising lets a group of people unite behind a single campaign. Everyone shares, everyone contributes — and the total raised far exceeds what one person can achieve alone.
             </p>
             <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/30 text-sm">
               Start a team campaign →
@@ -30,14 +30,14 @@ export default function TeamFundraisingPage() {
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">How team fundraising works</h2>
-              <p className="text-gray-400 text-sm">One campaign. Multiple fundraisers. Bigger results.</p>
+              <p className="text-gray-400 text-sm">One campaign. Multiple fundraisers. Far bigger results.</p>
             </div>
             <div className="grid md:grid-cols-4 gap-5">
               {[
-                { n: '01', icon: '🚀', title: 'One person creates', desc: 'The campaign organiser creates the main fundraiser page and sets the goal.' },
-                { n: '02', icon: '👥', title: 'Invite your team', desc: 'Share the campaign link with friends, family, colleagues or classmates.' },
-                { n: '03', icon: '📱', title: 'Everyone shares', desc: 'Each team member shares the campaign in their own networks on WhatsApp, Facebook and more.' },
-                { n: '04', icon: '💰', title: 'All donations go to one pot', desc: 'Every donation — regardless of who shared the link — goes to the same campaign.' },
+                { n: '01', icon: '🚀', title: 'One person creates', desc: 'The campaign organiser creates the main fundraiser and sets the goal.' },
+                { n: '02', icon: '👥', title: 'Invite your team', desc: 'Share the campaign link with friends, family, colleagues, or classmates.' },
+                { n: '03', icon: '📱', title: 'Everyone shares', desc: 'Each team member shares the campaign across their own networks — WhatsApp, Facebook, and beyond.' },
+                { n: '04', icon: '💰', title: 'All donations go to one pot', desc: 'Every donation — regardless of which team member shared the link — goes to the same campaign.' },
               ].map((step, i) => (
                 <div key={i} className="text-center">
                   <div className="w-14 h-14 bg-primary-light rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">{step.icon}</div>
@@ -57,10 +57,10 @@ export default function TeamFundraisingPage() {
             </div>
             <div className="grid md:grid-cols-2 gap-5">
               {[
-                { icon: '🎓', title: 'Students & classmates', desc: 'A student in need of school fees gets their entire class sharing the campaign. 30 people each reaching 50 contacts is 1,500 potential donors.', example: 'Example: "Help Kofi pay his final year fees — shared by his entire class"' },
-                { icon: '⛪', title: 'Churches & congregations', desc: 'A church fundraises for a new roof. The pastor shares in Sunday service, the youth group shares on WhatsApp — everyone contributes to the same goal.', example: 'Example: "New roof for Redemption Chapel — give anything you can"' },
-                { icon: '🏥', title: 'Family medical campaigns', desc: 'A family member is ill. The entire extended family shares one campaign instead of everyone creating separate payment requests.', example: 'Example: "Aunty Grace\'s surgery — shared by the Mensah family"' },
-                { icon: '🏘', title: 'Community projects', desc: 'A community borehole, school building or road repair. Community leaders and members all share a single verified campaign.', example: 'Example: "Borehole for Breman Asikuma — community fundraiser"' },
+                { icon: '🎓', title: 'Students & classmates', desc: 'One student needs school fees. Their entire class shares the campaign. Thirty people, each reaching fifty contacts — that is 1,500 potential donors from a single class.', example: 'Example: "Help Kofi pay his final year fees — shared by his entire class"' },
+                { icon: '⛪', title: 'Churches & congregations', desc: 'A church fundraises for a new roof. The pastor shares during Sunday service, the youth group shares on WhatsApp — everyone gives to the same verified goal.', example: 'Example: "New roof for Redemption Chapel — give anything you can"' },
+                { icon: '🏥', title: 'Family medical campaigns', desc: 'A family member is ill. The entire extended family shares one verified campaign — instead of sending separate, unverified MoMo requests that donors may not trust.', example: 'Example: "Aunty Grace\'s surgery — shared by the Mensah family"' },
+                { icon: '🏘', title: 'Community projects', desc: 'A community borehole, a school building, a road repair. Community leaders and members unite behind a single verified campaign rather than fragmented collection efforts.', example: 'Example: "Borehole for Breman Asikuma — community fundraiser"' },
               ].map((item, i) => (
                 <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                   <div className="text-3xl mb-3">{item.icon}</div>
@@ -79,8 +79,8 @@ export default function TeamFundraisingPage() {
             <div className="grid md:grid-cols-3 gap-5">
               {[
                 { icon: '📣', stat: '5×', label: 'More reach', desc: 'A team of 10 people sharing reaches 5× more people than one person sharing alone.' },
-                { icon: '💚', stat: '2×', label: 'More raised', desc: 'Team campaigns consistently raise more because every member feels personally responsible.' },
-                { icon: '🔒', stat: '1', label: 'Verified campaign', desc: 'One verified campaign is more trustworthy than multiple unverified payment links.' },
+                { icon: '💚', stat: '2×', label: 'More raised', desc: 'Team campaigns consistently raise more — every member feels personally accountable for the outcome.' },
+                { icon: '🔒', stat: '1', label: 'Verified campaign', desc: 'One verified campaign page carries far more trust than a scatter of unverified MoMo links.' },
               ].map((item, i) => (
                 <div key={i} className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
                   <div className="text-3xl mb-2">{item.icon}</div>
@@ -96,7 +96,7 @@ export default function TeamFundraisingPage() {
         {/* CTA */}
         <section className="py-14 bg-primary text-center px-5">
           <h2 className="font-nunito font-black text-white text-3xl mb-3">Start your team campaign</h2>
-          <p className="text-white/70 text-sm mb-7">One person creates. Everyone shares. Free to start.</p>
+          <p className="text-white/70 text-sm mb-7">Free to create. Everyone shares. Nothing to pay upfront.</p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link href="/create" className="inline-block bg-white text-primary font-nunito font-black px-10 py-4 rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">
               Create team campaign →

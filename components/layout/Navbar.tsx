@@ -9,34 +9,34 @@ const FUNDRAISE_MENU = [
   {
     section: 'Get started',
     items: [
-      { label: 'Start a campaign', sub: 'Create your fundraiser in minutes', href: '/create', icon: '🚀' },
-      { label: 'How it works', sub: 'Step-by-step guide with examples', href: '/how-it-works', icon: '📖' },
-      { label: 'Verification tiers', sub: 'Basic, Standard and Premium explained', href: '/verification', icon: '🪪' },
+      { label: 'Start a campaign', sub: 'Create a free, verified fundraiser', href: '/create', icon: '🚀' },
+      { label: 'How it works', sub: 'The complete step-by-step guide', href: '/how-it-works', icon: '📖' },
+      { label: 'Verification tiers', sub: 'Basic, Standard and Premium — what each includes', href: '/verification', icon: '🪪' },
     ],
   },
   {
     section: 'Resources',
     items: [
       { label: 'Fundraising categories', sub: '17 causes to raise money for', href: '/fundraising-categories', icon: '📋' },
-      { label: 'Fundraising tips', sub: 'How to raise more, faster', href: '/fundraising-tips', icon: '💡' },
-      { label: 'Team fundraising', sub: 'Fundraise together as a group', href: '/team-fundraising', icon: '👥' },
+      { label: 'Fundraising tips', sub: 'Proven tactics to raise more', href: '/fundraising-tips', icon: '💡' },
+      { label: 'Team fundraising', sub: 'Raise more when your whole network shares', href: '/team-fundraising', icon: '👥' },
     ],
   },
   {
     section: 'More',
     items: [
-      { label: 'Charity & org sign up', sub: 'Register your charity or organisation', href: '/charity-signup', icon: '🤲' },
-      { label: 'Fundraising blog', sub: 'Tips, stories and resources', href: '/blog', icon: '✍️' },
-      { label: 'Transparency', sub: 'How we operate and where fees go', href: '/transparency', icon: '🔍' },
+      { label: 'Charity & org sign up', sub: 'Get your organisation's Verified page', href: '/charity-signup', icon: '🤲' },
+      { label: 'Fundraising blog', sub: 'Tips, stories, and practical guides', href: '/blog', icon: '✍️' },
+      { label: 'Transparency', sub: 'How the platform works and where fees go', href: '/transparency', icon: '🔍' },
     ],
   },
 ]
 
 const ABOUT_MENU = [
-  { label: 'About us', sub: 'Our mission and story', href: '/about', icon: '💚' },
+  { label: 'About us', sub: 'Our story, mission, and values', href: '/about', icon: '💚' },
   { label: 'Help Centre', sub: '25+ answers to common questions', href: '/help', icon: '❓' },
-  { label: 'Contact', sub: 'Get in touch with our team', href: '/contact', icon: '📬' },
-  { label: 'Transparency', sub: 'Fees, verification and how we operate', href: '/transparency', icon: '🔍' },
+  { label: 'Contact', sub: 'Reach our team — we respond within 2 days', href: '/contact', icon: '📬' },
+  { label: 'Transparency', sub: 'Fees, verification, and how we operate', href: '/transparency', icon: '🔍' },
 ]
 
 function Dropdown({ label, items, isOpen, onToggle, pathname }: {

@@ -16,10 +16,7 @@ export default function VerifyIdPage() {
   const [step, setStep] = useState<VerifyStep>('intro')
   const [images, setImages] = useState<ImageCapture>({ front: null, back: null, selfie: null })
   const [cameraActive, setCameraActive] = useState(false)
-  const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
-  const [result, setResult] = useState<any>(null)
-  const [progress, setProgress] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
@@ -97,52 +94,37 @@ export default function VerifyIdPage() {
     if (!user) { setStep('failed'); setError('Not signed in'); return }
 
     try {
-      // Simulate progress for UX
-      const tick = setInterval(() => setProgress(p => Math.min(p + 2, 90)), 300)
+      // Upload images to Supabase Storage
+      const ts = Date.now()
+      const uid = user.id
+      const toBlob = (b64: string) => fetch(`data:image/jpeg;base64,${b64}`).then(r => r.blob())
 
-      const res = await fetch('/api/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'document_verification',
-          data: {
-            userId: user.id,
-            frontImage: imgs.front,
-            backImage: imgs.back,
-            selfieImage: imgs.selfie,
-          }
-        })
-      })
-
-      clearInterval(tick)
-      setProgress(100)
-
-      const data = await res.json()
-      setResult(data)
-
-      const passed = data.ResultCode === '1012' || data.Actions?.Verify_ID_Number === 'Verified'
-
-      if (passed) {
-        // Update profile as verified in Supabase
-        await supabase.from('profiles').update({
-          identity_verified: true,
-          verified_at: new Date().toISOString(),
-        }).eq('id', user.id)
-
-        // Also update pending campaigns to verified
-        await supabase.from('campaigns')
-          .update({ verified: true })
-          .eq('user_id', user.id)
-          .eq('status', 'pending')
-
-        setStep('done')
-      } else {
-        setStep('failed')
-        setError(data.ResultText || 'Verification could not be completed. Please try again with a clearer photo.')
+      const uploadImg = async (b64: string | null, name: string) => {
+        if (!b64) return null
+        const blob = await toBlob(b64)
+        const { data } = await supabase.storage.from('campaign-docs')
+          .upload(`${uid}/${ts}-${name}.jpg`, blob, { contentType: 'image/jpeg', upsert: true })
+        return data?.path || null
       }
-    } catch (err) {
+
+      setProgress(40)
+      await uploadImg(imgs.front, 'id-front')
+      setProgress(70)
+      await uploadImg(imgs.back, 'id-back')
+      setProgress(90)
+      if (imgs.selfie) await uploadImg(imgs.selfie, 'selfie')
+
+      // Mark profile as pending verification review
+      await supabase.from('profiles').update({
+        verification_submitted: true,
+        verification_submitted_at: new Date().toISOString(),
+      }).eq('id', uid)
+
+      setProgress(100)
+      setStep('done')
+    } catch {
       setStep('failed')
-      setError('Connection error. Please check your internet and try again.')
+      setError('Upload failed. Please check your connection and try again.')
     }
   }
 
@@ -162,7 +144,7 @@ export default function VerifyIdPage() {
         {/* Header */}
         <div className="max-w-lg mx-auto w-full px-5 pt-8 pb-4">
           <h1 className="font-nunito font-black text-white text-2xl tracking-tight mb-1">Identity Verification</h1>
-          <p className="text-white/40 text-sm">Automatic — takes less than 5 minutes</p>
+          <p className="text-white/40 text-sm">Reviewed by our team — usually within 24 hours</p>
 
           {/* Step indicators */}
           <div className="flex items-center gap-2 mt-5">
@@ -196,14 +178,14 @@ export default function VerifyIdPage() {
                 </div>
                 <h2 className="font-nunito font-black text-white text-2xl mb-3">What you will need</h2>
                 <p className="text-white/50 text-sm mb-8 leading-relaxed max-w-sm mx-auto">
-                  Your Ghana Card and a phone with a working camera. The entire process takes under 5 minutes and is fully automatic.
+                  Your Ghana Card and a phone with a working camera. Once submitted, our team reviews your documents and approves your campaign — usually within 24 hours.
                 </p>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 text-left space-y-3">
                   {[
                     { icon: '1', text: 'Photo of your Ghana Card (front)' },
                     { icon: '2', text: 'Photo of your Ghana Card (back)' },
                     { icon: '3', text: 'A selfie — face clearly lit' },
-                    { icon: '4', text: 'Our system does the rest automatically' },
+                    { icon: '4', text: 'Our team reviews and approves your campaign' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs font-black flex-shrink-0">{item.icon}</div>
@@ -294,34 +276,16 @@ export default function VerifyIdPage() {
               </div>
             )}
 
-            {/* PROCESSING */}
+            {/* PROCESSING / SUBMITTED */}
             {step === 'processing' && (
               <div className="text-center py-10">
-                <div className="relative w-24 h-24 mx-auto mb-6">
-                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 96 96">
-                    <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="6" />
-                    <circle cx="48" cy="48" r="40" fill="none" stroke="#02A95C" strokeWidth="6"
-                      strokeDasharray={`${2 * Math.PI * 40}`}
-                      strokeDashoffset={`${2 * Math.PI * 40 * (1 - progress / 100)}`}
-                      strokeLinecap="round"
-                      style={{ transition: 'stroke-dashoffset 0.3s ease' }} />
+                <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/30">
+                  <svg className="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <div className="absolute inset-0 flex items-center justify-center font-nunito font-black text-white text-lg">{progress}%</div>
                 </div>
-                <h2 className="font-nunito font-black text-white text-xl mb-2">Verifying your identity</h2>
-                <div className="text-white/50 text-sm space-y-1">
-                  {[
-                    { label: 'Reading Ghana Card details', done: progress > 20 },
-                    { label: 'Checking NIA database', done: progress > 45 },
-                    { label: 'Matching selfie to ID photo', done: progress > 70 },
-                    { label: 'Confirming identity', done: progress > 90 },
-                  ].map((item, i) => (
-                    <div key={i} className={`flex items-center justify-center gap-2 transition-colors ${item.done ? 'text-primary' : 'text-white/30'}`}>
-                      <span className="text-xs">{item.done ? '✓' : '...'}</span>
-                      <span className="text-xs">{item.label}</span>
-                    </div>
-                  ))}
-                </div>
+                <h2 className="font-nunito font-black text-white text-xl mb-2">Documents submitted</h2>
+                <p className="text-white/50 text-sm max-w-xs mx-auto">Your identity documents have been uploaded securely. Our team will review them and approve your campaign.</p>
               </div>
             )}
 
@@ -337,14 +301,14 @@ export default function VerifyIdPage() {
                   </div>
                 </div>
                 <h2 className="font-nunito font-black text-white text-2xl mb-2">Identity confirmed</h2>
-                <p className="text-white/50 text-sm mb-2">Your Ghana Card has been verified and your selfie matched successfully.</p>
+                <p className="text-white/50 text-sm mb-2">Your documents have been reviewed and your identity confirmed.</p>
                 <p className="text-primary font-bold text-sm mb-8">Your campaign is now live with the Verified badge.</p>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 text-left space-y-3">
                   {[
-                    'Ghana Card identity confirmed',
-                    'Selfie matched to ID photo',
-                    'NIA database check passed',
+                    'Ghana Card reviewed and accepted',
+                    'Identity confirmed by EveryGiving team',
                     'Verified badge added to your campaign',
+                    'You will receive a confirmation email shortly',
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-sm text-white/70">
                       <div className="w-5 h-5 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center text-primary text-xs flex-shrink-0">✓</div>

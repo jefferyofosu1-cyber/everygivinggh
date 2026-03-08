@@ -12,13 +12,13 @@ const STATS = [
 
 const HOW_STEPS = [
   { n: '01', title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo, and pick a category. The guided form takes under 5 minutes — no technical knowledge needed.', time: '5 minutes', color: 'bg-primary-light border-primary/20 text-primary' },
-  { n: '02', title: 'Verify your identity', desc: 'Upload your Ghana Card and take a selfie. Our system automatically cross-checks your identity against the NIA database — no manual review, no waiting.', time: 'Under 10 minutes', color: 'bg-amber-50 border-amber-200 text-amber-700' },
+  { n: '02', title: 'Verify your identity', desc: 'Upload your Ghana Card and a selfie. Our team reviews your documents and confirms your identity — usually within 24 hours.', time: 'Within 24 hours', color: 'bg-amber-50 border-amber-200 text-amber-700' },
   { n: '03', title: 'Share your campaign', desc: 'Your campaign goes live with a Verified badge. Share your link on WhatsApp, Facebook, or anywhere else. We include pre-written share messages to make it effortless.', time: 'Instant', color: 'bg-blue-50 border-blue-200 text-blue-700' },
   { n: '04', title: 'Receive donations', desc: 'Donors pay via MTN MoMo, Vodafone Cash, or AirtelTigo. Every donation lands directly in your registered MoMo wallet — same day.', time: 'Same day payout', color: 'bg-primary-light border-primary/20 text-primary' },
 ]
 
 const GUARANTEE_POINTS = [
-  { icon: '🔒', title: 'Identity verified', desc: 'Every fundraiser has confirmed their identity via Ghana Card, cross-checked against the NIA database.' },
+  { icon: '🔒', title: 'Identity verified', desc: 'Every fundraiser has confirmed their identity via Ghana Card, reviewed by the EveryGiving team.' },
   { icon: '₵', title: 'Zero platform fee — always', desc: 'We never take a percentage of what you raise. Every cedi your donors give goes directly to you.' },
   { icon: '👁', title: 'Full transparency', desc: 'Every donation is visible on the campaign page. Nothing is hidden from donors.' },
   { icon: '⚡', title: 'Same-day MoMo payouts', desc: 'Donations reach your MoMo wallet the same day they are made — no holding periods.' },
@@ -291,7 +291,7 @@ export default function AboutPage() {
                     ['Founded', '2026, Ghana'],
                     ['Platform type', 'Verified crowdfunding'],
                     ['Platform fee', '0% — always'],
-                    ['Verification', 'Ghana Card + NIA database'],
+                    ['Verification', 'Ghana Card reviewed by our team'],
                     ['Payments', 'MTN MoMo, Vodafone Cash, AirtelTigo'],
                     ['Contact', 'business@everygiving.org'],
                   ].map(([k, v]) => (

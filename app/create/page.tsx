@@ -36,9 +36,9 @@ const TIERS = [
     badge: '✓ Verified', badgeColor: 'bg-primary-light text-primary-dark',
     border: 'border-primary/30', activeBorder: 'border-primary',
     recommended: true,
-    desc: 'ID + selfie facial match. Full verified badge.',
+    desc: 'ID upload + selfie photo. Full verified badge.',
     limit: 'Campaigns up to ₵50,000',
-    features: ['ID upload + ID number', 'Selfie + facial match', 'Full Verified badge', 'Priority in listings'],
+    features: ['ID upload + ID number', 'Selfie photo included', 'Full Verified badge', 'Priority in listings'],
     selfie: true,
   },
   {
@@ -142,11 +142,11 @@ export default function CreatePage() {
           </div>
           <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
           <p className="text-gray-500 text-sm mb-2">Check your email — a confirmation has been sent to your inbox.</p>
-          <p className="text-gray-400 text-xs mb-8 max-w-sm mx-auto leading-relaxed">Your campaign and identity documents are under review. We will email you once it is approved — typically within 2 hours.</p>
+          <p className="text-gray-400 text-xs mb-8 max-w-sm mx-auto leading-relaxed">Your campaign and identity documents are under review. We will email you once it is approved — usually within 24 hours.</p>
           <div className="flex flex-col gap-3">
             {[
               { icon:'📧', text:'Check your email for confirmation' },
-              { icon:'⏱', text:'Review takes under 2 hours' },
+              { icon:'⏱', text:'Review usually within 24 hours' },
               { icon:'📱', text:'You\'ll get an email when you go live' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm text-gray-600 shadow-sm">
@@ -330,7 +330,7 @@ export default function CreatePage() {
                   {/* Selfie — Standard/Premium only */}
                   {tier.selfie && (
                     <div>
-                      <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Selfie — face match <span className="text-red-400">*</span></label>
+                      <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Selfie photo <span className="text-red-400">*</span></label>
                       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3 text-xs text-amber-700">
                         Good lighting · Face forward · No sunglasses or hats · Must match your ID photo
                       </div>

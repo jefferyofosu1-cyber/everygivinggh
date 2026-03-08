@@ -50,17 +50,17 @@ const FAQS = [
   {
     cat: 'verification',
     q: 'Why do I need to verify my identity?',
-    a: 'Verification is what sets EveryGiving apart from simply sending MoMo requests. When donors see a Verified badge, they know your identity has been confirmed against the NIA database. Verified campaigns raise more — because donors give with confidence.',
+    a: "Verification is what sets EveryGiving apart from simply sending MoMo requests. When donors see a Verified badge, they know your identity has been reviewed and confirmed by the EveryGiving team. Verified campaigns raise more — because donors give with confidence.",
   },
   {
     cat: 'verification',
     q: 'What documents do I need to verify?',
-    a: 'You need a valid Ghana Card (National Identification Card). During verification you will upload a photo of the front and back of your Ghana Card, and take a selfie. Our system automatically matches your face to your ID and cross-checks your details with the NIA database.',
+    a: "You need a valid Ghana Card (National Identification Card). During verification you will upload a clear photo of the front and back of your Ghana Card, and a selfie. Our team reviews your documents and confirms your identity — usually within 24 hours.",
   },
   {
     cat: 'verification',
     q: 'How long does verification take?',
-    a: 'Verification is fully automated and typically completes in under 10 minutes. In rare cases where the NIA database is slow to respond, it may take up to 24 hours. You will receive an email the moment verification is complete.',
+    a: "Our team reviews submitted documents and typically approves campaigns within 24 hours. You will receive an email the moment your campaign is approved and live.",
   },
   {
     cat: 'verification',
@@ -109,7 +109,7 @@ const FAQS = [
   {
     cat: 'donors',
     q: 'How do I know a campaign is legitimate?',
-    a: 'Look for the green Verified badge on the campaign. This means the fundraiser\'s identity has been confirmed against the NIA database using their Ghana Card. While verification confirms identity, we also encourage you to read the campaign story carefully, check for regular updates, and only give what you are comfortable with.',
+    a: "Look for the green Verified badge on the campaign. This means the fundraiser's identity documents have been reviewed and confirmed by the EveryGiving team using their Ghana Card. While verification confirms identity, we also encourage you to read the campaign story carefully, check for regular updates, and only give what you are comfortable with.",
   },
   {
     cat: 'donors',

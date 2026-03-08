@@ -93,8 +93,8 @@ export default function TransparencyPage() {
             <div className="flex flex-col gap-4 max-w-2xl">
               {[
                 { step: '1', title: 'Fundraiser uploads Ghana Card', desc: 'Front and back photo of their National Identification Card, plus manually entering their ID number.' },
-                { step: '2', title: 'NIA database check', desc: 'The ID number and document details are cross-referenced against the National Identification Authority (NIA) database.' },
-                { step: '3', title: 'Facial matching (Standard & Premium)', desc: 'A live selfie is compared against the photo on the ID document using facial recognition. Liveness detection prevents photo spoofing.' },
+                { step: '2', title: 'Document review', desc: 'The ID document is checked by our team to confirm it is valid, unaltered, and matches the submitted details.' },
+                { step: '3', title: 'Selfie review (Standard & Premium)', desc: 'For Standard and Premium campaigns, the selfie is reviewed alongside the ID photo to confirm the same person appears in both.' },
                 { step: '4', title: 'Document review (Premium only)', desc: 'Supporting documents — such as hospital admission letters — are reviewed manually by our team before the Premium badge is granted.' },
                 { step: '5', title: 'Badge awarded', desc: 'Once verified, the appropriate badge appears on the campaign. Donors can see the badge and understand exactly what level of verification it represents.' },
               ].map((item, i) => (

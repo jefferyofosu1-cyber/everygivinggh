@@ -74,7 +74,7 @@ export default function DonatePage() {
               Give with <span className="text-primary">confidence</span>
             </h1>
             <p className="text-white/50 text-base mb-8 max-w-xl mx-auto leading-relaxed">
-              Every campaign on EveryGiving is identity-verified. The person you are giving to is real, confirmed against the NIA database. Your donation goes directly to their MoMo wallet.
+              Every campaign on EveryGiving is identity-verified. The person you are giving to has had their Ghana Card reviewed and confirmed by our team. Your donation is held securely and released when milestones are met.
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {['🪪 Identity verified', '📱 MoMo direct', '🔒 Secure', '2% + ₵0.25 transaction fee only'].map((item, i) => (

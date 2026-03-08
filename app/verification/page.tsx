@@ -34,8 +34,8 @@ const TIERS = [
     recommended: true,
     checks: [
       'Everything in Basic',
-      'Selfie matched via facial recognition',
-      'NIA database cross-check',
+      'Selfie photo reviewed by our team',
+      'Full document review',
       'Full Verified badge on your campaign',
       'Priority placement in search results',
     ],
@@ -109,7 +109,7 @@ export default function VerificationPage() {
                 },
                 {
                   n: '03', title: 'Selfie (Standard & Premium)',
-                  desc: 'Take a live selfie on your phone. Our facial recognition matches your face to the photo on your ID for a deeper level of verification.',
+                  desc: 'Take a selfie on your phone. Our team checks your face against your ID photo for a deeper level of verification.',
                   required: 'Standard & Premium only',
                 },
               ].map((step, i) => (

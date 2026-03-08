@@ -42,7 +42,7 @@ function Character({ mood, holding }: { mood: 'thinking'|'happy'|'excited'|'prou
 const SCENES = [
   { mood:'thinking' as const, holding:null, bg:'from-slate-50 to-white', accent:'#64748B', label:'The challenge', name:'Ama has a problem', bubble:"My mother needs surgery at Korle Bu... I need ₵15,000. Where do I start?", narration:"Meet Ama from Accra. She needs to raise money urgently for her mother's surgery. Sending MoMo requests to friends isn't working — she needs something more." },
   { mood:'happy' as const, holding:'phone' as const, bg:'from-green-50 to-white', accent:'#02A95C', label:'The discovery', name:'She finds Every Giving', bubble:"Every Giving lets me create a verified page — people can donate even if they don't know me!", narration:"A friend shares a link to Every Giving. In 5 minutes, Ama fills in her campaign — her story, goal, and a photo. Simple guided form, no tech skills needed." },
-  { mood:'proud' as const, holding:'card' as const, bg:'from-amber-50 to-white', accent:'#D97706', label:'Verification', name:'Verified in minutes', bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!", narration:"Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the NIA database. Under 10 minutes — no waiting." },
+  { mood:'proud' as const, holding:'card' as const, bg:'from-amber-50 to-white', accent:'#D97706', label:'Verification', name:'Verified in minutes', bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!", narration:"Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the EveryGiving team review. Within 24 hours — no waiting." },
   { mood:'pointing' as const, holding:null, bg:'from-blue-50 to-white', accent:'#0066CC', label:'Going live', name:'Campaign goes live', bubble:"My campaign is live with a Verified badge! I'm sharing it everywhere right now.", narration:"The moment verification passes, her campaign goes live with a Verified badge. She shares on WhatsApp and Facebook. Donations come in from people she has never met." },
   { mood:'excited' as const, holding:'money' as const, bg:'from-green-50 to-emerald-50', accent:'#02A95C', label:'Success', name:'₵18,500 raised', bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Zero fees!", narration:"In 3 weeks, Ama raises ₵18,500 — more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. No platform fees. No delays." },
 ]
@@ -188,9 +188,9 @@ const STEPS = [
   {
     n: '03',
     title: 'Verify your identity',
-    description: 'Upload your Ghana Card and take a selfie. Our system automatically matches your face to your ID and cross-checks the NIA database — no manual review, typically under 10 minutes.',
+    description: 'Upload your Ghana Card and a selfie. Our team reviews your documents and confirms your identity — usually within 24 hours. You will receive an email when approved.',
     tip: 'Verified campaigns raise more. Donors give when they know the person is real.',
-    time: 'Under 10 minutes',
+    time: 'Within 24 hours',
   },
   {
     n: '04',
@@ -209,9 +209,9 @@ const STEPS = [
   {
     n: '06',
     title: 'Receive your money',
-    description: 'Donations are transferred directly to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet. Withdraw at any time — even before reaching your goal. Zero platform fees, always.',
-    tip: 'Same-day payouts once your campaign is verified and active.',
-    time: 'Same day',
+    description: 'Donations are held securely by Hubtel and released to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet as you complete your milestones. Zero platform fees, always.',
+    tip: 'You set your own milestones. Donors can see your progress before each payout — which builds even more trust.',
+    time: 'Per milestone',
   },
 ]
 
@@ -222,7 +222,7 @@ const FAQS = [
   },
   {
     q: 'How long does verification take?',
-    a: 'Our automated system verifies your Ghana Card and selfie in under 10 minutes. The process is fully automated using facial recognition and NIA database cross-referencing — no manual review.',
+    a: 'Our team reviews your Ghana Card and selfie and confirms your identity — usually within 24 hours. You will receive an email when your campaign is approved and live.',
   },
   {
     q: "What if I don't reach my goal?",

@@ -128,7 +128,7 @@ export default function FundraisePage() {
                 {[
                   { n: 1, title: 'Create your account', body: 'Sign up with your email and mobile number — takes 60 seconds. Start building your campaign immediately.', time: '1 minute', cta: null },
                   { n: 2, title: 'Tell your story', body: 'Write your story in your own words. Explain what the money is for, how much you need, and why it matters. A photo is essential — campaigns with photos consistently raise more.', time: '5–10 minutes', cta: null },
-                  { n: 3, title: 'Verify your identity', body: 'Upload your Ghana Card and take a selfie. Our system matches your face to your ID and confirms your identity with the NIA database. This is what earns you the Verified badge.', time: 'Under 10 minutes', cta: null },
+                  { n: 3, title: 'Verify your identity', body: 'Upload your Ghana Card and take a selfie. Our system matches your face to your ID and confirms your identity with the EveryGiving team review. This is what earns you the Verified badge.', time: 'Within 24 hours', cta: null },
                   { n: 4, title: 'Share your campaign', body: 'Once live, share your campaign link on WhatsApp, Facebook, or wherever your network is. We provide a ready-made WhatsApp message to make it immediate.', time: 'Instant', cta: null },
                   { n: 5, title: 'Receive donations to your MoMo', body: 'Donations go directly to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet. Same-day payouts. Zero platform fee. Every cedi is yours.', time: 'Same day', cta: { label: 'Start now →', href: '/create' } },
                 ].map((step, i) => (

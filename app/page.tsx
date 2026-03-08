@@ -134,7 +134,7 @@ export default function HomePage() {
                 <span className="text-[#02A95C]">Ghana</span>
               </h1>
               <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-md">
-                Every fundraiser is identity-verified. Every donation lands in your MoMo wallet the same day. Zero platform fees — always.
+                Every fundraiser is identity-verified by our team. Donations are released to your MoMo wallet as you hit milestones. Zero platform fees — always.
               </p>
 
               {/* Search bar — GoFundMe style */}
@@ -301,7 +301,7 @@ export default function HomePage() {
               {[
                 { n:'1', img: P.phone, title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo. Under 15 minutes — no technical skills required.', cta:'Start free →', href:'/create' },
                 { n:'2', img: P.accra, title: 'Verify your identity', desc: 'Upload your Ghana Card or accepted ID. Verified fundraisers raise 3× more — because donors trust people whose identity is confirmed.', cta:'See how →', href:'/verification' },
-                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Every donation goes straight to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet — same day.', cta:'Learn more →', href:'/how-it-works' },
+                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Donations are held securely by Hubtel and released to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet when you hit your milestones.', cta:'Learn more →', href:'/how-it-works' },
               ].map((step, i) => (
                 <div key={i} className="group">
                   <div className="relative rounded-2xl overflow-hidden h-52 mb-5 shadow-sm">
@@ -480,7 +480,7 @@ export default function HomePage() {
               {[
                 { icon:'🎯', title:'0% platform fee', desc:'We never charge a platform fee. Creating a campaign is always completely free.' },
                 { icon:'💸', title:'2% + ₵0.25 per donation', desc:'The only cost. Deducted automatically from each donation before it reaches the fundraiser.' },
-                { icon:'📱', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Your money arrives the same day.' },
+                { icon:'📱', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Funds are released to your wallet as milestones are completed.' },
               ].map((item, i) => (
                 <div key={i} className="bg-[#f8fafb] border border-gray-100 rounded-2xl p-6 text-left">
                   <div className="text-3xl mb-3">{item.icon}</div>

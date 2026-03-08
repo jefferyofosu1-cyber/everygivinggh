@@ -65,7 +65,7 @@ const FAQS = [
   {
     cat: 'verification',
     q: 'My verification failed — what do I do?',
-    a: 'Common reasons for failure: photo quality is too low, the ID is expired, the name on your account doesn't exactly match your ID, or the selfie lighting was too dark. Retry with better lighting and a clearer photo. If the issue persists, email business@everygiving.org and we will investigate.',
+    a: "Common reasons for failure: photo quality is too low, the ID is expired, the name on your account doesn't exactly match your ID, or the selfie lighting was too dark. Retry with better lighting and a clearer photo. If the issue persists, email business@everygiving.org and we will investigate.",
   },
   {
     cat: 'verification',

@@ -225,7 +225,7 @@ const FAQS = [
     a: 'Our automated system verifies your Ghana Card and selfie in under 10 minutes. The process is fully automated using facial recognition and NIA database cross-referencing — no manual review.',
   },
   {
-    q: 'What if I don't reach my goal?',
+    q: "What if I don't reach my goal?",
     a: 'You keep everything you raise. EveryGiving uses a keep-what-you-raise model — there is no penalty and no minimum threshold.',
   },
   {

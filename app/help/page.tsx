@@ -131,7 +131,7 @@ const FAQS = [
   {
     cat: 'account',
     q: 'How do I reset my password?',
-    a: 'Click "Forgot password" on the login page. Enter your registered email and we will send a reset link. The link expires after 24 hours. If you don't receive it, check your spam folder or email business@everygiving.org.',
+    a: "Click \"Forgot password\" on the login page. Enter your registered email and we will send a reset link. The link expires after 24 hours. If you don't receive it, check your spam folder or email business@everygiving.org.",
   },
   {
     cat: 'account',

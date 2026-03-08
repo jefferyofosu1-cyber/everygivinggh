@@ -25,7 +25,7 @@ const FUNDRAISE_MENU = [
   {
     section: 'More',
     items: [
-      { label: 'Charity & org sign up', sub: 'Get your organisation's Verified page', href: '/charity-signup', icon: '🤲' },
+      { label: 'Charity & org sign up', sub: "Get your organisation's Verified page", href: '/charity-signup', icon: '🤲' },
       { label: 'Fundraising blog', sub: 'Tips, stories, and practical guides', href: '/blog', icon: '✍️' },
       { label: 'Transparency', sub: 'How the platform works and where fees go', href: '/transparency', icon: '🔍' },
     ],

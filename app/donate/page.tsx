@@ -135,7 +135,7 @@ export default function DonatePage() {
             <h2 className="font-nunito font-black text-navy text-2xl mb-8">How donating works</h2>
             <div className="grid md:grid-cols-3 gap-5">
               {[
-                { icon: '🔍', title: 'Choose a campaign', desc: 'Browse verified campaigns. Every fundraiser has confirmed their identity — you know exactly who you're giving to.' },
+                { icon: '🔍', title: 'Choose a campaign', desc: "Browse verified campaigns. Every fundraiser has confirmed their identity — you know exactly who you're giving to." },
                 { icon: '📱', title: 'Pay by MoMo', desc: 'Choose MTN MoMo, Vodafone Cash, or AirtelTigo. A payment prompt appears instantly on your phone.' },
                 { icon: '✅', title: 'Donation received', desc: 'The fundraiser receives the money directly. You receive a confirmation and receipt instantly.' },
               ].map((step, i) => (

@@ -121,7 +121,17 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
 
     // Send email notification to fundraiser
     try {
-      const fundraiserEmail = campaign.profiles?.email || campaign.user_email
+      // Try profiles.email first, then fall back to auth user lookup
+      let fundraiserEmail = campaign.profiles?.email
+      if (!fundraiserEmail && campaign.user_id) {
+        const { data: userData } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('id', campaign.user_id)
+          .single()
+        fundraiserEmail = userData?.email
+      }
+
       if (fundraiserEmail) {
         await sendStatusEmail(
           fundraiserEmail,
@@ -130,7 +140,8 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           status,
           note.trim()
         )
-        setEmailSent(true)
+      } else {
+        console.warn('No email found for fundraiser — status email not sent')
       }
     } catch (e) {
       console.error('Status email failed:', e)
@@ -177,26 +188,41 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           {/* Documents */}
           <div className="bg-white/5 rounded-xl p-4">
             <div className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Identity Documents</div>
-            <div className="grid grid-cols-2 gap-3">
-              {campaign.id_front_url && (
-                <a href={campaign.id_front_url} target="_blank" rel="noopener noreferrer"
-                  className="bg-white/5 border border-white/10 rounded-xl p-3 text-center hover:border-primary/40 transition-all">
-                  <div className="text-2xl mb-1">🪪</div>
-                  <div className="text-white/60 text-xs font-bold">ID Photo</div>
-                  <div className="text-primary text-xs mt-0.5">View →</div>
-                </a>
-              )}
-              {campaign.selfie_url && (
-                <a href={campaign.selfie_url} target="_blank" rel="noopener noreferrer"
-                  className="bg-white/5 border border-white/10 rounded-xl p-3 text-center hover:border-primary/40 transition-all">
-                  <div className="text-2xl mb-1">🤳</div>
-                  <div className="text-white/60 text-xs font-bold">Selfie</div>
-                  <div className="text-primary text-xs mt-0.5">View →</div>
-                </a>
-              )}
-            </div>
-            {!campaign.id_front_url && !campaign.selfie_url && (
-              <div className="text-white/20 text-xs text-center py-3">No documents uploaded</div>
+            {!campaign.id_front_url && !campaign.selfie_url ? (
+              <div className="text-white/20 text-xs text-center py-4 border border-white/5 rounded-xl">
+                ⚠️ No documents uploaded — SQL migrations may not have run yet
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {campaign.id_front_url && (
+                  <div>
+                    <div className="text-white/40 text-xs font-bold mb-2">ID PHOTO</div>
+                    <a href={campaign.id_front_url} target="_blank" rel="noopener noreferrer" className="block group">
+                      <img
+                        src={campaign.id_front_url}
+                        alt="ID document"
+                        className="w-full rounded-xl border border-white/10 object-cover max-h-52 group-hover:border-primary/40 transition-all"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display='none' }}
+                      />
+                      <div className="text-primary text-xs mt-1.5 text-right">Open full size →</div>
+                    </a>
+                  </div>
+                )}
+                {campaign.selfie_url && (
+                  <div>
+                    <div className="text-white/40 text-xs font-bold mb-2">SELFIE</div>
+                    <a href={campaign.selfie_url} target="_blank" rel="noopener noreferrer" className="block group">
+                      <img
+                        src={campaign.selfie_url}
+                        alt="Selfie"
+                        className="w-full rounded-xl border border-white/10 object-cover max-h-52 group-hover:border-primary/40 transition-all"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display='none' }}
+                      />
+                      <div className="text-primary text-xs mt-1.5 text-right">Open full size →</div>
+                    </a>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -263,7 +289,7 @@ function CampaignsContent() {
     setLoading(true)
     const supabase = createClient()
     let q = supabase.from('campaigns')
-      .select('*, profiles(full_name, phone, email)')
+      .select('*, profiles(full_name, phone, email), user_id')
       .order('created_at', { ascending: false })
     if (activeTab !== 'all') q = q.eq('status', activeTab)
     const { data } = await q

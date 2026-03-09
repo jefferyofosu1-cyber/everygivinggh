@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const body = await req.json()
-    const { title, category, goal_amount, story, tier, fee_amount, fee_deferred, idType, idNumber, idFrontUrl, idBackUrl, selfieUrl } = body
+    const { title, category, goal_amount, story, tier, fee_amount, fee_deferred, idType, idNumber, idFrontUrl, selfieUrl } = body
 
     const { data: campaign, error } = await supabase.from('campaigns').insert({
       user_id: user.id,
@@ -106,7 +106,6 @@ export async function POST(req: NextRequest) {
       id_type: idType,
       id_number: idNumber,
       id_front_url: idFrontUrl || null,
-      id_back_url: idBackUrl || null,
       selfie_url: selfieUrl || null,
       raised_amount: 0,
       verified: false,

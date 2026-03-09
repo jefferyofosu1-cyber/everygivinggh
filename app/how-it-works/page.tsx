@@ -209,7 +209,7 @@ const STEPS = [
   {
     n: '06',
     title: 'Receive your money',
-    description: 'Donations are held securely by Hubtel and released to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet as you complete your milestones. Zero platform fees, always.',
+    description: 'Donations are held securely and released to your wallet when you reach each milestone you set. Withdraw via MoMo, bank transfer, or card. Zero platform fees, always.',
     tip: 'You set your own milestones. Donors can see your progress before each payout — which builds even more trust.',
     time: 'Per milestone',
   },

@@ -18,7 +18,7 @@ const HOW_STEPS = [
 ]
 
 const GUARANTEE_POINTS = [
-  { icon: '🔒', title: 'Identity verified', desc: 'Every fundraiser has confirmed their identity via Ghana Card, reviewed by the EveryGiving team.' },
+  { icon: '🪪', title: 'Identity verified', desc: 'Every fundraiser confirms their identity before going live. No anonymous campaigns.' },
   { icon: '₵', title: 'Zero platform fee — always', desc: 'We never take a percentage of what you raise. Every cedi your donors give goes directly to you.' },
   { icon: '👁', title: 'Full transparency', desc: 'Every donation is visible on the campaign page. Nothing is hidden from donors.' },
   { icon: '⚡', title: 'Same-day MoMo payouts', desc: 'Donations reach your MoMo wallet the same day they are made — no holding periods.' },

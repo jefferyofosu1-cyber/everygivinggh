@@ -74,7 +74,7 @@ export default function DonatePage() {
               Give with <span className="text-primary">confidence</span>
             </h1>
             <p className="text-white/50 text-base mb-8 max-w-xl mx-auto leading-relaxed">
-              Every campaign on EveryGiving is identity-verified. The person you are giving to has had their Ghana Card reviewed and confirmed by our team. Your donation is held securely and released when milestones are met.
+              Every campaign on EveryGiving is identity-verified. The person you are giving to has had their Ghana Card reviewed and confirmed by our team. Donations are held securely and released to fundraisers in milestones they set.
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {['🪪 Identity verified', '📱 MoMo direct', '🔒 Secure', '2% + ₵0.25 transaction fee only'].map((item, i) => (
@@ -84,17 +84,7 @@ export default function DonatePage() {
           </div>
         </section>
 
-        {/* Stats */}
-        <section className="bg-primary-light border-b border-primary/10 py-7 px-5">
-          <div className="max-w-3xl mx-auto grid grid-cols-3 gap-4 text-center">
-            {[['₵2.4M+', 'Total raised'], ['1,200+', 'Campaigns'], ['8,900+', 'Donors']].map(([v, l], i) => (
-              <div key={i}>
-                <div className="font-nunito font-black text-primary text-2xl md:text-3xl">{v}</div>
-                <div className="text-primary-dark/60 text-xs mt-0.5">{l}</div>
-              </div>
-            ))}
-          </div>
-        </section>
+
 
         {/* Category filter */}
         <div className="bg-white border-b border-gray-100 px-5 py-4 overflow-x-auto">

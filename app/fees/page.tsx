@@ -123,6 +123,43 @@ export default function FeesPage() {
           </div>
         </section>
 
+        {/* Verification fees */}
+        <section className="py-14 bg-white border-t border-gray-100">
+          <div className="max-w-2xl mx-auto px-5">
+            <div className="text-center mb-8">
+              <h2 className="font-nunito font-black text-navy text-2xl mb-2">Verification fees</h2>
+              <p className="text-gray-400 text-sm">One-time, per campaign. Pay upfront or defer — deducted from your first donations.</p>
+            </div>
+            <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+              <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-100 px-5 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                <div>Tier</div>
+                <div>Fee</div>
+                <div>Goal range</div>
+                <div>Defer?</div>
+              </div>
+              {[
+                { emoji: '🟢', tier: 'Basic',   fee: 'Free',     range: 'Up to GH₵5,000',          defer: '—' },
+                { emoji: '✅', tier: 'Standard', fee: 'GH₵50',   range: 'GH₵5,000 – GH₵10,000',    defer: 'Yes' },
+                { emoji: '⭐', tier: 'Premium',  fee: 'GH₵100',  range: 'GH₵10,000 – GH₵50,000',   defer: 'Yes' },
+                { emoji: '🥇', tier: 'Gold',     fee: 'GH₵200',  range: 'GH₵50,000 – GH₵100,000',  defer: 'Yes' },
+                { emoji: '💎', tier: 'Diamond',  fee: 'GH₵500',  range: 'GH₵100,000 and above',     defer: 'Yes' },
+              ].map((row, i) => (
+                <div key={i} className="grid grid-cols-4 px-5 py-4 border-b border-gray-50 last:border-0 items-center">
+                  <div className="flex items-center gap-2 font-bold text-navy text-sm">
+                    <span>{row.emoji}</span><span>{row.tier}</span>
+                  </div>
+                  <div className={`font-nunito font-black text-sm ${row.fee === 'Free' ? 'text-gray-500' : 'text-primary'}`}>{row.fee}</div>
+                  <div className="text-gray-500 text-xs">{row.range}</div>
+                  <div className={`text-xs font-bold ${row.defer === 'Yes' ? 'text-primary' : 'text-gray-300'}`}>{row.defer}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 text-center mt-4">
+              Defer means the fee is automatically deducted from your first donations — you pay nothing until money comes in.
+            </p>
+          </div>
+        </section>
+
         {/* Comparison */}
         <section className="py-14 bg-gray-50 border-t border-gray-100">
           <div className="max-w-2xl mx-auto px-5">
@@ -171,7 +208,7 @@ export default function FeesPage() {
             <h2 className="font-nunito font-black text-navy text-2xl text-center mb-8">Fee questions answered</h2>
             <div className="flex flex-col gap-4">
               {[
-                { q:'When is the fee deducted?', a:'At the moment a donation is made. The fundraiser receives the net amount directly in their MoMo wallet. No invoices, no bills, no follow-ups.' },
+                { q:'When is the fee deducted?', a:'At the moment a donation is made. The 2% + ₵0.25 is automatically deducted from each donation. Fundraisers receive the net amount when their milestones are reached. No invoices, no bills, no follow-ups.' },
                 { q:'Is there a platform fee on top?', a:'No. The only charge is the 2% + ₵0.25 transaction fee per donation. No monthly fee. No withdrawal fee. No setup fee. No platform fee. Ever.' },
                 { q:'What does the fee cover?', a:'The fee covers payment processing (MoMo provider fees), platform maintenance, identity verification infrastructure, and customer support. We operate with full transparency.' },
                 { q:'Do donors see the fee?', a:'Yes. As a donor types an amount, they see the breakdown in real time: how much reaches the fundraiser and how much is the transaction fee. Full transparency, always.' },

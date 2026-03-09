@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -38,22 +38,7 @@ const EMOJI: Record<string, string> = {
   sports:'⚽',events:'🎉',wishes:'🌟',memorial:'🕊',other:'💚',
 }
 
-// Count-up hook
-function useCountUp(target: number, duration = 2000, active = false) {
-  const [val, setVal] = useState(0)
-  useEffect(() => {
-    if (!active) return
-    let start: number
-    const step = (ts: number) => {
-      if (!start) start = ts
-      const p = Math.min((ts - start) / duration, 1)
-      setVal(Math.floor((1 - Math.pow(1 - p, 3)) * target))
-      if (p < 1) requestAnimationFrame(step)
-    }
-    requestAnimationFrame(step)
-  }, [active, target, duration])
-  return val
-}
+
 
 function CampaignCard({ c }: { c: any }) {
   const pct = c.goal_amount ? Math.min(Math.round((c.raised_amount / c.goal_amount) * 100), 100) : 0
@@ -82,24 +67,11 @@ function CampaignCard({ c }: { c: any }) {
 }
 
 // Placeholder cards
-const PLACEHOLDERS = [
-  { title: "Help Ama pay for her kidney surgery at Korle Bu", name: 'Ama Mensah · Accra', raised: 14400, goal: 20000, img: P.medical, cat: 'Medical' },
-  { title: "Kofi's final year university fees — KNUST Engineering", name: 'Kofi Asante · Kumasi', raised: 2100, goal: 4500, img: P.education, cat: 'Education' },
-  { title: 'New roof for Victory Baptist Church, Tema Community 8', name: 'Victory Baptist · Tema', raised: 18000, goal: 30000, img: P.faith, cat: 'Faith' },
-  { title: 'Borehole project for Breman Asikuma — 500 families', name: 'Breman Community', raised: 8750, goal: 15000, img: P.community, cat: 'Community' },
-  { title: 'School uniform and books for 30 orphaned children', name: 'Hope Foundation · Accra', raised: 3200, goal: 5000, img: P.giving, cat: 'Charity' },
-  { title: 'Support Kwame Mensah — Ghana Black Stars youth league', name: 'Kwame Mensah · Accra', raised: 1800, goal: 6000, img: P.sport, cat: 'Sports' },
-]
 
 export default function HomePage() {
   const [campaigns, setCampaigns] = useState<any[]>([])
-  const [statsVisible, setStatsVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const statsRef = useRef<HTMLDivElement>(null)
 
-  const raised = useCountUp(2412500, 2800, statsVisible)
-  const campaignCount = useCountUp(1247, 2200, statsVisible)
-  const donors = useCountUp(8934, 2500, statsVisible)
 
   useEffect(() => {
     const supabase = createClient()
@@ -107,12 +79,8 @@ export default function HomePage() {
       .eq('status', 'approved').order('created_at', { ascending: false }).limit(6)
       .then(({ data }) => setCampaigns(data || []))
 
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStatsVisible(true) }, { threshold: 0.3 })
-    if (statsRef.current) obs.observe(statsRef.current)
-    return () => obs.disconnect()
   }, [])
 
-  const displayCampaigns = campaigns.length > 0 ? campaigns : null
 
   return (
     <>
@@ -215,7 +183,7 @@ export default function HomePage() {
             {[
               { icon: '🪪', text: 'Identity verified' },
               { icon: '📱', text: 'MTN · Vodafone · AirtelTigo' },
-              { icon: '⚡', text: 'Same-day MoMo payouts' },
+              { icon: '🏆', text: 'Milestone-based payouts' },
               { icon: '💸', text: '2% + ₵0.25 per donation · 0% platform fee' },
               { icon: '🔒', text: 'Encrypted & secure' },
             ].map((t, i) => (
@@ -228,24 +196,24 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            STATS — animated numbers
+            WHY TRUST — simple honest platform values
         ══════════════════════════════════════════ */}
-        <section ref={statsRef} className="py-16 bg-white">
+        <section className="py-16 bg-white">
           <div className="max-w-5xl mx-auto px-6 text-center">
-            <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-4" style={{fontFamily:'DM Mono, monospace'}}>Impact so far</p>
+            <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-4" style={{fontFamily:'DM Mono, monospace'}}>Why EveryGiving</p>
             <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl md:text-4xl mb-12 tracking-tight" style={{letterSpacing:-1}}>
-              The numbers speak for themselves
+              Ghana's most trusted crowdfunding platform
             </h2>
-            <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
               {[
-                { val: `₵${raised >= 1000000 ? (raised/1000000).toFixed(1)+'M' : raised.toLocaleString()}`, label: 'Total raised', sub: 'and growing' },
-                { val: campaignCount.toLocaleString()+'+', label: 'Campaigns funded', sub: 'across 17 causes' },
-                { val: donors.toLocaleString()+'+', label: 'Generous donors', sub: 'right across Ghana' },
-              ].map((s, i) => (
-                <div key={i}>
-                  <div className="font-nunito font-black text-[#02A95C] text-4xl md:text-5xl leading-none mb-2">{s.val}</div>
-                  <div className="font-bold text-[#1A2B3C] text-sm mb-1">{s.label}</div>
-                  <div className="text-gray-400 text-xs">{s.sub}</div>
+                { icon: '🪪', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns — ever.' },
+                { icon: '💸', title: '2% + ₵0.25 per donation', desc: 'The only fee. Deducted automatically. Zero platform fee. Zero monthly charges.' },
+                { icon: '🏆', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones — keeping donors confident.' },
+              ].map((item, i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <div className="text-4xl mb-3">{item.icon}</div>
+                  <div className="font-nunito font-black text-[#1A2B3C] text-base mb-2">{item.title}</div>
+                  <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
                 </div>
               ))}
             </div>
@@ -301,7 +269,7 @@ export default function HomePage() {
               {[
                 { n:'1', img: P.phone, title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo. Under 15 minutes — no technical skills required.', cta:'Start free →', href:'/create' },
                 { n:'2', img: P.accra, title: 'Verify your identity', desc: 'Upload your Ghana Card or accepted ID. Verified fundraisers raise 3× more — because donors trust people whose identity is confirmed.', cta:'See how →', href:'/verification' },
-                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Donations are held securely by Hubtel and released to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet when you hit your milestones.', cta:'Learn more →', href:'/how-it-works' },
+                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Donations are held securely and released to your wallet in milestones. You set the milestones — donors can see progress before each payout.', cta:'Learn more →', href:'/how-it-works' },
               ].map((step, i) => (
                 <div key={i} className="group">
                   <div className="relative rounded-2xl overflow-hidden h-52 mb-5 shadow-sm">
@@ -333,35 +301,20 @@ export default function HomePage() {
               <Link href="/donate" className="hidden md:block text-[#02A95C] font-bold text-sm hover:underline">See all campaigns →</Link>
             </div>
 
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
-              {displayCampaigns
-                ? displayCampaigns.map(c => <CampaignCard key={c.id} c={c} />)
-                : PLACEHOLDERS.map((c, i) => {
-                    const pct = Math.round((c.raised / c.goal) * 100)
-                    return (
-                      <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group">
-                        <div className="h-48 overflow-hidden">
-                          <img src={c.img} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        </div>
-                        <div className="p-5">
-                          <div className="text-[10px] font-black text-[#02A95C] uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 bg-[#02A95C] rounded-full" />
-                            {c.cat} · Verified
-                          </div>
-                          <div className="font-bold text-[#1A2B3C] text-sm mb-1 line-clamp-2 leading-snug">{c.title}</div>
-                          <div className="text-gray-400 text-xs mb-3">{c.name}</div>
-                          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2">
-                            <div className="h-full bg-[#02A95C] rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="font-black text-[#1A2B3C] text-sm">₵{c.raised.toLocaleString()} <span className="text-gray-400 font-normal text-xs">raised</span></span>
-                            <span className="text-[#02A95C] font-black text-xs">{pct}% of ₵{c.goal.toLocaleString()}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-            </div>
+            {campaigns.length > 0 ? (
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
+                {campaigns.map(c => <CampaignCard key={c.id} c={c} />)}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+                <div className="text-5xl mb-4">💚</div>
+                <h3 className="font-nunito font-black text-[#1A2B3C] text-xl mb-2">Be the first to start a campaign</h3>
+                <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">EveryGiving is live and accepting campaigns. Create yours today — verified and trusted by donors across Ghana.</p>
+                <Link href="/create" className="inline-block bg-[#02A95C] text-white font-nunito font-black px-8 py-4 rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-[#02A95C]/25">
+                  Start the first campaign →
+                </Link>
+              </div>
+            )}
 
             <div className="text-center mt-8">
               <Link href="/donate"
@@ -388,8 +341,8 @@ export default function HomePage() {
               <img src={P.accra} alt="Accra"
                 className="absolute top-10 right-0 w-48 h-64 object-cover rounded-2xl shadow-xl border-4 border-white" />
               <div className="absolute bottom-12 right-4 bg-[#02A95C] text-white rounded-2xl px-5 py-3 shadow-xl">
-                <div className="font-nunito font-black text-2xl">₵2.4M+</div>
-                <div className="text-white/70 text-xs">raised in Ghana 🇬🇭</div>
+                <div className="font-nunito font-black text-2xl">₵0 platform fee</div>
+                <div className="text-white/70 text-xs">forever 🇬🇭</div>
               </div>
             </div>
 
@@ -508,7 +461,7 @@ export default function HomePage() {
               Create your campaign<br /><span className="text-[#02A95C]">today</span>
             </h2>
             <p className="text-white/60 text-lg mb-8 leading-relaxed">
-              Free to create. Verified in minutes.<br />Donations straight to your MoMo.
+              Free to create. Verified by our team.<br />Funds released as you hit your milestones.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/create"

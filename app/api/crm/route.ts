@@ -4,7 +4,7 @@ const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
 const BASE_URL = 'https://api.brevo.com/v3'
 
-const LIST_IDS = { fundraisers: 2, donors: 3, all: 1 }
+const LIST_IDS = { all: 3, fundraisers: 4, donors: 5 }
 
 async function brevo(endpoint: string, method: string, body: object) {
   const res = await fetch(`${BASE_URL}${endpoint}`, {

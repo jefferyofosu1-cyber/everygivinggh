@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url)
@@ -9,13 +9,14 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     try {
-      const supabase = createClient()
+      const supabase = await createServerSupabaseClient()
       const { error } = await supabase.auth.exchangeCodeForSession(code)
       if (!error) {
         return NextResponse.redirect(`${origin}${next}`)
       }
-    } catch (_) {
-      // fall through
+      console.error('Auth callback exchange error:', error.message)
+    } catch (e) {
+      console.error('Auth callback error:', e)
     }
   }
 

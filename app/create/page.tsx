@@ -90,7 +90,7 @@ const TIERS = [
   },
 ]
 
-type Step = 'campaign' | 'tier' | 'identity' | 'payment' | 'done'
+type Step = 'campaign' | 'details' | 'tier' | 'identity' | 'payment' | 'done'
 type PayMode = 'now' | 'defer'
 
 function suggestedTierId(goal: number) {
@@ -109,6 +109,8 @@ export default function CreatePage() {
   const [payMode, setPayMode] = useState<PayMode>('now')
 
   const [campaign, setCampaign] = useState({ title: '', category: '', goal: '', story: '' })
+  const [fundraiser, setFundraiser] = useState({ fullName: '', phone: '', location: '', relationship: '' })
+  const canNextDetails = fundraiser.fullName.trim().length > 1 && fundraiser.phone.trim().length > 8
   const [tierId, setTierId] = useState('standard')
   const tier = TIERS.find(t => t.id === tierId)!
 
@@ -296,7 +298,7 @@ export default function CreatePage() {
                     {campaign.story.length} characters {campaign.story.length < 30 ? `(write at least ${30 - campaign.story.length} more)` : '✓'}
                   </div>
                 </div>
-                <button disabled={!canNextCampaign} onClick={() => setStep('tier')}
+                <button disabled={!canNextCampaign} onClick={() => setStep('details')}
                   className={`w-full py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextCampaign ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
                   Continue to verification tier →
                 </button>
@@ -305,6 +307,64 @@ export default function CreatePage() {
           )}
 
           {/* ── STEP 2: TIER ── */}
+          {step === 'details' && (
+            <div>
+              <h2 className="font-nunito font-black text-navy text-2xl mb-2">Your details</h2>
+              <p className="text-gray-400 text-sm mb-7">Tell donors who is behind this campaign. This builds trust and helps people give with confidence.</p>
+
+              <div className="flex flex-col gap-5">
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Full name <span className="text-red-400">*</span></label>
+                  <input type="text" value={fundraiser.fullName}
+                    onChange={e => setFundraiser(p => ({ ...p, fullName: e.target.value }))}
+                    placeholder="e.g. Ama Mensah"
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all" />
+                  <p className="text-xs text-gray-400 mt-1.5">Your full legal name as it appears on your ID</p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Phone / MoMo number <span className="text-red-400">*</span></label>
+                  <input type="tel" value={fundraiser.phone}
+                    onChange={e => setFundraiser(p => ({ ...p, phone: e.target.value }))}
+                    placeholder="e.g. 024 000 0000"
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all" />
+                  <p className="text-xs text-gray-400 mt-1.5">Your active mobile money number — this is where funds will be sent</p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Location <span className="text-gray-400 font-normal normal-case">(optional)</span></label>
+                  <input type="text" value={fundraiser.location}
+                    onChange={e => setFundraiser(p => ({ ...p, location: e.target.value }))}
+                    placeholder="e.g. Accra, Kumasi, Tema…"
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all" />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Your relationship to this campaign <span className="text-gray-400 font-normal normal-case">(optional)</span></label>
+                  <select value={fundraiser.relationship}
+                    onChange={e => setFundraiser(p => ({ ...p, relationship: e.target.value }))}
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all bg-white">
+                    <option value="">Select…</option>
+                    <option value="self">I am the beneficiary</option>
+                    <option value="family">Raising for a family member</option>
+                    <option value="friend">Raising for a friend</option>
+                    <option value="community">Raising for my community</option>
+                    <option value="organisation">Raising for an organisation / charity</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-7">
+                <button onClick={() => setStep('campaign')} className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm">← Back</button>
+                <button disabled={!canNextDetails} onClick={() => setStep('tier')}
+                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextDetails ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                  Continue →
+                </button>
+              </div>
+            </div>
+          )}
+
           {step === 'tier' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
               <h2 className="font-nunito font-black text-navy text-2xl mb-1">Choose your verification tier</h2>

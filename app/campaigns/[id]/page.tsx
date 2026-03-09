@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -33,7 +33,6 @@ function getDefaultTip(amount: number): number {
 
 export default function CampaignPage() {
   const params = useParams()
-  const router = useRouter()
   const [campaign, setCampaign] = useState<any>(null)
   const [donations, setDonations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -61,11 +60,11 @@ export default function CampaignPage() {
     const supabase = createClient()
     Promise.all([
       supabase.from('campaigns').select('*, profiles(full_name, phone)').eq('id', params.id).single(),
-      supabase.from('donations').select('*').eq('campaign_id', params.id).eq('status', 'success').order('created_at', { ascending: false }).limit(50),
+      supabase.from('donations').select('*').eq('campaign_id', params.id).order('created_at', { ascending: false }).limit(50),
     ]).then(([{ data: camp, error }, { data: don }]) => {
-      if (error || !camp) { router.replace('/campaigns'); return }
+      if (error || !camp) { setLoading(false); return }
       setCampaign(camp)
-      setDonations(don || [])
+      setDonations((don || []).filter((d: any) => d.status === 'success' || d.status === 'pending'))
       setLoading(false)
     })
   }, [params?.id])
@@ -84,7 +83,22 @@ export default function CampaignPage() {
       <Footer />
     </>
   )
-  if (!campaign) return null
+  if (!loading && !campaign) return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🔍</div>
+          <h1 className="font-nunito font-black text-navy text-2xl mb-2">Campaign not found</h1>
+          <p className="text-gray-400 text-sm mb-6">This campaign may have been removed or the link may be incorrect.</p>
+          <Link href="/campaigns" className="inline-block bg-primary text-white font-nunito font-black px-8 py-3.5 rounded-full text-sm hover:-translate-y-0.5 transition-all">
+            Browse all campaigns →
+          </Link>
+        </div>
+      </div>
+      <Footer />
+    </>
+  )
 
   const pct = campaign.goal_amount
     ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0

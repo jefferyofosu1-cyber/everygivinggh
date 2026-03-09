@@ -128,6 +128,8 @@ export async function POST(req: NextRequest) {
     }
 
     // ── STEP 2: Patch extra columns one by one — silently skip any that don't exist yet ──
+    const { fundraiserName, fundraiserPhone, fundraiserLocation, fundraiserRelationship } = body
+
     const extraColumns: Record<string, any> = {
       verification_tier: tier || 'basic',
       id_type: idType || null,
@@ -138,6 +140,15 @@ export async function POST(req: NextRequest) {
       verification_fee: feeAmount,
       fee_deferred: feeDeferred,
       fee_collected: false,
+    }
+
+    // Update profile with fundraiser contact details
+    if (fundraiserName || fundraiserPhone) {
+      const profileUpdate: Record<string, any> = {}
+      if (fundraiserName) profileUpdate.full_name = fundraiserName
+      if (fundraiserPhone) profileUpdate.phone = fundraiserPhone
+      if (fundraiserLocation) profileUpdate.location = fundraiserLocation
+      await supabase.from('profiles').update(profileUpdate).eq('id', user.id)
     }
 
     // Try patching all extra columns together first

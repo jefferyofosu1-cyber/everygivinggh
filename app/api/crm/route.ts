@@ -26,16 +26,17 @@ async function brevo(endpoint: string, method: string, body: object) {
 async function upsertContact({ email, firstName, lastName, phone, tag, listId }: {
   email: string; firstName: string; lastName?: string; phone?: string; tag: string; listId: number
 }) {
+  // Only use Brevo's built-in default attributes (FIRSTNAME, LASTNAME, SMS)
+  // Custom attributes (PLATFORM, TAG etc) require manual creation in Brevo first
+  const attributes: Record<string, string> = {
+    FIRSTNAME: firstName,
+    LASTNAME: lastName || '',
+  }
+  if (phone) attributes.SMS = phone
+
   return brevo('/contacts', 'POST', {
     email,
-    attributes: {
-      FIRSTNAME: firstName,
-      LASTNAME: lastName || '',
-      SMS: phone || '',
-      PLATFORM: 'EveryGiving',
-      TAG: tag,
-      SIGNUP_DATE: new Date().toISOString().split('T')[0],
-    },
+    attributes,
     listIds: [listId],
     updateEnabled: true,
   })

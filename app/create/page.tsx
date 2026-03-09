@@ -217,7 +217,7 @@ export default function CreatePage() {
             {[
               { icon: '📧', text: 'Confirmation email sent to your inbox' },
               { icon: '🔍', text: 'Our team reviews your campaign & ID' },
-              { icon: '✅', text: 'You'll be emailed: approved or rejected' },
+              { icon: '✅', text: "You'll be emailed: approved or rejected" },
               { icon: '📱', text: 'If approved — share on WhatsApp and go live' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm text-gray-600 shadow-sm">

@@ -86,8 +86,6 @@ export default function VerifyIdPage() {
   }, [step, images, capturePhoto, stopCamera])
 
   const runVerification = async (imgs: ImageCapture) => {
-    setProcessing(true)
-    setProgress(0)
 
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -107,11 +105,8 @@ export default function VerifyIdPage() {
         return data?.path || null
       }
 
-      setProgress(40)
       await uploadImg(imgs.front, 'id-front')
-      setProgress(70)
       await uploadImg(imgs.back, 'id-back')
-      setProgress(90)
       if (imgs.selfie) await uploadImg(imgs.selfie, 'selfie')
 
       // Mark profile as pending verification review
@@ -120,7 +115,6 @@ export default function VerifyIdPage() {
         verification_submitted_at: new Date().toISOString(),
       }).eq('id', uid)
 
-      setProgress(100)
       setStep('done')
     } catch {
       setStep('failed')

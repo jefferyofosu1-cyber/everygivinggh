@@ -185,8 +185,8 @@ export default function CreatePage() {
     setSubmitting(false)
   }
 
-  const STEPS = ['Campaign', 'Tier', 'Identity', 'Payment']
-  const stepIdx = { campaign: 0, tier: 1, identity: 2, payment: 3, done: 4 }[step]
+  const STEPS = ['Campaign', 'Details', 'Tier', 'Identity', 'Payment']
+  const stepIdx = { campaign: 0, details: 1, tier: 2, identity: 3, payment: 4, done: 5 }[step]
 
   // ── DONE ─────────────────────────────────────────────────────────────────
   if (step === 'done') return (
@@ -240,11 +240,11 @@ export default function CreatePage() {
             <div className="flex items-center justify-between mb-2">
               {STEPS.map((s, i) => (
                 <div key={i} className="flex items-center gap-1.5">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all ${i < stepIdx ? 'bg-primary text-white' : i === stepIdx ? 'bg-primary text-white ring-4 ring-primary/20' : 'bg-gray-200 text-gray-400'}`}>
-                    {i < stepIdx ? '✓' : i + 1}
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all ${i < (stepIdx ?? 0) ? 'bg-primary text-white' : i === (stepIdx ?? 0) ? 'bg-primary text-white ring-4 ring-primary/20' : 'bg-gray-200 text-gray-400'}`}>
+                    {i < (stepIdx ?? 0) ? '✓' : i + 1}
                   </div>
-                  <span className={`text-xs font-bold hidden sm:block ${i === stepIdx ? 'text-primary' : i < stepIdx ? 'text-gray-400' : 'text-gray-300'}`}>{s}</span>
-                  {i < STEPS.length - 1 && <div className={`h-0.5 w-8 sm:w-16 ml-1 rounded-full ${i < stepIdx ? 'bg-primary' : 'bg-gray-200'}`} />}
+                  <span className={`text-xs font-bold hidden sm:block ${i === (stepIdx ?? 0) ? 'text-primary' : i < (stepIdx ?? 0) ? 'text-gray-400' : 'text-gray-300'}`}>{s}</span>
+                  {i < STEPS.length - 1 && <div className={`h-0.5 w-6 sm:w-10 ml-1 rounded-full ${i < (stepIdx ?? 0) ? 'bg-primary' : 'bg-gray-200'}`} />}
                 </div>
               ))}
             </div>

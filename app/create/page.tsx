@@ -428,11 +428,12 @@ export default function CreatePage() {
                 </div>
               )}
 
-              <div className="flex gap-3 mt-7">
+              {error && <div className="mt-5 bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">{error}</div>}
+              <div className="flex gap-3 mt-4">
                 <button onClick={() => setStep('tier')} className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm">← Back</button>
-                <button disabled={!canNextIdentity} onClick={() => tier.priceNum === 0 ? handleSubmit() : setStep('payment')}
-                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextIdentity ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
-                  {tier.priceNum === 0 ? 'Submit campaign →' : 'Continue to payment →'}
+                <button disabled={!canNextIdentity || submitting} onClick={() => tier.priceNum === 0 ? handleSubmit() : setStep('payment')}
+                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextIdentity && !submitting ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                  {submitting ? 'Submitting…' : tier.priceNum === 0 ? 'Submit campaign →' : 'Continue to payment →'}
                 </button>
               </div>
             </div>

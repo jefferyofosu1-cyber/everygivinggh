@@ -6,18 +6,22 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'jefferyofosu1@gmail.com'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
 
 async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
-  if (!BREVO_API_KEY) { console.warn('No BREVO_API_KEY'); return }
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: { 'api-key': BREVO_API_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sender: { name: 'Every Giving', email: 'business@everygiving.org' },
-      to: [{ email: to }],
-      subject,
-      htmlContent: html,
-    }),
-  })
-  if (!res.ok) console.error('Brevo error:', await res.json().catch(() => ({})))
+  if (!BREVO_API_KEY) { console.warn('No BREVO_API_KEY set'); return }
+  try {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': BREVO_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sender: { name: 'EveryGiving', email: 'business@everygiving.org' },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      }),
+    })
+    if (!res.ok) console.error('Brevo error:', await res.text())
+  } catch (e) {
+    console.error('Email send failed:', e)
+  }
 }
 
 function confirmEmail(name: string, title: string, tier: string, feeAmount: number, feeDeferred: boolean) {
@@ -33,43 +37,54 @@ function confirmEmail(name: string, title: string, tier: string, feeAmount: numb
   </div>
   <div style="background:white;padding:40px">
     <p style="font-size:15px;color:#475569;line-height:1.7;margin-bottom:24px">
-      Your campaign <strong style="color:#1A2B3C">"${title}"</strong> has been received and is now <strong style="color:#02A95C">pending review</strong>. We usually review campaigns within 2 hours.
+      Your campaign <strong style="color:#1A2B3C">"${title}"</strong> has been received and is now <strong style="color:#02A95C">pending review</strong>. Our team usually reviews within 24 hours.
     </p>
     <div style="background:#F0FDF6;border:1.5px solid rgba(2,169,92,.2);border-radius:16px;padding:20px;margin-bottom:24px">
       <div style="font-size:12px;font-weight:800;color:#1A2B3C;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">What happens next</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px"><span>🔍</span><span style="font-size:13px;color:#475569">Our team reviews your campaign and ID documents</span></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px"><span>✅</span><span style="font-size:13px;color:#475569">Once approved, your campaign goes live and you receive another email</span></div>
-      <div style="display:flex;gap:10px"><span>📱</span><span style="font-size:13px;color:#475569">Share on WhatsApp to start receiving donations via MoMo</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px"><span>🔍</span><span style="font-size:13px;color:#475569">Our team reviews your campaign and identity documents</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px"><span>✅</span><span style="font-size:13px;color:#475569">Once approved, your campaign goes live and you receive a confirmation email</span></div>
+      <div style="display:flex;gap:10px"><span>📱</span><span style="font-size:13px;color:#475569">Share on WhatsApp to start receiving donations</span></div>
     </div>
     <div style="background:#F8FAFC;border-radius:12px;padding:16px;margin-bottom:24px">
       <div style="font-size:12px;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Campaign details</div>
       <div style="font-size:14px;color:#1A2B3C;font-weight:700">${title}</div>
-      <div style="font-size:12px;color:#64748B;margin-top:4px">Tier: ${tier}</div>
-      ${feeDeferred && feeAmount > 0 ? `<div style="font-size:12px;color:#D97706;margin-top:6px;padding:8px 12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A">💡 Verification fee of ₵${feeAmount} will be deducted from your first donations — you pay nothing today.</div>` : ''}
+      <div style="font-size:12px;color:#64748B;margin-top:4px">Verification tier: ${tier}</div>
+      ${feeDeferred && feeAmount > 0 ? `<div style="font-size:12px;color:#D97706;margin-top:8px;padding:8px 12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A">💡 Your verification fee of ₵${feeAmount} will be deducted from your first donations — you pay nothing today.</div>` : ''}
     </div>
     <p style="font-size:13px;color:#94A3B8;text-align:center">Questions? Reply to this email — we are here to help.<br>
-      <a href="${APP_URL}/help" style="color:#02A95C;text-decoration:none;font-weight:600">Help Centre</a></p>
+      <a href="${APP_URL}/help" style="color:#02A95C;text-decoration:none;font-weight:600">Visit Help Centre</a></p>
   </div>
   <div style="background:#1A2B3C;border-radius:0 0 20px 20px;padding:20px 40px;text-align:center">
     <div style="font-size:18px;font-weight:900"><span style="color:#02A95C">Every</span><span style="color:white">Giving</span></div>
-    <div style="font-size:11px;color:rgba(255,255,255,.2);margin-top:4px">You received this because you submitted a campaign at everygiving.org</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.2);margin-top:4px">everygiving.org</div>
   </div>
 </div></body></html>`
 }
 
 function adminAlertEmail(name: string, email: string, title: string, category: string, goal: string, tier: string, feeAmount: number, feeDeferred: boolean, idType: string, campaignId: string) {
+  const rows = [
+    ['Campaign', title],
+    ['Category', category],
+    ['Goal', '₵' + goal],
+    ['Tier', tier],
+    ['Fee', '₵' + feeAmount + (feeDeferred ? ' (deferred — collect from first donations)' : ' (paid upfront)')],
+    ['ID type', idType],
+    ['Fundraiser', name],
+    ['Email', email],
+    ['Campaign ID', campaignId],
+  ]
   return `<!DOCTYPE html><html><body style="margin:0;background:#0F172A;font-family:Arial,sans-serif">
 <div style="max-width:540px;margin:32px auto;padding:0 16px">
   <div style="background:#1E293B;border-radius:20px;overflow:hidden">
     <div style="background:#02A95C;padding:20px 32px">
       <div style="color:white;font-size:18px;font-weight:900">🚨 New campaign to review</div>
-      <div style="color:rgba(255,255,255,.7);font-size:12px;margin-top:2px">Every Giving Admin · Action required</div>
+      <div style="color:rgba(255,255,255,.7);font-size:12px;margin-top:2px">EveryGiving Admin · Action required</div>
     </div>
     <div style="padding:28px 32px">
       <table style="width:100%;border-collapse:collapse">
-        ${[['Campaign',title],['Category',category],['Goal','₵'+goal],['Tier',tier],['Fee','₵'+feeAmount+(feeDeferred?' (deferred)':' (paid)')],['ID type',idType],['Fundraiser',name],['Email',email]].map(([l,v])=>`
+        ${rows.map(([l, v]) => `
         <tr>
-          <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:#64748B;width:110px">${l}</td>
+          <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:#64748B;width:120px;vertical-align:top">${l}</td>
           <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;color:white;font-weight:600">${v}</td>
         </tr>`).join('')}
       </table>
@@ -86,42 +101,91 @@ function adminAlertEmail(name: string, email: string, title: string, category: s
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Not authenticated. Please sign in and try again.' }, { status: 401 })
+    }
 
     const body = await req.json()
-    const { title, category, goal_amount, story, tier, fee_amount, fee_deferred, idType, idNumber, idFrontUrl, selfieUrl } = body
+    const {
+      title, category, goal_amount, story,
+      tier, fee_amount, fee_deferred,
+      idType, idNumber, idFrontUrl, selfieUrl,
+    } = body
 
-    const { data: campaign, error } = await supabase.from('campaigns').insert({
+    // Validate required fields
+    if (!title || !category || !goal_amount || !story) {
+      return NextResponse.json({ error: 'Missing required campaign fields.' }, { status: 400 })
+    }
+
+    // Build insert — core fields only, no dependency on new columns existing yet
+    const insertData: Record<string, any> = {
       user_id: user.id,
-      title,
+      title: title.trim(),
       category,
       goal_amount: parseFloat(goal_amount) || 0,
-      story,
+      story: story.trim(),
       status: 'pending',
-      verification_tier: tier,
-      verification_fee: parseFloat(fee_amount) || 0,
-      fee_deferred: fee_deferred || false,
-      fee_collected: false,
-      id_type: idType,
-      id_number: idNumber,
+      verification_tier: tier || 'basic',
+      id_type: idType || null,
+      id_number: idNumber || null,
       id_front_url: idFrontUrl || null,
       selfie_url: selfieUrl || null,
       raised_amount: 0,
       verified: false,
-    }).select().single()
+      nia_verified: false,
+    }
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    // Attempt to add new columns — if they don't exist yet Supabase will error,
+    // so we catch and retry without them
+    const feeAmount = parseFloat(fee_amount) || 0
+    const feeDeferred = fee_deferred === true
+
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .insert({ ...insertData, verification_fee: feeAmount, fee_deferred: feeDeferred, fee_collected: false })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Campaign insert error:', error)
+
+      // Retry without the new fee columns (in case migration hasn't run yet)
+      if (error.message?.includes('verification_fee') || error.message?.includes('fee_deferred') || error.message?.includes('fee_collected')) {
+        const { data: campaign2, error: error2 } = await supabase
+          .from('campaigns')
+          .insert(insertData)
+          .select()
+          .single()
+
+        if (error2) {
+          console.error('Campaign insert retry error:', error2)
+          return NextResponse.json({ error: error2.message }, { status: 500 })
+        }
+
+        // Send emails async (don't block response)
+        const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
+        const name = profile?.full_name || user.email?.split('@')[0] || 'Fundraiser'
+        sendEmail({ to: user.email!, subject: `Campaign received — "${title}" is under review`, html: confirmEmail(name, title, tier || 'Basic', feeAmount, feeDeferred) })
+        sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, goal_amount, tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign2!.id) })
+
+        return NextResponse.json({ success: true, campaignId: campaign2!.id })
+      }
+
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
 
     const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
     const name = profile?.full_name || user.email?.split('@')[0] || 'Fundraiser'
 
-    await sendEmail({ to: user.email!, subject: `Campaign received — "${title}" is under review`, html: confirmEmail(name, title, tier, parseFloat(fee_amount)||0, fee_deferred||false) })
-    await sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, goal_amount, tier, parseFloat(fee_amount)||0, fee_deferred||false, idType, campaign.id) })
+    sendEmail({ to: user.email!, subject: `Campaign received — "${title}" is under review`, html: confirmEmail(name, title, tier || 'Basic', feeAmount, feeDeferred) })
+    sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, goal_amount, tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign.id) })
 
     return NextResponse.json({ success: true, campaignId: campaign.id })
+
   } catch (err: any) {
-    console.error('Submit error:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    console.error('Campaign submit unexpected error:', err)
+    return NextResponse.json({ error: err.message || 'Unexpected error. Please try again.' }, { status: 500 })
   }
 }

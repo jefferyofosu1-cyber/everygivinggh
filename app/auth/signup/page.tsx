@@ -41,6 +41,7 @@ export default function SignupPage() {
         id: data.user.id,
         full_name: `${form.firstName} ${form.lastName}`.trim(),
         phone: form.phone,
+        email: form.email,
       })
       trackFundraiserSignup({
         email: form.email,

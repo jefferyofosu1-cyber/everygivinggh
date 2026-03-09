@@ -199,23 +199,26 @@ export default function CreatePage() {
             <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">🎉</div>
           </div>
           <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
-          <p className="text-gray-500 text-sm mb-2">Check your email — a confirmation has been sent to your inbox.</p>
+          <p className="text-gray-500 text-sm mb-1 max-w-sm mx-auto leading-relaxed">
+            Your campaign and identity documents have been received and are now <strong className="text-navy">under review</strong> by our team.
+          </p>
           <p className="text-gray-400 text-xs mb-6 max-w-sm mx-auto leading-relaxed">
-            Your campaign and identity documents are under review. We will email you once it is approved — usually within 24 hours.
+            You will receive an email once your campaign is approved or rejected — usually within 24 hours. Check your spam folder if you don't see it.
           </p>
           {payMode === 'defer' && tier.priceNum > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
-              <div className="font-bold text-amber-800 text-sm mb-1">💡 Deferred fee — how it works</div>
+              <div className="font-bold text-amber-800 text-sm mb-1">💡 Deferred fee reminder</div>
               <div className="text-amber-700 text-xs leading-relaxed">
-                Your <strong>{tier.name}</strong> verification fee of <strong>{tier.price}</strong> will be automatically deducted from your first donations once your campaign is live. You pay nothing today.
+                Your <strong>{tier.name}</strong> verification fee of <strong>{tier.price}</strong> will be automatically deducted from your first donations once your campaign goes live. You pay nothing today.
               </div>
             </div>
           )}
           <div className="flex flex-col gap-3 mb-8">
             {[
-              { icon: '📧', text: 'Check your email for confirmation' },
-              { icon: '⏱', text: 'Review usually within 24 hours' },
-              { icon: '📱', text: "You'll get an email when you go live" },
+              { icon: '📧', text: 'Confirmation email sent to your inbox' },
+              { icon: '🔍', text: 'Our team reviews your campaign & ID' },
+              { icon: '✅', text: 'You'll be emailed: approved or rejected' },
+              { icon: '📱', text: 'If approved — share on WhatsApp and go live' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm text-gray-600 shadow-sm">
                 <span className="text-xl">{item.icon}</span>{item.text}

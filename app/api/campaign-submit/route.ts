@@ -142,12 +142,26 @@ export async function POST(req: NextRequest) {
       fee_collected: false,
     }
 
-    // Update profile with fundraiser contact details
-    if (fundraiserName || fundraiserPhone) {
-      const profileUpdate: Record<string, any> = {}
-      if (fundraiserName) profileUpdate.full_name = fundraiserName
-      if (fundraiserPhone) profileUpdate.phone = fundraiserPhone
-      if (fundraiserLocation) profileUpdate.location = fundraiserLocation
+    // Update profile with all fundraiser details
+    const { fundraiserWhatsapp, fundraiserNetwork, fundraiserPayoutMethod,
+      fundraiserMomoNumber, fundraiserMomoNetwork, fundraiserBankName, fundraiserBankAccount,
+      fundraiserAddress, fundraiserLandmark, fundraiserGpsAddress } = body
+
+    const profileUpdate: Record<string, any> = {}
+    if (fundraiserName) profileUpdate.full_name = fundraiserName
+    if (fundraiserPhone) profileUpdate.phone = fundraiserPhone
+    if (fundraiserWhatsapp) profileUpdate.whatsapp = fundraiserWhatsapp
+    if (fundraiserNetwork) profileUpdate.mobile_network = fundraiserNetwork
+    if (fundraiserPayoutMethod) profileUpdate.payout_method = fundraiserPayoutMethod
+    if (fundraiserMomoNumber) profileUpdate.momo_number = fundraiserMomoNumber
+    if (fundraiserMomoNetwork) profileUpdate.momo_network = fundraiserMomoNetwork
+    if (fundraiserBankName) profileUpdate.bank_name = fundraiserBankName
+    if (fundraiserBankAccount) profileUpdate.bank_account = fundraiserBankAccount
+    if (fundraiserAddress) profileUpdate.address = fundraiserAddress
+    if (fundraiserLandmark) profileUpdate.landmark = fundraiserLandmark
+    if (fundraiserGpsAddress) profileUpdate.gps_address = fundraiserGpsAddress
+
+    if (Object.keys(profileUpdate).length > 0) {
       await supabase.from('profiles').update(profileUpdate).eq('id', user.id)
     }
 

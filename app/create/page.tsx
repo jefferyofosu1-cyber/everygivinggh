@@ -109,8 +109,16 @@ export default function CreatePage() {
   const [payMode, setPayMode] = useState<PayMode>('now')
 
   const [campaign, setCampaign] = useState({ title: '', category: '', goal: '', story: '' })
-  const [fundraiser, setFundraiser] = useState({ fullName: '', phone: '', location: '', relationship: '' })
-  const canNextDetails = fundraiser.fullName.trim().length > 1 && fundraiser.phone.trim().length > 8
+  const [fundraiser, setFundraiser] = useState({
+    fullName: '', phone: '', whatsapp: '', network: '',
+    payoutMethod: 'momo', // 'momo' | 'bank'
+    momoNumber: '', momoNetwork: '',
+    bankName: '', bankAccount: '',
+    address: '', landmark: '', gpsAddress: '',
+    relationship: '',
+  })
+  const canNextDetails = fundraiser.fullName.trim().length > 1 && fundraiser.phone.trim().length > 8 &&
+    (fundraiser.payoutMethod === 'momo' ? fundraiser.momoNumber.trim().length > 8 : fundraiser.bankAccount.trim().length > 4)
   const [tierId, setTierId] = useState('standard')
   const tier = TIERS.find(t => t.id === tierId)!
 
@@ -313,49 +321,154 @@ export default function CreatePage() {
           {step === 'details' && (
             <div>
               <h2 className="font-nunito font-black text-navy text-2xl mb-2">Your details</h2>
-              <p className="text-gray-400 text-sm mb-7">Tell donors who is behind this campaign. This builds trust and helps people give with confidence.</p>
+              <p className="text-gray-400 text-sm mb-7">This information is kept private and is only used for identity verification and payout processing.</p>
 
               <div className="flex flex-col gap-5">
-                <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Full name <span className="text-red-400">*</span></label>
-                  <input type="text" value={fundraiser.fullName}
-                    onChange={e => setFundraiser(p => ({ ...p, fullName: e.target.value }))}
-                    placeholder="e.g. Ama Mensah"
-                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all" />
-                  <p className="text-xs text-gray-400 mt-1.5">Your full legal name as it appears on your ID</p>
+
+                {/* ── PERSONAL INFO ── */}
+                <div className="bg-gray-50 rounded-2xl p-5">
+                  <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Personal information</div>
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Full name <span className="text-red-400">*</span></label>
+                      <input type="text" value={fundraiser.fullName}
+                        onChange={e => setFundraiser(p => ({ ...p, fullName: e.target.value }))}
+                        placeholder="As it appears on your ID"
+                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 block mb-1.5">Phone number <span className="text-red-400">*</span></label>
+                        <input type="tel" value={fundraiser.phone}
+                          onChange={e => setFundraiser(p => ({ ...p, phone: e.target.value }))}
+                          placeholder="024 000 0000"
+                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 block mb-1.5">WhatsApp number</label>
+                        <input type="tel" value={fundraiser.whatsapp}
+                          onChange={e => setFundraiser(p => ({ ...p, whatsapp: e.target.value }))}
+                          placeholder="Same as phone?"
+                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Mobile network</label>
+                      <select value={fundraiser.network} onChange={e => setFundraiser(p => ({ ...p, network: e.target.value }))}
+                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
+                        <option value="">Select network…</option>
+                        <option value="mtn">MTN</option>
+                        <option value="telecel">Telecel (Vodafone)</option>
+                        <option value="airteltigo">AirtelTigo</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Your role in this campaign</label>
+                      <select value={fundraiser.relationship} onChange={e => setFundraiser(p => ({ ...p, relationship: e.target.value }))}
+                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
+                        <option value="">Select…</option>
+                        <option value="self">I am the beneficiary</option>
+                        <option value="family">Raising for a family member</option>
+                        <option value="friend">Raising for a friend</option>
+                        <option value="community">Raising for my community</option>
+                        <option value="organisation">Raising for an organisation / charity</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Phone / MoMo number <span className="text-red-400">*</span></label>
-                  <input type="tel" value={fundraiser.phone}
-                    onChange={e => setFundraiser(p => ({ ...p, phone: e.target.value }))}
-                    placeholder="e.g. 024 000 0000"
-                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all" />
-                  <p className="text-xs text-gray-400 mt-1.5">Your active mobile money number — this is where funds will be sent</p>
+                {/* ── PAYOUT METHOD ── */}
+                <div className="bg-gray-50 rounded-2xl p-5">
+                  <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Payout method <span className="text-red-400">*</span></div>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {[
+                      { id: 'momo', label: '📱 Mobile Money', sub: 'MTN, Telecel, AirtelTigo' },
+                      { id: 'bank', label: '🏦 Bank account', sub: 'Any Ghana bank' },
+                    ].map(opt => (
+                      <button key={opt.id} type="button"
+                        onClick={() => setFundraiser(p => ({ ...p, payoutMethod: opt.id }))}
+                        className={`p-4 rounded-xl border-2 text-left transition-all ${fundraiser.payoutMethod === opt.id ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                        <div className="font-bold text-navy text-sm">{opt.label}</div>
+                        <div className="text-xs text-gray-400 mt-0.5">{opt.sub}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {fundraiser.payoutMethod === 'momo' && (
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 block mb-1.5">MoMo number <span className="text-red-400">*</span></label>
+                        <input type="tel" value={fundraiser.momoNumber}
+                          onChange={e => setFundraiser(p => ({ ...p, momoNumber: e.target.value }))}
+                          placeholder="024 000 0000"
+                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 block mb-1.5">MoMo network <span className="text-red-400">*</span></label>
+                        <select value={fundraiser.momoNetwork} onChange={e => setFundraiser(p => ({ ...p, momoNetwork: e.target.value }))}
+                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
+                          <option value="">Select network…</option>
+                          <option value="mtn">MTN MoMo</option>
+                          <option value="telecel">Telecel Cash</option>
+                          <option value="airteltigo">AirtelTigo Money</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {fundraiser.payoutMethod === 'bank' && (
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 block mb-1.5">Bank name <span className="text-red-400">*</span></label>
+                        <select value={fundraiser.bankName} onChange={e => setFundraiser(p => ({ ...p, bankName: e.target.value }))}
+                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
+                          <option value="">Select bank…</option>
+                          {['GCB Bank','Absa Ghana','Ecobank Ghana','Fidelity Bank','Stanbic Bank','Cal Bank','Access Bank','Standard Chartered','Republic Bank','Agricultural Development Bank (ADB)','National Investment Bank (NIB)','Consolidated Bank Ghana','OmniBSIC Bank','Prudential Bank','Universal Merchant Bank (UMB)','First Atlantic Bank','Zenith Bank','Guaranty Trust Bank','ARB Apex Bank','Other'].map(b => (
+                            <option key={b} value={b}>{b}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 block mb-1.5">Account number <span className="text-red-400">*</span></label>
+                        <input type="text" value={fundraiser.bankAccount}
+                          onChange={e => setFundraiser(p => ({ ...p, bankAccount: e.target.value }))}
+                          placeholder="Enter your account number"
+                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Location <span className="text-gray-400 font-normal normal-case">(optional)</span></label>
-                  <input type="text" value={fundraiser.location}
-                    onChange={e => setFundraiser(p => ({ ...p, location: e.target.value }))}
-                    placeholder="e.g. Accra, Kumasi, Tema…"
-                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all" />
+                {/* ── ADDRESS ── */}
+                <div className="bg-gray-50 rounded-2xl p-5">
+                  <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Address <span className="text-gray-400 font-normal normal-case">(optional)</span></div>
+                  <div className="flex flex-col gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Home / office address</label>
+                      <input type="text" value={fundraiser.address}
+                        onChange={e => setFundraiser(p => ({ ...p, address: e.target.value }))}
+                        placeholder="e.g. 14 Cantonments Road, Accra"
+                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Nearest landmark</label>
+                      <input type="text" value={fundraiser.landmark}
+                        onChange={e => setFundraiser(p => ({ ...p, landmark: e.target.value }))}
+                        placeholder="e.g. Near Kotoka Airport, Opposite GCB Bank"
+                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Ghana Post GPS address</label>
+                      <input type="text" value={fundraiser.gpsAddress}
+                        onChange={e => setFundraiser(p => ({ ...p, gpsAddress: e.target.value }))}
+                        placeholder="e.g. GA-123-4567"
+                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
+                      <p className="text-xs text-gray-400 mt-1.5">Find yours at ghanapostgps.com</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Your relationship to this campaign <span className="text-gray-400 font-normal normal-case">(optional)</span></label>
-                  <select value={fundraiser.relationship}
-                    onChange={e => setFundraiser(p => ({ ...p, relationship: e.target.value }))}
-                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3.5 text-sm outline-none transition-all bg-white">
-                    <option value="">Select…</option>
-                    <option value="self">I am the beneficiary</option>
-                    <option value="family">Raising for a family member</option>
-                    <option value="friend">Raising for a friend</option>
-                    <option value="community">Raising for my community</option>
-                    <option value="organisation">Raising for an organisation / charity</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
               </div>
 
               <div className="flex gap-3 mt-7">

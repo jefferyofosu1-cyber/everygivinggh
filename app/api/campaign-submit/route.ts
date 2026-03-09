@@ -20,7 +20,7 @@ async function sendEmail({ to, subject, html }: { to: string; subject: string; h
   if (!res.ok) console.error('Brevo error:', await res.json().catch(() => ({})))
 }
 
-function confirmEmail(name: string, title: string, tier: string) {
+function confirmEmail(name: string, title: string, tier: string, feeAmount: number, feeDeferred: boolean) {
   return `<!DOCTYPE html><html><body style="margin:0;background:#F1F5F9;font-family:Arial,sans-serif">
 <div style="max-width:580px;margin:32px auto;padding:0 16px">
   <div style="background:#1A2B3C;border-radius:20px 20px 0 0;padding:32px 40px;text-align:center">
@@ -45,6 +45,7 @@ function confirmEmail(name: string, title: string, tier: string) {
       <div style="font-size:12px;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Campaign details</div>
       <div style="font-size:14px;color:#1A2B3C;font-weight:700">${title}</div>
       <div style="font-size:12px;color:#64748B;margin-top:4px">Tier: ${tier}</div>
+      ${feeDeferred && feeAmount > 0 ? `<div style="font-size:12px;color:#D97706;margin-top:6px;padding:8px 12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A">💡 Verification fee of ₵${feeAmount} will be deducted from your first donations — you pay nothing today.</div>` : ''}
     </div>
     <p style="font-size:13px;color:#94A3B8;text-align:center">Questions? Reply to this email — we are here to help.<br>
       <a href="${APP_URL}/help" style="color:#02A95C;text-decoration:none;font-weight:600">Help Centre</a></p>
@@ -56,7 +57,7 @@ function confirmEmail(name: string, title: string, tier: string) {
 </div></body></html>`
 }
 
-function adminAlertEmail(name: string, email: string, title: string, category: string, goal: string, tier: string, idType: string, campaignId: string) {
+function adminAlertEmail(name: string, email: string, title: string, category: string, goal: string, tier: string, feeAmount: number, feeDeferred: boolean, idType: string, campaignId: string) {
   return `<!DOCTYPE html><html><body style="margin:0;background:#0F172A;font-family:Arial,sans-serif">
 <div style="max-width:540px;margin:32px auto;padding:0 16px">
   <div style="background:#1E293B;border-radius:20px;overflow:hidden">
@@ -66,7 +67,7 @@ function adminAlertEmail(name: string, email: string, title: string, category: s
     </div>
     <div style="padding:28px 32px">
       <table style="width:100%;border-collapse:collapse">
-        ${[['Campaign',title],['Category',category],['Goal','₵'+goal],['Tier',tier],['ID type',idType],['Fundraiser',name],['Email',email]].map(([l,v])=>`
+        ${[['Campaign',title],['Category',category],['Goal','₵'+goal],['Tier',tier],['Fee','₵'+feeAmount+(feeDeferred?' (deferred)':' (paid)')],['ID type',idType],['Fundraiser',name],['Email',email]].map(([l,v])=>`
         <tr>
           <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:#64748B;width:110px">${l}</td>
           <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;color:white;font-weight:600">${v}</td>
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const body = await req.json()
-    const { title, category, goal_amount, story, tier, idType, idNumber, idFrontUrl, idBackUrl, selfieUrl } = body
+    const { title, category, goal_amount, story, tier, fee_amount, fee_deferred, idType, idNumber, idFrontUrl, idBackUrl, selfieUrl } = body
 
     const { data: campaign, error } = await supabase.from('campaigns').insert({
       user_id: user.id,
@@ -99,6 +100,9 @@ export async function POST(req: NextRequest) {
       story,
       status: 'pending',
       verification_tier: tier,
+      verification_fee: parseFloat(fee_amount) || 0,
+      fee_deferred: fee_deferred || false,
+      fee_collected: false,
       id_type: idType,
       id_number: idNumber,
       id_front_url: idFrontUrl || null,
@@ -113,8 +117,8 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
     const name = profile?.full_name || user.email?.split('@')[0] || 'Fundraiser'
 
-    await sendEmail({ to: user.email!, subject: `Campaign received — "${title}" is under review`, html: confirmEmail(name, title, tier) })
-    await sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, goal_amount, tier, idType, campaign.id) })
+    await sendEmail({ to: user.email!, subject: `Campaign received — "${title}" is under review`, html: confirmEmail(name, title, tier, parseFloat(fee_amount)||0, fee_deferred||false) })
+    await sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, goal_amount, tier, parseFloat(fee_amount)||0, fee_deferred||false, idType, campaign.id) })
 
     return NextResponse.json({ success: true, campaignId: campaign.id })
   } catch (err: any) {

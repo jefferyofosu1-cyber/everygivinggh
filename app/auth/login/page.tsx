@@ -3,67 +3,81 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import toast from 'react-hot-toast'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const [form, setForm] = useState({ email: '', password: '' })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('Welcome back!')
-      router.push('/dashboard')
-      router.refresh()
+    setError('')
+    const supabase = createClient()
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: form.email,
+      password: form.password,
+    })
+    if (authError) {
+      setError(authError.message === 'Invalid login credentials'
+        ? 'Incorrect email or password. Please try again.'
+        : authError.message)
+      setLoading(false)
+      return
     }
-    setLoading(false)
+    router.push('/dashboard')
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5 py-12">
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-5 py-12">
       <div className="w-full max-w-md">
+
         <div className="text-center mb-8">
-          <Link href="/" className="font-nunito font-black text-2xl text-primary">EveryGiving</Link>
-          <h1 className="font-nunito font-black text-navy text-2xl mt-4 mb-1">Welcome back</h1>
-          <p className="text-gray-400 text-sm">Sign in to manage your campaigns</p>
+          <Link href="/" className="inline-block font-nunito font-black text-2xl tracking-tight">
+            <span className="text-primary">Every</span><span className="text-white">Giving</span>
+          </Link>
+          <div className="text-white/40 text-sm mt-2">Sign in to your account</div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+          <h1 className="font-nunito font-black text-white text-xl mb-1">Welcome back</h1>
+          <p className="text-white/40 text-sm mb-6">Sign in to manage your campaign</p>
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-5 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+              <label className="text-xs font-bold text-white/50 block mb-1.5">Email address</label>
+              <input type="email" required value={form.email}
+                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                 placeholder="you@example.com"
-                className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
             </div>
             <div>
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Password</label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
-                placeholder="••••••••"
-                className="w-full bg-gray-50 border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
+              <label className="text-xs font-bold text-white/50 block mb-1.5">Password</label>
+              <input type="password" required value={form.password}
+                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                placeholder="Your password"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
             </div>
+
             <button type="submit" disabled={loading}
-              className="w-full bg-primary hover:bg-primary-dark text-white font-nunito font-black py-3.5 rounded-xl transition-all hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed mt-1">
-              {loading ? 'Signing in...' : 'Sign in →'}
+              className="w-full py-3.5 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm mt-2">
+              {loading ? 'Signing in…' : 'Sign in →'}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-400">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-primary font-bold hover:underline">Create one free</Link>
+          <div className="mt-6 pt-5 border-t border-white/10 text-center">
+            <span className="text-white/40 text-sm">No account? </span>
+            <Link href="/auth/signup" className="text-primary font-bold text-sm hover:text-primary-dark transition-colors">Create one free</Link>
           </div>
         </div>
 
-        <div className="mt-4 text-center">
-          <Link href="/" className="text-xs text-gray-400 hover:text-gray-600">← Back to homepage</Link>
-        </div>
       </div>
     </div>
   )

@@ -24,9 +24,10 @@ function maybeCleanup() {
   if (cleanupCounter < 500) return
   cleanupCounter = 0
   const now = Date.now()
-  for (const [key, val] of rateMap.entries()) {
-    if (now > val.resetAt) rateMap.delete(key)
-  }
+  Array.from(rateMap.keys()).forEach(key => {
+    const val = rateMap.get(key)
+    if (val && now > val.resetAt) rateMap.delete(key)
+  })
 }
 
 export async function middleware(request: NextRequest) {

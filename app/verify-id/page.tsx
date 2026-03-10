@@ -17,6 +17,8 @@ export default function VerifyIdPage() {
   const [images, setImages] = useState<ImageCapture>({ front: null, back: null, selfie: null })
   const [cameraActive, setCameraActive] = useState(false)
   const [error, setError] = useState('')
+  const [processing, setProcessing] = useState(false)
+  const [progress, setProgress] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
@@ -138,7 +140,7 @@ export default function VerifyIdPage() {
         {/* Header */}
         <div className="max-w-lg mx-auto w-full px-5 pt-8 pb-4">
           <h1 className="font-nunito font-black text-white text-2xl tracking-tight mb-1">Identity Verification</h1>
-          <p className="text-white/40 text-sm">Reviewed by our team — usually within 24 hours</p>
+          <p className="text-white/40 text-sm">Reviewed by our team  -  usually within 24 hours</p>
 
           {/* Step indicators */}
           <div className="flex items-center gap-2 mt-5">
@@ -172,13 +174,13 @@ export default function VerifyIdPage() {
                 </div>
                 <h2 className="font-nunito font-black text-white text-2xl mb-3">What you will need</h2>
                 <p className="text-white/50 text-sm mb-8 leading-relaxed max-w-sm mx-auto">
-                  Your Ghana Card and a phone with a working camera. Once submitted, our team reviews your documents and approves your campaign — usually within 24 hours.
+                  Your Ghana Card and a phone with a working camera. Once submitted, our team reviews your documents and approves your campaign  -  usually within 24 hours.
                 </p>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 text-left space-y-3">
                   {[
                     { icon: '1', text: 'Photo of your Ghana Card (front)' },
                     { icon: '2', text: 'Photo of your Ghana Card (back)' },
-                    { icon: '3', text: 'A selfie — face clearly lit' },
+                    { icon: '3', text: 'A selfie  -  face clearly lit' },
                     { icon: '4', text: 'Our team reviews and approves your campaign' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -335,10 +337,10 @@ export default function VerifyIdPage() {
                 <p className="text-white/50 text-sm mb-6 max-w-xs mx-auto">{error || 'We could not verify your identity. Please try again with clearer photos.'}</p>
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left text-sm text-white/50 space-y-2">
                   <div className="font-bold text-white/70 mb-2">Tips for better results:</div>
-                  <div>— Use good lighting, avoid shadows on your card</div>
-                  <div>— Hold the card still and flat</div>
-                  <div>— Make sure all text on the card is readable</div>
-                  <div>— For the selfie, face the light source directly</div>
+                  <div> -  Use good lighting, avoid shadows on your card</div>
+                  <div> -  Hold the card still and flat</div>
+                  <div> -  Make sure all text on the card is readable</div>
+                  <div> -  For the selfie, face the light source directly</div>
                 </div>
                 <button
                   onClick={() => { setStep('intro'); setError(''); setImages({ front: null, back: null, selfie: null }) }}

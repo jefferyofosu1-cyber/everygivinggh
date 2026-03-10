@@ -185,15 +185,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Email service not configured. Set BREVO_API_KEY in Vercel.' }, { status: 500 })
   }
   try {
-    const { type, user } = await req.json()
-    if (!user?.email || !user?.firstName) return NextResponse.json({ error: 'Missing email or firstName' }, { status: 400 })
+    const body: Record<string, unknown> = await req.json()
+    const type = typeof body.type === 'string' ? body.type : ''
+    const user = body.user && typeof body.user === 'object' ? body.user as Record<string, unknown> : null
+    if (!user || typeof user.email !== 'string' || typeof user.firstName !== 'string') {
+      return NextResponse.json({ error: 'Missing email or firstName' }, { status: 400 })
+    }
     const appUrl = APP_URL
 
     if (type === 'fundraiser_signup') {
       try {
         await upsertContact({ email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, listId: LIST_IDS.fundraisers })
         await upsertContact({ email: user.email, firstName: user.firstName, listId: LIST_IDS.all })
-      } catch (e: any) { console.error('Brevo contact error:', e.message) }
+      } catch (e) { console.error('Brevo contact error:', e.message) }
       await sendEmail({ to: { email: user.email, name: user.firstName }, subject: `Welcome to EveryGiving, ${user.firstName} 🎉`, htmlContent: fundraiserWelcomeEmail(user.firstName, appUrl) })
       return NextResponse.json({ success: true, type: 'fundraiser_signup' })
     }
@@ -202,13 +206,13 @@ export async function POST(req: NextRequest) {
       try {
         await upsertContact({ email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, listId: LIST_IDS.donors })
         await upsertContact({ email: user.email, firstName: user.firstName, listId: LIST_IDS.all })
-      } catch (e: any) { console.error('Brevo donor contact error:', e.message) }
+      } catch (e) { console.error('Brevo donor contact error:', e.message) }
       await sendEmail({ to: { email: user.email, name: user.firstName }, subject: `Thank you for giving, ${user.firstName} 💚`, htmlContent: donorWelcomeEmail(user.firstName, appUrl) })
       return NextResponse.json({ success: true, type: 'donor_signup' })
     }
 
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
-  } catch (err: any) {
+  } catch (err) {
     console.error('CRM route error:', err)
     return NextResponse.json({ error: err.message || 'Failed' }, { status: 500 })
   }

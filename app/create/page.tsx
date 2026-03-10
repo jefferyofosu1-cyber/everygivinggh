@@ -139,8 +139,24 @@ export default function CreatePage() {
   const canNextCampaign = campaign.title.trim() && campaign.category && campaign.goal && campaign.story.trim().length > 30
   const canNextIdentity = idTypeId && identity.idNumber.trim() && identity.idFront && (tier.selfie ? !!identity.selfie : true)
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+  const MAX_SIZE_MB = 5
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'idFront' | 'idBack' | 'selfie') => {
     const file = e.target.files?.[0] || null
+    if (!file) { setIdentity(p => ({ ...p, [field]: null })); return }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError('Only JPEG, PNG or WebP images are accepted.')
+      e.target.value = ''
+      return
+    }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      setError(`Image must be under ${MAX_SIZE_MB}MB. Please compress and try again.`)
+      e.target.value = ''
+      return
+    }
+    setError('')
     setIdentity(p => ({ ...p, [field]: file }))
   }
 
@@ -200,7 +216,7 @@ export default function CreatePage() {
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Submission failed'); setSubmitting(false); return }
       setStep('done')
-    } catch (e: any) {
+    } catch (e) {
       setError(e.message || 'Something went wrong')
     }
     setSubmitting(false)

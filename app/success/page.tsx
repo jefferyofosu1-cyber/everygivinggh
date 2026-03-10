@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { Suspense } from 'react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -23,7 +24,7 @@ function SuccessContent() {
 
   const shareText = campaign
     ? `I just donated ₵${amount} to "${campaign.title}" on Every Giving! Help them reach their goal 💚`
-    : `I just donated on Every Giving — Ghana's trusted crowdfunding platform! 💚`
+    : `I just donated on Every Giving  -  Ghana's trusted crowdfunding platform! 💚`
   const shareUrl = campaign
     ? `https://everygivinggh.vercel.app/campaigns/${campaignId}`
     : 'https://everygivinggh.vercel.app'

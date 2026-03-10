@@ -105,6 +105,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Email service not configured' }, { status: 500 })
   }
 
+  // Admin-only: verify the caller is an authenticated admin
+  try {
+    const { createServerSupabaseClient } = await import('@/lib/supabase-server')
+    const supabase = await createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
+    if (!profile?.is_admin) return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+  } catch {
+    return NextResponse.json({ error: 'Auth check failed' }, { status: 500 })
+  }
+
   try {
     const { to, name, title, status, note } = await req.json()
 

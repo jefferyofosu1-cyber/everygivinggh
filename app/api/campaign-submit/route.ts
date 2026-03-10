@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { sanitiseString, sanitiseNumber, sanitiseEmail } from '@/lib/api-security'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'jefferyofosu1@gmail.com'
@@ -98,8 +99,23 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { title, category, goal_amount, story, tier, fee_amount, fee_deferred, idType, idNumber, idFrontUrl, selfieUrl } = body
 
-    if (!title || !category || !goal_amount || !story) {
-      return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 })
+    // ── Input validation ────────────────────────────────────────────────────
+    const cleanTitle = sanitiseString(title, 120)
+    const cleanStory = sanitiseString(story, 5000)
+    const cleanCategory = sanitiseString(category, 50)
+    const cleanGoal = sanitiseNumber(goal_amount, 100, 10000000)
+
+    if (!cleanTitle || cleanTitle.length < 5) {
+      return NextResponse.json({ error: 'Campaign title must be at least 5 characters.' }, { status: 400 })
+    }
+    if (!cleanStory || cleanStory.length < 30) {
+      return NextResponse.json({ error: 'Campaign story must be at least 30 characters.' }, { status: 400 })
+    }
+    if (!cleanCategory) {
+      return NextResponse.json({ error: 'Please select a category.' }, { status: 400 })
+    }
+    if (cleanGoal === null) {
+      return NextResponse.json({ error: 'Goal must be between GH₵100 and GH₵10,000,000.' }, { status: 400 })
     }
 
     const feeAmount = parseFloat(fee_amount) || 0
@@ -111,10 +127,10 @@ export async function POST(req: NextRequest) {
       .from('campaigns')
       .insert({
         user_id: user.id,
-        title: title.trim(),
-        category,
-        goal_amount: parseFloat(goal_amount) || 0,
-        story: story.trim(),
+        title: cleanTitle,
+        category: cleanCategory,
+        goal_amount: cleanGoal,
+        story: cleanStory,
         status: 'pending',
         raised_amount: 0,
         verified: false,

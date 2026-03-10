@@ -40,11 +40,11 @@ function Character({ mood, holding }: { mood: 'thinking'|'happy'|'excited'|'prou
 }
 
 const SCENES = [
-  { mood:'thinking' as const, holding:null, bg:'from-slate-50 to-white', accent:'#64748B', label:'The challenge', name:'Ama has a problem', bubble:"My mother needs surgery at Korle Bu... I need ₵15,000. Where do I start?", narration:"Meet Ama from Accra. She needs to raise money urgently for her mother's surgery. Sending MoMo requests to friends isn't working — she needs something more." },
-  { mood:'happy' as const, holding:'phone' as const, bg:'from-green-50 to-white', accent:'#02A95C', label:'The discovery', name:'She finds Every Giving', bubble:"Every Giving lets me create a verified page — people can donate even if they don't know me!", narration:"A friend shares a link to Every Giving. In 5 minutes, Ama fills in her campaign — her story, goal, and a photo. Simple guided form, no tech skills needed." },
-  { mood:'proud' as const, holding:'card' as const, bg:'from-amber-50 to-white', accent:'#D97706', label:'Verification', name:'Verified in minutes', bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!", narration:"Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the EveryGiving team review. Within 24 hours — no waiting." },
+  { mood:'thinking' as const, holding:null, bg:'from-slate-50 to-white', accent:'#64748B', label:'The challenge', name:'Ama has a problem', bubble:"My mother needs surgery at Korle Bu... I need ₵15,000. Where do I start?", narration:"Meet Ama from Accra. She needs to raise money urgently for her mother's surgery. Sending MoMo requests to friends isn't working  -  she needs something more." },
+  { mood:'happy' as const, holding:'phone' as const, bg:'from-green-50 to-white', accent:'#02A95C', label:'The discovery', name:'She finds Every Giving', bubble:"Every Giving lets me create a verified page  -  people can donate even if they don't know me!", narration:"A friend shares a link to Every Giving. In 5 minutes, Ama fills in her campaign  -  her story, goal, and a photo. Simple guided form, no tech skills needed." },
+  { mood:'proud' as const, holding:'card' as const, bg:'from-amber-50 to-white', accent:'#D97706', label:'Verification', name:'Verified in minutes', bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!", narration:"Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the EveryGiving team review. Within 24 hours  -  no waiting." },
   { mood:'pointing' as const, holding:null, bg:'from-blue-50 to-white', accent:'#0066CC', label:'Going live', name:'Campaign goes live', bubble:"My campaign is live with a Verified badge! I'm sharing it everywhere right now.", narration:"The moment verification passes, her campaign goes live with a Verified badge. She shares on WhatsApp and Facebook. Donations come in from people she has never met." },
-  { mood:'excited' as const, holding:'money' as const, bg:'from-green-50 to-emerald-50', accent:'#02A95C', label:'Success', name:'₵18,500 raised', bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Zero fees!", narration:"In 3 weeks, Ama raises ₵18,500 — more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. No platform fees. No delays." },
+  { mood:'excited' as const, holding:'money' as const, bg:'from-green-50 to-emerald-50', accent:'#02A95C', label:'Success', name:'₵18,500 raised', bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Zero fees!", narration:"In 3 weeks, Ama raises ₵18,500  -  more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. No platform fees. No delays." },
 ]
 
 function TutorialEmbed() {
@@ -103,7 +103,7 @@ function TutorialEmbed() {
             </button>
           ))}
         </div>
-        {/* Stage — single column on mobile, 5-col grid on desktop */}
+        {/* Stage  -  single column on mobile, 5-col grid on desktop */}
         <div className="flex flex-col md:grid md:grid-cols-5 gap-4 md:gap-6 md:items-center">
 
           {/* Character + bubble stacked on mobile */}
@@ -111,7 +111,7 @@ function TutorialEmbed() {
             <div className="w-28 h-36 md:w-44 md:h-60 flex-shrink-0">
               <Character mood={cur.mood} holding={cur.holding} />
             </div>
-            {/* Bubble below character — mobile only */}
+            {/* Bubble below character  -  mobile only */}
             <div className={`md:hidden w-full transition-all duration-500 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
               <div className="bg-white rounded-2xl p-3 shadow-lg border border-gray-100 text-center">
                 <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
@@ -121,7 +121,7 @@ function TutorialEmbed() {
 
           {/* Info col */}
           <div className={`md:col-span-3 transition-all duration-700 ${show.narration ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            {/* Bubble beside character — desktop only */}
+            {/* Bubble beside character  -  desktop only */}
             <div className={`hidden md:block mb-3 transition-all duration-500 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
               <div className="bg-white rounded-2xl rounded-tl-sm p-3 shadow-lg border border-gray-100 inline-block max-w-xs">
                 <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
@@ -174,35 +174,35 @@ const STEPS = [
   {
     n: '01',
     title: 'Tell your story',
-    description: 'Describe what you are raising money for — medical bills, school fees, emergencies, church projects, or community causes. Be specific about the amount needed and why.',
+    description: 'Describe what you are raising money for  -  medical bills, school fees, emergencies, church projects, or community causes. Be specific about the amount needed and why.',
     tip: 'Campaigns with a clear story and a strong photo raise significantly more.',
     time: '5 minutes',
   },
   {
     n: '02',
     title: 'Set your goal',
-    description: 'Choose a fundraising target. You keep every cedi donated regardless of whether you reach your goal. There is no platform fee — 100% of donations go directly to you.',
+    description: 'Choose a fundraising target. You keep every cedi donated regardless of whether you reach your goal. There is no platform fee  -  100% of donations go directly to you.',
     tip: 'Set a specific, realistic goal. The most successful campaigns give donors a clear target to rally behind.',
     time: '1 minute',
   },
   {
     n: '03',
     title: 'Verify your identity',
-    description: 'Upload your Ghana Card and a selfie. Our team reviews your documents and confirms your identity — usually within 24 hours. You will receive an email when approved.',
+    description: 'Upload your Ghana Card and a selfie. Our team reviews your documents and confirms your identity  -  usually within 24 hours. You will receive an email when approved.',
     tip: 'Verified campaigns raise more. Donors give when they know the person is real.',
     time: 'Within 24 hours',
   },
   {
     n: '04',
     title: 'Share with your network',
-    description: 'Send your campaign link to friends, family, and your community. Share on WhatsApp, Facebook, and Instagram. The first 48 hours are the most important — start with your closest supporters.',
+    description: 'Send your campaign link to friends, family, and your community. Share on WhatsApp, Facebook, and Instagram. The first 48 hours are the most important  -  start with your closest supporters.',
     tip: 'Campaigns shared on WhatsApp in the first 24 hours raise significantly more. Start sharing the moment you go live.',
     time: 'Ongoing',
   },
   {
     n: '05',
     title: 'Watch donations come in',
-    description: 'Get notified with every donation. Post updates to thank supporters and show progress — donors who see updates are far more likely to share your campaign.',
+    description: 'Get notified with every donation. Post updates to thank supporters and show progress  -  donors who see updates are far more likely to share your campaign.',
     tip: 'Post at least one update per week to maintain momentum.',
     time: 'Live tracking',
   },
@@ -210,7 +210,7 @@ const STEPS = [
     n: '06',
     title: 'Receive your money',
     description: 'Donations are held securely and released to your wallet when you reach each milestone you set. Withdraw via MoMo, bank transfer, or card. Zero platform fees, always.',
-    tip: 'You set your own milestones. Donors can see your progress before each payout — which builds even more trust.',
+    tip: 'You set your own milestones. Donors can see your progress before each payout  -  which builds even more trust.',
     time: 'Per milestone',
   },
 ]
@@ -218,19 +218,19 @@ const STEPS = [
 const FAQS = [
   {
     q: 'How much does it cost to use Every Giving?',
-    a: 'Nothing. EveryGiving charges 0% platform fees. Every cedi donated goes directly to the fundraiser. We are funded through optional verification tiers — not by taking a cut of donations.',
+    a: 'Nothing. EveryGiving charges 0% platform fees. Every cedi donated goes directly to the fundraiser. We are funded through optional verification tiers  -  not by taking a cut of donations.',
   },
   {
     q: 'How long does verification take?',
-    a: 'Our team reviews your Ghana Card and selfie and confirms your identity — usually within 24 hours. You will receive an email when your campaign is approved and live.',
+    a: 'Our team reviews your Ghana Card and selfie and confirms your identity  -  usually within 24 hours. You will receive an email when your campaign is approved and live.',
   },
   {
     q: "What if I don't reach my goal?",
-    a: 'You keep everything you raise. EveryGiving uses a keep-what-you-raise model — there is no penalty and no minimum threshold.',
+    a: 'You keep everything you raise. EveryGiving uses a keep-what-you-raise model  -  there is no penalty and no minimum threshold.',
   },
   {
     q: 'How do donors pay?',
-    a: 'Donors can pay via MTN MoMo, Vodafone Cash, AirtelTigo, or debit/credit card — available to anyone in Ghana and internationally.',
+    a: 'Donors can pay via MTN MoMo, Vodafone Cash, AirtelTigo, or debit/credit card  -  available to anyone in Ghana and internationally.',
   },
   {
     q: 'When do I receive the money?',
@@ -238,7 +238,7 @@ const FAQS = [
   },
   {
     q: 'Is my personal information safe?',
-    a: "Your Ghana Card and selfie are used solely for identity verification — encrypted, never shared with donors or third parties, and handled in full compliance with Ghana's Data Protection Act.",
+    a: "Your Ghana Card and selfie are used solely for identity verification  -  encrypted, never shared with donors or third parties, and handled in full compliance with Ghana's Data Protection Act.",
   },
 ]
 
@@ -259,7 +259,7 @@ export default function HowItWorksPage() {
               How EveryGiving works
             </h1>
             <p className="text-white/60 text-base leading-relaxed max-w-xl mx-auto mb-8">
-              From creating your campaign to receiving money in your MoMo wallet — the complete process, step by step.
+              From creating your campaign to receiving money in your MoMo wallet  -  the complete process, step by step.
             </p>
             <div className="flex flex-wrap justify-center gap-8">
               {[
@@ -281,7 +281,7 @@ export default function HowItWorksPage() {
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-center mb-8">
               <h2 className="font-nunito font-black text-navy text-2xl md:text-3xl tracking-tight mb-2">See it in action</h2>
-              <p className="text-gray-400 text-sm">Follow Ama's journey from idea to funded — in 60 seconds</p>
+              <p className="text-gray-400 text-sm">Follow Ama's journey from idea to funded  -  in 60 seconds</p>
             </div>
             <TutorialEmbed />
           </div>
@@ -303,7 +303,7 @@ export default function HowItWorksPage() {
                     <h3 className="font-nunito font-black text-navy text-xl mb-2">{step.title}</h3>
                     <p className="text-gray-500 text-sm leading-relaxed mb-3">{step.description}</p>
                     <div className="bg-white border border-primary/20 rounded-xl px-4 py-3">
-                      <span className="text-xs font-bold text-primary">Tip — </span>
+                      <span className="text-xs font-bold text-primary">Tip  -  </span>
                       <span className="text-xs text-gray-500">{step.tip}</span>
                     </div>
                   </div>
@@ -328,7 +328,7 @@ export default function HowItWorksPage() {
               platform fee. Ever.
             </h2>
             <p className="text-white/75 text-sm leading-relaxed max-w-lg mx-auto mb-8">
-              EveryGiving will never take a percentage of your donations. Every cedi your donors give goes directly to you. We are funded through optional verification services — not your fundraising.
+              EveryGiving will never take a percentage of your donations. Every cedi your donors give goes directly to you. We are funded through optional verification services  -  not your fundraising.
             </p>
             <Link href="/create"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary font-nunito font-black rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">

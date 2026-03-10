@@ -88,13 +88,13 @@ export default function HomePage() {
       <main className="overflow-x-hidden">
 
         {/* ══════════════════════════════════════════
-            HERO — GoFundMe style: big headline,
+            HERO  -  GoFundMe style: big headline,
             search bar, split photo layout
         ══════════════════════════════════════════ */}
         <section className="relative bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 md:px-10 pt-14 pb-0 grid md:grid-cols-2 gap-0 items-end min-h-[560px]">
 
-            {/* Left — text + search */}
+            {/* Left  -  text + search */}
             <div className="pb-14 md:pb-20 pr-0 md:pr-12 flex flex-col justify-center">
               <h1 className="font-nunito font-black text-[#1A2B3C] text-5xl md:text-[4rem] leading-[1.02] tracking-tight mb-4" style={{letterSpacing:-2}}>
                 Raise money with
@@ -102,10 +102,10 @@ export default function HomePage() {
                 <span className="text-[#02A95C]">Ghana</span>
               </h1>
               <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-md">
-                Every fundraiser is identity-verified by our team. Donations are released to your MoMo wallet as you hit milestones. Zero platform fees — always.
+                Every fundraiser is identity-verified by our team. Donations are released to your MoMo wallet as you hit milestones. Zero platform fees  -  always.
               </p>
 
-              {/* Search bar — GoFundMe style */}
+              {/* Search bar  -  GoFundMe style */}
               <div className="flex gap-0 max-w-md mb-6">
                 <div className="relative flex-1">
                   <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right — stacked campaign cards over photo */}
+            {/* Right  -  stacked campaign cards over photo */}
             <div className="relative hidden md:block self-end">
               <img src={P.hero} alt="Fundraiser" className="w-full h-[500px] object-cover object-top rounded-tl-[40px]" />
               <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-tl-[40px]" />
@@ -176,7 +176,7 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            TRUST STRIP — like GoFundMe's "as seen in"
+            TRUST STRIP  -  like GoFundMe's "as seen in"
         ══════════════════════════════════════════ */}
         <section className="border-y border-gray-100 bg-gray-50 py-5">
           <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-8 text-xs font-semibold text-gray-400">
@@ -196,7 +196,7 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            WHY TRUST — simple honest platform values
+            WHY TRUST  -  simple honest platform values
         ══════════════════════════════════════════ */}
         <section className="py-16 bg-white">
           <div className="max-w-5xl mx-auto px-6 text-center">
@@ -206,9 +206,9 @@ export default function HomePage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
               {[
-                { icon: '🪪', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns — ever.' },
+                { icon: '🪪', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns  -  ever.' },
                 { icon: '💸', title: '2% + ₵0.25 per donation', desc: 'The only fee. Deducted automatically. Zero platform fee. Zero monthly charges.' },
-                { icon: '🏆', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones — keeping donors confident.' },
+                { icon: '🏆', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones  -  keeping donors confident.' },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center">
                   <div className="text-4xl mb-3">{item.icon}</div>
@@ -221,7 +221,7 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            BROWSE BY CAUSE — real photos, GoFundMe grid
+            BROWSE BY CAUSE  -  real photos, GoFundMe grid
         ══════════════════════════════════════════ */}
         <section className="py-16 bg-[#f8fafb]">
           <div className="max-w-6xl mx-auto px-6">
@@ -253,7 +253,7 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            HOW IT WORKS — 3 steps with real images
+            HOW IT WORKS  -  3 steps with real images
             (GoFundMe-style horizontal steps)
         ══════════════════════════════════════════ */}
         <section className="py-20 bg-white border-t border-gray-100">
@@ -261,15 +261,15 @@ export default function HomePage() {
             <div className="text-center mb-14">
               <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Simple process</p>
               <h2 className="font-nunito font-black text-[#1A2B3C] text-4xl tracking-tight" style={{letterSpacing:-1}}>
-                From idea to funded — in three steps
+                From idea to funded  -  in three steps
               </h2>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { n:'1', img: P.phone, title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo. Under 15 minutes — no technical skills required.', cta:'Start free →', href:'/create' },
-                { n:'2', img: P.accra, title: 'Verify your identity', desc: 'Upload your Ghana Card or accepted ID. Verified fundraisers raise 3× more — because donors trust people whose identity is confirmed.', cta:'See how →', href:'/verification' },
-                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Donations are held securely and released to your wallet in milestones. You set the milestones — donors can see progress before each payout.', cta:'Learn more →', href:'/how-it-works' },
+                { n:'1', img: P.phone, title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo. Under 15 minutes  -  no technical skills required.', cta:'Start free →', href:'/create' },
+                { n:'2', img: P.accra, title: 'Verify your identity', desc: 'Upload your Ghana Card or accepted ID. Verified fundraisers raise 3× more  -  because donors trust people whose identity is confirmed.', cta:'See how →', href:'/verification' },
+                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Donations are held securely and released to your wallet in milestones. You set the milestones  -  donors can see progress before each payout.', cta:'Learn more →', href:'/how-it-works' },
               ].map((step, i) => (
                 <div key={i} className="group">
                   <div className="relative rounded-2xl overflow-hidden h-52 mb-5 shadow-sm">
@@ -289,7 +289,7 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            LIVE CAMPAIGNS — GoFundMe discovery grid
+            LIVE CAMPAIGNS  -  GoFundMe discovery grid
         ══════════════════════════════════════════ */}
         <section className="py-16 bg-[#f8fafb] border-t border-gray-100">
           <div className="max-w-6xl mx-auto px-6">
@@ -309,7 +309,7 @@ export default function HomePage() {
               <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
                 <div className="text-5xl mb-4">💚</div>
                 <h3 className="font-nunito font-black text-[#1A2B3C] text-xl mb-2">Be the first to start a campaign</h3>
-                <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">EveryGiving is live and accepting campaigns. Create yours today — verified and trusted by donors across Ghana.</p>
+                <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">EveryGiving is live and accepting campaigns. Create yours today  -  verified and trusted by donors across Ghana.</p>
                 <Link href="/create" className="inline-block bg-[#02A95C] text-white font-nunito font-black px-8 py-4 rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-[#02A95C]/25">
                   Start the first campaign →
                 </Link>
@@ -326,7 +326,7 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            WHY EVERYGIVING — feature split
+            WHY EVERYGIVING  -  feature split
             (GoFundMe "why us" section)
         ══════════════════════════════════════════ */}
         <section className="py-20 bg-white border-t border-gray-100">
@@ -355,9 +355,9 @@ export default function HomePage() {
               </h2>
               <div className="flex flex-col gap-6">
                 {[
-                  { icon:'🪪', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns — and now they have a reason to trust you.' },
+                  { icon:'🪪', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns  -  and now they have a reason to trust you.' },
                   { icon:'📱', title:'Built for mobile money from day one', desc:'MTN MoMo, Vodafone Cash, and AirtelTigo are built into the platform from the ground up. No bank account needed. Donations land same day.' },
-                  { icon:'💸', title:'Honest fees — no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
+                  { icon:'💸', title:'Honest fees  -  no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-5">
                     <div className="w-12 h-12 bg-[#f0fdf6] border border-[#02A95C]/15 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">{item.icon}</div>
@@ -419,14 +419,14 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            FEES EXPLAINER — transparent pricing
+            FEES EXPLAINER  -  transparent pricing
         ══════════════════════════════════════════ */}
         <section className="py-16 bg-white border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Transparent pricing</p>
             <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl tracking-tight mb-3" style={{letterSpacing:-1}}>Simple, honest fees</h2>
             <p className="text-gray-500 text-base mb-10 max-w-lg mx-auto leading-relaxed">
-              One transaction fee per donation — automatically deducted so you never receive a bill. No platform fee. No monthly charges. Nothing hidden.
+              One transaction fee per donation  -  automatically deducted so you never receive a bill. No platform fee. No monthly charges. Nothing hidden.
             </p>
 
             <div className="grid md:grid-cols-3 gap-4 mb-8">
@@ -450,7 +450,7 @@ export default function HomePage() {
         </section>
 
         {/* ══════════════════════════════════════════
-            FINAL CTA — full bleed, photo bg
+            FINAL CTA  -  full bleed, photo bg
             (GoFundMe bottom CTA)
         ══════════════════════════════════════════ */}
         <section className="relative py-28 overflow-hidden">
@@ -466,7 +466,7 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/create"
                 className="px-10 py-4 bg-[#02A95C] hover:bg-[#028a4a] text-white font-nunito font-black rounded-full transition-all hover:-translate-y-0.5 shadow-2xl shadow-[#02A95C]/30 text-base">
-                Start a campaign — free →
+                Start a campaign  -  free →
               </Link>
               <Link href="/donate"
                 className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-full transition-all text-base">

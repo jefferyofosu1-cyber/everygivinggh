@@ -31,12 +31,12 @@ export default function TransparencyPage() {
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-10">How Every Giving works</h2>
             <div className="grid md:grid-cols-2 gap-5">
               {[
-                { icon: '₵', title: '0% platform fee on donations', body: 'EveryGiving charges nothing on donations. If a donor gives ₵100, the fundraiser receives ₵100 minus only the standard MoMo network fee. We take no cut — ever.' },
+                { icon: '₵', title: '0% platform fee on donations', body: 'EveryGiving charges nothing on donations. If a donor gives ₵100, the fundraiser receives ₵100 minus only the standard MoMo network fee. We take no cut  -  ever.' },
                 { icon: '🔒', title: 'Identity verified against NIA', body: 'Every fundraiser\'s identity is checked against the National Identification Authority database using their Ghana Card. Donors can see the Verified badge as proof.' },
                 { icon: '👁', title: 'Every donation is visible', body: 'Donors can see all contributions on a campaign page. The total raised, the goal, and individual donations are all publicly visible. No hidden numbers.' },
                 { icon: '⚡', title: 'Same-day MoMo payouts', body: 'We never hold fundraiser money. Donations flow directly to the registered MoMo wallet the same day they are received.' },
-                { icon: '🛡', title: 'Fraud is reported to authorities', body: 'Any fraudulent campaign is removed immediately. We report fraud to the Ghana Police Service and EOCO. Fraudsters are not simply banned — they are reported to the authorities.' },
-                { icon: '📊', title: 'No ads. No data selling. Ever.', body: 'EveryGiving is entirely ad-free. We do not sell user data to advertisers or any third party. Our business model is the verification fee — not your data.' },
+                { icon: '🛡', title: 'Fraud is reported to authorities', body: 'Any fraudulent campaign is removed immediately. We report fraud to the Ghana Police Service and EOCO. Fraudsters are not simply banned  -  they are reported to the authorities.' },
+                { icon: '📊', title: 'No ads. No data selling. Ever.', body: 'EveryGiving is entirely ad-free. We do not sell user data to advertisers or any third party. Our business model is the verification fee  -  not your data.' },
               ].map((item, i) => (
                 <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                   <div className="text-2xl mb-3">{item.icon}</div>
@@ -69,7 +69,7 @@ export default function TransparencyPage() {
                     { fee: 'Basic verification', amount: '₵20 one-time', by: 'Fundraiser', purpose: 'ID upload + number check + Basic badge' },
                     { fee: 'Standard verification', amount: '₵50 one-time', by: 'Fundraiser', purpose: 'Full ID + selfie + NIA check + Verified badge' },
                     { fee: 'Premium verification', amount: '₵100 one-time', by: 'Fundraiser', purpose: 'Full check + document review + Premium badge' },
-                    { fee: 'MoMo transfer fees', amount: 'Set by network', by: 'Fundraiser (on withdrawal)', purpose: 'Set by MTN/Vodafone/AirtelTigo — not by us' },
+                    { fee: 'MoMo transfer fees', amount: 'Set by network', by: 'Fundraiser (on withdrawal)', purpose: 'Set by MTN/Vodafone/AirtelTigo  -  not by us' },
                     { fee: 'Account creation', amount: '₵0', by: 'No one', purpose: 'Creating an account is always free' },
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
@@ -95,7 +95,7 @@ export default function TransparencyPage() {
                 { step: '1', title: 'Fundraiser uploads Ghana Card', desc: 'Front and back photo of their National Identification Card, plus manually entering their ID number.' },
                 { step: '2', title: 'Document review', desc: 'The ID document is checked by our team to confirm it is valid, unaltered, and matches the submitted details.' },
                 { step: '3', title: 'Selfie review (Standard & Premium)', desc: 'For Standard and Premium campaigns, the selfie is reviewed alongside the ID photo to confirm the same person appears in both.' },
-                { step: '4', title: 'Document review (Premium only)', desc: 'Supporting documents — such as hospital admission letters — are reviewed manually by our team before the Premium badge is granted.' },
+                { step: '4', title: 'Document review (Premium only)', desc: 'Supporting documents  -  such as hospital admission letters  -  are reviewed manually by our team before the Premium badge is granted.' },
                 { step: '5', title: 'Badge awarded', desc: 'Once verified, the appropriate badge appears on the campaign. Donors can see the badge and understand exactly what level of verification it represents.' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-4">

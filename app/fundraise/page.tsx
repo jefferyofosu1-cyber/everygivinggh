@@ -19,7 +19,7 @@ const CATEGORIES = [
 const BLOG_POSTS = [
   { emoji: '📱', tag: 'Sharing tips', title: 'How to share your campaign on WhatsApp and raise more', desc: 'The right message at the right time can double your donations. This is the exact WhatsApp strategy that works for Ghanaian fundraisers.', time: '4 min read' },
   { emoji: '📝', tag: 'Campaign writing', title: 'How to write a campaign story that makes people give', desc: 'Donors give to people, not problems. Learn how to tell your story honestly, clearly, and compellingly.', time: '6 min read' },
-  { emoji: '📸', tag: 'Photos & media', title: 'The right photo for your campaign — and how to take it', desc: 'Campaigns with strong photos raise significantly more. Here is what works and what to avoid.', time: '3 min read' },
+  { emoji: '📸', tag: 'Photos & media', title: 'The right photo for your campaign  -  and how to take it', desc: 'Campaigns with strong photos raise significantly more. Here is what works and what to avoid.', time: '3 min read' },
   { emoji: '🔄', tag: 'Keeping donors updated', title: 'Why posting updates doubles your donations', desc: 'Donors who see a campaign update are twice as likely to share it. Learn how to write updates that sustain momentum.', time: '4 min read' },
 ]
 
@@ -27,16 +27,16 @@ const CORPORATE_BENEFITS = [
   { icon: '🤝', title: 'CSR & community impact', desc: 'Support verified community campaigns as part of your Corporate Social Responsibility programme.' },
   { icon: '🏆', title: 'Employee giving campaigns', desc: 'Match employee donations or run internal giving drives for causes your team believes in.' },
   { icon: '📊', title: 'Full transparency', desc: 'Every donation is tracked and publicly visible. Full reports show exactly where contributions go.' },
-  { icon: '🎯', title: 'Cause alignment', desc: 'Choose campaigns aligned with your company\'s values — medical, education, community, or emergency.' },
+  { icon: '🎯', title: 'Cause alignment', desc: 'Choose campaigns aligned with your company\'s values  -  medical, education, community, or emergency.' },
 ]
 
 const EVENT_TYPES = [
   { icon: '🎂', label: 'Birthday fundraisers', desc: 'Ask for donations instead of gifts. Raise money for a cause on your special day.' },
   { icon: '💒', label: 'Wedding fundraisers', desc: 'Let guests contribute to a cause you care about as a wedding gift.' },
-  { icon: '🏃', label: 'Sponsored challenges', desc: 'Run a marathon, climb a hill, or complete a challenge — get sponsored for every kilometre.' },
-  { icon: '🎓', label: 'Graduation fundraisers', desc: 'Celebrate your achievement and give back — raise money for your school or community.' },
+  { icon: '🏃', label: 'Sponsored challenges', desc: 'Run a marathon, climb a hill, or complete a challenge  -  get sponsored for every kilometre.' },
+  { icon: '🎓', label: 'Graduation fundraisers', desc: 'Celebrate your achievement and give back  -  raise money for your school or community.' },
   { icon: '⚽', label: 'Sports events', desc: 'Charity matches, tournaments, and sports days with proceeds going to your chosen cause.' },
-  { icon: '🎤', label: 'Concerts & shows', desc: 'Perform for a purpose — sell tickets or take donations at your event.' },
+  { icon: '🎤', label: 'Concerts & shows', desc: 'Perform for a purpose  -  sell tickets or take donations at your event.' },
 ]
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -69,7 +69,7 @@ export default function FundraisePage() {
               Raise money for<br /><span className="text-primary">anything that matters.</span>
             </h1>
             <p className="text-white/50 text-lg leading-relaxed max-w-xl mb-10">
-              Medical bills. School fees. Community projects. If your cause is real and you can verify it, EveryGiving helps you raise what you need — identity-verified, free to start, and paid directly to your MoMo.
+              Medical bills. School fees. Community projects. If your cause is real and you can verify it, EveryGiving helps you raise what you need  -  identity-verified, free to start, and paid directly to your MoMo.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="/create"
@@ -126,8 +126,8 @@ export default function FundraisePage() {
               <div className="absolute left-6 top-8 bottom-8 w-px bg-gray-100 hidden md:block" />
               <div className="flex flex-col gap-6">
                 {[
-                  { n: 1, title: 'Create your account', body: 'Sign up with your email and mobile number — takes 60 seconds. Start building your campaign immediately.', time: '1 minute', cta: null },
-                  { n: 2, title: 'Tell your story', body: 'Write your story in your own words. Explain what the money is for, how much you need, and why it matters. A photo is essential — campaigns with photos consistently raise more.', time: '5–10 minutes', cta: null },
+                  { n: 1, title: 'Create your account', body: 'Sign up with your email and mobile number  -  takes 60 seconds. Start building your campaign immediately.', time: '1 minute', cta: null },
+                  { n: 2, title: 'Tell your story', body: 'Write your story in your own words. Explain what the money is for, how much you need, and why it matters. A photo is essential  -  campaigns with photos consistently raise more.', time: '5–10 minutes', cta: null },
                   { n: 3, title: 'Verify your identity', body: 'Upload your Ghana Card and take a selfie. Our system matches your face to your ID and confirms your identity with the EveryGiving team review. This is what earns you the Verified badge.', time: 'Within 24 hours', cta: null },
                   { n: 4, title: 'Share your campaign', body: 'Once live, share your campaign link on WhatsApp, Facebook, or wherever your network is. We provide a ready-made WhatsApp message to make it immediate.', time: 'Instant', cta: null },
                   { n: 5, title: 'Receive donations to your MoMo', body: 'Donations go directly to your MTN MoMo, Vodafone Cash, or AirtelTigo wallet. Same-day payouts. Zero platform fee. Every cedi is yours.', time: 'Same day', cta: { label: 'Start now →', href: '/create' } },
@@ -165,7 +165,7 @@ export default function FundraisePage() {
               What are you raising for?
             </h2>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">
-              EveryGiving supports 17 fundraising categories. Whatever your cause, there is a place for it here — and donors who care.
+              EveryGiving supports 17 fundraising categories. Whatever your cause, there is a place for it here  -  and donors who care.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {CATEGORIES.map((cat, i) => (
@@ -196,16 +196,16 @@ export default function FundraisePage() {
               Stronger together
             </h2>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">
-              When a group rallies behind a single campaign, they raise more — and faster. Team fundraising on EveryGiving lets multiple people promote the same verified page.
+              When a group rallies behind a single campaign, they raise more  -  and faster. Team fundraising on EveryGiving lets multiple people promote the same verified page.
             </p>
             <div className="grid md:grid-cols-2 gap-8 items-center mb-10">
               <div>
                 <div className="flex flex-col gap-5">
                   {[
-                    { icon: '👥', title: 'One campaign, many fundraisers', desc: 'The campaign organiser creates the fundraiser and shares a team link. Every team member promotes the same page — all donations flow to the same goal.' },
+                    { icon: '👥', title: 'One campaign, many fundraisers', desc: 'The campaign organiser creates the fundraiser and shares a team link. Every team member promotes the same page  -  all donations flow to the same goal.' },
                     { icon: '📣', title: 'Broader reach', desc: 'When 10 people each share with their WhatsApp contacts, the campaign reaches hundreds of potential donors. Team fundraising multiplies your reach exponentially.' },
-                    { icon: '🏅', title: 'Visible contributors', desc: 'Team members who help promote the campaign can be credited on the page. Recognition drives action — people share more when they are acknowledged.' },
-                    { icon: '💬', title: 'Group accountability', desc: 'The team can see donation progress in real time. Shared goals drive shared action — teams don\'t let each other down.' },
+                    { icon: '🏅', title: 'Visible contributors', desc: 'Team members who help promote the campaign can be credited on the page. Recognition drives action  -  people share more when they are acknowledged.' },
+                    { icon: '💬', title: 'Group accountability', desc: 'The team can see donation progress in real time. Shared goals drive shared action  -  teams don\'t let each other down.' },
                   ].map((item, i) => (
                     <div key={i} className="flex gap-4">
                       <div className="text-xl flex-shrink-0 mt-0.5">{item.icon}</div>
@@ -265,7 +265,7 @@ export default function FundraisePage() {
               Tips to raise more
             </h2>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">
-              Practical guides written for Ghanaian fundraisers — covering how to write your story, share effectively, and keep your donors engaged.
+              Practical guides written for Ghanaian fundraisers  -  covering how to write your story, share effectively, and keep your donors engaged.
             </p>
             <div className="grid md:grid-cols-2 gap-5 mb-8">
               {BLOG_POSTS.map((post, i) => (
@@ -308,10 +308,10 @@ export default function FundraisePage() {
             <div className="grid md:grid-cols-2 gap-8 items-start">
               <div className="flex flex-col gap-5">
                 {[
-                  { icon: '✅', title: 'Verified Charity badge', desc: 'Registered charities and NGOs receive a dedicated Verified Charity badge — distinct from individual fundraiser badges — so donors know exactly who they are supporting.' },
-                  { icon: '📋', title: 'Multiple campaigns at once', desc: 'Charities can manage multiple campaigns simultaneously — one for each project, programme, or emergency appeal.' },
+                  { icon: '✅', title: 'Verified Charity badge', desc: 'Registered charities and NGOs receive a dedicated Verified Charity badge  -  distinct from individual fundraiser badges  -  so donors know exactly who they are supporting.' },
+                  { icon: '📋', title: 'Multiple campaigns at once', desc: 'Charities can manage multiple campaigns simultaneously  -  one for each project, programme, or emergency appeal.' },
                   { icon: '📊', title: 'Donor reporting', desc: 'Download full donation reports for your records, board meetings, and donor acknowledgements.' },
-                  { icon: '🔄', title: 'Recurring giving', desc: 'Allow your donors to set up recurring monthly contributions — building a sustainable income for your organisation rather than relying on one-off appeals.' },
+                  { icon: '🔄', title: 'Recurring giving', desc: 'Allow your donors to set up recurring monthly contributions  -  building a sustainable income for your organisation rather than relying on one-off appeals.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
                     <div className="text-xl flex-shrink-0">{item.icon}</div>
@@ -371,13 +371,13 @@ export default function FundraisePage() {
                   Get your Verified Charity badge
                 </h2>
                 <p className="text-white/50 text-sm leading-relaxed mb-8">
-                  Registered charities and NGOs on Every Giving get a special badge that distinguishes them from individual fundraisers. Donors trust verified organisations more — and give more.
+                  Registered charities and NGOs on Every Giving get a special badge that distinguishes them from individual fundraisers. Donors trust verified organisations more  -  and give more.
                 </p>
                 <div className="flex flex-col gap-3 mb-8">
                   {[
                     'Submit your organisation registration documents',
                     'Provide a contact person and verified email address',
-                    'Complete a brief verification review — typically within 48 hours',
+                    'Complete a brief verification review  -  typically within 48 hours',
                     'Receive your Verified Charity badge and go live',
                   ].map((step, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -444,7 +444,7 @@ export default function FundraisePage() {
                 {[
                   { title: 'Donation matching', desc: 'Match every cedi your employees donate. EveryGiving tracks and reports every contribution.' },
                   { title: 'End-of-year giving', desc: 'Launch a campaign at year-end and invite staff, clients, and partners to contribute to a cause that matters.' },
-                  { title: 'Supplier giving days', desc: 'Invite your supply chain to give alongside your business — build a culture of generosity around your brand.' },
+                  { title: 'Supplier giving days', desc: 'Invite your supply chain to give alongside your business  -  build a culture of generosity around your brand.' },
                 ].map((item, i) => (
                   <div key={i} className="bg-white border border-gray-100 rounded-xl p-5">
                     <div className="font-nunito font-black text-navy text-sm mb-2">{item.title}</div>
@@ -497,7 +497,7 @@ export default function FundraisePage() {
                   { n: '1', text: 'Create your campaign and set your event date as the deadline' },
                   { n: '2', text: 'Include the link when you send invitations or announce your event' },
                   { n: '3', text: 'Display the live campaign total on a screen at your event' },
-                  { n: '4', text: 'Announce the total raised and thank your donors — live, in the room' },
+                  { n: '4', text: 'Announce the total raised and thank your donors  -  live, in the room' },
                 ].map((step, i) => (
                   <div key={i} className="text-center">
                     <div className="w-10 h-10 bg-navy rounded-full flex items-center justify-center mx-auto mb-3">
@@ -527,7 +527,7 @@ export default function FundraisePage() {
               Your cause deserves<br /><span className="text-primary">to be funded.</span>
             </div>
             <p className="text-white/40 text-sm leading-relaxed mb-8 max-w-md mx-auto">
-              Free to start. Verified in minutes. Every cedi goes directly to you — no platform fee, ever.
+              Free to start. Verified in minutes. Every cedi goes directly to you  -  no platform fee, ever.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/create"

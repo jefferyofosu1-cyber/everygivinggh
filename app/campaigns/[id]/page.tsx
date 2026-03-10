@@ -237,7 +237,7 @@ export default function CampaignPage() {
                   Organised by <strong className="text-navy">{campaign.profiles?.full_name || 'Anonymous'}</strong>
                 </p>
 
-                {/* Progress — GoFundMe style */}
+                {/* Progress  -  GoFundMe style */}
                 <div className="mb-6">
                   <div className="flex items-end gap-2 mb-2">
                     <span className="font-nunito font-black text-primary text-3xl">
@@ -276,7 +276,7 @@ export default function CampaignPage() {
                 <div className="text-gray-600 leading-relaxed text-sm whitespace-pre-line">{campaign.story}</div>
               </div>
 
-              {/* ── DONORS SECTION — GoFundMe style ── */}
+              {/* ── DONORS SECTION  -  GoFundMe style ── */}
               {donations.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
                   <div className="flex items-center justify-between mb-6">
@@ -365,7 +365,7 @@ export default function CampaignPage() {
                     )}
                   </div>
 
-                  {/* ── TIP — appears after amount ── */}
+                  {/* ── TIP  -  appears after amount ── */}
                   {rawAmount > 0 && (
                     <div className={`rounded-2xl border-2 p-4 transition-all ${tipEnabled ? 'border-primary/25 bg-[#f0fdf6]' : 'border-gray-100 bg-gray-50'}`}>
                       <div className="flex items-start justify-between gap-3 mb-0">

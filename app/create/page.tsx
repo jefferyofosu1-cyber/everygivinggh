@@ -224,7 +224,7 @@ export default function CreatePage() {
             Your campaign and identity documents have been received and are now <strong className="text-navy">under review</strong> by our team.
           </p>
           <p className="text-gray-400 text-xs mb-6 max-w-sm mx-auto leading-relaxed">
-            You will receive an email once your campaign is approved or rejected — usually within 24 hours. Check your spam folder if you don't see it.
+            You will receive an email once your campaign is approved or rejected  -  usually within 24 hours. Check your spam folder if you don't see it.
           </p>
           {payMode === 'defer' && tier.priceNum > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
@@ -239,7 +239,7 @@ export default function CreatePage() {
               { icon: '📧', text: 'Confirmation email sent to your inbox' },
               { icon: '🔍', text: 'Our team reviews your campaign & ID' },
               { icon: '✅', text: "You'll be emailed: approved or rejected" },
-              { icon: '📱', text: 'If approved — share on WhatsApp and go live' },
+              { icon: '📱', text: 'If approved  -  share on WhatsApp and go live' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm text-gray-600 shadow-sm">
                 <span className="text-xl">{item.icon}</span>{item.text}
@@ -316,7 +316,7 @@ export default function CreatePage() {
                 <div>
                   <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Your story <span className="text-red-400">*</span></label>
                   <textarea rows={5} value={campaign.story} onChange={e => setCampaign(p => ({ ...p, story: e.target.value }))}
-                    placeholder="Tell donors who you are, what happened, why you need help, and exactly how the money will be used. Specificity builds trust — and trust drives donations."
+                    placeholder="Tell donors who you are, what happened, why you need help, and exactly how the money will be used. Specificity builds trust  -  and trust drives donations."
                     className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none" />
                   <div className={`text-xs mt-1 ${campaign.story.length < 30 ? 'text-gray-300' : 'text-primary'}`}>
                     {campaign.story.length} characters {campaign.story.length < 30 ? `(write at least ${30 - campaign.story.length} more)` : '✓'}
@@ -497,11 +497,11 @@ export default function CreatePage() {
           {step === 'tier' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
               <h2 className="font-nunito font-black text-navy text-2xl mb-1">Choose your verification tier</h2>
-              <p className="text-gray-400 text-sm mb-2">Each tier sets the maximum goal your campaign can raise. Higher tiers include deeper review and stronger badges — which builds more donor trust.</p>
+              <p className="text-gray-400 text-sm mb-2">Each tier sets the maximum goal your campaign can raise. Higher tiers include deeper review and stronger badges  -  which builds more donor trust.</p>
 
               {goalNum > 0 && (
                 <div className="bg-primary-light border border-primary/20 rounded-xl px-4 py-3 mb-6 text-sm text-primary-dark">
-                  Your goal is <strong>₵{goalNum.toLocaleString()}</strong> — <strong>{TIERS.find(t => t.id === suggestedTierId(goalNum))?.name} tier</strong> is selected automatically. You can change it below.
+                  Your goal is <strong>₵{goalNum.toLocaleString()}</strong>  -  <strong>{TIERS.find(t => t.id === suggestedTierId(goalNum))?.name} tier</strong> is selected automatically. You can change it below.
                 </div>
               )}
 
@@ -536,7 +536,7 @@ export default function CreatePage() {
                           </div>
                           {t.canDefer && isSelected && (
                             <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-amber-700 font-semibold bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
-                              💡 Pay {t.price} now or defer — deducted from first donations
+                              💡 Pay {t.price} now or defer  -  deducted from first donations
                             </div>
                           )}
                         </div>
@@ -692,7 +692,7 @@ export default function CreatePage() {
                   </div>
                 )}
 
-                {/* Pay now — MoMo selector */}
+                {/* Pay now  -  MoMo selector */}
                 {payMode === 'now' && (
                   <div className="mt-2">
                     <div className="text-xs font-bold text-navy uppercase tracking-wider mb-3">Pay with mobile money</div>

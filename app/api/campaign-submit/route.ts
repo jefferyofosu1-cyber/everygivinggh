@@ -49,9 +49,9 @@ function confirmEmail(name: string, title: string, tier: string, feeAmount: numb
       <div style="font-size:12px;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Campaign details</div>
       <div style="font-size:14px;color:#1A2B3C;font-weight:700">${title}</div>
       <div style="font-size:12px;color:#64748B;margin-top:4px">Verification tier: ${tier}</div>
-      ${feeDeferred && feeAmount > 0 ? `<div style="font-size:12px;color:#D97706;margin-top:8px;padding:8px 12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A">💡 Your verification fee of ₵${feeAmount} will be deducted from your first donations — you pay nothing today.</div>` : ''}
+      ${feeDeferred && feeAmount > 0 ? `<div style="font-size:12px;color:#D97706;margin-top:8px;padding:8px 12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A">💡 Your verification fee of ₵${feeAmount} will be deducted from your first donations  -  you pay nothing today.</div>` : ''}
     </div>
-    <p style="font-size:13px;color:#94A3B8;text-align:center">Questions? Reply to this email — we are here to help.<br>
+    <p style="font-size:13px;color:#94A3B8;text-align:center">Questions? Reply to this email  -  we are here to help.<br>
       <a href="${APP_URL}/help" style="color:#02A95C;text-decoration:none;font-weight:600">Visit Help Centre</a></p>
   </div>
   <div style="background:#1A2B3C;border-radius:0 0 20px 20px;padding:20px 40px;text-align:center">
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not save campaign. Please try again.' }, { status: 500 })
     }
 
-    // ── STEP 2: Patch extra columns one by one — silently skip any that don't exist yet ──
+    // ── STEP 2: Patch extra columns one by one  -  silently skip any that don't exist yet ──
     const { fundraiserName, fundraiserPhone, fundraiserLocation, fundraiserRelationship } = body
 
     const extraColumns: Record<string, any> = {
@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
           .update({ [key]: value })
           .eq('id', campaign.id)
         if (colError) {
-          console.warn(`Column ${key} not yet in DB — skipping:`, colError.message)
+          console.warn(`Column ${key} not yet in DB  -  skipping:`, colError.message)
         }
       }
     }
@@ -189,7 +189,7 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
     const name = profile?.full_name || user.email?.split('@')[0] || 'Fundraiser'
 
-    sendEmail({ to: user.email!, subject: `Campaign received — "${title}" is under review`, html: confirmEmail(name, title, tier || 'Basic', feeAmount, feeDeferred) })
+    sendEmail({ to: user.email!, subject: `Campaign received  -  "${title}" is under review`, html: confirmEmail(name, title, tier || 'Basic', feeAmount, feeDeferred) })
     sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, goal_amount, tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign.id) })
 
     return NextResponse.json({ success: true, campaignId: campaign.id })

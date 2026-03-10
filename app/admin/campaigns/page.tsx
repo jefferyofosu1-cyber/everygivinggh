@@ -73,7 +73,7 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           note.trim()
         )
       } else {
-        console.warn('No email found for fundraiser — status email not sent')
+        console.warn('No email found for fundraiser  -  status email not sent')
       }
     } catch (e) {
       console.error('Status email failed:', e)
@@ -108,12 +108,12 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           <div className="bg-white/5 rounded-xl p-4">
             <div className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Fundraiser</div>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div><div className="text-white/30 text-xs mb-0.5">Name</div><div className="text-white font-semibold">{campaign.profiles?.full_name || '—'}</div></div>
-              <div><div className="text-white/30 text-xs mb-0.5">Phone</div><div className="text-white font-semibold">{campaign.profiles?.phone || '—'}</div></div>
+              <div><div className="text-white/30 text-xs mb-0.5">Name</div><div className="text-white font-semibold">{campaign.profiles?.full_name || ' - '}</div></div>
+              <div><div className="text-white/30 text-xs mb-0.5">Phone</div><div className="text-white font-semibold">{campaign.profiles?.phone || ' - '}</div></div>
               <div><div className="text-white/30 text-xs mb-0.5">Category</div><div className="text-white font-semibold">{campaign.category}</div></div>
               <div><div className="text-white/30 text-xs mb-0.5">Goal</div><div className="text-primary font-black">₵{campaign.goal_amount?.toLocaleString()}</div></div>
-              <div className="col-span-2"><div className="text-white/30 text-xs mb-0.5">ID type</div><div className="text-white font-semibold">{campaign.id_type || '—'}</div></div>
-              <div className="col-span-2"><div className="text-white/30 text-xs mb-0.5">ID number</div><div className="text-white font-mono font-bold">{campaign.id_number || '—'}</div></div>
+              <div className="col-span-2"><div className="text-white/30 text-xs mb-0.5">ID type</div><div className="text-white font-semibold">{campaign.id_type || ' - '}</div></div>
+              <div className="col-span-2"><div className="text-white/30 text-xs mb-0.5">ID number</div><div className="text-white font-mono font-bold">{campaign.id_number || ' - '}</div></div>
             </div>
           </div>
 
@@ -122,7 +122,7 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
             <div className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Identity Documents</div>
             {!campaign.id_front_url && !campaign.selfie_url ? (
               <div className="text-white/20 text-xs text-center py-4 border border-white/5 rounded-xl">
-                ⚠️ No documents uploaded — SQL migrations may not have run yet
+                ⚠️ No documents uploaded  -  SQL migrations may not have run yet
               </div>
             ) : (
               <div className="flex flex-col gap-4">
@@ -167,7 +167,7 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           {/* Rejection note */}
           <div>
             <label className="text-white/40 text-xs font-bold uppercase tracking-wider block mb-2">
-              Note to fundraiser <span className="text-white/20 font-normal normal-case">(required if rejecting — included in their email)</span>
+              Note to fundraiser <span className="text-white/20 font-normal normal-case">(required if rejecting  -  included in their email)</span>
             </label>
             <textarea value={note} onChange={e => setNote(e.target.value)} rows={3}
               placeholder="e.g. Your ID photo is too blurry to read. Please resubmit with a clear, well-lit photo of your Ghana Card."
@@ -301,8 +301,8 @@ function CampaignsContent() {
                       <div className="text-white/30 text-xs truncate max-w-[200px]">{c.category}</div>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="text-white/70 text-sm">{c.profiles?.full_name || '—'}</div>
-                      <div className="text-white/30 text-xs">{c.profiles?.phone || '—'}</div>
+                      <div className="text-white/70 text-sm">{c.profiles?.full_name || ' - '}</div>
+                      <div className="text-white/30 text-xs">{c.profiles?.phone || ' - '}</div>
                     </td>
                     <td className="px-5 py-4">
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${TIER_BADGE[c.verification_tier] || 'bg-gray-700 text-gray-300'}`}>

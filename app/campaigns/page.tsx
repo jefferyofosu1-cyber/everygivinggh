@@ -139,7 +139,7 @@ export default function CampaignsPage() {
             ) : campaigns.length === 0 ? (
               <div>
                 <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-center text-sm text-amber-700">
-                  <strong>Coming soon</strong> — No campaigns live yet. Here is a preview of what campaigns will look like.
+                  <strong>Coming soon</strong>  -  No campaigns live yet. Here is a preview of what campaigns will look like.
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {[...Array(6)].map((_, i) => <PlaceholderCard key={i} i={i} />)}

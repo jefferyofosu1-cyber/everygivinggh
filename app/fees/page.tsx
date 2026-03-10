@@ -34,7 +34,7 @@ export default function FeesPage() {
               Let's do the<br /><span className="text-primary">math together</span>
             </h1>
             <p className="text-white/50 text-sm max-w-xl mx-auto leading-relaxed">
-              No hidden charges. No surprises. We deduct a small transaction fee from each donation automatically — so you never receive a bill.
+              No hidden charges. No surprises. We deduct a small transaction fee from each donation automatically  -  so you never receive a bill.
             </p>
           </div>
         </section>
@@ -128,7 +128,7 @@ export default function FeesPage() {
           <div className="max-w-2xl mx-auto px-5">
             <div className="text-center mb-8">
               <h2 className="font-nunito font-black text-navy text-2xl mb-2">Verification fees</h2>
-              <p className="text-gray-400 text-sm">One-time, per campaign. Pay upfront or defer — deducted from your first donations.</p>
+              <p className="text-gray-400 text-sm">One-time, per campaign. Pay upfront or defer  -  deducted from your first donations.</p>
             </div>
             <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
               <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-100 px-5 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
@@ -138,7 +138,7 @@ export default function FeesPage() {
                 <div>Defer?</div>
               </div>
               {[
-                { emoji: '🟢', tier: 'Basic',   fee: 'Free',     range: 'Up to GH₵5,000',          defer: '—' },
+                { emoji: '🟢', tier: 'Basic',   fee: 'Free',     range: 'Up to GH₵5,000',          defer: ' - ' },
                 { emoji: '✅', tier: 'Standard', fee: 'GH₵50',   range: 'GH₵5,000 – GH₵10,000',    defer: 'Yes' },
                 { emoji: '⭐', tier: 'Premium',  fee: 'GH₵100',  range: 'GH₵10,000 – GH₵50,000',   defer: 'Yes' },
                 { emoji: '🥇', tier: 'Gold',     fee: 'GH₵200',  range: 'GH₵50,000 – GH₵100,000',  defer: 'Yes' },
@@ -155,7 +155,7 @@ export default function FeesPage() {
               ))}
             </div>
             <p className="text-xs text-gray-400 text-center mt-4">
-              Defer means the fee is automatically deducted from your first donations — you pay nothing until money comes in.
+              Defer means the fee is automatically deducted from your first donations  -  you pay nothing until money comes in.
             </p>
           </div>
         </section>

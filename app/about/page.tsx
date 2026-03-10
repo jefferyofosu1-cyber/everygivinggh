@@ -11,23 +11,23 @@ const STATS = [
 ]
 
 const HOW_STEPS = [
-  { n: '01', title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo, and pick a category. The guided form takes under 5 minutes — no technical knowledge needed.', time: '5 minutes', color: 'bg-primary-light border-primary/20 text-primary' },
-  { n: '02', title: 'Verify your identity', desc: 'Upload your Ghana Card and a selfie. Our team reviews your documents and confirms your identity — usually within 24 hours.', time: 'Within 24 hours', color: 'bg-amber-50 border-amber-200 text-amber-700' },
+  { n: '01', title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo, and pick a category. The guided form takes under 5 minutes  -  no technical knowledge needed.', time: '5 minutes', color: 'bg-primary-light border-primary/20 text-primary' },
+  { n: '02', title: 'Verify your identity', desc: 'Upload your Ghana Card and a selfie. Our team reviews your documents and confirms your identity  -  usually within 24 hours.', time: 'Within 24 hours', color: 'bg-amber-50 border-amber-200 text-amber-700' },
   { n: '03', title: 'Share your campaign', desc: 'Your campaign goes live with a Verified badge. Share your link on WhatsApp, Facebook, or anywhere else. We include pre-written share messages to make it effortless.', time: 'Instant', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-  { n: '04', title: 'Receive donations', desc: 'Donors pay via MTN MoMo, Vodafone Cash, or AirtelTigo. Every donation lands directly in your registered MoMo wallet — same day.', time: 'Same day payout', color: 'bg-primary-light border-primary/20 text-primary' },
+  { n: '04', title: 'Receive donations', desc: 'Donors pay via MTN MoMo, Vodafone Cash, or AirtelTigo. Every donation lands directly in your registered MoMo wallet  -  same day.', time: 'Same day payout', color: 'bg-primary-light border-primary/20 text-primary' },
 ]
 
 const GUARANTEE_POINTS = [
   { icon: '🪪', title: 'Identity verified', desc: 'Every fundraiser confirms their identity before going live. No anonymous campaigns.' },
-  { icon: '₵', title: 'Zero platform fee — always', desc: 'We never take a percentage of what you raise. Every cedi your donors give goes directly to you.' },
+  { icon: '₵', title: 'Zero platform fee  -  always', desc: 'We never take a percentage of what you raise. Every cedi your donors give goes directly to you.' },
   { icon: '👁', title: 'Full transparency', desc: 'Every donation is visible on the campaign page. Nothing is hidden from donors.' },
-  { icon: '⚡', title: 'Same-day MoMo payouts', desc: 'Donations reach your MoMo wallet the same day they are made — no holding periods.' },
+  { icon: '⚡', title: 'Same-day MoMo payouts', desc: 'Donations reach your MoMo wallet the same day they are made  -  no holding periods.' },
   { icon: '🛡', title: 'Fraud protection', desc: 'We monitor all campaigns for suspicious activity and report fraud to Ghanaian authorities without delay.' },
   { icon: '📞', title: 'Real support', desc: 'Email business@everygiving.org. Payout issues are resolved same day. All other enquiries within 2 business days.' },
 ]
 
 const COUNTRIES = [
-  { name: 'Ghana', flag: '🇬🇭', status: 'Full support', detail: 'All features — campaigns, verification, MoMo payouts', active: true },
+  { name: 'Ghana', flag: '🇬🇭', status: 'Full support', detail: 'All features  -  campaigns, verification, MoMo payouts', active: true },
   { name: 'Nigeria', flag: '🇳🇬', status: 'Coming soon', detail: 'Planned expansion with local payment methods', active: false },
   { name: 'Kenya', flag: '🇰🇪', status: 'Coming soon', detail: 'M-Pesa integration planned', active: false },
   { name: "Côte d'Ivoire", flag: '🇨🇮', status: 'Coming soon', detail: 'Orange Money & Wave integration planned', active: false },
@@ -70,7 +70,7 @@ export default function AboutPage() {
               Giving should be<br /><span className="text-primary">trusted.</span>
             </h1>
             <p className="text-white/50 text-lg leading-relaxed max-w-xl mb-10">
-              EveryGiving is Ghana's verified crowdfunding platform — connecting fundraisers and donors through identity verification, zero platform fees, and same-day MoMo payouts.
+              EveryGiving is Ghana's verified crowdfunding platform  -  connecting fundraisers and donors through identity verification, zero platform fees, and same-day MoMo payouts.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 rounded-2xl overflow-hidden">
               {STATS.map(s => (
@@ -136,7 +136,7 @@ export default function AboutPage() {
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>EveryGiving Giving Guarantee</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">Our promise to every user</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">The EveryGiving Guarantee is our commitment to every fundraiser and donor. These are not aspirations — they are the minimum standard we hold ourselves to.</p>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">The EveryGiving Guarantee is our commitment to every fundraiser and donor. These are not aspirations  -  they are the minimum standard we hold ourselves to.</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               {GUARANTEE_POINTS.map((g, i) => (
                 <div key={i} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform">
@@ -206,7 +206,7 @@ export default function AboutPage() {
             </div>
             <div className="bg-white/10 border border-white/15 rounded-2xl p-6">
               <div className="font-nunito font-black text-white text-base mb-2">One thing to be aware of</div>
-              <p className="text-white/60 text-sm leading-relaxed max-w-2xl">Mobile money network operators (MTN, Vodafone, AirtelTigo) charge their own standard transfer fees. These are set by the networks — EveryGiving itself charges nothing on top.</p>
+              <p className="text-white/60 text-sm leading-relaxed max-w-2xl">Mobile money network operators (MTN, Vodafone, AirtelTigo) charge their own standard transfer fees. These are set by the networks  -  EveryGiving itself charges nothing on top.</p>
             </div>
           </div>
         </section>
@@ -249,9 +249,9 @@ export default function AboutPage() {
               <div>
                 <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-6 leading-tight">Built in Ghana.<br />For Ghana.</h2>
                 <div className="flex flex-col gap-5 text-sm text-gray-500 leading-relaxed">
-                  <p>EveryGiving was founded in 2026 by Jeffery Ofosu after seeing people he knew struggle to raise money for medical emergencies — sending MoMo requests to strangers who had no way to verify if the cause was real.</p>
+                  <p>EveryGiving was founded in 2026 by Jeffery Ofosu after seeing people he knew struggle to raise money for medical emergencies  -  sending MoMo requests to strangers who had no way to verify if the cause was real.</p>
                   <p>The idea was straightforward: verify identity, build trust, and make every cedi count. If donations went straight to MoMo, fundraisers would get their money fast. And if the platform charged 0%, every cedi would reach the person who needs it.</p>
-                  <p>Ghana has always had a culture of communal giving — from susu groups to church fundraisers to emergency appeals. Every Giving is a modern infrastructure for that ancient generosity.</p>
+                  <p>Ghana has always had a culture of communal giving  -  from susu groups to church fundraisers to emergency appeals. Every Giving is a modern infrastructure for that ancient generosity.</p>
                 </div>
               </div>
               <div className="flex flex-col gap-4">
@@ -290,7 +290,7 @@ export default function AboutPage() {
                   {[
                     ['Founded', '2026, Ghana'],
                     ['Platform type', 'Verified crowdfunding'],
-                    ['Platform fee', '0% — always'],
+                    ['Platform fee', '0%  -  always'],
                     ['Verification', 'Ghana Card reviewed by our team'],
                     ['Payments', 'MTN MoMo, Vodafone Cash, AirtelTigo'],
                     ['Contact', 'business@everygiving.org'],
@@ -326,7 +326,7 @@ export default function AboutPage() {
               <div className="text-4xl mb-4">🇬🇭</div>
               <div className="font-nunito font-black text-navy text-xl mb-3">No open roles right now</div>
               <p className="text-gray-400 text-sm leading-relaxed max-w-md mx-auto mb-6">We don't have any open positions at the moment, but we are always interested in hearing from talented people who are passionate about our mission.</p>
-              <a href="mailto:business@everygiving.org?subject=Careers — Speculative Application"
+              <a href="mailto:business@everygiving.org?subject=Careers  -  Speculative Application"
                 className="inline-block bg-navy hover:bg-navy/90 text-white font-nunito font-black px-7 py-3.5 rounded-full transition-all hover:-translate-y-0.5 text-sm">
                 Send a speculative application
               </a>

@@ -30,7 +30,7 @@ export default function ContactPage() {
     // In production, wire this to your API route or a form service like Formspree
     // For now we simulate a submission delay
     await new Promise(r => setTimeout(r, 1200))
-    // Redirect to mailto as fallback — replace with real API call
+    // Redirect to mailto as fallback  -  replace with real API call
     const subject = encodeURIComponent(`[Every Giving Contact] ${topic}`)
     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nTopic: ${topic}\n\n${message}`)
     window.location.href = `mailto:business@everygiving.org?subject=${subject}&body=${body}`
@@ -64,7 +64,7 @@ export default function ContactPage() {
           <div className="max-w-4xl mx-auto px-5">
             <div className="grid md:grid-cols-5 gap-8">
 
-              {/* ── LEFT — CONTACT INFO ── */}
+              {/* ── LEFT  -  CONTACT INFO ── */}
               <div className="md:col-span-2 flex flex-col gap-4">
 
                 {/* Direct email */}
@@ -118,7 +118,7 @@ export default function ContactPage() {
 
               </div>
 
-              {/* ── RIGHT — FORM ── */}
+              {/* ── RIGHT  -  FORM ── */}
               <div className="md:col-span-3">
                 <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-sm">
 

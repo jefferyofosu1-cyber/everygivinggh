@@ -12,7 +12,7 @@ const STATUS_STYLE: Record<string, { bg: string; text: string; dot: string; labe
   rejected: { bg: 'bg-red-50',    text: 'text-red-700',    dot: 'bg-red-500',    label: 'Not approved' },
 }
 
-// Simple SVG bar chart — no external deps
+// Simple SVG bar chart  -  no external deps
 function BarChart({ data }: { data: { label: string; value: number }[] }) {
   const max = Math.max(...data.map(d => d.value), 1)
   return (
@@ -158,7 +158,7 @@ function WithdrawModal({ available, profile, onClose }: { available: number; pro
               <div className="h-px bg-gray-200" />
               <div className="flex justify-between"><span className="text-gray-500">To</span>
                 <span className="font-bold text-navy">
-                  {method === 'momo' ? `${profile?.momo_network?.toUpperCase() || 'MoMo'} · ${profile?.momo_number || '—'}` : `${profile?.bank_name || 'Bank'} · ${profile?.bank_account || '—'}`}
+                  {method === 'momo' ? `${profile?.momo_network?.toUpperCase() || 'MoMo'} · ${profile?.momo_number || ' - '}` : `${profile?.bank_name || 'Bank'} · ${profile?.bank_account || ' - '}`}
                 </span>
               </div>
             </div>
@@ -201,7 +201,7 @@ function WithdrawModal({ available, profile, onClose }: { available: number; pro
             {method === 'bank' && (
               <div className="bg-gray-50 rounded-xl p-4 mb-4 text-sm">
                 <div className="text-xs text-gray-400 mb-1">Sending to</div>
-                <div className="font-bold text-navy">{profile?.bank_name || 'Bank not set'} · {profile?.bank_account || '—'}</div>
+                <div className="font-bold text-navy">{profile?.bank_name || 'Bank not set'} · {profile?.bank_account || ' - '}</div>
                 {!profile?.bank_account && <Link href="/dashboard/edit-profile" className="text-xs text-primary font-bold mt-1 inline-block">Set bank details →</Link>}
               </div>
             )}
@@ -386,7 +386,7 @@ export default function DashboardPage() {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="font-nunito font-black text-navy text-lg">Donations — last 14 days</h2>
+                    <h2 className="font-nunito font-black text-navy text-lg">Donations  -  last 14 days</h2>
                     <div className="text-gray-400 text-xs mt-0.5">Daily totals in GH₵</div>
                   </div>
                   <div className="text-right">
@@ -395,7 +395,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 {donations.length === 0 ? (
-                  <div className="h-24 flex items-center justify-center text-gray-300 text-sm">No donations yet — share your campaign to start receiving</div>
+                  <div className="h-24 flex items-center justify-center text-gray-300 text-sm">No donations yet  -  share your campaign to start receiving</div>
                 ) : (
                   <BarChart data={last14} />
                 )}
@@ -509,7 +509,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-4">
               {/* Chart */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <h3 className="font-nunito font-black text-navy text-base mb-4">Daily donations — last 14 days</h3>
+                <h3 className="font-nunito font-black text-navy text-base mb-4">Daily donations  -  last 14 days</h3>
                 {donations.length === 0 ? (
                   <div className="h-24 flex items-center justify-center text-gray-300 text-sm">No donations yet</div>
                 ) : <BarChart data={last14} />}

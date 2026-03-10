@@ -22,14 +22,14 @@ function approvedEmailHtml(name: string, title: string, note: string, appUrl: st
 
   <div style="background:white;padding:40px;">
     <p style="font-size:15px;color:#475569;line-height:1.7;margin-bottom:24px;">
-      Great news — your campaign <strong style="color:#1A2B3C;">"${title}"</strong> has been <strong style="color:#02A95C;">approved</strong> and is now live on EveryGiving. Donors can find it and start giving right now.
+      Great news  -  your campaign <strong style="color:#1A2B3C;">"${title}"</strong> has been <strong style="color:#02A95C;">approved</strong> and is now live on EveryGiving. Donors can find it and start giving right now.
     </p>
 
     <div style="background:#F0FDF6;border:1.5px solid rgba(2,169,92,0.2);border-radius:16px;padding:20px;margin-bottom:24px;">
       <div style="font-size:12px;font-weight:800;color:#1A2B3C;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">What to do now</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><span>📲</span><span style="font-size:13px;color:#475569;">Share your campaign link on WhatsApp, Facebook, and Instagram — the more you share, the more you raise</span></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><span>👨‍👩‍👧</span><span style="font-size:13px;color:#475569;">Message friends and family directly first — they are your best first donors</span></div>
-      <div style="display:flex;gap:10px;align-items:flex-start;"><span>📝</span><span style="font-size:13px;color:#475569;">Post updates as your campaign progresses — donors give more to campaigns that communicate</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><span>📲</span><span style="font-size:13px;color:#475569;">Share your campaign link on WhatsApp, Facebook, and Instagram  -  the more you share, the more you raise</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><span>👨‍👩‍👧</span><span style="font-size:13px;color:#475569;">Message friends and family directly first  -  they are your best first donors</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><span>📝</span><span style="font-size:13px;color:#475569;">Post updates as your campaign progresses  -  donors give more to campaigns that communicate</span></div>
     </div>
 
     ${note ? `
@@ -41,7 +41,7 @@ function approvedEmailHtml(name: string, title: string, note: string, appUrl: st
     <div style="text-align:center;margin:28px 0;">
       <a href="${appUrl}/campaigns" style="display:inline-block;background:#02A95C;color:white;font-weight:900;font-size:15px;padding:16px 44px;border-radius:9999px;text-decoration:none;">View your campaign →</a>
     </div>
-    <p style="font-size:13px;color:#94A3B8;text-align:center;">Questions? Reply to this email — we are here to help.</p>
+    <p style="font-size:13px;color:#94A3B8;text-align:center;">Questions? Reply to this email  -  we are here to help.</p>
   </div>
 
   <div style="background:#1A2B3C;border-radius:0 0 20px 20px;padding:20px 40px;text-align:center;">
@@ -67,7 +67,7 @@ function rejectedEmailHtml(name: string, title: string, note: string, appUrl: st
 
   <div style="background:#EF4444;padding:28px 40px;text-align:center;">
     <div style="font-size:40px;margin-bottom:8px;">⚠️</div>
-    <div style="color:white;font-size:22px;font-weight:900;">Campaign not approved — ${name}</div>
+    <div style="color:white;font-size:22px;font-weight:900;">Campaign not approved  -  ${name}</div>
   </div>
 
   <div style="background:white;padding:40px;">
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
     const isApproved = status === 'approved'
     const subject = isApproved
       ? `Your campaign "${title}" is live!`
-      : `Your campaign "${title}" — update from EveryGiving`
+      : `Your campaign "${title}"  -  update from EveryGiving`
 
     const html = isApproved
       ? approvedEmailHtml(name || 'there', title, note || '', APP_URL)

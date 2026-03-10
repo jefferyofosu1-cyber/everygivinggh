@@ -8,7 +8,7 @@ const sections = [
   {
     id: 'overview',
     title: '1. Who We Are & What This Policy Covers',
-    content: `EveryGiving ("we", "us", "our") operates the crowdfunding platform at everygiving.org. We are committed to protecting the personal data of everyone who uses our Platform — whether you are a fundraiser, donor, or visitor.
+    content: `EveryGiving ("we", "us", "our") operates the crowdfunding platform at everygiving.org. We are committed to protecting the personal data of everyone who uses our Platform  -  whether you are a fundraiser, donor, or visitor.
 
 This Privacy Policy explains:
 • What personal data we collect and why
@@ -26,7 +26,7 @@ By using EveryGiving, you consent to the practices described in this policy.`,
 
 Account data
 • Full name, email address, phone number
-• Password (stored in encrypted form — we never see it in plain text)
+• Password (stored in encrypted form  -  we never see it in plain text)
 
 Campaign & identity data (fundraisers)
 • Ghana Card, Passport, Driver's Licence, Voter's ID, NHIS Card, or other government-issued ID
@@ -99,7 +99,7 @@ We do not share your data with advertisers, data brokers, or any third parties f
     title: '6. Data Retention',
     content: `We retain your personal data for as long as your account is active. If you close your account, we will delete or anonymise your personal data within 90 days, except where we are required to retain it by law.
 
-Identity documents (ID photos, selfies) are retained for as long as your account is active. You may request early deletion by contacting us — we will action all such requests within 30 days.
+Identity documents (ID photos, selfies) are retained for as long as your account is active. You may request early deletion by contacting us  -  we will action all such requests within 30 days.
 
 Donation records are retained for 7 years to comply with Ghanaian financial record-keeping requirements.`,
   },
@@ -121,7 +121,7 @@ You can disable cookies in your browser settings, but some features of the Platf
     content: `We take the security of your data seriously. Our security measures include:
 
 • All data transmitted between your browser and our servers is encrypted using TLS/HTTPS
-• Passwords are hashed using industry-standard encryption — we never store or see plain-text passwords
+• Passwords are hashed using industry-standard encryption  -  we never store or see plain-text passwords
 • Identity documents are stored in encrypted, access-controlled storage
 • Access to personal data is restricted to authorised team members only
 • We use Supabase Row Level Security (RLS) to enforce data access controls at the database level
@@ -133,11 +133,11 @@ No security system is completely impenetrable. If you believe your account has b
     title: '9. Your Rights Under the Ghana Data Protection Act',
     content: `Under the Ghana Data Protection Act, 2012 (Act 843), you have the right to:
 
-• Access — request a copy of the personal data we hold about you
-• Correction — ask us to correct inaccurate or incomplete data
-• Deletion — ask us to delete your personal data (subject to legal retention requirements)
-• Objection — object to how we use your data in certain circumstances
-• Portability — request your data in a machine-readable format
+• Access  -  request a copy of the personal data we hold about you
+• Correction  -  ask us to correct inaccurate or incomplete data
+• Deletion  -  ask us to delete your personal data (subject to legal retention requirements)
+• Objection  -  object to how we use your data in certain circumstances
+• Portability  -  request your data in a machine-readable format
 
 To exercise any of these rights, contact us at business@everygiving.org. We will respond within 30 days. We may need to verify your identity before actioning your request.
 

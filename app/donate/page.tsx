@@ -64,7 +64,7 @@ export default function DonatePage() {
     <>
       <Navbar />
       <main>
-        {/* Hero — emotional, donation-focused */}
+        {/* Hero  -  emotional, donation-focused */}
         <section className="bg-gradient-to-br from-navy via-navy to-[#0d2035] py-20 px-5 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
@@ -113,7 +113,7 @@ export default function DonatePage() {
               <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
                 <div className="text-4xl mb-3">💚</div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No campaigns yet</div>
-                <p className="text-gray-400 text-sm">Check back soon — or start your own campaign.</p>
+                <p className="text-gray-400 text-sm">Check back soon  -  or start your own campaign.</p>
               </div>
             )}
           </div>
@@ -125,7 +125,7 @@ export default function DonatePage() {
             <h2 className="font-nunito font-black text-navy text-2xl mb-8">How donating works</h2>
             <div className="grid md:grid-cols-3 gap-5">
               {[
-                { icon: '🔍', title: 'Choose a campaign', desc: "Browse verified campaigns. Every fundraiser has confirmed their identity — you know exactly who you're giving to." },
+                { icon: '🔍', title: 'Choose a campaign', desc: "Browse verified campaigns. Every fundraiser has confirmed their identity  -  you know exactly who you're giving to." },
                 { icon: '📱', title: 'Pay by MoMo', desc: 'Choose MTN MoMo, Vodafone Cash, or AirtelTigo. A payment prompt appears instantly on your phone.' },
                 { icon: '✅', title: 'Donation received', desc: 'The fundraiser receives the money directly. You receive a confirmation and receipt instantly.' },
               ].map((step, i) => (

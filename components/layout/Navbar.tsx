@@ -11,7 +11,7 @@ const FUNDRAISE_MENU = [
     items: [
       { label: 'Start a campaign', sub: 'Create a free, verified fundraiser', href: '/create', icon: '🚀' },
       { label: 'How it works', sub: 'The complete step-by-step guide', href: '/how-it-works', icon: '📖' },
-      { label: 'Verification tiers', sub: 'Basic, Standard and Premium — what each includes', href: '/verification', icon: '🪪' },
+      { label: 'Verification tiers', sub: 'Basic, Standard and Premium  -  what each includes', href: '/verification', icon: '🪪' },
     ],
   },
   {
@@ -35,7 +35,7 @@ const FUNDRAISE_MENU = [
 const ABOUT_MENU = [
   { label: 'About us', sub: 'Our story, mission, and values', href: '/about', icon: '💚' },
   { label: 'Help Centre', sub: '25+ answers to common questions', href: '/help', icon: '❓' },
-  { label: 'Contact', sub: 'Reach our team — we respond within 2 days', href: '/contact', icon: '📬' },
+  { label: 'Contact', sub: 'Reach our team  -  we respond within 2 days', href: '/contact', icon: '📬' },
   { label: 'Transparency', sub: 'Fees, verification, and how we operate', href: '/transparency', icon: '🔍' },
 ]
 

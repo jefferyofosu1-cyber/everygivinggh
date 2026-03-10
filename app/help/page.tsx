@@ -23,7 +23,7 @@ const FAQS = [
   {
     cat: 'fundraisers',
     q: 'Is Every Giving really free?',
-    a: 'Yes — completely. EveryGiving charges 0% platform fees on all donations. Every cedi your donors give goes directly to you. Note that your mobile money operator (MTN, Vodafone, AirtelTigo) may charge standard transfer fees on withdrawals. These are set by the networks and are outside our control.',
+    a: 'Yes  -  completely. EveryGiving charges 0% platform fees on all donations. Every cedi your donors give goes directly to you. Note that your mobile money operator (MTN, Vodafone, AirtelTigo) may charge standard transfer fees on withdrawals. These are set by the networks and are outside our control.',
   },
   {
     cat: 'fundraisers',
@@ -33,7 +33,7 @@ const FAQS = [
   {
     cat: 'fundraisers',
     q: 'What happens if I don\'t reach my goal?',
-    a: 'You keep everything you raise. EveryGiving uses a keep-what-you-raise model — no minimum target, no penalty. If you raise ₵500 of a ₵5,000 goal, that ₵500 is yours to withdraw immediately.',
+    a: 'You keep everything you raise. EveryGiving uses a keep-what-you-raise model  -  no minimum target, no penalty. If you raise ₵500 of a ₵5,000 goal, that ₵500 is yours to withdraw immediately.',
   },
   {
     cat: 'fundraisers',
@@ -50,12 +50,12 @@ const FAQS = [
   {
     cat: 'verification',
     q: 'Why do I need to verify my identity?',
-    a: "Verification is what sets EveryGiving apart from simply sending MoMo requests. When donors see a Verified badge, they know your identity has been reviewed and confirmed by the EveryGiving team. Verified campaigns raise more — because donors give with confidence.",
+    a: "Verification is what sets EveryGiving apart from simply sending MoMo requests. When donors see a Verified badge, they know your identity has been reviewed and confirmed by the EveryGiving team. Verified campaigns raise more  -  because donors give with confidence.",
   },
   {
     cat: 'verification',
     q: 'What documents do I need to verify?',
-    a: "You need a valid Ghana Card (National Identification Card). During verification you will upload a clear photo of the front and back of your Ghana Card, and a selfie. Our team reviews your documents and confirms your identity — usually within 24 hours.",
+    a: "You need a valid Ghana Card (National Identification Card). During verification you will upload a clear photo of the front and back of your Ghana Card, and a selfie. Our team reviews your documents and confirms your identity  -  usually within 24 hours.",
   },
   {
     cat: 'verification',
@@ -64,7 +64,7 @@ const FAQS = [
   },
   {
     cat: 'verification',
-    q: 'My verification failed — what do I do?',
+    q: 'My verification failed  -  what do I do?',
     a: "Common reasons for failure: photo quality is too low, the ID is expired, the name on your account doesn't exactly match your ID, or the selfie lighting was too dark. Retry with better lighting and a clearer photo. If the issue persists, email business@everygiving.org and we will investigate.",
   },
   {
@@ -102,7 +102,7 @@ const FAQS = [
   {
     cat: 'payments',
     q: 'Are there any fees on withdrawals?',
-    a: 'EveryGiving charges 0% on withdrawals. Your mobile money operator may charge standard transfer fees — these are set by MTN, Vodafone, or AirtelTigo and are outside our control.',
+    a: 'EveryGiving charges 0% on withdrawals. Your mobile money operator may charge standard transfer fees  -  these are set by MTN, Vodafone, or AirtelTigo and are outside our control.',
   },
 
   // DONORS
@@ -114,7 +114,7 @@ const FAQS = [
   {
     cat: 'donors',
     q: 'Can I donate anonymously?',
-    a: 'Yes. Tick "Donate anonymously" when making your donation. Your name appears as "Anonymous Donor" on the campaign page. Your identity is still recorded internally for fraud prevention — but is never shown to the fundraiser or other donors.',
+    a: 'Yes. Tick "Donate anonymously" when making your donation. Your name appears as "Anonymous Donor" on the campaign page. Your identity is still recorded internally for fraud prevention  -  but is never shown to the fundraiser or other donors.',
   },
   {
     cat: 'donors',
@@ -136,7 +136,7 @@ const FAQS = [
   {
     cat: 'account',
     q: 'Can I change my registered mobile money number?',
-    a: 'Yes. Update your MoMo number in account settings. For security, changes to your payout number require identity re-verification — protecting you from unauthorised changes.',
+    a: 'Yes. Update your MoMo number in account settings. For security, changes to your payout number require identity re-verification  -  protecting you from unauthorised changes.',
   },
   {
     cat: 'account',

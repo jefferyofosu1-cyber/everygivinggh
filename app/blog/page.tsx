@@ -17,7 +17,7 @@ const POSTS = [
     slug: 'why-verification-matters',
     category: 'Verification',
     title: 'Why verification makes your campaign raise more',
-    excerpt: 'Donors are cautious — and rightfully so. Here is the data on how verified campaigns perform compared to unverified ones.',
+    excerpt: 'Donors are cautious  -  and rightfully so. Here is the data on how verified campaigns perform compared to unverified ones.',
     readTime: '4 min read',
     date: 'March 2026',
     emoji: '🪪',
@@ -37,7 +37,7 @@ const POSTS = [
     slug: 'medical-fundraising-ghana',
     category: 'Medical',
     title: 'How to raise money for medical bills in Ghana',
-    excerpt: 'Medical campaigns are the most common — and the most urgent. A step-by-step guide for hospital bills, surgery, and treatment costs.',
+    excerpt: 'Medical campaigns are the most common  -  and the most urgent. A step-by-step guide for hospital bills, surgery, and treatment costs.',
     readTime: '5 min read',
     date: 'February 2026',
     emoji: '🏥',
@@ -57,7 +57,7 @@ const POSTS = [
     slug: 'education-fundraising',
     category: 'Education',
     title: 'Raising school fees: a guide for students and their families',
-    excerpt: 'University fees, school books, WASSCE levies — education campaigns succeed when they are specific, verified, and actively shared.',
+    excerpt: 'University fees, school books, WASSCE levies  -  education campaigns succeed when they are specific, verified, and actively shared.',
     readTime: '4 min read',
     date: 'January 2026',
     emoji: '🎓',
@@ -66,7 +66,7 @@ const POSTS = [
   {
     slug: 'team-fundraising-tips',
     category: 'Team',
-    title: '7 ways to get your team to actually share — not just like',
+    title: '7 ways to get your team to actually share  -  not just like',
     excerpt: 'Creating a team campaign is straightforward. Getting everyone to genuinely participate is harder. Here are 7 tactics that actually work.',
     readTime: '3 min read',
     date: 'December 2025',
@@ -103,7 +103,7 @@ export default function BlogPage() {
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-4" style={{ letterSpacing: -1 }}>
               Tips, stories<br />and guides
             </h1>
-            <p className="text-white/50 text-sm max-w-lg mx-auto">Practical guides, fundraising tactics, and real stories — written by the EveryGiving team.</p>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">Practical guides, fundraising tactics, and real stories  -  written by the EveryGiving team.</p>
           </div>
         </section>
 

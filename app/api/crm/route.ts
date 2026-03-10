@@ -64,7 +64,7 @@ function fundraiserWelcomeEmail(name: string, appUrl: string) {
   <div style="background:#FFFFFF;padding:40px;">
 
     <p style="font-size:15px;color:#475569;line-height:1.75;margin:0 0 28px;">
-      You have joined <strong style="color:#1A2B3C;">EveryGiving</strong> — Ghana's first identity-verified crowdfunding platform.
+      You have joined <strong style="color:#1A2B3C;">EveryGiving</strong>  -  Ghana's first identity-verified crowdfunding platform.
       Before you start, here's everything you need to know about how it works.
     </p>
 
@@ -84,7 +84,7 @@ function fundraiserWelcomeEmail(name: string, appUrl: string) {
     ${[
       ['1', '📝', 'Create your campaign', 'Fill in your campaign title, story, goal amount, and category. Add photos to bring your story to life.'],
       ['2', '🪪', 'Verify your identity', 'Upload a photo of your Ghana Card, passport, or other valid ID. For campaigns above ₵5,000 a selfie is also required. Our team manually reviews every document.'],
-      ['3', '⏳', 'Wait for review', 'Our team reviews your campaign and identity documents within 24 hours. You will receive an email with the outcome — approved or rejected with a clear reason.'],
+      ['3', '⏳', 'Wait for review', 'Our team reviews your campaign and identity documents within 24 hours. You will receive an email with the outcome  -  approved or rejected with a clear reason.'],
       ['4', '📲', 'Share and raise', 'Once approved your campaign is live. Share the link on WhatsApp, Facebook, and with friends and family to start receiving donations.'],
       ['5', '💰', 'Receive your funds', 'Donations are released in milestones you set. Withdraw directly to your MoMo, bank account, or debit card at any time.'],
     ].map(([n, icon, title, desc]) => `
@@ -101,7 +101,7 @@ function fundraiserWelcomeEmail(name: string, appUrl: string) {
     <!-- Verification tiers -->
     <div style="font-size:17px;font-weight:900;color:#1A2B3C;margin-bottom:8px;">Verification tiers</div>
     <p style="font-size:13px;color:#64748B;line-height:1.6;margin:0 0 20px;">
-      Your verification tier is automatically suggested based on your fundraising goal. Higher tiers have a one-time verification fee — this can be paid upfront or deducted from your first donations.
+      Your verification tier is automatically suggested based on your fundraising goal. Higher tiers have a one-time verification fee  -  this can be paid upfront or deducted from your first donations.
     </p>
 
     <table style="width:100%;border-collapse:collapse;border-radius:14px;overflow:hidden;border:1px solid #E2E8F0;">
@@ -123,7 +123,7 @@ function fundraiserWelcomeEmail(name: string, appUrl: string) {
     </table>
 
     <p style="font-size:12px;color:#94A3B8;margin:12px 0 0;line-height:1.6;">
-      * A 2% + ₵0.25 transaction fee applies per donation. This is the only ongoing charge — the platform fee is always 0%.
+      * A 2% + ₵0.25 transaction fee applies per donation. This is the only ongoing charge  -  the platform fee is always 0%.
     </p>
 
     <div style="height:1px;background:#F1F5F9;margin:28px 0;"></div>

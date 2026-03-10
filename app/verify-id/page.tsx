@@ -88,6 +88,8 @@ export default function VerifyIdPage() {
   }, [step, images, capturePhoto, stopCamera])
 
   const runVerification = async (imgs: ImageCapture) => {
+    setProcessing(true)
+    setProgress(0)
 
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -117,8 +119,10 @@ export default function VerifyIdPage() {
         verification_submitted_at: new Date().toISOString(),
       }).eq('id', uid)
 
+      setProcessing(false)
       setStep('done')
     } catch {
+      setProcessing(false)
       setStep('failed')
       setError('Upload failed. Please check your connection and try again.')
     }

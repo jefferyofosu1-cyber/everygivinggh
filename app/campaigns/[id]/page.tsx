@@ -62,6 +62,8 @@ export default function CampaignPage() {
       supabase.from('campaigns').select('*, profiles(full_name, phone)').eq('id', params.id).single(),
       supabase.from('donations').select('*').eq('campaign_id', params.id).order('created_at', { ascending: false }).limit(50),
     ]).then(([{ data: camp, error }, { data: don }]) => {
+      if (error) console.error('Campaign fetch error:', error.code, error.message, error.hint)
+      if (!camp) console.warn('Campaign not found for id:', params.id)
       if (error || !camp) { setLoading(false); return }
       setCampaign(camp)
       setDonations((don || []).filter((d: any) => d.status === 'success' || d.status === 'pending'))
@@ -90,7 +92,8 @@ export default function CampaignPage() {
         <div className="text-center">
           <div className="text-6xl mb-4">🔍</div>
           <h1 className="font-nunito font-black text-navy text-2xl mb-2">Campaign not found</h1>
-          <p className="text-gray-400 text-sm mb-6">This campaign may have been removed or the link may be incorrect.</p>
+          <p className="text-gray-400 text-sm mb-4">This campaign may have been removed, not yet approved, or the link may be incorrect.</p>
+          <p className="text-gray-300 text-xs mb-6">If you just submitted this campaign, it is under review and will be visible once approved.</p>
           <Link href="/campaigns" className="inline-block bg-primary text-white font-nunito font-black px-8 py-3.5 rounded-full text-sm hover:-translate-y-0.5 transition-all">
             Browse all campaigns →
           </Link>

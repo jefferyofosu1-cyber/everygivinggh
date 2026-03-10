@@ -1,6 +1,34 @@
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Team Fundraising',
+  description: 'Raise more together. Team fundraising on EveryGiving lets a group of people unite behind one campaign and reach goals no individual could reach alone.',
+}
+
+const STEPS = [
+  { n: '01', icon: '🚀', title: 'One person creates', desc: 'The organiser creates the campaign, sets the goal, and writes the story. Takes about 5 minutes.' },
+  { n: '02', icon: '📲', title: 'Invite your team', desc: 'Share the campaign link with friends, family, teammates, classmates, or colleagues via WhatsApp.' },
+  { n: '03', icon: '📣', title: 'Everyone shares', desc: 'Each person shares the campaign across their own networks. The more people share, the further it travels.' },
+  { n: '04', icon: '💰', title: 'All donations, one pot', desc: 'Every donation - regardless of who shared the link - goes directly to the same campaign goal.' },
+]
+
+const USE_CASES = [
+  { icon: '🏥', title: 'Medical bills', desc: 'A family unites to cover the cost of a parent\'s surgery. The church group shares. The workplace donates. The community shows up.' },
+  { icon: '🎓', title: 'School fees', desc: 'An entire extended family pools effort to send the brightest child to university. One campaign. Every relative shares.' },
+  { icon: '⛪', title: 'Church projects', desc: 'The entire congregation fundraises for a new roof. Every member becomes a fundraiser. Every network is activated.' },
+  { icon: '🏘', title: 'Community projects', desc: 'A neighbourhood committee raises money for a borehole. The whole community becomes the fundraising team.' },
+  { icon: '⚽', title: 'Sports teams', desc: 'The team captain creates a campaign for tournament fees. Every player shares with family. Supporters donate.' },
+  { icon: '🎉', title: 'Events & celebrations', desc: 'A group of friends raises money for a surprise party or reunion. One campaign, everyone contributes and invites.' },
+]
+
+const STATS = [
+  { number: '4×', label: 'more raised', sub: 'compared to solo campaigns' },
+  { number: '10+', label: 'sharers average', sub: 'per team campaign' },
+  { number: '48h', label: 'fastest to fund', sub: 'when teams mobilise quickly' },
+]
 
 export default function TeamFundraisingPage() {
   return (
@@ -11,82 +39,106 @@ export default function TeamFundraisingPage() {
         {/* Hero */}
         <section className="bg-navy py-20 px-5 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
-            <div className="inline-block bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5">Team fundraising</div>
-            <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-5" style={{ letterSpacing: -1 }}>
-              Raise more<br /><span className="text-primary">together</span>
+            <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
+              👥 Team fundraising
+            </div>
+            <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-5" style={{ letterSpacing: -1 }}>
+              Your whole network.<br />
+              <span className="text-primary">One campaign.</span>
             </h1>
-            <p className="text-white/50 text-base max-w-xl mx-auto leading-relaxed mb-8">
-              Team fundraising lets a group of people unite behind a single campaign. Everyone shares, everyone contributes — and the total raised far exceeds what one person can achieve alone.
+            <p className="text-white/55 text-base max-w-xl mx-auto leading-relaxed mb-8">
+              Team fundraising lets a group of people rally behind a single campaign. Everyone shares, everyone contributes - and the total raised far exceeds what one person could achieve alone.
             </p>
-            <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/30 text-sm">
-              Start a team campaign →
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/25 text-sm">
+                Start a team campaign
+              </Link>
+              <Link href="/how-it-works" className="inline-block border-2 border-white/20 hover:border-white/40 text-white font-nunito font-bold px-8 py-4 rounded-full transition-all text-sm">
+                How it works
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Stats bar */}
+        <section className="bg-primary py-8 px-5">
+          <div className="max-w-3xl mx-auto grid grid-cols-3 gap-6 text-center">
+            {STATS.map((s) => (
+              <div key={s.number}>
+                <div className="font-nunito font-black text-white text-3xl md:text-4xl">{s.number}</div>
+                <div className="text-white font-bold text-sm mt-0.5">{s.label}</div>
+                <div className="text-white/60 text-xs mt-0.5">{s.sub}</div>
+              </div>
+            ))}
           </div>
         </section>
 
         {/* How it works */}
-        <section className="py-16 bg-white border-b border-gray-100">
-          <div className="max-w-4xl mx-auto px-5">
+        <section className="py-20 bg-white px-5">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-14">
+              <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-3">How team fundraising works</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">One campaign. Multiple fundraisers. Far bigger results. Here is exactly how it happens.</p>
+            </div>
+            <div className="grid md:grid-cols-4 gap-6">
+              {STEPS.map((step, i) => (
+                <div key={step.n} className="relative">
+                  {i < STEPS.length - 1 && (
+                    <div className="hidden md:block absolute top-8 left-[calc(100%-12px)] w-full h-0.5 bg-gradient-to-r from-primary/30 to-transparent z-0" />
+                  )}
+                  <div className="relative bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all">
+                    <div className="font-mono-dm text-xs text-primary font-bold mb-3 bg-primary/10 inline-block px-2 py-1 rounded-md">{step.n}</div>
+                    <div className="text-3xl mb-3">{step.icon}</div>
+                    <h3 className="font-nunito font-black text-navy text-base mb-2">{step.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Use cases */}
+        <section className="py-20 bg-gray-50 px-5">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-14">
+              <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-3">Who uses team fundraising?</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">From families to faith communities - team fundraising works for any group with a shared goal.</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {USE_CASES.map((uc) => (
+                <div key={uc.title} className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all">
+                  <div className="text-3xl mb-4">{uc.icon}</div>
+                  <h3 className="font-nunito font-black text-navy text-base mb-2">{uc.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{uc.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Tips */}
+        <section className="py-20 bg-white px-5">
+          <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">How team fundraising works</h2>
-              <p className="text-gray-400 text-sm">One campaign. Multiple fundraisers. Far bigger results.</p>
+              <h2 className="font-nunito font-black text-navy text-3xl mb-3">Tips for a successful team campaign</h2>
             </div>
-            <div className="grid md:grid-cols-4 gap-5">
+            <div className="flex flex-col gap-4">
               {[
-                { n: '01', icon: '🚀', title: 'One person creates', desc: 'The campaign organiser creates the main fundraiser and sets the goal.' },
-                { n: '02', icon: '👥', title: 'Invite your team', desc: 'Share the campaign link with friends, family, colleagues, or classmates.' },
-                { n: '03', icon: '📱', title: 'Everyone shares', desc: 'Each team member shares the campaign across their own networks — WhatsApp, Facebook, and beyond.' },
-                { n: '04', icon: '💰', title: 'All donations go to one pot', desc: 'Every donation — regardless of which team member shared the link — goes to the same campaign.' },
-              ].map((step, i) => (
-                <div key={i} className="text-center">
-                  <div className="w-14 h-14 bg-primary-light rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">{step.icon}</div>
-                  <div className="font-nunito font-black text-navy text-sm mb-2">{step.title}</div>
-                  <div className="text-gray-400 text-xs leading-relaxed">{step.desc}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Team types */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-5">
-            <div className="text-center mb-10">
-              <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">Who uses team fundraising?</h2>
-            </div>
-            <div className="grid md:grid-cols-2 gap-5">
-              {[
-                { icon: '🎓', title: 'Students & classmates', desc: 'One student needs school fees. Their entire class shares the campaign. Thirty people, each reaching fifty contacts — that is 1,500 potential donors from a single class.', example: 'Example: "Help Kofi pay his final year fees — shared by his entire class"' },
-                { icon: '⛪', title: 'Churches & congregations', desc: 'A church fundraises for a new roof. The pastor shares during Sunday service, the youth group shares on WhatsApp — everyone gives to the same verified goal.', example: 'Example: "New roof for Redemption Chapel — give anything you can"' },
-                { icon: '🏥', title: 'Family medical campaigns', desc: 'A family member is ill. The entire extended family shares one verified campaign — instead of sending separate, unverified MoMo requests that donors may not trust.', example: 'Example: "Aunty Grace\'s surgery — shared by the Mensah family"' },
-                { icon: '🏘', title: 'Community projects', desc: 'A community borehole, a school building, a road repair. Community leaders and members unite behind a single verified campaign rather than fragmented collection efforts.', example: 'Example: "Borehole for Breman Asikuma — community fundraiser"' },
+                { tip: 'Appoint a campaign leader', detail: 'One person should own the campaign, post updates, and coordinate the team. Campaigns without a clear owner go quiet fast.' },
+                { tip: 'Share in the first hour', detail: 'The first 48 hours are critical. As soon as the campaign is live, every team member should share it immediately in every WhatsApp group.' },
+                { tip: 'Ask for shares, not just donations', detail: 'Most people cannot donate but can share. Tell your team: "Even if you cannot give right now, please share - that is just as important."' },
+                { tip: 'Post updates every few days', detail: 'Update the campaign with progress. Tag your team in updates. Donors who see active campaigns give again and share more.' },
+                { tip: 'Get verified before sharing', detail: 'A Verified badge makes your campaign 3x more trusted. Complete ID verification before you start sharing widely.' },
               ].map((item, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                  <div className="text-3xl mb-3">{item.icon}</div>
-                  <div className="font-nunito font-black text-navy text-base mb-2">{item.title}</div>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-3">{item.desc}</p>
-                  <div className="bg-primary-light border border-primary/15 rounded-xl p-3 text-xs text-primary-dark font-medium italic">{item.example}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Why team is better */}
-        <section className="py-14 bg-white border-t border-gray-100">
-          <div className="max-w-4xl mx-auto px-5">
-            <div className="grid md:grid-cols-3 gap-5">
-              {[
-                { icon: '📣', stat: '5×', label: 'More reach', desc: 'A team of 10 people sharing reaches 5× more people than one person sharing alone.' },
-                { icon: '💚', stat: '2×', label: 'More raised', desc: 'Team campaigns consistently raise more — every member feels personally accountable for the outcome.' },
-                { icon: '🔒', stat: '1', label: 'Verified campaign', desc: 'One verified campaign page carries far more trust than a scatter of unverified MoMo links.' },
-              ].map((item, i) => (
-                <div key={i} className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
-                  <div className="text-3xl mb-2">{item.icon}</div>
-                  <div className="font-nunito font-black text-primary text-3xl mb-1">{item.stat}</div>
-                  <div className="font-nunito font-black text-navy text-sm mb-2">{item.label}</div>
-                  <div className="text-gray-400 text-xs leading-relaxed">{item.desc}</div>
+                <div key={i} className="flex gap-4 bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                  <div className="flex-shrink-0 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white font-nunito font-black text-xs mt-0.5">{i + 1}</div>
+                  <div>
+                    <div className="font-nunito font-black text-navy text-sm mb-1">{item.tip}</div>
+                    <p className="text-gray-500 text-sm leading-relaxed">{item.detail}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -94,15 +146,13 @@ export default function TeamFundraisingPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-14 bg-primary text-center px-5">
-          <h2 className="font-nunito font-black text-white text-3xl mb-3">Start your team campaign</h2>
-          <p className="text-white/70 text-sm mb-7">Free to create. Everyone shares. Nothing to pay upfront.</p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Link href="/create" className="inline-block bg-white text-primary font-nunito font-black px-10 py-4 rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">
-              Create team campaign →
-            </Link>
-            <Link href="/fundraising-tips" className="inline-block border-2 border-white/30 hover:border-white/60 text-white font-nunito font-bold px-7 py-4 rounded-full text-sm transition-all">
-              Read fundraising tips
+        <section className="py-20 bg-navy px-5 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+          <div className="relative max-w-2xl mx-auto text-center">
+            <h2 className="font-nunito font-black text-white text-3xl md:text-4xl mb-4">Ready to raise more together?</h2>
+            <p className="text-white/55 mb-8">Create your campaign in 5 minutes. Invite your team. Share widely. Watch donations arrive.</p>
+            <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-10 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/30 text-sm">
+              Start your team campaign
             </Link>
           </div>
         </section>

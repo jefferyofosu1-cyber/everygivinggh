@@ -1,191 +1,259 @@
-'use client'
-import { useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Verification Tiers',
+  description: 'Understand EveryGiving verification tiers - Basic, Standard, Premium, Gold, and Diamond. Learn what each tier includes, the fees, and the goal limits.',
+}
 
 const TIERS = [
   {
-    tier: 'Basic',
-    price: '₵20',
-    priceNum: 20,
-    border: 'border-gray-200',
-    badge: 'Basic Verified',
-    badgeColor: 'bg-gray-100 text-gray-600',
-    recommended: false,
+    id: 'basic', name: 'Basic', emoji: '🟢', price: 'Free', priceNum: 0,
+    badge: 'Basic', badgeStyle: 'bg-gray-100 text-gray-600 border-gray-200',
+    border: 'border-gray-200', headerBg: 'bg-gray-50',
+    limit: 'Up to GH₵5,000', limitNum: 5000,
+    canDefer: false, recommended: false,
+    desc: 'For small, personal campaigns. ID upload only. No fee ever.',
     checks: [
-      'Email confirmed',
-      'Phone number verified',
-      'ID document upload required',
-      'ID number required',
-      'Basic Verified badge',
+      'ID document photo uploaded',
+      'ID number recorded on file',
+      'Basic badge displayed on campaign',
+      'Manual admin review before approval',
     ],
-    note: 'Ideal for smaller personal campaigns',
-    noteColor: 'bg-gray-50 text-gray-500',
-    limit: 'Campaign goal up to ₵5,000',
+    notIncluded: ['Selfie verification', 'Priority listing', 'Premium badge'],
   },
   {
-    tier: 'Standard',
-    price: '₵50',
-    priceNum: 50,
-    border: 'border-primary',
-    badge: 'Verified ✓',
-    badgeColor: 'bg-primary-light text-primary-dark',
-    recommended: true,
+    id: 'standard', name: 'Standard', emoji: '✅', price: 'GH₵50', priceNum: 50,
+    badge: 'Verified', badgeStyle: 'bg-primary-light text-primary border-primary/20',
+    border: 'border-primary', headerBg: 'bg-primary-light',
+    limit: 'Up to GH₵10,000', limitNum: 10000,
+    canDefer: true, recommended: true,
+    desc: 'The most popular tier. ID and selfie reviewed. Full Verified badge.',
     checks: [
       'Everything in Basic',
       'Selfie photo reviewed by our team',
-      'Full document review',
-      'Full Verified badge on your campaign',
-      'Priority placement in search results',
+      'Full Verified badge on campaign',
+      'Priority placement in listings',
+      'Can defer fee until first donation',
     ],
-    note: 'Most popular · highest donor confidence',
-    noteColor: 'bg-primary-light text-primary-dark',
-    limit: 'Campaign goal up to ₵50,000',
+    notIncluded: ['Supporting document review', 'Gold/Diamond placement'],
   },
   {
-    tier: 'Premium',
-    price: '₵100',
-    priceNum: 100,
-    border: 'border-amber-400',
-    badge: 'Premium ★',
-    badgeColor: 'bg-amber-50 text-amber-700',
-    recommended: false,
+    id: 'premium', name: 'Premium', emoji: '⭐', price: 'GH₵100', priceNum: 100,
+    badge: 'Premium', badgeStyle: 'bg-amber-50 text-amber-700 border-amber-200',
+    border: 'border-amber-400', headerBg: 'bg-amber-50',
+    limit: 'Up to GH₵50,000', limitNum: 50000,
+    canDefer: true, recommended: false,
+    desc: 'Full document review for medium-to-large campaigns. Premium badge.',
     checks: [
       'Everything in Standard',
       'Supporting documents reviewed',
-      'Hospital bill or admission letter accepted',
-      'Premium badge + top listing placement',
-      'Dedicated campaign support',
+      'Premium badge + top placement',
+      'Priority support from our team',
+      'Review completed within 24 hours',
     ],
-    note: 'Recommended for campaigns above ₵50,000',
-    noteColor: 'bg-amber-50 text-amber-700',
-    limit: 'Unlimited campaign goal',
+    notIncluded: ['Gold/Diamond homepage featured'],
+  },
+  {
+    id: 'gold', name: 'Gold', emoji: '🥇', price: 'GH₵200', priceNum: 200,
+    badge: 'Gold', badgeStyle: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+    border: 'border-yellow-400', headerBg: 'bg-yellow-50',
+    limit: 'Up to GH₵100,000', limitNum: 100000,
+    canDefer: true, recommended: false,
+    desc: 'For large campaigns. Gold badge and featured placement.',
+    checks: [
+      'Everything in Premium',
+      'Gold badge on campaign',
+      'Featured placement on homepage',
+      'Review completed within 12 hours',
+      'Dedicated account support',
+    ],
+    notIncluded: ['Diamond homepage hero slot'],
+  },
+  {
+    id: 'diamond', name: 'Diamond', emoji: '💎', price: 'GH₵500', priceNum: 500,
+    badge: 'Diamond', badgeStyle: 'bg-blue-50 text-blue-700 border-blue-200',
+    border: 'border-blue-400', headerBg: 'bg-blue-50',
+    limit: 'Unlimited goal', limitNum: Infinity,
+    canDefer: true, recommended: false,
+    desc: 'No goal limit. Diamond badge, hero placement, personal campaign manager.',
+    checks: [
+      'Everything in Gold',
+      'Diamond badge on campaign',
+      'Homepage hero featured slot',
+      'Review completed within 6 hours',
+      'Personal campaign manager assigned',
+      'No fundraising goal limit',
+    ],
+    notIncluded: [],
   },
 ]
 
-export default function VerificationPage() {
-  const [selectedTier, setSelectedTier] = useState<string | null>(null)
+const FAQS = [
+  { q: 'Why does verification cost money?', a: 'The fee covers the cost of manual identity review by our team. We read every document carefully to protect donors. The fee ensures only serious, genuine fundraisers launch campaigns on EveryGiving.' },
+  { q: 'Can I defer the fee?', a: 'Yes, Standard tier and above can defer the verification fee. It is automatically deducted from your first donations once your campaign starts receiving money. You pay nothing upfront.' },
+  { q: 'What ID do I need?', a: 'Ghana Card (preferred), Passport, DVLA Driver\'s Licence, Voter\'s ID, or NHIS Card. The ID must be yours and must be clearly readable in the photo.' },
+  { q: 'How long does verification take?', a: 'Basic and Standard tiers are usually reviewed within 24 hours. Premium within 24 hours. Gold within 12 hours. Diamond within 6 hours. You receive an email the moment your campaign is approved.' },
+  { q: 'What happens if my campaign is rejected?', a: 'You will receive an email explaining why. The most common reasons are: unclear ID photo, ID details that do not match, or a campaign that violates our guidelines. You can resubmit after correcting the issue.' },
+  { q: 'Can I upgrade my tier?', a: 'Yes. You can upgrade your tier at any time by contacting our team. You will pay the difference in fees, and your campaign will be re-reviewed at the higher tier level.' },
+]
 
+export default function VerificationPage() {
   return (
     <>
       <Navbar />
       <main>
 
         {/* Hero */}
-        <section className="bg-navy py-20 px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <section className="bg-navy py-16 px-5 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+          <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
-            <div className="inline-block bg-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-full mb-5 border border-primary/30">
-              Identity verification
+            <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
+              🪪 5 verification tiers
             </div>
-            <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-5 leading-tight">
-              Verified fundraisers<br />raise more
+            <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-4" style={{ letterSpacing: -1 }}>
+              Build donor trust.<br />
+              <span className="text-primary">Raise more money.</span>
             </h1>
-            <p className="text-white/60 text-base leading-relaxed max-w-xl mx-auto">
-              Your Ghana Card proves you are who you say you are. Donors trust verified fundraisers — and consistently give more to them.
+            <p className="text-white/55 text-base max-w-xl mx-auto leading-relaxed mb-8">
+              Every EveryGiving campaign is manually reviewed by our team before going live. Verified campaigns raise 3x more than unverified ones - because donors trust what they can see.
             </p>
+            <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/25 text-sm">
+              Start a verified campaign
+            </Link>
           </div>
         </section>
 
-        {/* How verification works */}
-        <section className="py-16 bg-gray-50 border-b border-gray-100">
-          <div className="max-w-4xl mx-auto px-5">
-            <div className="text-center mb-12">
-              <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">What verification requires</h2>
-              <p className="text-gray-400 text-sm">All tiers require identity documents. Your chosen tier determines the depth of verification — and the level of trust it signals to donors.</p>
+        {/* Why verification matters */}
+        <section className="py-14 bg-white px-5 border-b border-gray-100">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="font-nunito font-black text-navy text-3xl mb-3">Why verification matters</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">In Ghana, trust is everything. Donors need to know the person asking for money is who they say they are.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-5">
               {[
-                {
-                  n: '01', title: 'ID document upload',
-                  desc: 'Upload a clear photo of the front of your ID document. The ID number must be fully visible. Required for all tiers.',
-                  required: 'Required for all tiers',
-                },
-                {
-                  n: '02', title: 'Enter your ID number',
-                  desc: 'Type your ID number exactly as it appears on your document. This is cross-referenced with your uploaded card to confirm accuracy.',
-                  required: 'Required for all tiers',
-                },
-                {
-                  n: '03', title: 'Selfie (Standard & Premium)',
-                  desc: 'Take a selfie on your phone. Our team checks your face against your ID photo for a deeper level of verification.',
-                  required: 'Standard & Premium only',
-                },
-              ].map((step, i) => (
-                <div key={i} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                  <div className="font-nunito font-black text-primary/30 text-3xl mb-3">{step.n}</div>
-                  <h3 className="font-nunito font-extrabold text-navy text-base mb-2">{step.title}</h3>
-                  <p className="text-sm text-gray-400 leading-relaxed mb-4">{step.desc}</p>
-                  <div className="bg-primary-light text-primary-dark text-xs font-bold px-3 py-2 rounded-lg">
-                    {step.required}
-                  </div>
+                { icon: '🛡', title: 'Protects donors', desc: 'We review every ID document manually. Donors know every campaign they give to has been verified by a real person.' },
+                { icon: '💚', title: 'Boosts fundraising', desc: 'Campaigns with the Verified badge raise 3 times more on average. Trust converts to donations.' },
+                { icon: '🌍', title: 'Builds Ghana\'s giving culture', desc: 'Every verified campaign makes online giving safer. We are building the infrastructure of trust for Ghana\'s digital economy.' },
+              ].map((item) => (
+                <div key={item.title} className="bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center">
+                  <div className="text-3xl mb-3">{item.icon}</div>
+                  <h3 className="font-nunito font-black text-navy text-base mb-2">{item.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Verification tiers */}
-        <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-5">
-            <div className="text-center mb-10">
-              <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">Choose your verification tier</h2>
-              <p className="text-gray-400 text-sm">All tiers require valid ID. Higher tiers unlock larger campaign goals and greater donor confidence.</p>
+        {/* Tier cards */}
+        <section className="py-16 bg-gray-50 px-5">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="font-nunito font-black text-navy text-3xl mb-3">Choose your verification tier</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">Higher tiers include deeper review, stronger badges, and higher fundraising limits. Most fundraisers start at Standard.</p>
             </div>
-            <div className="grid md:grid-cols-3 gap-6">
-              {TIERS.map((tier, i) => (
-                <div key={i}
-                  onClick={() => setSelectedTier(tier.tier)}
-                  className={`bg-white border-2 ${selectedTier === tier.tier ? 'border-primary shadow-xl shadow-primary/10' : tier.border} rounded-2xl p-6 relative cursor-pointer transition-all hover:-translate-y-0.5 ${tier.recommended ? 'shadow-lg shadow-primary/10' : ''}`}>
+            <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {TIERS.map((tier) => (
+                <div key={tier.id} className={`relative bg-white rounded-2xl border-2 ${tier.border} overflow-hidden flex flex-col`}>
                   {tier.recommended && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
-                      Recommended
-                    </div>
+                    <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">Most popular</div>
                   )}
-                  <div className="font-nunito font-black text-navy text-lg mb-0.5">{tier.tier}</div>
-                  <div className="font-nunito font-black text-primary text-3xl mb-1">{tier.price}</div>
-                  <div className="text-gray-400 text-xs mb-3">one-time fee</div>
-                  <div className={`text-xs font-bold px-2.5 py-1 rounded-full inline-block mb-4 ${tier.badgeColor}`}>{tier.badge}</div>
-                  <div className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Includes</div>
-                  <div className="flex flex-col gap-2 mb-4">
-                    {tier.checks.map((c, j) => (
-                      <div key={j} className="flex items-start gap-2 text-xs text-gray-600">
-                        <span className="text-primary flex-shrink-0 mt-0.5 font-bold">✓</span>
-                        {c}
-                      </div>
-                    ))}
+                  <div className={`${tier.headerBg} px-5 pt-5 pb-4 border-b border-gray-100`}>
+                    <div className="text-2xl mb-1.5">{tier.emoji}</div>
+                    <div className="font-nunito font-black text-navy text-lg">{tier.name}</div>
+                    <div className="font-nunito font-black text-2xl mt-1">{tier.price}</div>
+                    {tier.canDefer && <div className="text-xs text-gray-400 mt-0.5">or defer from donations</div>}
+                    <div className={`inline-flex items-center gap-1 border text-xs font-bold px-2.5 py-1 rounded-full mt-3 ${tier.badgeStyle}`}>
+                      {tier.emoji} {tier.badge}
+                    </div>
                   </div>
-                  <div className="border-t border-gray-100 pt-3 mb-4">
-                    <div className="text-xs text-gray-400 font-bold">{tier.limit}</div>
+                  <div className="p-5 flex-1 flex flex-col gap-3">
+                    <div className="text-xs text-gray-500 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 font-semibold">
+                      {tier.limit}
+                    </div>
+                    <p className="text-xs text-gray-500 leading-relaxed">{tier.desc}</p>
+                    <div className="flex flex-col gap-2 mt-1">
+                      {tier.checks.map((c) => (
+                        <div key={c} className="flex items-start gap-2">
+                          <span className="text-primary text-xs mt-0.5 flex-shrink-0">✓</span>
+                          <span className="text-xs text-gray-600 leading-snug">{c}</span>
+                        </div>
+                      ))}
+                      {tier.notIncluded.map((c) => (
+                        <div key={c} className="flex items-start gap-2 opacity-40">
+                          <span className="text-gray-400 text-xs mt-0.5 flex-shrink-0">-</span>
+                          <span className="text-xs text-gray-400 leading-snug line-through">{c}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className={`text-xs font-bold px-3 py-2 rounded-lg ${tier.noteColor}`}>{tier.note}</div>
+                  <div className="px-5 pb-5">
+                    <Link href="/create"
+                      className={`block text-center py-2.5 rounded-full text-xs font-nunito font-black transition-all ${tier.recommended ? 'bg-primary hover:bg-primary-dark text-white shadow-md shadow-primary/20' : 'border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600'}`}>
+                      {tier.priceNum === 0 ? 'Start free' : `Start - ${tier.price}`}
+                    </Link>
+                  </div>
                 </div>
               ))}
-            </div>
-
-            <div className="mt-8 text-center">
-              <Link href="/create"
-                className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-9 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/25 text-sm">
-                Start your campaign and choose your tier →
-              </Link>
             </div>
           </div>
         </section>
 
-        {/* Privacy strip */}
-        <section className="py-12 bg-gray-50 border-t border-gray-100">
-          <div className="max-w-3xl mx-auto px-5 text-center">
-            <h3 className="font-nunito font-black text-navy text-xl mb-3">Your data is protected</h3>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-lg mx-auto mb-5">
-              Your ID documents and selfie are used solely for identity verification. We never share this data with donors or third parties. All documents are encrypted and handled in full compliance with Ghana's Data Protection Act 2012.
-            </p>
-            <div className="flex flex-wrap justify-center gap-5 text-xs text-gray-400">
-              <span>✓ End-to-end encrypted</span>
-              <span>✓ Never shared with donors</span>
-              <span>✓ Ghana Data Protection Act compliant</span>
-              <span>✓ NIA-verified</span>
+        {/* How it works */}
+        <section className="py-16 bg-white px-5">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="font-nunito font-black text-navy text-3xl mb-3">How the verification process works</h2>
             </div>
+            <div className="grid md:grid-cols-4 gap-5">
+              {[
+                { n: '01', icon: '📝', title: 'Create your campaign', desc: 'Fill in your campaign details - title, story, category, and fundraising goal.' },
+                { n: '02', icon: '🪪', title: 'Upload your ID', desc: 'Take a clear photo of your ID document and a selfie (Standard and above). Takes 2 minutes.' },
+                { n: '03', icon: '👀', title: 'Our team reviews', desc: 'We manually review your ID and campaign. This usually takes less than 24 hours.' },
+                { n: '04', icon: '🚀', title: 'Go live and fundraise', desc: 'Once approved, your campaign goes live with a Verified badge and you can start sharing.' },
+              ].map((s, i) => (
+                <div key={s.n} className="relative bg-gray-50 rounded-2xl border border-gray-100 p-6">
+                  <div className="font-mono-dm text-xs text-primary font-bold mb-3 bg-primary/10 inline-block px-2 py-1 rounded-md">{s.n}</div>
+                  <div className="text-2xl mb-3">{s.icon}</div>
+                  <h3 className="font-nunito font-black text-navy text-sm mb-2">{s.title}</h3>
+                  <p className="text-gray-500 text-xs leading-relaxed">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQs */}
+        <section className="py-16 bg-gray-50 px-5">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="font-nunito font-black text-navy text-3xl mb-3">Frequently asked questions</h2>
+            </div>
+            <div className="flex flex-col gap-3">
+              {FAQS.map((faq) => (
+                <div key={faq.q} className="bg-white rounded-2xl border border-gray-100 p-6">
+                  <h3 className="font-nunito font-black text-navy text-base mb-2">{faq.q}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-16 bg-navy px-5 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+          <div className="relative max-w-2xl mx-auto text-center">
+            <h2 className="font-nunito font-black text-white text-3xl mb-4">Ready to get verified?</h2>
+            <p className="text-white/55 text-sm mb-8">Create your campaign in 5 minutes. Upload your ID. Go live within 24 hours.</p>
+            <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-10 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/30 text-sm">
+              Start your verified campaign
+            </Link>
           </div>
         </section>
 

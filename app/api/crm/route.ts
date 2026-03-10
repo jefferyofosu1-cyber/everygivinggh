@@ -191,23 +191,29 @@ export async function POST(req: NextRequest) {
     if (!user || typeof user.email !== 'string' || typeof user.firstName !== 'string') {
       return NextResponse.json({ error: 'Missing email or firstName' }, { status: 400 })
     }
-    const appUrl = APP_URL
+
+    // Extract as typed constants - TypeScript now knows these are strings
+    const email     = user.email
+    const firstName = user.firstName
+    const lastName  = typeof user.lastName === 'string' ? user.lastName : undefined
+    const phone     = typeof user.phone    === 'string' ? user.phone    : undefined
+    const appUrl    = APP_URL
 
     if (type === 'fundraiser_signup') {
       try {
-        await upsertContact({ email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, listId: LIST_IDS.fundraisers })
-        await upsertContact({ email: user.email, firstName: user.firstName, listId: LIST_IDS.all })
-      } catch (e) { console.error('Brevo contact error:', e.message) }
-      await sendEmail({ to: { email: user.email, name: user.firstName }, subject: `Welcome to EveryGiving, ${user.firstName} 🎉`, htmlContent: fundraiserWelcomeEmail(user.firstName, appUrl) })
+        await upsertContact({ email, firstName, lastName, phone, listId: LIST_IDS.fundraisers })
+        await upsertContact({ email, firstName, listId: LIST_IDS.all })
+      } catch (e) { console.error('Brevo contact error:', e instanceof Error ? e.message : e) }
+      await sendEmail({ to: { email, name: firstName }, subject: `Welcome to EveryGiving, ${firstName} 🎉`, htmlContent: fundraiserWelcomeEmail(firstName, appUrl) })
       return NextResponse.json({ success: true, type: 'fundraiser_signup' })
     }
 
     if (type === 'donor_signup') {
       try {
-        await upsertContact({ email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, listId: LIST_IDS.donors })
-        await upsertContact({ email: user.email, firstName: user.firstName, listId: LIST_IDS.all })
-      } catch (e) { console.error('Brevo donor contact error:', e.message) }
-      await sendEmail({ to: { email: user.email, name: user.firstName }, subject: `Thank you for giving, ${user.firstName} 💚`, htmlContent: donorWelcomeEmail(user.firstName, appUrl) })
+        await upsertContact({ email, firstName, lastName, phone, listId: LIST_IDS.donors })
+        await upsertContact({ email, firstName, listId: LIST_IDS.all })
+      } catch (e) { console.error('Brevo donor contact error:', e instanceof Error ? e.message : e) }
+      await sendEmail({ to: { email, name: firstName }, subject: `Thank you for giving, ${firstName} 💚`, htmlContent: donorWelcomeEmail(firstName, appUrl) })
       return NextResponse.json({ success: true, type: 'donor_signup' })
     }
 

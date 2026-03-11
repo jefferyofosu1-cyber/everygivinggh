@@ -74,8 +74,8 @@ export default function AdminDashboard() {
         totalDonations:   donations.count ?? 0,
         totalRaised:      raised,
       })
-      setRecentCampaigns((recent.data ?? []) as RecentCampaign[])
-      setRecentDonations((recentDon.data ?? []) as RecentDonation[])
+      setRecentCampaigns((recent.data ?? []) as unknown as RecentCampaign[])
+      setRecentDonations((recentDon.data ?? []) as unknown as RecentDonation[])
       setLoading(false)
     })
   }, [])

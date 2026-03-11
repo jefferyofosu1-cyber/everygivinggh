@@ -11,11 +11,11 @@ const sections = [
     content: `EveryGiving ("we", "us", "our") operates the crowdfunding platform at everygiving.org. We are committed to protecting the personal data of everyone who uses our Platform  -  whether you are a fundraiser, donor, or visitor.
 
 This Privacy Policy explains:
-• What personal data we collect and why
-• How we use, store, and protect your data
-• Who we share your data with
-• Your rights under the Ghana Data Protection Act, 2012 (Act 843)
-• How to contact us with privacy concerns
+* What personal data we collect and why
+* How we use, store, and protect your data
+* Who we share your data with
+* Your rights under the Ghana Data Protection Act, 2012 (Act 843)
+* How to contact us with privacy concerns
 
 By using EveryGiving, you consent to the practices described in this policy.`,
   },
@@ -25,23 +25,23 @@ By using EveryGiving, you consent to the practices described in this policy.`,
     content: `We collect the following categories of personal data:
 
 Account data
-• Full name, email address, phone number
-• Password (stored in encrypted form  -  we never see it in plain text)
+* Full name, email address, phone number
+* Password (stored in encrypted form  -  we never see it in plain text)
 
 Campaign & identity data (fundraisers)
-• Ghana Card, Passport, Driver's Licence, Voter's ID, NHIS Card, or other government-issued ID
-• ID number, photo of your identity document, selfie photograph
-• Campaign title, story, goal amount, category, and updates
+* Ghana Card, Passport, Driver's Licence, Voter's ID, NHIS Card, or other government-issued ID
+* ID number, photo of your identity document, selfie photograph
+* Campaign title, story, goal amount, category, and updates
 
 Donation data (donors)
-• Name (or "Anonymous" if chosen), email address
-• Donation amount, tip amount, message to fundraiser
-• Payment method (MTN MoMo, Vodafone Cash, AirtelTigo, bank, card)
+* Name (or "Anonymous" if chosen), email address
+* Donation amount, tip amount, message to fundraiser
+* Payment method (MTN MoMo, Vodafone Cash, AirtelTigo, bank, card)
 
 Technical data
-• IP address, browser type, device type
-• Pages visited, time on site, referral source
-• Cookies and similar tracking technologies (see Section 7)
+* IP address, browser type, device type
+* Pages visited, time on site, referral source
+* Cookies and similar tracking technologies (see Section 7)
 
 We do not collect your MoMo PIN, bank account passwords, or any payment credentials. These are handled directly by Hubtel, our licensed payment processor.`,
   },
@@ -50,14 +50,14 @@ We do not collect your MoMo PIN, bank account passwords, or any payment credenti
     title: '3. How We Use Your Data',
     content: `We use your personal data to:
 
-• Create and manage your account
-• Review and approve campaigns (identity verification is done manually by our team)
-• Process donations and release funds to fundraisers via milestone payouts
-• Send you transactional emails (campaign confirmation, approval notification, donation receipts)
-• Respond to support requests and enquiries
-• Detect and prevent fraud or misuse of the Platform
-• Comply with legal obligations under Ghanaian law
-• Improve the Platform through analytics
+* Create and manage your account
+* Review and approve campaigns (identity verification is done manually by our team)
+* Process donations and release funds to fundraisers via milestone payouts
+* Send you transactional emails (campaign confirmation, approval notification, donation receipts)
+* Respond to support requests and enquiries
+* Detect and prevent fraud or misuse of the Platform
+* Comply with legal obligations under Ghanaian law
+* Improve the Platform through analytics
 
 We do not use your data for advertising. We do not sell your data to third parties.`,
   },
@@ -67,11 +67,11 @@ We do not use your data for advertising. We do not sell your data to third parti
     content: `When you submit a campaign, you upload an identity document (and selfie, for Standard tier and above). This data is used solely to verify your identity before your campaign goes live.
 
 How we handle your documents:
-• Documents are uploaded to secure, encrypted storage (Supabase)
-• They are reviewed manually by our team
-• They are never shared with donors or any third party
-• They are retained for as long as your account is active and for a reasonable period after closure to comply with legal obligations
-• You may request deletion at any time by contacting business@everygiving.org
+* Documents are uploaded to secure, encrypted storage (Supabase)
+* They are reviewed manually by our team
+* They are never shared with donors or any third party
+* They are retained for as long as your account is active and for a reasonable period after closure to comply with legal obligations
+* You may request deletion at any time by contacting business@everygiving.org
 
 We do not use automated decision-making or profiling for identity verification. All verification decisions are made by a human member of our team.`,
   },
@@ -107,9 +107,9 @@ Donation records are retained for 7 years to comply with Ghanaian financial reco
     id: 'cookies',
     title: '7. Cookies & Tracking',
     content: `We use cookies and similar technologies to:
-• Keep you logged in to your account
-• Remember your preferences
-• Analyse how the Platform is used (via anonymised analytics)
+* Keep you logged in to your account
+* Remember your preferences
+* Analyse how the Platform is used (via anonymised analytics)
 
 We do not use advertising cookies or share tracking data with advertisers.
 
@@ -120,11 +120,11 @@ You can disable cookies in your browser settings, but some features of the Platf
     title: '8. Security',
     content: `We take the security of your data seriously. Our security measures include:
 
-• All data transmitted between your browser and our servers is encrypted using TLS/HTTPS
-• Passwords are hashed using industry-standard encryption  -  we never store or see plain-text passwords
-• Identity documents are stored in encrypted, access-controlled storage
-• Access to personal data is restricted to authorised team members only
-• We use Supabase Row Level Security (RLS) to enforce data access controls at the database level
+* All data transmitted between your browser and our servers is encrypted using TLS/HTTPS
+* Passwords are hashed using industry-standard encryption  -  we never store or see plain-text passwords
+* Identity documents are stored in encrypted, access-controlled storage
+* Access to personal data is restricted to authorised team members only
+* We use Supabase Row Level Security (RLS) to enforce data access controls at the database level
 
 No security system is completely impenetrable. If you believe your account has been compromised, please contact us immediately at business@everygiving.org.`,
   },
@@ -133,11 +133,11 @@ No security system is completely impenetrable. If you believe your account has b
     title: '9. Your Rights Under the Ghana Data Protection Act',
     content: `Under the Ghana Data Protection Act, 2012 (Act 843), you have the right to:
 
-• Access  -  request a copy of the personal data we hold about you
-• Correction  -  ask us to correct inaccurate or incomplete data
-• Deletion  -  ask us to delete your personal data (subject to legal retention requirements)
-• Objection  -  object to how we use your data in certain circumstances
-• Portability  -  request your data in a machine-readable format
+* Access  -  request a copy of the personal data we hold about you
+* Correction  -  ask us to correct inaccurate or incomplete data
+* Deletion  -  ask us to delete your personal data (subject to legal retention requirements)
+* Objection  -  object to how we use your data in certain circumstances
+* Portability  -  request your data in a machine-readable format
 
 To exercise any of these rights, contact us at business@everygiving.org. We will respond within 30 days. We may need to verify your identity before actioning your request.
 

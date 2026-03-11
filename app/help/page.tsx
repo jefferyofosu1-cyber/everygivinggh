@@ -238,7 +238,7 @@ export default function HelpPage() {
           <div className="max-w-3xl mx-auto px-5">
             {filtered.length === 0 ? (
               <div className="text-center py-16">
-                <div className="text-4xl mb-4">🤔</div>
+                <div className="text-4xl mb-4"></div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No results found</div>
                 <p className="text-gray-400 text-sm mb-6">Try a different search term or browse all questions.</p>
                 <button onClick={() => { setSearch(''); setActiveCategory('all') }}
@@ -266,7 +266,7 @@ export default function HelpPage() {
             <div className="grid md:grid-cols-3 gap-4">
               {[
                 {
-                  icon: '✉️',
+                  icon: '*',
                   title: 'Email us',
                   desc: 'For account issues, verification problems, or anything else.',
                   action: 'business@everygiving.org',
@@ -274,7 +274,7 @@ export default function HelpPage() {
                   btn: 'Send email',
                 },
                 {
-                  icon: '📋',
+                  icon: '*',
                   title: 'Read the Terms',
                   desc: 'Full details on how the platform works, fees, and your rights.',
                   action: 'Terms & Conditions',
@@ -282,7 +282,7 @@ export default function HelpPage() {
                   btn: 'Read terms',
                 },
                 {
-                  icon: '🔒',
+                  icon: '*',
                   title: 'Privacy questions',
                   desc: 'Data access requests, deletion, or privacy concerns.',
                   action: 'Privacy Policy',

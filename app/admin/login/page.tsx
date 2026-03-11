@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
             <div>
               <label className="text-xs font-bold text-white/40 block mb-1.5 uppercase tracking-wider">Password</label>
               <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="********"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#02A95C] transition-colors" />
             </div>
             <button type="submit" disabled={loading}

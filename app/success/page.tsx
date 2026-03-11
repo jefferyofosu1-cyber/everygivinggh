@@ -23,8 +23,8 @@ function SuccessContent() {
   }, [campaignId])
 
   const shareText = campaign
-    ? `I just donated ₵${amount} to "${campaign.title}" on Every Giving! Help them reach their goal 💚`
-    : `I just donated on Every Giving  -  Ghana's trusted crowdfunding platform! 💚`
+    ? `I just donated ₵${amount} to "${campaign.title}" on Every Giving! Help them reach their goal `
+    : `I just donated on Every Giving  -  Ghana's trusted crowdfunding platform! `
   const shareUrl = campaign
     ? `https://everygivinggh.vercel.app/campaigns/${campaignId}`
     : 'https://everygivinggh.vercel.app'
@@ -39,7 +39,7 @@ function SuccessContent() {
         <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
           <div className="absolute inset-0 bg-primary/10 rounded-full animate-ping" />
           <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">
-            💚
+            
           </div>
         </div>
 
@@ -90,7 +90,7 @@ function SuccessContent() {
             <button
               onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Link copied!') }}
               className="flex items-center justify-center gap-2 py-3 border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold rounded-xl transition-all text-sm">
-              🔗 Copy campaign link
+               Copy campaign link
             </button>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function SuccessPage() {
       <Suspense fallback={
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-pulse">💚</div>
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-pulse"></div>
             <div className="font-nunito font-black text-navy text-xl">Loading...</div>
           </div>
         </div>

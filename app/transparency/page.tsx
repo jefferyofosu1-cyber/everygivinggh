@@ -32,11 +32,11 @@ export default function TransparencyPage() {
             <div className="grid md:grid-cols-2 gap-5">
               {[
                 { icon: '₵', title: '0% platform fee on donations', body: 'EveryGiving charges nothing on donations. If a donor gives ₵100, the fundraiser receives ₵100 minus only the standard MoMo network fee. We take no cut  -  ever.' },
-                { icon: '🔒', title: 'Identity verified against NIA', body: 'Every fundraiser\'s identity is checked against the National Identification Authority database using their Ghana Card. Donors can see the Verified badge as proof.' },
-                { icon: '👁', title: 'Every donation is visible', body: 'Donors can see all contributions on a campaign page. The total raised, the goal, and individual donations are all publicly visible. No hidden numbers.' },
-                { icon: '⚡', title: 'Same-day MoMo payouts', body: 'We never hold fundraiser money. Donations flow directly to the registered MoMo wallet the same day they are received.' },
-                { icon: '🛡', title: 'Fraud is reported to authorities', body: 'Any fraudulent campaign is removed immediately. We report fraud to the Ghana Police Service and EOCO. Fraudsters are not simply banned  -  they are reported to the authorities.' },
-                { icon: '📊', title: 'No ads. No data selling. Ever.', body: 'EveryGiving is entirely ad-free. We do not sell user data to advertisers or any third party. Our business model is the verification fee  -  not your data.' },
+                { icon: '*', title: 'Identity verified against NIA', body: 'Every fundraiser\'s identity is checked against the National Identification Authority database using their Ghana Card. Donors can see the Verified badge as proof.' },
+                { icon: '*', title: 'Every donation is visible', body: 'Donors can see all contributions on a campaign page. The total raised, the goal, and individual donations are all publicly visible. No hidden numbers.' },
+                { icon: '*', title: 'Same-day MoMo payouts', body: 'We never hold fundraiser money. Donations flow directly to the registered MoMo wallet the same day they are received.' },
+                { icon: '*', title: 'Fraud is reported to authorities', body: 'Any fraudulent campaign is removed immediately. We report fraud to the Ghana Police Service and EOCO. Fraudsters are not simply banned  -  they are reported to the authorities.' },
+                { icon: '*', title: 'No ads. No data selling. Ever.', body: 'EveryGiving is entirely ad-free. We do not sell user data to advertisers or any third party. Our business model is the verification fee  -  not your data.' },
               ].map((item, i) => (
                 <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                   <div className="text-2xl mb-3">{item.icon}</div>

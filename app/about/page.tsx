@@ -18,12 +18,12 @@ const HOW_STEPS = [
 ]
 
 const GUARANTEE_POINTS = [
-  { icon: '🪪', title: 'Identity verified', desc: 'Every fundraiser confirms their identity before going live. No anonymous campaigns.' },
+  { icon: '*', title: 'Identity verified', desc: 'Every fundraiser confirms their identity before going live. No anonymous campaigns.' },
   { icon: '₵', title: 'Zero platform fee  -  always', desc: 'We never take a percentage of what you raise. Every cedi your donors give goes directly to you.' },
-  { icon: '👁', title: 'Full transparency', desc: 'Every donation is visible on the campaign page. Nothing is hidden from donors.' },
-  { icon: '⚡', title: 'Same-day MoMo payouts', desc: 'Donations reach your MoMo wallet the same day they are made  -  no holding periods.' },
-  { icon: '🛡', title: 'Fraud protection', desc: 'We monitor all campaigns for suspicious activity and report fraud to Ghanaian authorities without delay.' },
-  { icon: '📞', title: 'Real support', desc: 'Email business@everygiving.org. Payout issues are resolved same day. All other enquiries within 2 business days.' },
+  { icon: '*', title: 'Full transparency', desc: 'Every donation is visible on the campaign page. Nothing is hidden from donors.' },
+  { icon: '*', title: 'Same-day MoMo payouts', desc: 'Donations reach your MoMo wallet the same day they are made  -  no holding periods.' },
+  { icon: '*', title: 'Fraud protection', desc: 'We monitor all campaigns for suspicious activity and report fraud to Ghanaian authorities without delay.' },
+  { icon: '*', title: 'Real support', desc: 'Email business@everygiving.org. Payout issues are resolved same day. All other enquiries within 2 business days.' },
 ]
 
 const COUNTRIES = [
@@ -34,14 +34,14 @@ const COUNTRIES = [
 ]
 
 const RESOURCES = [
-  { label: 'Fundraising tips for Ghana', href: '/help', icon: '📖' },
-  { label: 'How to write a campaign story', href: '/help', icon: '✍️' },
-  { label: 'WhatsApp sharing guide', href: '/help', icon: '📱' },
-  { label: 'Verification walkthrough', href: '/how-it-works', icon: '🔐' },
-  { label: 'Help Centre & FAQ', href: '/help', icon: '❓' },
-  { label: 'Terms & Conditions', href: '/terms', icon: '📋' },
-  { label: 'Privacy Policy', href: '/privacy', icon: '🔒' },
-  { label: 'Contact us', href: '/contact', icon: '✉️' },
+  { label: 'Fundraising tips for Ghana', href: '/help', icon: '*' },
+  { label: 'How to write a campaign story', href: '/help', icon: '*' },
+  { label: 'WhatsApp sharing guide', href: '/help', icon: '*' },
+  { label: 'Verification walkthrough', href: '/how-it-works', icon: '*' },
+  { label: 'Help Centre & FAQ', href: '/help', icon: '*' },
+  { label: 'Terms & Conditions', href: '/terms', icon: '*' },
+  { label: 'Privacy Policy', href: '/privacy', icon: '*' },
+  { label: 'Contact us', href: '/contact', icon: '*' },
 ]
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -333,9 +333,9 @@ export default function AboutPage() {
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               {[
-                { icon: '🏠', label: 'Remote-first', desc: 'Work from anywhere in Ghana' },
-                { icon: '🚀', label: 'Early stage', desc: 'Real ownership and impact from day one' },
-                { icon: '💚', label: 'Mission-driven', desc: 'Building something that genuinely helps people' },
+                { icon: '*', label: 'Remote-first', desc: 'Work from anywhere in Ghana' },
+                { icon: '*', label: 'Early stage', desc: 'Real ownership and impact from day one' },
+                { icon: '*', label: 'Mission-driven', desc: 'Building something that genuinely helps people' },
               ].map((item, i) => (
                 <div key={i} className="bg-white border border-gray-100 rounded-xl p-5 text-center">
                   <div className="text-2xl mb-2">{item.icon}</div>

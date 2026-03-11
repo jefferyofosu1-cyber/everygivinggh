@@ -66,7 +66,7 @@ export default function AdminDonationsPage() {
         </div>
         <button onClick={exportCSV}
           className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all">
-          <span>📊</span> Export CSV
+          <span></span> Export CSV
         </button>
       </div>
 
@@ -114,7 +114,7 @@ export default function AdminDonationsPage() {
           <div className="p-8 text-center text-white/30 text-sm">Loading donations…</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="text-4xl mb-3">💸</div>
+            <div className="text-4xl mb-3"></div>
             <div className="text-white/30 text-sm">No donations found</div>
           </div>
         ) : (

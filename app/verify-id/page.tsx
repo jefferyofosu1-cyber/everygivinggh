@@ -311,7 +311,7 @@ export default function VerifyIdPage() {
                     'You will receive a confirmation email shortly',
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-sm text-white/70">
-                      <div className="w-5 h-5 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center text-primary text-xs flex-shrink-0">✓</div>
+                      <div className="w-5 h-5 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center text-primary text-xs flex-shrink-0"></div>
                       {item}
                     </div>
                   ))}

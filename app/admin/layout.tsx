@@ -10,10 +10,10 @@ interface AdminUser {
 }
 
 const NAV = [
-  { href: '/admin',           label: 'Dashboard', icon: '📊', exact: true  },
-  { href: '/admin/campaigns', label: 'Campaigns', icon: '📋', exact: false },
-  { href: '/admin/donations', label: 'Donations', icon: '💰', exact: false },
-  { href: '/admin/users',     label: 'Users',     icon: '👥', exact: false },
+  { href: '/admin',           label: 'Dashboard', icon: '*', exact: true  },
+  { href: '/admin/campaigns', label: 'Campaigns', icon: '*', exact: false },
+  { href: '/admin/donations', label: 'Donations', icon: '*', exact: false },
+  { href: '/admin/users',     label: 'Users',     icon: '*', exact: false },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

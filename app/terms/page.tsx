@@ -18,10 +18,10 @@ We may update these Terms at any time. Continued use of the Platform after chang
     id: 'eligibility',
     title: '2. Eligibility',
     content: `To use EveryGiving you must:
-• Be at least 18 years old
-• Be a resident of Ghana or have a valid Ghanaian bank or mobile money account
-• Provide accurate and truthful information during registration and campaign creation
-• Not be prohibited from using the Platform under any applicable law
+* Be at least 18 years old
+* Be a resident of Ghana or have a valid Ghanaian bank or mobile money account
+* Provide accurate and truthful information during registration and campaign creation
+* Not be prohibited from using the Platform under any applicable law
 
 By using the Platform, you represent and warrant that you meet all of these requirements.`,
   },
@@ -42,22 +42,22 @@ EveryGiving's team reviews all identity documents manually before approving any 
 Verification tiers (Basic, Standard, Premium, Gold, Diamond) determine the maximum fundraising goal permitted for each campaign. Verification fees are one-time, non-refundable, and may be paid upfront or deferred and deducted from the first donations received.
 
 You agree that your campaign:
-• Is truthful, accurate, and not misleading in any way
-• Does not violate any Ghanaian law or regulation
-• Does not involve fraud, deception, or misrepresentation
-• Will use funds solely for the stated purpose
-• Will provide updates to donors on the use of funds`,
+* Is truthful, accurate, and not misleading in any way
+* Does not violate any Ghanaian law or regulation
+* Does not involve fraud, deception, or misrepresentation
+* Will use funds solely for the stated purpose
+* Will provide updates to donors on the use of funds`,
   },
   {
     id: 'prohibited',
     title: '5. Prohibited Content & Uses',
     content: `You may not use EveryGiving to fundraise for:
-• Illegal activities of any kind
-• Political campaigns or partisan causes
-• Hate speech, discrimination, or content targeting individuals
-• Weapons, drugs, or controlled substances
-• Pyramid schemes or multi-level marketing
-• Any activity that violates Ghanaian law
+* Illegal activities of any kind
+* Political campaigns or partisan causes
+* Hate speech, discrimination, or content targeting individuals
+* Weapons, drugs, or controlled substances
+* Pyramid schemes or multi-level marketing
+* Any activity that violates Ghanaian law
 
 EveryGiving reserves the right to remove any campaign and suspend any account that violates these prohibitions without prior notice.`,
   },
@@ -87,10 +87,10 @@ EveryGiving may withhold or reverse payouts if fraud, misrepresentation, or a vi
     id: 'donors',
     title: '8. Donor Responsibilities',
     content: `Donations are voluntary. By making a donation you acknowledge that:
-• You are not purchasing a product or service
-• Donations are not guaranteed to reach any specific goal
-• EveryGiving does not guarantee the outcome of any campaign
-• You have read the campaign description and are satisfied with its contents
+* You are not purchasing a product or service
+* Donations are not guaranteed to reach any specific goal
+* EveryGiving does not guarantee the outcome of any campaign
+* You have read the campaign description and are satisfied with its contents
 
 Donations are generally non-refundable. In cases of verified fraud, EveryGiving will make reasonable efforts to facilitate refunds where possible.`,
   },
@@ -100,10 +100,10 @@ Donations are generally non-refundable. In cases of verified fraud, EveryGiving 
     content: `EveryGiving is a platform that connects fundraisers and donors. We do not endorse, guarantee, or take responsibility for the accuracy of any campaign content.
 
 To the maximum extent permitted by Ghanaian law, EveryGiving shall not be liable for:
-• Any indirect, incidental, or consequential damages
-• Loss of donations due to fraud by a third party
-• Technical failures or interruptions of service
-• Actions or omissions of fundraisers or donors
+* Any indirect, incidental, or consequential damages
+* Loss of donations due to fraud by a third party
+* Technical failures or interruptions of service
+* Actions or omissions of fundraisers or donors
 
 Our total liability to you in any circumstance shall not exceed the total fees paid by you to EveryGiving in the 12 months preceding the claim.`,
   },

@@ -215,7 +215,7 @@ export default function SearchPage() {
                 <div className="aspect-video bg-gradient-to-br from-green-100 to-green-200 relative">
                   {campaign.verified && (
                     <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                      <span>✓</span>
+                      <span></span>
                       <span>Verified</span>
                     </div>
                   )}
@@ -275,7 +275,7 @@ export default function SearchPage() {
         ) : (
           // No results state
           <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔍</div>
+            <div className="text-6xl mb-4"></div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               No fundraisers found
             </h3>

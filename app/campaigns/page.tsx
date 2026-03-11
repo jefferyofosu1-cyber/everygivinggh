@@ -8,8 +8,8 @@ import { createClient } from '@/lib/supabase'
 const CATEGORIES = ['All', 'Medical', 'Education', 'Church & Faith', 'Emergency', 'Business', 'Memorial', 'Community', 'Events']
 
 const EMOJI: Record<string, string> = {
-  Medical: '🏥', Education: '🎓', 'Church & Faith': '⛪', Emergency: '🆘',
-  Business: '💼', Memorial: '🕊', Community: '🏘', Events: '🎉', Other: '💚',
+  Medical: 'MD', Education: 'ED', 'Church & Faith': 'FA', Emergency: 'EM',
+  Business: 'BS', Memorial: 'MM', Community: 'CM', Events: 'EV', Other: 'OT',
 }
 
 function CampaignCard({ campaign }: { campaign: any }) {
@@ -18,9 +18,9 @@ function CampaignCard({ campaign }: { campaign: any }) {
     <Link href={`/campaigns/${campaign.id}`}
       className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden group">
       <div className="h-40 bg-gradient-to-br from-primary-light to-blue-50 flex items-center justify-center text-5xl relative">
-        {EMOJI[campaign.category] || '💚'}
+        {EMOJI[campaign.category] || ''}
         {campaign.verified && (
-          <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">✓ Verified</div>
+          <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full"> Verified</div>
         )}
       </div>
       <div className="p-5">
@@ -53,8 +53,8 @@ function PlaceholderCard({ i }: { i: number }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="h-40 bg-gradient-to-br from-primary-light to-blue-50 flex items-center justify-center text-5xl relative">
-        {EMOJI[c.category] || '💚'}
-        <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">✓ Verified</div>
+        {EMOJI[c.category] || ''}
+        <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full"> Verified</div>
       </div>
       <div className="p-5">
         <div className="font-nunito font-black text-navy text-sm mb-1.5 line-clamp-2 leading-snug">{c.title}</div>
@@ -147,7 +147,7 @@ export default function CampaignsPage() {
               </div>
             ) : (
               <div className="text-center py-16">
-                <div className="text-4xl mb-3">🔍</div>
+                <div className="text-4xl mb-3"></div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No campaigns found</div>
                 <p className="text-gray-400 text-sm mb-5">Try a different search or category.</p>
                 <button onClick={() => { setSearch(''); setCategory('All') }}

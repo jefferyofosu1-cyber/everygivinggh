@@ -210,7 +210,7 @@ function WithdrawModal({ available, profile, onClose }: {
 
         {wStep === 'sent' && (
           <div className="p-8 text-center">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">✅</div>
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl"></div>
             <h3 className="font-nunito font-black text-navy text-xl mb-2">Withdrawal requested!</h3>
             <p className="text-gray-400 text-sm mb-2">Funds will arrive within 24 hours.</p>
             <p className="text-xs text-gray-300 mb-6">You will receive an SMS confirmation when the transfer completes.</p>
@@ -257,7 +257,7 @@ function WithdrawModal({ available, profile, onClose }: {
                 <div className="text-xs text-gray-400 mb-0.5">Available balance</div>
                 <div className="font-nunito font-black text-navy text-2xl">GH₵{available.toLocaleString()}</div>
               </div>
-              <div className="text-3xl">💰</div>
+              <div className="text-3xl"></div>
             </div>
             <div className="grid grid-cols-2 gap-2 mb-5">
               {(['momo', 'bank'] as const).map(m => (
@@ -573,7 +573,7 @@ export default function DashboardPage() {
             campaigns.length === 0
               ? (
                 <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-                  <div className="text-5xl mb-4">🚀</div>
+                  <div className="text-5xl mb-4"></div>
                   <h3 className="font-nunito font-black text-navy text-xl mb-2">No campaigns yet</h3>
                   <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">Start your first campaign and begin raising funds.</p>
                   <Link href="/create" className="inline-block bg-primary text-white font-nunito font-black px-8 py-3.5 rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-primary/20">
@@ -605,7 +605,7 @@ export default function DashboardPage() {
                   ? <div className="p-8 text-center text-gray-300 text-sm">No donations received yet</div>
                   : donations.map((d, i) => (
                     <div key={d.id} className={`flex items-center gap-4 px-5 py-4 ${i < donations.length - 1 ? 'border-b border-gray-50' : ''}`}>
-                      <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center text-sm flex-shrink-0">💚</div>
+                      <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center text-sm flex-shrink-0"></div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-navy text-sm">{d.anonymous ? 'Anonymous donor' : (d.donor_name ?? 'Someone')}</div>
                         <div className="text-xs text-gray-400 truncate">{campaigns.find(c => c.id === d.campaign_id)?.title ?? 'Campaign'}</div>
@@ -632,7 +632,7 @@ export default function DashboardPage() {
                     <div className="text-xs text-gray-400 mb-1">Available balance</div>
                     <div className="font-nunito font-black text-navy text-3xl">GH₵{availableBalance.toLocaleString()}</div>
                   </div>
-                  <div className="text-4xl">💰</div>
+                  <div className="text-4xl"></div>
                 </div>
                 <div className="flex flex-col gap-3 mb-6">
                   {[

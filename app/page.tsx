@@ -34,9 +34,9 @@ const CATEGORIES = [
 ]
 
 const EMOJI: Record<string, string> = {
-  medical:'🏥',emergency:'🆘',education:'🎓',charity:'🤲',faith:'⛪',
-  community:'🏘',environment:'🌿',business:'💼',family:'👨‍👩‍👧',
-  sports:'⚽',events:'🎉',wishes:'🌟',memorial:'🕊',other:'💚',
+  medical:'MD',emergency:'EM',education:'ED',charity:'CH',faith:'FA',
+  community:'CM',environment:'EN',business:'BS',family:'FM',
+  sports:'SP',events:'EV',wishes:'WS',memorial:'MM',other:'OT',
 }
 
 
@@ -49,8 +49,8 @@ function CampaignCard({ c }: { c: any }) {
       <div className="h-48 relative overflow-hidden bg-gray-100">
         {c.image_url
           ? <Image src={c.image_url} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
-          : <div className="w-full h-full bg-gradient-to-br from-[#e6f9f1] to-blue-50 flex items-center justify-center text-5xl">{EMOJI[c.category?.toLowerCase()] || '💚'}</div>}
-        {c.verified && <div className="absolute top-3 right-3 bg-[#02A95C] text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide">✓ VERIFIED</div>}
+          : <div className="w-full h-full bg-gradient-to-br from-[#e6f9f1] to-blue-50 flex items-center justify-center text-5xl">{EMOJI[c.category?.toLowerCase()] || ''}</div>}
+        {c.verified && <div className="absolute top-3 right-3 bg-[#02A95C] text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide"> VERIFIED</div>}
       </div>
       <div className="p-5">
         <div className="font-bold text-[#1A2B3C] text-sm mb-1 line-clamp-2 group-hover:text-[#02A95C] transition-colors leading-snug">{c.title}</div>
@@ -148,7 +148,7 @@ export default function HomePage() {
                   <Image src={P.accra} alt="" width={40} height={40} className="rounded-full object-cover border-2 border-[#02A95C]" />
                   <div>
                     <div className="font-black text-[#1A2B3C] text-xs">Ama Mensah</div>
-                    <div className="text-[#02A95C] text-[10px] font-bold flex items-center gap-1">✓ Ghana Card Verified · Accra</div>
+                    <div className="text-[#02A95C] text-[10px] font-bold flex items-center gap-1"> Ghana Card Verified · Accra</div>
                   </div>
                 </div>
                 <div className="text-xs text-gray-500 mb-2.5 leading-snug">Help with kidney surgery at Korle Bu Teaching Hospital</div>
@@ -163,7 +163,7 @@ export default function HomePage() {
 
               {/* Donation notification */}
               <div className="absolute top-8 -left-8 bg-white rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 border border-gray-100">
-                <div className="w-8 h-8 bg-[#02A95C] rounded-full flex items-center justify-center text-sm flex-shrink-0">💚</div>
+                <div className="w-8 h-8 bg-[#02A95C] rounded-full flex items-center justify-center text-sm flex-shrink-0"></div>
                 <div>
                   <div className="text-xs font-black text-[#1A2B3C]">New donation</div>
                   <div className="text-[10px] text-gray-400">Kwame donated ₵200 via MTN MoMo</div>
@@ -182,11 +182,11 @@ export default function HomePage() {
         <section className="border-y border-gray-100 bg-gray-50 py-5">
           <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-8 text-xs font-semibold text-gray-400">
             {[
-              { icon: '🪪', text: 'Identity verified' },
-              { icon: '📱', text: 'MTN · Vodafone · AirtelTigo' },
-              { icon: '🏆', text: 'Milestone-based payouts' },
-              { icon: '💸', text: '2% + ₵0.25 per donation · 0% platform fee' },
-              { icon: '🔒', text: 'Encrypted & secure' },
+              { icon: '*', text: 'Identity verified' },
+              { icon: '*', text: 'MTN · Vodafone · AirtelTigo' },
+              { icon: '*', text: 'Milestone-based payouts' },
+              { icon: '*', text: '2% + ₵0.25 per donation · 0% platform fee' },
+              { icon: '*', text: 'Encrypted & secure' },
             ].map((t, i) => (
               <div key={i} className="flex items-center gap-2">
                 <span className="text-base">{t.icon}</span>
@@ -207,9 +207,9 @@ export default function HomePage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
               {[
-                { icon: '🪪', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns  -  ever.' },
-                { icon: '💸', title: '2% + ₵0.25 per donation', desc: 'The only fee. Deducted automatically. Zero platform fee. Zero monthly charges.' },
-                { icon: '🏆', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones  -  keeping donors confident.' },
+                { icon: '*', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns  -  ever.' },
+                { icon: '*', title: '2% + ₵0.25 per donation', desc: 'The only fee. Deducted automatically. Zero platform fee. Zero monthly charges.' },
+                { icon: '*', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones  -  keeping donors confident.' },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center">
                   <div className="text-4xl mb-3">{item.icon}</div>
@@ -308,7 +308,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-                <div className="text-5xl mb-4">💚</div>
+                <div className="text-5xl mb-4"></div>
                 <h3 className="font-nunito font-black text-[#1A2B3C] text-xl mb-2">Be the first to start a campaign</h3>
                 <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">EveryGiving is live and accepting campaigns. Create yours today  -  verified and trusted by donors across Ghana.</p>
                 <Link href="/create" className="inline-block bg-[#02A95C] text-white font-nunito font-black px-8 py-4 rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-[#02A95C]/25">
@@ -356,9 +356,9 @@ export default function HomePage() {
               </h2>
               <div className="flex flex-col gap-6">
                 {[
-                  { icon:'🪪', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns  -  and now they have a reason to trust you.' },
-                  { icon:'📱', title:'Built for mobile money from day one', desc:'MTN MoMo, Vodafone Cash, and AirtelTigo are built into the platform from the ground up. No bank account needed. Donations land same day.' },
-                  { icon:'💸', title:'Honest fees  -  no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
+                  { icon: '*', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns  -  and now they have a reason to trust you.' },
+                  { icon: '*', title:'Built for mobile money from day one', desc:'MTN MoMo, Vodafone Cash, and AirtelTigo are built into the platform from the ground up. No bank account needed. Donations land same day.' },
+                  { icon: '*', title:'Honest fees  -  no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-5">
                     <div className="w-12 h-12 bg-[#f0fdf6] border border-[#02A95C]/15 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">{item.icon}</div>
@@ -432,9 +432,9 @@ export default function HomePage() {
 
             <div className="grid md:grid-cols-3 gap-4 mb-8">
               {[
-                { icon:'🎯', title:'0% platform fee', desc:'We never charge a platform fee. Creating a campaign is always completely free.' },
-                { icon:'💸', title:'2% + ₵0.25 per donation', desc:'The only cost. Deducted automatically from each donation before it reaches the fundraiser.' },
-                { icon:'📱', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Funds are released to your wallet as milestones are completed.' },
+                { icon: '*', title:'0% platform fee', desc:'We never charge a platform fee. Creating a campaign is always completely free.' },
+                { icon: '*', title:'2% + ₵0.25 per donation', desc:'The only cost. Deducted automatically from each donation before it reaches the fundraiser.' },
+                { icon: '*', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Funds are released to your wallet as milestones are completed.' },
               ].map((item, i) => (
                 <div key={i} className="bg-[#f8fafb] border border-gray-100 rounded-2xl p-6 text-left">
                   <div className="text-3xl mb-3">{item.icon}</div>

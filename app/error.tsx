@@ -10,7 +10,7 @@ export default function GlobalError({
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5">
       <div className="max-w-md w-full text-center">
-        <div className="text-6xl mb-4">😔</div>
+        <div className="text-6xl mb-4"></div>
         <h1 className="font-nunito font-black text-navy text-2xl mb-2">Something went wrong</h1>
         <p className="text-gray-400 text-sm mb-6">
           An unexpected error occurred. Please try again.

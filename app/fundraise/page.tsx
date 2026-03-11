@@ -6,37 +6,37 @@ import Footer from '@/components/layout/Footer'
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { icon: '🏥', label: 'Medical', desc: 'Hospital bills, surgery, treatment, and recovery costs.', href: '/campaigns?category=medical' },
-  { icon: '🎓', label: 'Education', desc: 'School fees, university costs, and learning materials.', href: '/campaigns?category=education' },
-  { icon: '⛪', label: 'Church & Faith', desc: 'Building projects, community outreach, and ministry work.', href: '/campaigns?category=church' },
-  { icon: '🆘', label: 'Emergency', desc: 'Sudden disasters, accidents, and urgent crises.', href: '/campaigns?category=emergency' },
-  { icon: '💼', label: 'Business', desc: 'Starting or growing a small business or livelihood.', href: '/campaigns?category=business' },
-  { icon: '🕊', label: 'Memorial', desc: 'Funeral costs, burials, and remembrance funds.', href: '/campaigns?category=memorial' },
-  { icon: '🏘', label: 'Community', desc: 'Local projects, clean water, roads, and shared resources.', href: '/campaigns?category=community' },
-  { icon: '🎉', label: 'Events', desc: 'Celebrations, reunions, and community gatherings.', href: '/campaigns?category=events' },
+  { icon: '*', label: 'Medical', desc: 'Hospital bills, surgery, treatment, and recovery costs.', href: '/campaigns?category=medical' },
+  { icon: '*', label: 'Education', desc: 'School fees, university costs, and learning materials.', href: '/campaigns?category=education' },
+  { icon: '*', label: 'Church & Faith', desc: 'Building projects, community outreach, and ministry work.', href: '/campaigns?category=church' },
+  { icon: 'EM', label: 'Emergency', desc: 'Sudden disasters, accidents, and urgent crises.', href: '/campaigns?category=emergency' },
+  { icon: '*', label: 'Business', desc: 'Starting or growing a small business or livelihood.', href: '/campaigns?category=business' },
+  { icon: '*', label: 'Memorial', desc: 'Funeral costs, burials, and remembrance funds.', href: '/campaigns?category=memorial' },
+  { icon: '*', label: 'Community', desc: 'Local projects, clean water, roads, and shared resources.', href: '/campaigns?category=community' },
+  { icon: '*', label: 'Events', desc: 'Celebrations, reunions, and community gatherings.', href: '/campaigns?category=events' },
 ]
 
 const BLOG_POSTS = [
-  { emoji: '📱', tag: 'Sharing tips', title: 'How to share your campaign on WhatsApp and raise more', desc: 'The right message at the right time can double your donations. This is the exact WhatsApp strategy that works for Ghanaian fundraisers.', time: '4 min read' },
-  { emoji: '📝', tag: 'Campaign writing', title: 'How to write a campaign story that makes people give', desc: 'Donors give to people, not problems. Learn how to tell your story honestly, clearly, and compellingly.', time: '6 min read' },
-  { emoji: '📸', tag: 'Photos & media', title: 'The right photo for your campaign  -  and how to take it', desc: 'Campaigns with strong photos raise significantly more. Here is what works and what to avoid.', time: '3 min read' },
-  { emoji: '🔄', tag: 'Keeping donors updated', title: 'Why posting updates doubles your donations', desc: 'Donors who see a campaign update are twice as likely to share it. Learn how to write updates that sustain momentum.', time: '4 min read' },
+  { emoji: '*', tag: 'Sharing tips', title: 'How to share your campaign on WhatsApp and raise more', desc: 'The right message at the right time can double your donations. This is the exact WhatsApp strategy that works for Ghanaian fundraisers.', time: '4 min read' },
+  { emoji: '*', tag: 'Campaign writing', title: 'How to write a campaign story that makes people give', desc: 'Donors give to people, not problems. Learn how to tell your story honestly, clearly, and compellingly.', time: '6 min read' },
+  { emoji: '*', tag: 'Photos & media', title: 'The right photo for your campaign  -  and how to take it', desc: 'Campaigns with strong photos raise significantly more. Here is what works and what to avoid.', time: '3 min read' },
+  { emoji: '*', tag: 'Keeping donors updated', title: 'Why posting updates doubles your donations', desc: 'Donors who see a campaign update are twice as likely to share it. Learn how to write updates that sustain momentum.', time: '4 min read' },
 ]
 
 const CORPORATE_BENEFITS = [
-  { icon: '🤝', title: 'CSR & community impact', desc: 'Support verified community campaigns as part of your Corporate Social Responsibility programme.' },
-  { icon: '🏆', title: 'Employee giving campaigns', desc: 'Match employee donations or run internal giving drives for causes your team believes in.' },
-  { icon: '📊', title: 'Full transparency', desc: 'Every donation is tracked and publicly visible. Full reports show exactly where contributions go.' },
-  { icon: '🎯', title: 'Cause alignment', desc: 'Choose campaigns aligned with your company\'s values  -  medical, education, community, or emergency.' },
+  { icon: '*', title: 'CSR & community impact', desc: 'Support verified community campaigns as part of your Corporate Social Responsibility programme.' },
+  { icon: '*', title: 'Employee giving campaigns', desc: 'Match employee donations or run internal giving drives for causes your team believes in.' },
+  { icon: '*', title: 'Full transparency', desc: 'Every donation is tracked and publicly visible. Full reports show exactly where contributions go.' },
+  { icon: '*', title: 'Cause alignment', desc: 'Choose campaigns aligned with your company\'s values  -  medical, education, community, or emergency.' },
 ]
 
 const EVENT_TYPES = [
-  { icon: '🎂', label: 'Birthday fundraisers', desc: 'Ask for donations instead of gifts. Raise money for a cause on your special day.' },
-  { icon: '💒', label: 'Wedding fundraisers', desc: 'Let guests contribute to a cause you care about as a wedding gift.' },
-  { icon: '🏃', label: 'Sponsored challenges', desc: 'Run a marathon, climb a hill, or complete a challenge  -  get sponsored for every kilometre.' },
-  { icon: '🎓', label: 'Graduation fundraisers', desc: 'Celebrate your achievement and give back  -  raise money for your school or community.' },
-  { icon: '⚽', label: 'Sports events', desc: 'Charity matches, tournaments, and sports days with proceeds going to your chosen cause.' },
-  { icon: '🎤', label: 'Concerts & shows', desc: 'Perform for a purpose  -  sell tickets or take donations at your event.' },
+  { icon: '*', label: 'Birthday fundraisers', desc: 'Ask for donations instead of gifts. Raise money for a cause on your special day.' },
+  { icon: '*', label: 'Wedding fundraisers', desc: 'Let guests contribute to a cause you care about as a wedding gift.' },
+  { icon: '*', label: 'Sponsored challenges', desc: 'Run a marathon, climb a hill, or complete a challenge  -  get sponsored for every kilometre.' },
+  { icon: '*', label: 'Graduation fundraisers', desc: 'Celebrate your achievement and give back  -  raise money for your school or community.' },
+  { icon: '*', label: 'Sports events', desc: 'Charity matches, tournaments, and sports days with proceeds going to your chosen cause.' },
+  { icon: '*', label: 'Concerts & shows', desc: 'Perform for a purpose  -  sell tickets or take donations at your event.' },
 ]
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -202,10 +202,10 @@ export default function FundraisePage() {
               <div>
                 <div className="flex flex-col gap-5">
                   {[
-                    { icon: '👥', title: 'One campaign, many fundraisers', desc: 'The campaign organiser creates the fundraiser and shares a team link. Every team member promotes the same page  -  all donations flow to the same goal.' },
-                    { icon: '📣', title: 'Broader reach', desc: 'When 10 people each share with their WhatsApp contacts, the campaign reaches hundreds of potential donors. Team fundraising multiplies your reach exponentially.' },
-                    { icon: '🏅', title: 'Visible contributors', desc: 'Team members who help promote the campaign can be credited on the page. Recognition drives action  -  people share more when they are acknowledged.' },
-                    { icon: '💬', title: 'Group accountability', desc: 'The team can see donation progress in real time. Shared goals drive shared action  -  teams don\'t let each other down.' },
+                    { icon: '*', title: 'One campaign, many fundraisers', desc: 'The campaign organiser creates the fundraiser and shares a team link. Every team member promotes the same page  -  all donations flow to the same goal.' },
+                    { icon: '*', title: 'Broader reach', desc: 'When 10 people each share with their WhatsApp contacts, the campaign reaches hundreds of potential donors. Team fundraising multiplies your reach exponentially.' },
+                    { icon: '*', title: 'Visible contributors', desc: 'Team members who help promote the campaign can be credited on the page. Recognition drives action  -  people share more when they are acknowledged.' },
+                    { icon: '*', title: 'Group accountability', desc: 'The team can see donation progress in real time. Shared goals drive shared action  -  teams don\'t let each other down.' },
                   ].map((item, i) => (
                     <div key={i} className="flex gap-4">
                       <div className="text-xl flex-shrink-0 mt-0.5">{item.icon}</div>
@@ -220,7 +220,7 @@ export default function FundraisePage() {
               <div className="bg-navy rounded-2xl p-8 text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.15), transparent 70%)', transform: 'translate(30%,-30%)' }} />
                 <div className="relative">
-                  <div className="text-5xl mb-4">🤝</div>
+                  <div className="text-5xl mb-4"></div>
                   <div className="font-nunito font-black text-white text-xl mb-3">Fundraise as a group</div>
                   <p className="text-white/40 text-sm leading-relaxed mb-6">
                     Churches, schools, families, and friend groups raise significantly more when they organise a team around a single campaign.
@@ -308,10 +308,10 @@ export default function FundraisePage() {
             <div className="grid md:grid-cols-2 gap-8 items-start">
               <div className="flex flex-col gap-5">
                 {[
-                  { icon: '✅', title: 'Verified Charity badge', desc: 'Registered charities and NGOs receive a dedicated Verified Charity badge  -  distinct from individual fundraiser badges  -  so donors know exactly who they are supporting.' },
-                  { icon: '📋', title: 'Multiple campaigns at once', desc: 'Charities can manage multiple campaigns simultaneously  -  one for each project, programme, or emergency appeal.' },
-                  { icon: '📊', title: 'Donor reporting', desc: 'Download full donation reports for your records, board meetings, and donor acknowledgements.' },
-                  { icon: '🔄', title: 'Recurring giving', desc: 'Allow your donors to set up recurring monthly contributions  -  building a sustainable income for your organisation rather than relying on one-off appeals.' },
+                  { icon: '*', title: 'Verified Charity badge', desc: 'Registered charities and NGOs receive a dedicated Verified Charity badge  -  distinct from individual fundraiser badges  -  so donors know exactly who they are supporting.' },
+                  { icon: '*', title: 'Multiple campaigns at once', desc: 'Charities can manage multiple campaigns simultaneously  -  one for each project, programme, or emergency appeal.' },
+                  { icon: '*', title: 'Donor reporting', desc: 'Download full donation reports for your records, board meetings, and donor acknowledgements.' },
+                  { icon: '*', title: 'Recurring giving', desc: 'Allow your donors to set up recurring monthly contributions  -  building a sustainable income for your organisation rather than relying on one-off appeals.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
                     <div className="text-xl flex-shrink-0">{item.icon}</div>

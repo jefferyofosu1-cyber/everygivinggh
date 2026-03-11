@@ -42,10 +42,10 @@ interface Donation {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const EMOJI: Record<string, string> = {
-  medical: '🏥', emergency: '🆘', education: '🎓', charity: '🤲',
-  faith: '⛪', community: '🏘', environment: '🌿', business: '💼',
-  family: '👨‍👩‍👧', sports: '⚽', events: '🎉', wishes: '🌟',
-  competition: '🏆', travel: '✈️', volunteer: '🙌', memorial: '🕊', other: '💚',
+  medical: 'MD', emergency: 'EM', education: 'ED', charity: 'CH',
+  faith: 'FA', community: 'CM', environment: 'EN', business: 'BS',
+  family: 'FM', sports: 'SP', events: 'EV', wishes: 'WS',
+  competition: 'CP', travel: 'TR', volunteer: 'VL', memorial: 'MM', other: 'OT',
 }
 
 const GRADIENT: Record<string, string> = {
@@ -151,7 +151,7 @@ export default function CampaignPage() {
   const pct   = campaign?.goal_amount
     ? Math.min(Math.round(((campaign.raised_amount ?? 0) / campaign.goal_amount) * 100), 100)
     : 0
-  const emoji = EMOJI[(campaign?.category ?? '').toLowerCase()] ?? '💚'
+  const emoji = EMOJI[(campaign?.category ?? '').toLowerCase()] ?? ''
   const grad  = GRADIENT[(campaign?.category ?? '').toLowerCase()] ?? GRADIENT.default
 
   // ── Handlers ──────────────────────────────────────────────────────────────
@@ -209,7 +209,7 @@ export default function CampaignPage() {
       <Navbar />
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5">
         <div className="text-center">
-          <div className="text-6xl mb-4">🔍</div>
+          <div className="text-6xl mb-4"></div>
           <h1 className="font-nunito font-black text-navy text-2xl mb-2">Campaign not found</h1>
           <p className="text-gray-400 text-sm mb-2">This campaign may have been removed, not yet approved, or the link may be incorrect.</p>
           <p className="text-gray-300 text-xs mb-6">If you just submitted this campaign, it is under review and will be visible once approved.</p>
@@ -230,7 +230,7 @@ export default function CampaignPage() {
         <div className="max-w-md w-full text-center">
           <div className="relative inline-flex w-24 h-24 mb-6">
             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl">💚</div>
+            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl"></div>
           </div>
           <h1 className="font-nunito font-black text-navy text-3xl mb-2">
             Thank you{!form.anonymous && form.name ? `, ${form.name.split(' ')[0]}` : ''}!
@@ -285,7 +285,7 @@ export default function CampaignPage() {
                   : <span className="drop-shadow-sm">{emoji}</span>}
                 {campaign.verified && (
                   <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
-                    ✓ Verified
+                     Verified
                   </div>
                 )}
               </div>
@@ -297,7 +297,7 @@ export default function CampaignPage() {
                     {campaign.category}
                   </span>
                   {campaign.verified && (
-                    <span className="text-xs font-bold text-primary flex items-center gap-1">✓ Identity verified</span>
+                    <span className="text-xs font-bold text-primary flex items-center gap-1"> Identity verified</span>
                   )}
                 </div>
                 <h1 className="font-nunito font-black text-navy text-2xl sm:text-3xl mb-3 leading-tight">
@@ -354,7 +354,7 @@ export default function CampaignPage() {
                     {visibleDonors.map((d, i) => (
                       <div key={i} className="flex items-start gap-4">
                         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-light to-blue-100 flex items-center justify-center text-lg flex-shrink-0 font-black text-primary border border-primary/10">
-                          {d.donor_name === 'Anonymous' ? '👤' : (d.donor_name?.charAt(0)?.toUpperCase() ?? '?')}
+                          {d.donor_name === 'Anonymous' ? '' : (d.donor_name?.charAt(0)?.toUpperCase() ?? '?')}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2 mb-0.5">

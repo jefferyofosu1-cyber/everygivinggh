@@ -20,7 +20,7 @@ function ConfirmContent() {
     return (
       <div className="min-h-screen bg-navy flex items-center justify-center px-5">
         <div className="max-w-md w-full text-center">
-          <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">❌</div>
+          <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl"></div>
           <h1 className="font-nunito font-black text-white text-2xl mb-3">Confirmation failed</h1>
           <p className="text-white/50 text-sm mb-8">The link may have expired. Please sign up again.</p>
           <Link href="/auth/signup"
@@ -38,7 +38,7 @@ function ConfirmContent() {
         <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
           <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
           <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">
-            ✅
+            
           </div>
         </div>
         <h1 className="font-nunito font-black text-white text-3xl mb-3">Email confirmed!</h1>

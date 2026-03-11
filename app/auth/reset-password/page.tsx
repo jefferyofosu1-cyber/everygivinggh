@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
             </Link>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-            <div className="text-4xl mb-4">✅</div>
+            <div className="text-4xl mb-4"></div>
             <h1 className="font-nunito font-black text-white text-xl mb-2">Password updated</h1>
             <p className="text-white/40 text-sm">Redirecting you to your dashboard…</p>
           </div>

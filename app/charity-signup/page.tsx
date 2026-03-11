@@ -8,13 +8,13 @@ import { createClient } from '@/lib/supabase'
 type OrgType = 'charity' | 'ngo' | 'church' | 'school' | 'hospital' | 'community' | 'corporate' | ''
 
 const ORG_TYPES: { id: OrgType; label: string; icon: string; desc: string }[] = [
-  { id: 'charity',   label: 'Registered Charity',  icon: '🤲', desc: 'Officially registered with Ghana\'s Department of Social Welfare' },
-  { id: 'ngo',       label: 'NGO / Non-profit',     icon: '🌍', desc: 'Registered non-governmental organisation operating in Ghana' },
-  { id: 'church',    label: 'Church / Faith org',   icon: '⛪', desc: 'Registered church, mosque, or faith-based organisation' },
-  { id: 'school',    label: 'School / University',  icon: '🎓', desc: 'Accredited educational institution' },
-  { id: 'hospital',  label: 'Hospital / Clinic',    icon: '🏥', desc: 'Licensed medical facility or health organisation' },
-  { id: 'community', label: 'Community group',      icon: '🏘', desc: 'Formally organised community group or association' },
-  { id: 'corporate', label: 'Corporate / Business', icon: '💼', desc: 'Company operating a CSR or charitable giving programme' },
+  { id: 'charity',   label: 'Registered Charity',  icon: '*', desc: 'Officially registered with Ghana\'s Department of Social Welfare' },
+  { id: 'ngo',       label: 'NGO / Non-profit',     icon: '*', desc: 'Registered non-governmental organisation operating in Ghana' },
+  { id: 'church',    label: 'Church / Faith org',   icon: '*', desc: 'Registered church, mosque, or faith-based organisation' },
+  { id: 'school',    label: 'School / University',  icon: '*', desc: 'Accredited educational institution' },
+  { id: 'hospital',  label: 'Hospital / Clinic',    icon: '*', desc: 'Licensed medical facility or health organisation' },
+  { id: 'community', label: 'Community group',      icon: '*', desc: 'Formally organised community group or association' },
+  { id: 'corporate', label: 'Corporate / Business', icon: '*', desc: 'Company operating a CSR or charitable giving programme' },
 ]
 
 const GHANA_BANKS = [
@@ -92,7 +92,7 @@ export default function CharitySignupPage() {
         <div className="max-w-md w-full text-center">
           <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">✅</div>
+            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30"></div>
           </div>
           <h1 className="font-nunito font-black text-navy text-3xl mb-3">Application received!</h1>
           <p className="text-gray-500 text-sm mb-2 max-w-sm mx-auto leading-relaxed">
@@ -120,7 +120,7 @@ export default function CharitySignupPage() {
           <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-2xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5">
-              🤲 For organisations
+               For organisations
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-4" style={{ letterSpacing: -1 }}>
               Charity & organisation<br />

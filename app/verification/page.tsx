@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const TIERS = [
   {
-    id: 'basic', name: 'Basic', emoji: '🟢', price: 'Free', priceNum: 0,
+    id: 'basic', name: 'Basic', emoji: '*', price: 'Free', priceNum: 0,
     badge: 'Basic', badgeStyle: 'bg-gray-100 text-gray-600 border-gray-200',
     border: 'border-gray-200', headerBg: 'bg-gray-50',
     limit: 'Up to GH₵5,000', limitNum: 5000,
@@ -25,7 +25,7 @@ const TIERS = [
     notIncluded: ['Selfie verification', 'Priority listing', 'Premium badge'],
   },
   {
-    id: 'standard', name: 'Standard', emoji: '✅', price: 'GH₵50', priceNum: 50,
+    id: 'standard', name: 'Standard', emoji: '*', price: 'GH₵50', priceNum: 50,
     badge: 'Verified', badgeStyle: 'bg-primary-light text-primary border-primary/20',
     border: 'border-primary', headerBg: 'bg-primary-light',
     limit: 'Up to GH₵10,000', limitNum: 10000,
@@ -57,7 +57,7 @@ const TIERS = [
     notIncluded: ['Gold/Diamond homepage featured'],
   },
   {
-    id: 'gold', name: 'Gold', emoji: '🥇', price: 'GH₵200', priceNum: 200,
+    id: 'gold', name: 'Gold', emoji: '*', price: 'GH₵200', priceNum: 200,
     badge: 'Gold', badgeStyle: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     border: 'border-yellow-400', headerBg: 'bg-yellow-50',
     limit: 'Up to GH₵100,000', limitNum: 100000,
@@ -73,7 +73,7 @@ const TIERS = [
     notIncluded: ['Diamond homepage hero slot'],
   },
   {
-    id: 'diamond', name: 'Diamond', emoji: '💎', price: 'GH₵500', priceNum: 500,
+    id: 'diamond', name: 'Diamond', emoji: '*', price: 'GH₵500', priceNum: 500,
     badge: 'Diamond', badgeStyle: 'bg-blue-50 text-blue-700 border-blue-200',
     border: 'border-blue-400', headerBg: 'bg-blue-50',
     limit: 'Unlimited goal', limitNum: Infinity,
@@ -112,7 +112,7 @@ export default function VerificationPage() {
           <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
-              🪪 5 verification tiers
+               5 verification tiers
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-4" style={{ letterSpacing: -1 }}>
               Build donor trust.<br />
@@ -136,9 +136,9 @@ export default function VerificationPage() {
             </div>
             <div className="grid md:grid-cols-3 gap-5">
               {[
-                { icon: '🛡', title: 'Protects donors', desc: 'We review every ID document manually. Donors know every campaign they give to has been verified by a real person.' },
-                { icon: '💚', title: 'Boosts fundraising', desc: 'Campaigns with the Verified badge raise 3 times more on average. Trust converts to donations.' },
-                { icon: '🌍', title: 'Builds Ghana\'s giving culture', desc: 'Every verified campaign makes online giving safer. We are building the infrastructure of trust for Ghana\'s digital economy.' },
+                { icon: '*', title: 'Protects donors', desc: 'We review every ID document manually. Donors know every campaign they give to has been verified by a real person.' },
+                { icon: '*', title: 'Boosts fundraising', desc: 'Campaigns with the Verified badge raise 3 times more on average. Trust converts to donations.' },
+                { icon: '*', title: 'Builds Ghana\'s giving culture', desc: 'Every verified campaign makes online giving safer. We are building the infrastructure of trust for Ghana\'s digital economy.' },
               ].map((item) => (
                 <div key={item.title} className="bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center">
                   <div className="text-3xl mb-3">{item.icon}</div>
@@ -180,7 +180,7 @@ export default function VerificationPage() {
                     <div className="flex flex-col gap-2 mt-1">
                       {tier.checks.map((c) => (
                         <div key={c} className="flex items-start gap-2">
-                          <span className="text-primary text-xs mt-0.5 flex-shrink-0">✓</span>
+                          <span className="text-primary text-xs mt-0.5 flex-shrink-0"></span>
                           <span className="text-xs text-gray-600 leading-snug">{c}</span>
                         </div>
                       ))}
@@ -212,10 +212,10 @@ export default function VerificationPage() {
             </div>
             <div className="grid md:grid-cols-4 gap-5">
               {[
-                { n: '01', icon: '📝', title: 'Create your campaign', desc: 'Fill in your campaign details - title, story, category, and fundraising goal.' },
-                { n: '02', icon: '🪪', title: 'Upload your ID', desc: 'Take a clear photo of your ID document and a selfie (Standard and above). Takes 2 minutes.' },
-                { n: '03', icon: '👀', title: 'Our team reviews', desc: 'We manually review your ID and campaign. This usually takes less than 24 hours.' },
-                { n: '04', icon: '🚀', title: 'Go live and fundraise', desc: 'Once approved, your campaign goes live with a Verified badge and you can start sharing.' },
+                { n: '01', icon: '*', title: 'Create your campaign', desc: 'Fill in your campaign details - title, story, category, and fundraising goal.' },
+                { n: '02', icon: '*', title: 'Upload your ID', desc: 'Take a clear photo of your ID document and a selfie (Standard and above). Takes 2 minutes.' },
+                { n: '03', icon: '*', title: 'Our team reviews', desc: 'We manually review your ID and campaign. This usually takes less than 24 hours.' },
+                { n: '04', icon: '*', title: 'Go live and fundraise', desc: 'Once approved, your campaign goes live with a Verified badge and you can start sharing.' },
               ].map((s, i) => (
                 <div key={s.n} className="relative bg-gray-50 rounded-2xl border border-gray-100 p-6">
                   <div className="font-mono-dm text-xs text-primary font-bold mb-3 bg-primary/10 inline-block px-2 py-1 rounded-md">{s.n}</div>

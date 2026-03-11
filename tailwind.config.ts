@@ -15,8 +15,8 @@ const config: Config = {
         navy: '#16233A',
       },
       fontFamily: {
-        nunito: ['Nunito', 'sans-serif'],
-        sans: ['Nunito Sans', 'sans-serif'],
+        nunito: ['var(--font-nunito)', 'sans-serif'],
+        sans: ['var(--font-nunito-sans)', 'sans-serif'],
       },
     },
   },

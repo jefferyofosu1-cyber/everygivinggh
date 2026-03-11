@@ -20,22 +20,6 @@ const STATUS_BADGE: Record<string, string> = {
   rejected: 'bg-red-500/20 text-red-400',
 }
 
-async function sendStatusEmail(to: string, name: string, title: string, status: 'approved' | 'rejected', note: string) {
-  try {
-    const res = await fetch('/api/send-status-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to, name, title, status, note }),
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      console.error('Status email failed:', err)
-    }
-  } catch (e) {
-    console.error('sendStatusEmail error:', e)
-  }
-}
-
 
 function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose: () => void; onUpdate: () => void }) {
   const [loading, setLoading] = useState(false)
@@ -44,39 +28,19 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
 
   const updateStatus = async (status: 'approved' | 'rejected') => {
     setLoading(true)
-    const supabase = createClient()
 
-    await supabase.from('campaigns').update({
-      status,
-      verified: status === 'approved',
-    }).eq('id', campaign.id)
-
-    // Send email notification to fundraiser
     try {
-      // Try profiles.email first, then fall back to auth user lookup
-      let fundraiserEmail = campaign.profiles?.email
-      if (!fundraiserEmail && campaign.user_id) {
-        const { data: userData } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('id', campaign.user_id)
-          .single()
-        fundraiserEmail = userData?.email
-      }
-
-      if (fundraiserEmail) {
-        await sendStatusEmail(
-          fundraiserEmail,
-          campaign.profiles?.full_name?.split(' ')[0] || 'there',
-          campaign.title,
-          status,
-          note.trim()
-        )
-      } else {
-        console.warn('No email found for fundraiser  -  status email not sent')
+      const res = await fetch('/api/admin/campaigns', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: campaign.id, status, note: note.trim() }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        console.error('Campaign update failed:', err)
       }
     } catch (e) {
-      console.error('Status email failed:', e)
+      console.error('updateStatus error:', e)
     }
 
     setLoading(false)
@@ -122,7 +86,7 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
             <div className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Identity Documents</div>
             {!campaign.id_front_url && !campaign.selfie_url ? (
               <div className="text-white/20 text-xs text-center py-4 border border-white/5 rounded-xl">
-                ⚠️ No documents uploaded  -  SQL migrations may not have run yet
+                 No documents uploaded  -  SQL migrations may not have run yet
               </div>
             ) : (
               <div className="flex flex-col gap-4">
@@ -175,7 +139,7 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           </div>
 
           <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 text-xs text-primary/80">
-            📧 An email will be automatically sent to the fundraiser when you approve or reject their campaign.
+             An email will be automatically sent to the fundraiser when you approve or reject their campaign.
           </div>
         </div>
 
@@ -184,11 +148,11 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           <div className="flex gap-3 p-6 border-t border-white/10">
             <button onClick={() => updateStatus('rejected')} disabled={loading}
               className="flex-1 py-3.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-nunito font-black rounded-xl transition-all text-sm disabled:opacity-50">
-              {loading ? '…' : '✗ Reject'}
+              {loading ? '…' : ' Reject'}
             </button>
             <button onClick={() => updateStatus('approved')} disabled={loading}
               className="flex-[2] py-3.5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl transition-all text-sm disabled:opacity-50 shadow-lg shadow-primary/20">
-              {loading ? 'Saving…' : '✓ Approve & go live'}
+              {loading ? 'Saving…' : ' Approve & go live'}
             </button>
           </div>
         )}
@@ -196,11 +160,11 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
           <div className="flex gap-3 p-6 border-t border-white/10">
             <button onClick={() => updateStatus('approved')} disabled={loading || campaign.status === 'approved'}
               className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 font-bold rounded-xl transition-all text-sm disabled:opacity-30">
-              ✓ Approve
+               Approve
             </button>
             <button onClick={() => updateStatus('rejected')} disabled={loading || campaign.status === 'rejected'}
               className="flex-1 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold rounded-xl transition-all text-sm disabled:opacity-30">
-              ✗ Reject
+               Reject
             </button>
           </div>
         )}
@@ -276,7 +240,7 @@ function CampaignsContent() {
           <div className="p-8 text-center text-white/30 text-sm">Loading…</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="text-4xl mb-3">📭</div>
+            <div className="text-4xl mb-3"></div>
             <div className="text-white/30 text-sm">No campaigns found</div>
           </div>
         ) : (

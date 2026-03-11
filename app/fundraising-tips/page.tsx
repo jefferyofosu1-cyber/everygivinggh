@@ -10,63 +10,63 @@ export const metadata: Metadata = {
 
 const TIPS = [
   {
-    n: '01', icon: '📸', title: 'Use a real, personal photo',
+    n: '01', icon: '*', title: 'Use a real, personal photo',
     tag: 'Most impactful',
     tagColor: 'bg-primary-light text-primary',
     body: 'Campaigns with a clear personal photo raise significantly more. Use a real photo of yourself or the person you are raising for. Avoid stock photos - donors can tell immediately.',
     stat: '68%', statLabel: 'more raised with a personal photo',
   },
   {
-    n: '02', icon: '✍️', title: 'Tell a complete, specific story',
+    n: '02', icon: '*', title: 'Tell a complete, specific story',
     tag: 'Writing',
     tagColor: 'bg-blue-50 text-blue-600',
     body: 'Explain who you are, what happened, why you need help, and exactly how the money will be used. "I need GH₵8,000 for my daughter\'s surgery at Korle Bu Teaching Hospital" beats "help me please" every single time.',
     stat: '3x', statLabel: 'more trust with specific details',
   },
   {
-    n: '03', icon: '🪪', title: 'Get verified before you share',
+    n: '03', icon: '*', title: 'Get verified before you share',
     tag: 'Trust',
     tagColor: 'bg-amber-50 text-amber-600',
     body: 'Donors give significantly more to verified campaigns. Upload your Ghana Card and complete verification before sharing widely. The Verified badge is the single most important trust signal on the platform.',
     stat: '3x', statLabel: 'more raised by verified campaigns',
   },
   {
-    n: '04', icon: '📱', title: 'Share on WhatsApp within the first hour',
+    n: '04', icon: '*', title: 'Share on WhatsApp within the first hour',
     tag: 'Sharing',
     tagColor: 'bg-green-50 text-green-600',
     body: 'The first 48 hours are critical. Share your link in every WhatsApp group you are in - write a personal message, not just a link drop. Explain who you are and why you need help. Early momentum signals credibility.',
     stat: '48h', statLabel: 'is the most critical sharing window',
   },
   {
-    n: '05', icon: '🔄', title: 'Post updates consistently',
+    n: '05', icon: '*', title: 'Post updates consistently',
     tag: 'Momentum',
     tagColor: 'bg-purple-50 text-purple-600',
     body: 'Campaigns that post updates raise more. Show donors the money is being used well. Even a short "We are 40% there - thank you!" message keeps momentum going and encourages new donors to give.',
     stat: '2x', statLabel: 'more raised by campaigns with updates',
   },
   {
-    n: '06', icon: '🎯', title: 'Set a goal you can realistically hit',
+    n: '06', icon: '*', title: 'Set a goal you can realistically hit',
     tag: 'Strategy',
     tagColor: 'bg-rose-50 text-rose-600',
     body: 'Campaigns that reach 30% in the first week almost always hit their target. Set a goal you can achieve - you can always raise more. A very high goal that stalls looks like failure and discourages new donors.',
     stat: '30%', statLabel: 'in week 1 predicts overall success',
   },
   {
-    n: '07', icon: '🙏', title: 'Thank every donor personally',
+    n: '07', icon: '*', title: 'Thank every donor personally',
     tag: 'Relationships',
     tagColor: 'bg-teal-50 text-teal-600',
     body: 'When someone donates, send them a personal WhatsApp thank you within 24 hours. Donors who feel appreciated become your biggest advocates and often share your campaign with their own networks.',
     stat: '5x', statLabel: 'more shares from personally thanked donors',
   },
   {
-    n: '08', icon: '📣', title: 'Ask specifically for shares, not just donations',
+    n: '08', icon: '*', title: 'Ask specifically for shares, not just donations',
     tag: 'Growth',
     tagColor: 'bg-orange-50 text-orange-600',
     body: 'Most people cannot donate but can share. Explicitly say "even if you cannot give, please share this." One share from the right person can unlock 10 new donors you would never have reached otherwise.',
     stat: '1 share', statLabel: 'can reach 50+ new potential donors',
   },
   {
-    n: '09', icon: '📊', title: 'Show evidence and documentation',
+    n: '09', icon: '*', title: 'Show evidence and documentation',
     tag: 'Credibility',
     tagColor: 'bg-indigo-50 text-indigo-600',
     body: 'Upload a photo of the hospital bill, school fees invoice, or doctor letter. Evidence removes doubt. Transparency builds the trust that translates directly into more donations and more sharing.',
@@ -86,7 +86,7 @@ export default function FundraisingTipsPage() {
           <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
-              💡 9 proven tips
+               9 proven tips
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-4" style={{ letterSpacing: -1 }}>
               Raise more money.<br />

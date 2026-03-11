@@ -111,7 +111,7 @@ export default function EditProfilePage() {
             <div className="bg-white rounded-2xl border border-gray-100 p-5">
               <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Payout method</div>
               <div className="grid grid-cols-2 gap-2 mb-4">
-                {[{ id: 'momo', label: '📱 Mobile Money' }, { id: 'bank', label: '🏦 Bank account' }].map(opt => (
+                {[{ id: 'momo', label: ' Mobile Money' }, { id: 'bank', label: ' Bank account' }].map(opt => (
                   <button key={opt.id} type="button" onClick={() => set('payout_method', opt.id)}
                     className={`p-3 rounded-xl border-2 text-sm font-bold transition-all ${form.payout_method === opt.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-100 text-gray-400 hover:border-gray-200'}`}>
                     {opt.label}
@@ -153,7 +153,7 @@ export default function EditProfilePage() {
 
           <button onClick={handleSave} disabled={saving || saved}
             className={`w-full mt-6 py-4 font-nunito font-black rounded-full text-sm transition-all ${saved ? 'bg-green-500 text-white' : 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20'} disabled:opacity-70`}>
-            {saved ? '✓ Saved!' : saving ? 'Saving…' : 'Save changes'}
+            {saved ? ' Saved!' : saving ? 'Saving…' : 'Save changes'}
           </button>
         </div>
       </main>

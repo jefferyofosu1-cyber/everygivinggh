@@ -69,7 +69,7 @@ export default function AdminUsersPage() {
           <div className="p-8 text-center text-white/30 text-sm">Loading users…</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="text-4xl mb-3">👤</div>
+            <div className="text-4xl mb-3"></div>
             <div className="text-white/30 text-sm">No users found</div>
           </div>
         ) : (

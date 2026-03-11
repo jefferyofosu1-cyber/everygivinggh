@@ -9,19 +9,19 @@ export const metadata: Metadata = {
 }
 
 const STEPS = [
-  { n: '01', icon: '🚀', title: 'One person creates', desc: 'The organiser creates the campaign, sets the goal, and writes the story. Takes about 5 minutes.' },
-  { n: '02', icon: '📲', title: 'Invite your team', desc: 'Share the campaign link with friends, family, teammates, classmates, or colleagues via WhatsApp.' },
-  { n: '03', icon: '📣', title: 'Everyone shares', desc: 'Each person shares the campaign across their own networks. The more people share, the further it travels.' },
-  { n: '04', icon: '💰', title: 'All donations, one pot', desc: 'Every donation - regardless of who shared the link - goes directly to the same campaign goal.' },
+  { n: '01', icon: '*', title: 'One person creates', desc: 'The organiser creates the campaign, sets the goal, and writes the story. Takes about 5 minutes.' },
+  { n: '02', icon: '*', title: 'Invite your team', desc: 'Share the campaign link with friends, family, teammates, classmates, or colleagues via WhatsApp.' },
+  { n: '03', icon: '*', title: 'Everyone shares', desc: 'Each person shares the campaign across their own networks. The more people share, the further it travels.' },
+  { n: '04', icon: '*', title: 'All donations, one pot', desc: 'Every donation - regardless of who shared the link - goes directly to the same campaign goal.' },
 ]
 
 const USE_CASES = [
-  { icon: '🏥', title: 'Medical bills', desc: 'A family unites to cover the cost of a parent\'s surgery. The church group shares. The workplace donates. The community shows up.' },
-  { icon: '🎓', title: 'School fees', desc: 'An entire extended family pools effort to send the brightest child to university. One campaign. Every relative shares.' },
-  { icon: '⛪', title: 'Church projects', desc: 'The entire congregation fundraises for a new roof. Every member becomes a fundraiser. Every network is activated.' },
-  { icon: '🏘', title: 'Community projects', desc: 'A neighbourhood committee raises money for a borehole. The whole community becomes the fundraising team.' },
-  { icon: '⚽', title: 'Sports teams', desc: 'The team captain creates a campaign for tournament fees. Every player shares with family. Supporters donate.' },
-  { icon: '🎉', title: 'Events & celebrations', desc: 'A group of friends raises money for a surprise party or reunion. One campaign, everyone contributes and invites.' },
+  { icon: '*', title: 'Medical bills', desc: 'A family unites to cover the cost of a parent\'s surgery. The church group shares. The workplace donates. The community shows up.' },
+  { icon: '*', title: 'School fees', desc: 'An entire extended family pools effort to send the brightest child to university. One campaign. Every relative shares.' },
+  { icon: '*', title: 'Church projects', desc: 'The entire congregation fundraises for a new roof. Every member becomes a fundraiser. Every network is activated.' },
+  { icon: '*', title: 'Community projects', desc: 'A neighbourhood committee raises money for a borehole. The whole community becomes the fundraising team.' },
+  { icon: '*', title: 'Sports teams', desc: 'The team captain creates a campaign for tournament fees. Every player shares with family. Supporters donate.' },
+  { icon: '*', title: 'Events & celebrations', desc: 'A group of friends raises money for a surprise party or reunion. One campaign, everyone contributes and invites.' },
 ]
 
 const STATS = [
@@ -42,7 +42,7 @@ export default function TeamFundraisingPage() {
           <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
-              👥 Team fundraising
+               Team fundraising
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-5" style={{ letterSpacing: -1 }}>
               Your whole network.<br />

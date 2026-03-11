@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
@@ -33,9 +34,9 @@ const CATEGORIES = [
 ]
 
 const EMOJI: Record<string, string> = {
-  medical:'🏥',emergency:'🆘',education:'🎓',charity:'🤲',faith:'⛪',
-  community:'🏘',environment:'🌿',business:'💼',family:'👨‍👩‍👧',
-  sports:'⚽',events:'🎉',wishes:'🌟',memorial:'🕊',other:'💚',
+  medical:'MD',emergency:'EM',education:'ED',charity:'CH',faith:'FA',
+  community:'CM',environment:'EN',business:'BS',family:'FM',
+  sports:'SP',events:'EV',wishes:'WS',memorial:'MM',other:'OT',
 }
 
 
@@ -47,9 +48,9 @@ function CampaignCard({ c }: { c: any }) {
       className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300">
       <div className="h-48 relative overflow-hidden bg-gray-100">
         {c.image_url
-          ? <img src={c.image_url} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          : <div className="w-full h-full bg-gradient-to-br from-[#e6f9f1] to-blue-50 flex items-center justify-center text-5xl">{EMOJI[c.category?.toLowerCase()] || '💚'}</div>}
-        {c.verified && <div className="absolute top-3 right-3 bg-[#02A95C] text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide">✓ VERIFIED</div>}
+          ? <Image src={c.image_url} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
+          : <div className="w-full h-full bg-gradient-to-br from-[#e6f9f1] to-blue-50 flex items-center justify-center text-5xl">{EMOJI[c.category?.toLowerCase()] || ''}</div>}
+        {c.verified && <div className="absolute top-3 right-3 bg-[#02A95C] text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide"> VERIFIED</div>}
       </div>
       <div className="p-5">
         <div className="font-bold text-[#1A2B3C] text-sm mb-1 line-clamp-2 group-hover:text-[#02A95C] transition-colors leading-snug">{c.title}</div>
@@ -137,17 +138,17 @@ export default function HomePage() {
             </div>
 
             {/* Right  -  stacked campaign cards over photo */}
-            <div className="relative hidden md:block self-end">
-              <img src={P.hero} alt="Fundraiser" className="w-full h-[500px] object-cover object-top rounded-tl-[40px]" />
+            <div className="relative hidden md:block self-end h-[500px] rounded-tl-[40px] overflow-hidden">
+              <Image src={P.hero} alt="Fundraiser" fill className="object-cover object-top" sizes="50vw" priority />
               <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-tl-[40px]" />
 
               {/* Floating verified card */}
               <div className="absolute -left-10 bottom-16 bg-white rounded-2xl shadow-2xl p-4 w-64 border border-gray-100">
                 <div className="flex items-center gap-3 mb-3">
-                  <img src={P.accra} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-[#02A95C]" />
+                  <Image src={P.accra} alt="" width={40} height={40} className="rounded-full object-cover border-2 border-[#02A95C]" />
                   <div>
                     <div className="font-black text-[#1A2B3C] text-xs">Ama Mensah</div>
-                    <div className="text-[#02A95C] text-[10px] font-bold flex items-center gap-1">✓ Ghana Card Verified · Accra</div>
+                    <div className="text-[#02A95C] text-[10px] font-bold flex items-center gap-1"> Ghana Card Verified · Accra</div>
                   </div>
                 </div>
                 <div className="text-xs text-gray-500 mb-2.5 leading-snug">Help with kidney surgery at Korle Bu Teaching Hospital</div>
@@ -162,7 +163,7 @@ export default function HomePage() {
 
               {/* Donation notification */}
               <div className="absolute top-8 -left-8 bg-white rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 border border-gray-100">
-                <div className="w-8 h-8 bg-[#02A95C] rounded-full flex items-center justify-center text-sm flex-shrink-0">💚</div>
+                <div className="w-8 h-8 bg-[#02A95C] rounded-full flex items-center justify-center text-sm flex-shrink-0"></div>
                 <div>
                   <div className="text-xs font-black text-[#1A2B3C]">New donation</div>
                   <div className="text-[10px] text-gray-400">Kwame donated ₵200 via MTN MoMo</div>
@@ -181,11 +182,11 @@ export default function HomePage() {
         <section className="border-y border-gray-100 bg-gray-50 py-5">
           <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-8 text-xs font-semibold text-gray-400">
             {[
-              { icon: '🪪', text: 'Identity verified' },
-              { icon: '📱', text: 'MTN · Vodafone · AirtelTigo' },
-              { icon: '🏆', text: 'Milestone-based payouts' },
-              { icon: '💸', text: '2% + ₵0.25 per donation · 0% platform fee' },
-              { icon: '🔒', text: 'Encrypted & secure' },
+              { icon: '*', text: 'Identity verified' },
+              { icon: '*', text: 'MTN · Vodafone · AirtelTigo' },
+              { icon: '*', text: 'Milestone-based payouts' },
+              { icon: '*', text: '2% + ₵0.25 per donation · 0% platform fee' },
+              { icon: '*', text: 'Encrypted & secure' },
             ].map((t, i) => (
               <div key={i} className="flex items-center gap-2">
                 <span className="text-base">{t.icon}</span>
@@ -206,9 +207,9 @@ export default function HomePage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
               {[
-                { icon: '🪪', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns  -  ever.' },
-                { icon: '💸', title: '2% + ₵0.25 per donation', desc: 'The only fee. Deducted automatically. Zero platform fee. Zero monthly charges.' },
-                { icon: '🏆', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones  -  keeping donors confident.' },
+                { icon: '*', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns  -  ever.' },
+                { icon: '*', title: '2% + ₵0.25 per donation', desc: 'The only fee. Deducted automatically. Zero platform fee. Zero monthly charges.' },
+                { icon: '*', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones  -  keeping donors confident.' },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center">
                   <div className="text-4xl mb-3">{item.icon}</div>
@@ -237,7 +238,7 @@ export default function HomePage() {
               {CATEGORIES.map((cat, i) => (
                 <Link key={i} href={`/campaigns?category=${cat.slug}`}
                   className="group relative rounded-2xl overflow-hidden aspect-[4/3] shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <Image src={cat.img} alt={cat.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="(max-width: 640px) 50vw, 25vw" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <div className="font-nunito font-black text-white text-sm drop-shadow-sm">{cat.name}</div>
@@ -273,7 +274,7 @@ export default function HomePage() {
               ].map((step, i) => (
                 <div key={i} className="group">
                   <div className="relative rounded-2xl overflow-hidden h-52 mb-5 shadow-sm">
-                    <img src={step.img} alt={step.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={step.img} alt={step.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
                     <div className="absolute inset-0 bg-[#1A2B3C]/30 group-hover:bg-[#1A2B3C]/15 transition-all" />
                     <div className="absolute top-4 left-4 w-10 h-10 bg-[#02A95C] rounded-full flex items-center justify-center shadow-lg">
                       <span className="font-nunito font-black text-white text-sm">{step.n}</span>
@@ -307,7 +308,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-                <div className="text-5xl mb-4">💚</div>
+                <div className="text-5xl mb-4"></div>
                 <h3 className="font-nunito font-black text-[#1A2B3C] text-xl mb-2">Be the first to start a campaign</h3>
                 <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">EveryGiving is live and accepting campaigns. Create yours today  -  verified and trusted by donors across Ghana.</p>
                 <Link href="/create" className="inline-block bg-[#02A95C] text-white font-nunito font-black px-8 py-4 rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-[#02A95C]/25">
@@ -334,12 +335,12 @@ export default function HomePage() {
 
             {/* Photo collage */}
             <div className="relative h-[480px]">
-              <img src={P.hero2} alt="Community"
-                className="absolute top-0 left-0 w-72 h-72 object-cover rounded-2xl shadow-xl border-4 border-white" />
-              <img src={P.medical} alt="Medical"
-                className="absolute bottom-0 left-20 w-56 h-56 object-cover rounded-2xl shadow-xl border-4 border-white" />
-              <img src={P.accra} alt="Accra"
-                className="absolute top-10 right-0 w-48 h-64 object-cover rounded-2xl shadow-xl border-4 border-white" />
+              <Image src={P.hero2} alt="Community"
+                width={288} height={288} className="absolute top-0 left-0 object-cover rounded-2xl shadow-xl border-4 border-white" />
+              <Image src={P.medical} alt="Medical"
+                width={224} height={224} className="absolute bottom-0 left-20 object-cover rounded-2xl shadow-xl border-4 border-white" />
+              <Image src={P.accra} alt="Accra"
+                width={192} height={256} className="absolute top-10 right-0 object-cover rounded-2xl shadow-xl border-4 border-white" />
               <div className="absolute bottom-12 right-4 bg-[#02A95C] text-white rounded-2xl px-5 py-3 shadow-xl">
                 <div className="font-nunito font-black text-2xl">₵0 platform fee</div>
                 <div className="text-white/70 text-xs">forever 🇬🇭</div>
@@ -355,9 +356,9 @@ export default function HomePage() {
               </h2>
               <div className="flex flex-col gap-6">
                 {[
-                  { icon:'🪪', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns  -  and now they have a reason to trust you.' },
-                  { icon:'📱', title:'Built for mobile money from day one', desc:'MTN MoMo, Vodafone Cash, and AirtelTigo are built into the platform from the ground up. No bank account needed. Donations land same day.' },
-                  { icon:'💸', title:'Honest fees  -  no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
+                  { icon: '*', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns  -  and now they have a reason to trust you.' },
+                  { icon: '*', title:'Built for mobile money from day one', desc:'MTN MoMo, Vodafone Cash, and AirtelTigo are built into the platform from the ground up. No bank account needed. Donations land same day.' },
+                  { icon: '*', title:'Honest fees  -  no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-5">
                     <div className="w-12 h-12 bg-[#f0fdf6] border border-[#02A95C]/15 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">{item.icon}</div>
@@ -404,7 +405,7 @@ export default function HomePage() {
               ].map((t, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
                   <div className="flex items-center gap-3 mb-4">
-                    <img src={t.img} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-[#02A95C]" />
+                    <Image src={t.img} alt={t.name} width={48} height={48} className="rounded-full object-cover border-2 border-[#02A95C]" />
                     <div>
                       <div className="font-nunito font-black text-white text-sm">{t.name}</div>
                       <div className="text-[#02A95C] text-xs font-semibold">{t.location} · Raised {t.raised}</div>
@@ -431,9 +432,9 @@ export default function HomePage() {
 
             <div className="grid md:grid-cols-3 gap-4 mb-8">
               {[
-                { icon:'🎯', title:'0% platform fee', desc:'We never charge a platform fee. Creating a campaign is always completely free.' },
-                { icon:'💸', title:'2% + ₵0.25 per donation', desc:'The only cost. Deducted automatically from each donation before it reaches the fundraiser.' },
-                { icon:'📱', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Funds are released to your wallet as milestones are completed.' },
+                { icon: '*', title:'0% platform fee', desc:'We never charge a platform fee. Creating a campaign is always completely free.' },
+                { icon: '*', title:'2% + ₵0.25 per donation', desc:'The only cost. Deducted automatically from each donation before it reaches the fundraiser.' },
+                { icon: '*', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Funds are released to your wallet as milestones are completed.' },
               ].map((item, i) => (
                 <div key={i} className="bg-[#f8fafb] border border-gray-100 rounded-2xl p-6 text-left">
                   <div className="text-3xl mb-3">{item.icon}</div>
@@ -454,7 +455,7 @@ export default function HomePage() {
             (GoFundMe bottom CTA)
         ══════════════════════════════════════════ */}
         <section className="relative py-28 overflow-hidden">
-          <img src={P.hero2} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <Image src={P.hero2} alt="" fill className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-[#1A2B3C]/85" />
           <div className="relative max-w-2xl mx-auto px-6 text-center">
             <h2 className="font-nunito font-black text-white text-5xl tracking-tight mb-4" style={{letterSpacing:-2}}>

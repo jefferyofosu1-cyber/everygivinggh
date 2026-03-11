@@ -1,5 +1,21 @@
 import type { Metadata } from 'next'
+import { Nunito, Nunito_Sans } from 'next/font/google'
+import { validateEnv } from '@/lib/env'
 import './globals.css'
+
+validateEnv()
+
+const nunito = Nunito({
+  subsets: ['latin'],
+  variable: '--font-nunito',
+  display: 'swap',
+})
+
+const nunitoSans = Nunito_Sans({
+  subsets: ['latin'],
+  variable: '--font-nunito-sans',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -38,11 +54,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
+    <html lang="en" className={`${nunito.variable} ${nunitoSans.variable}`}>
       <body className="min-h-screen flex flex-col">
         {children}
       </body>

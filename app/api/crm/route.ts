@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAuth } from '@/lib/api-security'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
@@ -180,6 +181,10 @@ function donorWelcomeEmail(name: string, appUrl: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // Require authenticated user to prevent arbitrary CRM writes
+  const authCheck = await requireAuth()
+  if (authCheck.error) return authCheck.error
+
   if (!BREVO_API_KEY) {
     console.error('BREVO_API_KEY not set')
     return NextResponse.json({ error: 'Email service not configured. Set BREVO_API_KEY in Vercel.' }, { status: 500 })

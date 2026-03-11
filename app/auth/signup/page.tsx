@@ -63,7 +63,7 @@ export default function SignupPage() {
           <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
             <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">
-              ✉️
+              
             </div>
           </div>
           <h1 className="font-nunito font-black text-white text-3xl mb-3">Check your email</h1>

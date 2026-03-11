@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Campaign } from '@/types'
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -11,14 +12,14 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 const CATEGORY_EMOJI: Record<string, string> = {
-  medical: '🏥', education: '🎓', church: '⛪',
-  emergency: '🚨', business: '💼', community: '🏡',
+  medical: '', education: '', church: '',
+  emergency: '', business: '', community: '',
 }
 
 export default function CampaignCard({ campaign }: { campaign: Campaign }) {
   const pct = Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100)
   const bg = CATEGORY_COLORS[campaign.category] || 'bg-gray-50'
-  const emoji = CATEGORY_EMOJI[campaign.category] || '💚'
+  const emoji = CATEGORY_EMOJI[campaign.category] || ''
 
   return (
     <Link href={`/campaigns/${campaign.id}`}>
@@ -26,7 +27,7 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
         {/* Image / placeholder */}
         <div className={`${bg} h-44 flex items-center justify-center text-5xl relative`}>
           {campaign.image_url ? (
-            <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover absolute inset-0" />
+            <Image src={campaign.image_url} alt={campaign.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
           ) : (
             <span>{emoji}</span>
           )}
@@ -35,7 +36,7 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
           </div>
           {campaign.verified && (
             <div className="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
-              ✓ Verified
+               Verified
             </div>
           )}
         </div>

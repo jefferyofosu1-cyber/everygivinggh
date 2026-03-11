@@ -9,34 +9,34 @@ const FUNDRAISE_MENU = [
   {
     section: 'Get started',
     items: [
-      { label: 'Start a campaign', sub: 'Create a free, verified fundraiser', href: '/create', icon: '🚀' },
-      { label: 'How it works', sub: 'The complete step-by-step guide', href: '/how-it-works', icon: '📖' },
-      { label: 'Verification tiers', sub: 'Basic, Standard and Premium  -  what each includes', href: '/verification', icon: '🪪' },
+      { label: 'Start a campaign', sub: 'Create a free, verified fundraiser', href: '/create', icon: '*' },
+      { label: 'How it works', sub: 'The complete step-by-step guide', href: '/how-it-works', icon: '*' },
+      { label: 'Verification tiers', sub: 'Basic, Standard and Premium  -  what each includes', href: '/verification', icon: '*' },
     ],
   },
   {
     section: 'Resources',
     items: [
-      { label: 'Fundraising categories', sub: '17 causes to raise money for', href: '/fundraising-categories', icon: '📋' },
-      { label: 'Fundraising tips', sub: 'Proven tactics to raise more', href: '/fundraising-tips', icon: '💡' },
-      { label: 'Team fundraising', sub: 'Raise more when your whole network shares', href: '/team-fundraising', icon: '👥' },
+      { label: 'Fundraising categories', sub: '17 causes to raise money for', href: '/fundraising-categories', icon: '*' },
+      { label: 'Fundraising tips', sub: 'Proven tactics to raise more', href: '/fundraising-tips', icon: '*' },
+      { label: 'Team fundraising', sub: 'Raise more when your whole network shares', href: '/team-fundraising', icon: '*' },
     ],
   },
   {
     section: 'More',
     items: [
-      { label: 'Charity & org sign up', sub: "Get your organisation's Verified page", href: '/charity-signup', icon: '🤲' },
-      { label: 'Fundraising blog', sub: 'Tips, stories, and practical guides', href: '/blog', icon: '✍️' },
-      { label: 'Transparency', sub: 'How the platform works and where fees go', href: '/transparency', icon: '🔍' },
+      { label: 'Charity & org sign up', sub: "Get your organisation's Verified page", href: '/charity-signup', icon: '*' },
+      { label: 'Fundraising blog', sub: 'Tips, stories, and practical guides', href: '/blog', icon: '*' },
+      { label: 'Transparency', sub: 'How the platform works and where fees go', href: '/transparency', icon: '*' },
     ],
   },
 ]
 
 const ABOUT_MENU = [
-  { label: 'About us', sub: 'Our story, mission, and values', href: '/about', icon: '💚' },
-  { label: 'Help Centre', sub: '25+ answers to common questions', href: '/help', icon: '❓' },
-  { label: 'Contact', sub: 'Reach our team  -  we respond within 2 days', href: '/contact', icon: '📬' },
-  { label: 'Transparency', sub: 'Fees, verification, and how we operate', href: '/transparency', icon: '🔍' },
+  { label: 'About us', sub: 'Our story, mission, and values', href: '/about', icon: '*' },
+  { label: 'Help Centre', sub: '25+ answers to common questions', href: '/help', icon: '*' },
+  { label: 'Contact', sub: 'Reach our team  -  we respond within 2 days', href: '/contact', icon: '*' },
+  { label: 'Transparency', sub: 'Fees, verification, and how we operate', href: '/transparency', icon: '*' },
 ]
 
 function Dropdown({ label, items, isOpen, onToggle, pathname }: {
@@ -158,7 +158,7 @@ export default function Navbar() {
             {openDropdown === 'fundraise' && (
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[620px] bg-white rounded-2xl shadow-2xl shadow-gray-200/80 border border-gray-100 p-6 z-50">
                 <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
-                  <div className="w-9 h-9 bg-primary-light rounded-xl flex items-center justify-center text-lg">🌱</div>
+                  <div className="w-9 h-9 bg-primary-light rounded-xl flex items-center justify-center text-lg"></div>
                   <div>
                     <div className="font-nunito font-black text-navy text-sm">Start fundraising, tips and resources</div>
                     <div className="text-gray-400 text-xs">Everything you need to raise money in Ghana</div>

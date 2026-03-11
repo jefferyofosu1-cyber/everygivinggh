@@ -14,10 +14,10 @@ export default function FeesPage() {
   const EXAMPLES = [20, 50, 100, 200, 500, 1000, 5000]
 
   const COMPARE = [
-    { name: 'Every Giving', fee: '2% + ₵0.25', total: fee, color: 'bg-primary', logo: '💚' },
-    { name: 'GoFundMe (US)', fee: '~5% + processing', total: parseFloat((amount * 0.05 + (amount * 0.029 + 0.30)).toFixed(2)), color: 'bg-green-500', logo: '🌍' },
-    { name: 'Jumia Pay', fee: '~3.5%', total: parseFloat((amount * 0.035).toFixed(2)), color: 'bg-orange-500', logo: '🛒' },
-    { name: 'Direct MoMo', fee: 'Unverified · No platform', total: 0, color: 'bg-gray-400', logo: '📱', note: 'No trust or verification' },
+    { name: 'Every Giving', fee: '2% + ₵0.25', total: fee, color: 'bg-primary', logo: '' },
+    { name: 'GoFundMe (US)', fee: '~5% + processing', total: parseFloat((amount * 0.05 + (amount * 0.029 + 0.30)).toFixed(2)), color: 'bg-green-500', logo: '' },
+    { name: 'Jumia Pay', fee: '~3.5%', total: parseFloat((amount * 0.035).toFixed(2)), color: 'bg-orange-500', logo: '' },
+    { name: 'Direct MoMo', fee: 'Unverified · No platform', total: 0, color: 'bg-gray-400', logo: '', note: 'No trust or verification' },
   ]
 
   return (
@@ -138,11 +138,11 @@ export default function FeesPage() {
                 <div>Defer?</div>
               </div>
               {[
-                { emoji: '🟢', tier: 'Basic',   fee: 'Free',     range: 'Up to GH₵5,000',          defer: ' - ' },
-                { emoji: '✅', tier: 'Standard', fee: 'GH₵50',   range: 'GH₵5,000 – GH₵10,000',    defer: 'Yes' },
+                { emoji: '*', tier: 'Basic',   fee: 'Free',     range: 'Up to GH₵5,000',          defer: ' - ' },
+                { emoji: '*', tier: 'Standard', fee: 'GH₵50',   range: 'GH₵5,000 – GH₵10,000',    defer: 'Yes' },
                 { emoji: '⭐', tier: 'Premium',  fee: 'GH₵100',  range: 'GH₵10,000 – GH₵50,000',   defer: 'Yes' },
-                { emoji: '🥇', tier: 'Gold',     fee: 'GH₵200',  range: 'GH₵50,000 – GH₵100,000',  defer: 'Yes' },
-                { emoji: '💎', tier: 'Diamond',  fee: 'GH₵500',  range: 'GH₵100,000 and above',     defer: 'Yes' },
+                { emoji: '*', tier: 'Gold',     fee: 'GH₵200',  range: 'GH₵50,000 – GH₵100,000',  defer: 'Yes' },
+                { emoji: '*', tier: 'Diamond',  fee: 'GH₵500',  range: 'GH₵100,000 and above',     defer: 'Yes' },
               ].map((row, i) => (
                 <div key={i} className="grid grid-cols-4 px-5 py-4 border-b border-gray-50 last:border-0 items-center">
                   <div className="flex items-center gap-2 font-bold text-navy text-sm">

@@ -10,7 +10,7 @@ const POSTS = [
     excerpt: 'Your story is your most powerful fundraising asset. Here is how to write one that builds trust, creates genuine emotion, and moves people to act.',
     readTime: '5 min read',
     date: 'March 2026',
-    emoji: '✍️',
+    emoji: '*',
     featured: true,
   },
   {
@@ -20,7 +20,7 @@ const POSTS = [
     excerpt: 'Donors are cautious  -  and rightfully so. Here is the data on how verified campaigns perform compared to unverified ones.',
     readTime: '4 min read',
     date: 'March 2026',
-    emoji: '🪪',
+    emoji: '*',
     featured: false,
   },
   {
@@ -30,7 +30,7 @@ const POSTS = [
     excerpt: 'WhatsApp is Ghana\'s most powerful fundraising channel. Here is how to share your campaign the right way and get people to actually donate.',
     readTime: '6 min read',
     date: 'February 2026',
-    emoji: '📱',
+    emoji: '*',
     featured: false,
   },
   {
@@ -40,7 +40,7 @@ const POSTS = [
     excerpt: 'Medical campaigns are the most common  -  and the most urgent. A step-by-step guide for hospital bills, surgery, and treatment costs.',
     readTime: '5 min read',
     date: 'February 2026',
-    emoji: '🏥',
+    emoji: '*',
     featured: false,
   },
   {
@@ -50,7 +50,7 @@ const POSTS = [
     excerpt: 'Faith-based campaigns are among the most successful on the platform. Here\'s how to structure your church fundraiser for maximum results.',
     readTime: '4 min read',
     date: 'January 2026',
-    emoji: '⛪',
+    emoji: '*',
     featured: false,
   },
   {
@@ -60,7 +60,7 @@ const POSTS = [
     excerpt: 'University fees, school books, WASSCE levies  -  education campaigns succeed when they are specific, verified, and actively shared.',
     readTime: '4 min read',
     date: 'January 2026',
-    emoji: '🎓',
+    emoji: '*',
     featured: false,
   },
   {
@@ -70,7 +70,7 @@ const POSTS = [
     excerpt: 'Creating a team campaign is straightforward. Getting everyone to genuinely participate is harder. Here are 7 tactics that actually work.',
     readTime: '3 min read',
     date: 'December 2025',
-    emoji: '👥',
+    emoji: '*',
     featured: false,
   },
   {
@@ -80,7 +80,7 @@ const POSTS = [
     excerpt: 'The first two days are the most critical. Campaigns that gain momentum early are far more likely to hit their goal. Here\'s your hour-by-hour plan.',
     readTime: '5 min read',
     date: 'December 2025',
-    emoji: '⚡',
+    emoji: '*',
     featured: false,
   },
 ]

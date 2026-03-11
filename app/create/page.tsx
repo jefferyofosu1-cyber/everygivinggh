@@ -13,18 +13,18 @@ const CATEGORIES = [
 ]
 
 const ID_TYPES = [
-  { id: 'ghana-card',      label: 'Ghana Card',       placeholder: 'GHA-XXXXXXXXX-X',  hint: 'Found on the front of your Ghana Card',              icon: '🪪' },
-  { id: 'passport',        label: 'Passport',          placeholder: 'G 0000000',         hint: 'Found on the photo page of your passport',           icon: '📘' },
-  { id: 'drivers-license', label: "Driver's Licence",  placeholder: 'DVLA-XXXXXXXXXX',   hint: 'Found on the front of your DVLA card',               icon: '🚗' },
-  { id: 'voters-id',       label: "Voter's ID",        placeholder: 'EC-XXXXXXXXXX',     hint: 'Found on your Electoral Commission ID card',         icon: '🗳️' },
-  { id: 'nhis',            label: 'NHIS Card',         placeholder: 'NHIS-XXXXXXXXX',    hint: 'National Health Insurance Scheme card number',       icon: '🏥' },
-  { id: 'other',           label: 'Other ID',          placeholder: 'ID number',          hint: 'Enter the ID number from your document',             icon: '📄' },
+  { id: 'ghana-card',      label: 'Ghana Card',       placeholder: 'GHA-XXXXXXXXX-X',  hint: 'Found on the front of your Ghana Card',              icon: '*' },
+  { id: 'passport',        label: 'Passport',          placeholder: 'G 0000000',         hint: 'Found on the photo page of your passport',           icon: '*' },
+  { id: 'drivers-license', label: "Driver's Licence",  placeholder: 'DVLA-XXXXXXXXXX',   hint: 'Found on the front of your DVLA card',               icon: '*' },
+  { id: 'voters-id',       label: "Voter's ID",        placeholder: 'EC-XXXXXXXXXX',     hint: 'Found on your Electoral Commission ID card',         icon: '*' },
+  { id: 'nhis',            label: 'NHIS Card',         placeholder: 'NHIS-XXXXXXXXX',    hint: 'National Health Insurance Scheme card number',       icon: '*' },
+  { id: 'other',           label: 'Other ID',          placeholder: 'ID number',          hint: 'Enter the ID number from your document',             icon: '*' },
 ]
 
 const TIERS = [
   {
     id: 'basic', name: 'Basic', price: 'Free', priceNum: 0,
-    emoji: '🟢', badge: 'Basic', badgeColor: 'bg-gray-100 text-gray-600',
+    emoji: '*', badge: 'Basic', badgeColor: 'bg-gray-100 text-gray-600',
     border: 'border-gray-200', activeBorder: 'border-gray-500',
     desc: 'ID upload only. No fee ever.',
     goalRange: 'Up to GH₵5,000', goalMax: 5000,
@@ -33,7 +33,7 @@ const TIERS = [
   },
   {
     id: 'standard', name: 'Standard', price: 'GH₵50', priceNum: 50,
-    emoji: '✅', badge: '✓ Verified', badgeColor: 'bg-primary-light text-primary-dark',
+    emoji: '*', badge: ' Verified', badgeColor: 'bg-primary-light text-primary-dark',
     border: 'border-primary/30', activeBorder: 'border-primary',
     recommended: true,
     desc: 'ID + selfie reviewed. Full Verified badge.',
@@ -43,7 +43,7 @@ const TIERS = [
   },
   {
     id: 'premium', name: 'Premium', price: 'GH₵100', priceNum: 100,
-    emoji: '⭐', badge: '★ Premium', badgeColor: 'bg-amber-50 text-amber-700',
+    emoji: '⭐', badge: ' Premium', badgeColor: 'bg-amber-50 text-amber-700',
     border: 'border-amber-200', activeBorder: 'border-amber-500',
     desc: 'Full document review. Premium badge.',
     goalRange: 'GH₵10,000 - GH₵50,000', goalMax: 50000,
@@ -52,7 +52,7 @@ const TIERS = [
   },
   {
     id: 'gold', name: 'Gold', price: 'GH₵200', priceNum: 200,
-    emoji: '🥇', badge: '🥇 Gold', badgeColor: 'bg-yellow-50 text-yellow-700',
+    emoji: '*', badge: ' Gold', badgeColor: 'bg-yellow-50 text-yellow-700',
     border: 'border-yellow-300', activeBorder: 'border-yellow-500',
     desc: 'For large campaigns. Gold badge.',
     goalRange: 'GH₵50,000 - GH₵100,000', goalMax: 100000,
@@ -61,7 +61,7 @@ const TIERS = [
   },
   {
     id: 'diamond', name: 'Diamond', price: 'GH₵500', priceNum: 500,
-    emoji: '💎', badge: '💎 Diamond', badgeColor: 'bg-blue-50 text-blue-700',
+    emoji: '*', badge: ' Diamond', badgeColor: 'bg-blue-50 text-blue-700',
     border: 'border-blue-300', activeBorder: 'border-blue-500',
     desc: 'Unlimited goal. Diamond badge.',
     goalRange: 'GH₵100,000 and above', goalMax: Infinity,
@@ -225,7 +225,7 @@ export default function CreatePage() {
         <div className="max-w-md w-full text-center">
           <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">🎉</div>
+            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30"></div>
           </div>
           <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
           <p className="text-gray-500 text-sm mb-1 max-w-sm mx-auto leading-relaxed">
@@ -244,10 +244,10 @@ export default function CreatePage() {
           )}
           <div className="flex flex-col gap-3 mb-8">
             {[
-              { icon: '📧', text: 'Confirmation email sent to your inbox' },
-              { icon: '🔍', text: 'Our team reviews your campaign and ID' },
-              { icon: '✅', text: "You'll be emailed: approved or rejected" },
-              { icon: '📱', text: 'If approved - share on WhatsApp and go live' },
+              { icon: '*', text: 'Confirmation email sent to your inbox' },
+              { icon: '*', text: 'Our team reviews your campaign and ID' },
+              { icon: '*', text: "You'll be emailed: approved or rejected" },
+              { icon: '*', text: 'If approved - share on WhatsApp and go live' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm text-gray-600 shadow-sm">
                 <span className="text-xl">{item.icon}</span>{item.text}
@@ -276,7 +276,7 @@ export default function CreatePage() {
                     i < stepIdx ? 'bg-primary text-white' :
                     i === stepIdx ? 'bg-primary text-white ring-4 ring-primary/20' :
                     'bg-gray-200 text-gray-400'}`}>
-                    {i < stepIdx ? '✓' : i + 1}
+                    {i < stepIdx ? '' : i + 1}
                   </div>
                   <span className={`text-xs font-bold hidden sm:block ${
                     i === stepIdx ? 'text-primary' :
@@ -339,7 +339,7 @@ export default function CreatePage() {
                     placeholder="Tell donors who you are, what happened, why you need help, and how the money will be used."
                     className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none" />
                   <div className={`text-xs mt-1 ${campaign.story.length < 30 ? 'text-gray-300' : 'text-primary'}`}>
-                    {campaign.story.length} characters {campaign.story.length < 30 ? `(${30 - campaign.story.length} more needed)` : '✓'}
+                    {campaign.story.length} characters {campaign.story.length < 30 ? `(${30 - campaign.story.length} more needed)` : ''}
                   </div>
                 </div>
                 <button disabled={!canNextCampaign} onClick={() => setStep('details')}
@@ -416,8 +416,8 @@ export default function CreatePage() {
                   <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Payout method <span className="text-red-400">*</span></div>
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     {[
-                      { id: 'momo', label: 'Mobile Money', sub: 'MTN, Telecel, AirtelTigo', icon: '📱' },
-                      { id: 'bank', label: 'Bank account',  sub: 'Any Ghana bank',           icon: '🏦' },
+                      { id: 'momo', label: 'Mobile Money', sub: 'MTN, Telecel, AirtelTigo', icon: '*' },
+                      { id: 'bank', label: 'Bank account',  sub: 'Any Ghana bank',           icon: '*' },
                     ].map(opt => (
                       <button key={opt.id} type="button"
                         onClick={() => setFundraiser(p => ({ ...p, payoutMethod: opt.id }))}
@@ -547,7 +547,7 @@ export default function CreatePage() {
                           <div className="flex flex-wrap gap-x-4 gap-y-1">
                             {t.features.map((f, i) => (
                               <div key={i} className="text-xs text-gray-500 flex items-center gap-1">
-                                <span className="text-primary font-bold">✓</span> {f}
+                                <span className="text-primary font-bold"></span> {f}
                               </div>
                             ))}
                           </div>
@@ -606,7 +606,7 @@ export default function CreatePage() {
                     <button type="button" onClick={() => idFrontRef.current?.click()}
                       className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idFront ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
                       {identity.idFront
-                        ? <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-gray-400 text-xs mt-0.5">Tap to change</div></div>
+                        ? <div><div className="text-2xl mb-1"></div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-gray-400 text-xs mt-0.5">Tap to change</div></div>
                         : <div><div className="text-2xl mb-1.5">{idType.icon}</div><div className="text-gray-500 font-semibold text-sm">Upload a photo of your {idType.label}</div><div className="text-gray-400 text-xs mt-1">JPG or PNG · Clear and in focus · Max 5MB</div></div>}
                     </button>
                   </div>
@@ -620,8 +620,8 @@ export default function CreatePage() {
                       <button type="button" onClick={() => selfieRef.current?.click()}
                         className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.selfie ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
                         {identity.selfie
-                          ? <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-gray-400 text-xs mt-0.5">Tap to change</div></div>
-                          : <div><div className="text-2xl mb-1.5">🤳</div><div className="text-gray-500 font-semibold text-sm">Take or upload a selfie</div><div className="text-gray-400 text-xs mt-1">Face forward · Good lighting</div></div>}
+                          ? <div><div className="text-2xl mb-1"></div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-gray-400 text-xs mt-0.5">Tap to change</div></div>
+                          : <div><div className="text-2xl mb-1.5"></div><div className="text-gray-500 font-semibold text-sm">Take or upload a selfie</div><div className="text-gray-400 text-xs mt-1">Face forward · Good lighting</div></div>}
                       </button>
                     </div>
                   )}

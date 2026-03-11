@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAuth } from '@/lib/api-security'
 
 // Smile Identity Web API v2
 // Docs: https://docs.usesmileid.com/server-to-server/javascript/products/document-verification
 
 const SMILE_PARTNER_ID = process.env.SMILE_PARTNER_ID || ''
 const SMILE_API_KEY = process.env.SMILE_API_KEY || ''
-const SMILE_BASE_URL = 'https://testapi.smileidentity.com/v1' // Change to https://api.smileidentity.com/v1 for production
+const SMILE_BASE_URL = process.env.SMILE_BASE_URL || 'https://testapi.smileidentity.com/v1'
 
 export async function POST(req: NextRequest) {
+  // Require authenticated user to prevent abuse of paid API
+  const auth = await requireAuth()
+  if (auth.error) return auth.error
+
   try {
     const body = await req.json()
     const { type, data } = body

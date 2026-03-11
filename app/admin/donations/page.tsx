@@ -16,7 +16,6 @@ interface Donation {
   payment_reference: string | null
   status:            string
   created_at:        string
-  anonymous:         boolean | null
   campaigns:         DonationCampaign | null
 }
 
@@ -30,10 +29,10 @@ const STATUS_FILTERS = ['all', 'success', 'pending', 'failed'] as const
 type StatusFilter = typeof STATUS_FILTERS[number]
 
 export default function AdminDonationsPage() {
-  const [donations,     setDonations]     = useState<Donation[]>([])
-  const [loading,       setLoading]       = useState(true)
-  const [search,        setSearch]        = useState('')
-  const [statusFilter,  setStatusFilter]  = useState<StatusFilter>('all')
+  const [donations,    setDonations]    = useState<Donation[]>([])
+  const [loading,      setLoading]      = useState(true)
+  const [search,       setSearch]       = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
   useEffect(() => {
     const supabase = createClient()
@@ -51,15 +50,15 @@ export default function AdminDonationsPage() {
     const matchStatus = statusFilter === 'all' || d.status === statusFilter
     const q = search.toLowerCase()
     const matchSearch = !search ||
-      d.donor_name?.toLowerCase().includes(q) ||
-      d.campaigns?.title?.toLowerCase().includes(q) ||
+      (d.donor_name ?? '').toLowerCase().includes(q) ||
+      (d.campaigns?.title ?? '').toLowerCase().includes(q) ||
       (d.payment_reference ?? '').includes(search)
     return matchStatus && matchSearch
   })
 
-  const successDonations = donations.filter(d => d.status === 'success')
-  const totalRaised      = successDonations.reduce((s, d) => s + (d.amount ?? 0), 0)
-  const filteredRaised   = filtered.filter(d => d.status === 'success').reduce((s, d) => s + (d.amount ?? 0), 0)
+  const successTotal  = donations.filter(d => d.status === 'success').reduce((s, d) => s + (d.amount ?? 0), 0)
+  const filteredTotal = filtered.filter(d => d.status === 'success').reduce((s, d) => s + (d.amount ?? 0), 0)
+  const cedis = (n: number) => `GH${String.fromCharCode(8373)}${n.toLocaleString()}`
 
   function exportCSV() {
     const rows = [
@@ -90,7 +89,7 @@ export default function AdminDonationsPage() {
           <p className="text-white/30 text-sm">All transactions across every campaign.</p>
         </div>
         <button onClick={exportCSV}
-          className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all">
+          className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all">
           Export CSV
         </button>
       </div>
@@ -98,14 +97,14 @@ export default function AdminDonationsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Total donations', val: successDonations.length,               color: 'text-primary'    },
-          { label: 'Total raised',    val: `GH₵${totalRaised.toLocaleString()}`,  color: 'text-primary'    },
-          { label: 'Pending',         val: donations.filter(d => d.status === 'pending').length, color: 'text-amber-400' },
-          { label: 'Failed',          val: donations.filter(d => d.status === 'failed').length,  color: 'text-red-400'   },
+          { label: 'Successful',   val: donations.filter(d => d.status === 'success').length, color: 'text-green-400' },
+          { label: 'Total raised', val: cedis(successTotal),                                   color: 'text-green-400' },
+          { label: 'Pending',      val: donations.filter(d => d.status === 'pending').length,  color: 'text-amber-400' },
+          { label: 'Failed',       val: donations.filter(d => d.status === 'failed').length,   color: 'text-red-400'   },
         ].map((s, i) => (
           <div key={i} className="bg-gray-900 border border-white/5 rounded-xl px-5 py-4">
-            <div className={`font-nunito font-black text-xl ${s.color}`}>{s.val}</div>
-            <div className="text-white/30 text-xs">{s.label}</div>
+            <p className={`font-nunito font-black text-xl ${s.color}`}>{s.val}</p>
+            <p className="text-white/30 text-xs">{s.label}</p>
           </div>
         ))}
       </div>
@@ -115,21 +114,25 @@ export default function AdminDonationsPage() {
         <div className="flex gap-1 bg-white/5 rounded-xl p-1">
           {STATUS_FILTERS.map(s => (
             <button key={s} onClick={() => setStatusFilter(s)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold capitalize transition-all ${statusFilter === s ? 'bg-primary text-white' : 'text-white/40 hover:text-white'}`}>
+              className={`px-4 py-2 rounded-lg text-xs font-bold capitalize transition-all ${
+                statusFilter === s ? 'bg-primary text-white' : 'text-white/40 hover:text-white'
+              }`}>
               {s}
             </button>
           ))}
         </div>
         <div className="relative flex-1 max-w-xs">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
           <input type="text" placeholder="Search donor, campaign..." value={search} onChange={e => setSearch(e.target.value)}
             className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm placeholder-white/20 outline-none focus:border-primary transition-all" />
         </div>
         {filtered.length > 0 && (
-          <div className="flex items-center gap-1 text-sm text-white/30 self-center">
-            <span>{filtered.length} results</span>
-            <span>·</span>
-            <span className="text-primary font-bold">GH₵{filteredRaised.toLocaleString()} shown</span>
+          <div className="flex items-center gap-1 text-sm self-center">
+            <span className="text-white/30">{filtered.length} results</span>
+            <span className="text-white/20 mx-1">·</span>
+            <span className="text-primary font-bold">{cedis(filteredTotal)} shown</span>
           </div>
         )}
       </div>
@@ -137,11 +140,11 @@ export default function AdminDonationsPage() {
       {/* Table */}
       <div className="bg-gray-900 border border-white/5 rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-white/30 text-sm">Loading donations...</div>
+          <div className="p-8 text-center text-white/30 text-sm">Loading...</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="text-4xl mb-3">💸</div>
-            <div className="text-white/30 text-sm">No donations found</div>
+            <p className="text-4xl mb-3">💸</p>
+            <p className="text-white/30 text-sm">No donations found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -158,14 +161,14 @@ export default function AdminDonationsPage() {
                   <tr key={d.id} className="hover:bg-white/[0.03] transition-all">
                     <td className="px-5 py-4 text-white/40 text-xs">{new Date(d.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-4">
-                      <div className="text-white font-semibold">{d.donor_name ?? 'Anonymous'}</div>
-                      {d.donor_email && <div className="text-white/30 text-xs">{d.donor_email}</div>}
+                      <p className="text-white font-semibold">{d.donor_name ?? 'Anonymous'}</p>
+                      {d.donor_email && <p className="text-white/30 text-xs">{d.donor_email}</p>}
                     </td>
                     <td className="px-5 py-4">
-                      <div className="text-white/70 max-w-[180px] truncate">{d.campaigns?.title ?? '-'}</div>
-                      <div className="text-white/30 text-xs">{d.campaigns?.profiles?.full_name ?? '-'}</div>
+                      <p className="text-white/70 max-w-[180px] truncate">{d.campaigns?.title ?? '-'}</p>
+                      <p className="text-white/30 text-xs">{d.campaigns?.profiles?.full_name ?? ''}</p>
                     </td>
-                    <td className="px-5 py-4 font-nunito font-black text-primary">GH₵{d.amount?.toLocaleString()}</td>
+                    <td className="px-5 py-4 font-nunito font-black text-primary">{cedis(d.amount ?? 0)}</td>
                     <td className="px-5 py-4 text-white/50 text-xs">{d.payment_method ?? '-'}</td>
                     <td className="px-5 py-4 text-white/30 text-xs font-mono">{d.payment_reference ?? '-'}</td>
                     <td className="px-5 py-4">

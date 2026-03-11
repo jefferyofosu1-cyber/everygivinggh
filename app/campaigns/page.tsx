@@ -80,7 +80,7 @@ export default function CampaignsPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.from('campaigns').select('*').order('created_at', { ascending: false })
+    supabase.from('campaigns').select('*').eq('status', 'approved').order('created_at', { ascending: false })
       .then(({ data }) => {
         setCampaigns(data || [])
         setLoading(false)

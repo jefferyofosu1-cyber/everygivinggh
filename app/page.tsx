@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
@@ -47,7 +48,7 @@ function CampaignCard({ c }: { c: any }) {
       className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300">
       <div className="h-48 relative overflow-hidden bg-gray-100">
         {c.image_url
-          ? <img src={c.image_url} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          ? <Image src={c.image_url} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
           : <div className="w-full h-full bg-gradient-to-br from-[#e6f9f1] to-blue-50 flex items-center justify-center text-5xl">{EMOJI[c.category?.toLowerCase()] || '💚'}</div>}
         {c.verified && <div className="absolute top-3 right-3 bg-[#02A95C] text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide">✓ VERIFIED</div>}
       </div>
@@ -137,14 +138,14 @@ export default function HomePage() {
             </div>
 
             {/* Right  -  stacked campaign cards over photo */}
-            <div className="relative hidden md:block self-end">
-              <img src={P.hero} alt="Fundraiser" className="w-full h-[500px] object-cover object-top rounded-tl-[40px]" />
+            <div className="relative hidden md:block self-end h-[500px] rounded-tl-[40px] overflow-hidden">
+              <Image src={P.hero} alt="Fundraiser" fill className="object-cover object-top" sizes="50vw" priority />
               <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-tl-[40px]" />
 
               {/* Floating verified card */}
               <div className="absolute -left-10 bottom-16 bg-white rounded-2xl shadow-2xl p-4 w-64 border border-gray-100">
                 <div className="flex items-center gap-3 mb-3">
-                  <img src={P.accra} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-[#02A95C]" />
+                  <Image src={P.accra} alt="" width={40} height={40} className="rounded-full object-cover border-2 border-[#02A95C]" />
                   <div>
                     <div className="font-black text-[#1A2B3C] text-xs">Ama Mensah</div>
                     <div className="text-[#02A95C] text-[10px] font-bold flex items-center gap-1">✓ Ghana Card Verified · Accra</div>
@@ -237,7 +238,7 @@ export default function HomePage() {
               {CATEGORIES.map((cat, i) => (
                 <Link key={i} href={`/campaigns?category=${cat.slug}`}
                   className="group relative rounded-2xl overflow-hidden aspect-[4/3] shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <Image src={cat.img} alt={cat.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="(max-width: 640px) 50vw, 25vw" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <div className="font-nunito font-black text-white text-sm drop-shadow-sm">{cat.name}</div>
@@ -273,7 +274,7 @@ export default function HomePage() {
               ].map((step, i) => (
                 <div key={i} className="group">
                   <div className="relative rounded-2xl overflow-hidden h-52 mb-5 shadow-sm">
-                    <img src={step.img} alt={step.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={step.img} alt={step.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
                     <div className="absolute inset-0 bg-[#1A2B3C]/30 group-hover:bg-[#1A2B3C]/15 transition-all" />
                     <div className="absolute top-4 left-4 w-10 h-10 bg-[#02A95C] rounded-full flex items-center justify-center shadow-lg">
                       <span className="font-nunito font-black text-white text-sm">{step.n}</span>
@@ -334,12 +335,12 @@ export default function HomePage() {
 
             {/* Photo collage */}
             <div className="relative h-[480px]">
-              <img src={P.hero2} alt="Community"
-                className="absolute top-0 left-0 w-72 h-72 object-cover rounded-2xl shadow-xl border-4 border-white" />
-              <img src={P.medical} alt="Medical"
-                className="absolute bottom-0 left-20 w-56 h-56 object-cover rounded-2xl shadow-xl border-4 border-white" />
-              <img src={P.accra} alt="Accra"
-                className="absolute top-10 right-0 w-48 h-64 object-cover rounded-2xl shadow-xl border-4 border-white" />
+              <Image src={P.hero2} alt="Community"
+                width={288} height={288} className="absolute top-0 left-0 object-cover rounded-2xl shadow-xl border-4 border-white" />
+              <Image src={P.medical} alt="Medical"
+                width={224} height={224} className="absolute bottom-0 left-20 object-cover rounded-2xl shadow-xl border-4 border-white" />
+              <Image src={P.accra} alt="Accra"
+                width={192} height={256} className="absolute top-10 right-0 object-cover rounded-2xl shadow-xl border-4 border-white" />
               <div className="absolute bottom-12 right-4 bg-[#02A95C] text-white rounded-2xl px-5 py-3 shadow-xl">
                 <div className="font-nunito font-black text-2xl">₵0 platform fee</div>
                 <div className="text-white/70 text-xs">forever 🇬🇭</div>
@@ -404,7 +405,7 @@ export default function HomePage() {
               ].map((t, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
                   <div className="flex items-center gap-3 mb-4">
-                    <img src={t.img} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-[#02A95C]" />
+                    <Image src={t.img} alt={t.name} width={48} height={48} className="rounded-full object-cover border-2 border-[#02A95C]" />
                     <div>
                       <div className="font-nunito font-black text-white text-sm">{t.name}</div>
                       <div className="text-[#02A95C] text-xs font-semibold">{t.location} · Raised {t.raised}</div>
@@ -454,7 +455,7 @@ export default function HomePage() {
             (GoFundMe bottom CTA)
         ══════════════════════════════════════════ */}
         <section className="relative py-28 overflow-hidden">
-          <img src={P.hero2} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <Image src={P.hero2} alt="" fill className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-[#1A2B3C]/85" />
           <div className="relative max-w-2xl mx-auto px-6 text-center">
             <h2 className="font-nunito font-black text-white text-5xl tracking-tight mb-4" style={{letterSpacing:-2}}>

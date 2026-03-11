@@ -150,11 +150,11 @@ export async function middleware(request: NextRequest) {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com",
+      "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com",
-      "connect-src 'self' https://*.supabase.co https://api.brevo.com https://api.hubtel.com",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com",
       "frame-ancestors 'none'",
     ].join('; ')
   )

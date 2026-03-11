@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { sanitiseString, sanitiseNumber } from '@/lib/api-security'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'jefferyofosu1@gmail.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || ''
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
 
 async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
@@ -96,14 +97,22 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { title, category, goal_amount, story, tier, fee_amount, fee_deferred, idType, idNumber, idFrontUrl, selfieUrl } = body
 
-    if (!title || !category || !goal_amount || !story) {
+    const title = sanitiseString(body.title, 200)
+    const category = sanitiseString(body.category, 100)
+    const story = sanitiseString(body.story, 10000)
+    const tier = sanitiseString(body.tier, 50)
+    const idType = sanitiseString(body.idType, 50)
+    const idNumber = sanitiseString(body.idNumber, 50)
+    const idFrontUrl = sanitiseString(body.idFrontUrl, 1000)
+    const selfieUrl = sanitiseString(body.selfieUrl, 1000)
+    const goalAmount = sanitiseNumber(body.goal_amount, 1, 999999)
+    const feeAmount = sanitiseNumber(body.fee_amount, 0, 10000) ?? 0
+    const feeDeferred = body.fee_deferred === true
+
+    if (!title || !category || !goalAmount || !story) {
       return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 })
     }
-
-    const feeAmount = parseFloat(fee_amount) || 0
-    const feeDeferred = fee_deferred === true
 
     // ── STEP 1: Insert with only the core columns that definitely exist ──
     // Extra columns (id_type, verification_tier, etc.) added via migration SQL
@@ -111,10 +120,10 @@ export async function POST(req: NextRequest) {
       .from('campaigns')
       .insert({
         user_id: user.id,
-        title: title.trim(),
+        title,
         category,
-        goal_amount: parseFloat(goal_amount) || 0,
-        story: story.trim(),
+        goal_amount: goalAmount,
+        story,
         status: 'pending',
         raised_amount: 0,
         verified: false,
@@ -128,8 +137,6 @@ export async function POST(req: NextRequest) {
     }
 
     // ── STEP 2: Patch extra columns one by one  -  silently skip any that don't exist yet ──
-    const { fundraiserName, fundraiserPhone, fundraiserLocation, fundraiserRelationship } = body
-
     const extraColumns: Record<string, any> = {
       verification_tier: tier || 'basic',
       id_type: idType || null,
@@ -142,10 +149,19 @@ export async function POST(req: NextRequest) {
       fee_collected: false,
     }
 
-    // Update profile with all fundraiser details
-    const { fundraiserWhatsapp, fundraiserNetwork, fundraiserPayoutMethod,
-      fundraiserMomoNumber, fundraiserMomoNetwork, fundraiserBankName, fundraiserBankAccount,
-      fundraiserAddress, fundraiserLandmark, fundraiserGpsAddress } = body
+    // Sanitise and update profile with all fundraiser details
+    const fundraiserName = sanitiseString(body.fundraiserName, 200)
+    const fundraiserPhone = sanitiseString(body.fundraiserPhone, 20)
+    const fundraiserWhatsapp = sanitiseString(body.fundraiserWhatsapp, 20)
+    const fundraiserNetwork = sanitiseString(body.fundraiserNetwork, 50)
+    const fundraiserPayoutMethod = sanitiseString(body.fundraiserPayoutMethod, 50)
+    const fundraiserMomoNumber = sanitiseString(body.fundraiserMomoNumber, 20)
+    const fundraiserMomoNetwork = sanitiseString(body.fundraiserMomoNetwork, 50)
+    const fundraiserBankName = sanitiseString(body.fundraiserBankName, 100)
+    const fundraiserBankAccount = sanitiseString(body.fundraiserBankAccount, 50)
+    const fundraiserAddress = sanitiseString(body.fundraiserAddress, 300)
+    const fundraiserLandmark = sanitiseString(body.fundraiserLandmark, 200)
+    const fundraiserGpsAddress = sanitiseString(body.fundraiserGpsAddress, 50)
 
     const profileUpdate: Record<string, any> = {}
     if (fundraiserName) profileUpdate.full_name = fundraiserName
@@ -190,7 +206,9 @@ export async function POST(req: NextRequest) {
     const name = profile?.full_name || user.email?.split('@')[0] || 'Fundraiser'
 
     sendEmail({ to: user.email!, subject: `Campaign received  -  "${title}" is under review`, html: confirmEmail(name, title, tier || 'Basic', feeAmount, feeDeferred) })
-    sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, goal_amount, tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign.id) })
+    if (ADMIN_EMAIL) {
+      sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, String(goalAmount), tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign.id) })
+    }
 
     return NextResponse.json({ success: true, campaignId: campaign.id })
 

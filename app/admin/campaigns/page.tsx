@@ -20,22 +20,6 @@ const STATUS_BADGE: Record<string, string> = {
   rejected: 'bg-red-500/20 text-red-400',
 }
 
-async function sendStatusEmail(to: string, name: string, title: string, status: 'approved' | 'rejected', note: string) {
-  try {
-    const res = await fetch('/api/send-status-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to, name, title, status, note }),
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      console.error('Status email failed:', err)
-    }
-  } catch (e) {
-    console.error('sendStatusEmail error:', e)
-  }
-}
-
 
 function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose: () => void; onUpdate: () => void }) {
   const [loading, setLoading] = useState(false)
@@ -44,39 +28,19 @@ function CampaignModal({ campaign, onClose, onUpdate }: { campaign: any; onClose
 
   const updateStatus = async (status: 'approved' | 'rejected') => {
     setLoading(true)
-    const supabase = createClient()
 
-    await supabase.from('campaigns').update({
-      status,
-      verified: status === 'approved',
-    }).eq('id', campaign.id)
-
-    // Send email notification to fundraiser
     try {
-      // Try profiles.email first, then fall back to auth user lookup
-      let fundraiserEmail = campaign.profiles?.email
-      if (!fundraiserEmail && campaign.user_id) {
-        const { data: userData } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('id', campaign.user_id)
-          .single()
-        fundraiserEmail = userData?.email
-      }
-
-      if (fundraiserEmail) {
-        await sendStatusEmail(
-          fundraiserEmail,
-          campaign.profiles?.full_name?.split(' ')[0] || 'there',
-          campaign.title,
-          status,
-          note.trim()
-        )
-      } else {
-        console.warn('No email found for fundraiser  -  status email not sent')
+      const res = await fetch('/api/admin/campaigns', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: campaign.id, status, note: note.trim() }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        console.error('Campaign update failed:', err)
       }
     } catch (e) {
-      console.error('Status email failed:', e)
+      console.error('updateStatus error:', e)
     }
 
     setLoading(false)

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/api-security'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
@@ -100,6 +101,10 @@ function rejectedEmailHtml(name: string, title: string, note: string, appUrl: st
 }
 
 export async function POST(req: NextRequest) {
+  // Only admins can send status emails
+  const auth = await requireAdmin()
+  if (auth.error) return auth.error
+
   if (!BREVO_API_KEY) {
     console.error('BREVO_API_KEY not set')
     return NextResponse.json({ error: 'Email service not configured' }, { status: 500 })

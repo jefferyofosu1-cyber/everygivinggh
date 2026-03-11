@@ -59,7 +59,12 @@ export default function LoginPage() {
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
             </div>
             <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Password</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-white/50">Password</label>
+                <Link href="/auth/forgot-password" className="text-xs text-primary hover:text-primary-dark font-semibold transition-colors">
+                  Forgot password?
+                </Link>
+              </div>
               <input type="password" required value={form.password}
                 onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                 placeholder="Your password"

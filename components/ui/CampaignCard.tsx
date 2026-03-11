@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Campaign } from '@/types'
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -26,7 +27,7 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
         {/* Image / placeholder */}
         <div className={`${bg} h-44 flex items-center justify-center text-5xl relative`}>
           {campaign.image_url ? (
-            <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover absolute inset-0" />
+            <Image src={campaign.image_url} alt={campaign.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
           ) : (
             <span>{emoji}</span>
           )}

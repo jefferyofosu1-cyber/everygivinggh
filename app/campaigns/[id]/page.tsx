@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
@@ -280,7 +281,7 @@ export default function CampaignPage() {
               {/* Hero */}
               <div className={`h-72 sm:h-80 bg-gradient-to-br ${grad} rounded-2xl flex items-center justify-center text-9xl relative overflow-hidden border border-gray-100 shadow-sm`}>
                 {campaign.image_url
-                  ? <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover" />
+                  ? <Image src={campaign.image_url} alt={campaign.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 60vw" priority />
                   : <span className="drop-shadow-sm">{emoji}</span>}
                 {campaign.verified && (
                   <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">

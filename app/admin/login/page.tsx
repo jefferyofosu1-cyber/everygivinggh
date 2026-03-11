@@ -6,12 +6,12 @@ import { createClient } from '@/lib/supabase'
 
 export default function AdminLoginPage() {
   const router = useRouter()
-  const [email,    setEmail]    = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  async function handleLogin(e: React.FormEvent) {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -24,6 +24,7 @@ export default function AdminLoginPage() {
       return
     }
 
+    // Check admin flag
     const { data: profile } = await supabase
       .from('profiles').select('is_admin').eq('id', data.user.id).single()
 
@@ -41,11 +42,12 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-5">
       <div className="w-full max-w-sm">
 
+        {/* Logo */}
         <div className="text-center mb-10">
-          <Link href="/" className="inline-block font-nunito font-black text-2xl">
-            <span className="text-[#02A95C]">Every</span><span className="text-white">Giving</span>
+          <Link href="/" className="font-nunito font-black text-2xl">
+            <span className="text-primary">Every</span><span className="text-white">Giving</span>
           </Link>
-          <p className="text-white/30 text-xs mt-1 tracking-widest font-mono uppercase">Admin Access</p>
+          <div className="text-white/30 text-xs mt-1 font-mono tracking-widest uppercase">Admin Access</div>
         </div>
 
         <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
@@ -53,34 +55,36 @@ export default function AdminLoginPage() {
           <p className="text-white/30 text-sm mb-6">Admin accounts only.</p>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-5 text-sm text-red-400">
-              {error}
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-5 text-sm text-red-400 flex items-center gap-2">
+              <span>⚠️</span> {error}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <div>
               <label className="text-xs font-bold text-white/40 block mb-1.5 uppercase tracking-wider">Email</label>
-              <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+              <input type="email" required value={email}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="admin@everygiving.org"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#02A95C] transition-colors" />
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
             </div>
             <div>
               <label className="text-xs font-bold text-white/40 block mb-1.5 uppercase tracking-wider">Password</label>
-              <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
-                placeholder="********"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#02A95C] transition-colors" />
+              <input type="password" required value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
             </div>
             <button type="submit" disabled={loading}
-              className="w-full py-3.5 bg-[#02A95C] hover:bg-[#017A42] disabled:opacity-50 text-white font-nunito font-black rounded-xl transition-all text-sm mt-1">
-              {loading ? 'Signing in...' : 'Sign in to admin'}
+              className="w-full py-3.5 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-xl transition-all text-sm mt-1">
+              {loading ? 'Signing in…' : 'Sign in to admin →'}
             </button>
           </form>
         </div>
 
         <p className="text-center text-white/20 text-xs mt-6">
           Not an admin?{' '}
-          <Link href="/" className="text-white/40 hover:text-[#02A95C] transition-colors">Go to main site</Link>
+          <Link href="/" className="text-white/40 hover:text-primary transition-colors">Go to main site</Link>
         </p>
       </div>
     </div>

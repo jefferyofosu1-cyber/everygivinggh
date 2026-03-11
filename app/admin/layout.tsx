@@ -4,136 +4,124 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 
-interface AdminUser {
-  name:  string
-  email: string
-}
-
 const NAV = [
-  { href: '/admin',           label: 'Dashboard', icon: '*', exact: true  },
-  { href: '/admin/campaigns', label: 'Campaigns', icon: '*', exact: false },
-  { href: '/admin/donations', label: 'Donations', icon: '*', exact: false },
-  { href: '/admin/users',     label: 'Users',     icon: '*', exact: false },
+  { href: '/admin', label: 'Dashboard', icon: '📊', exact: true },
+  { href: '/admin/campaigns', label: 'Campaigns', icon: '📋', exact: false },
+  { href: '/admin/users', label: 'Users', icon: '👥', exact: false },
+  { href: '/admin/donations', label: 'Donations', icon: '💰', exact: false },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const router      = useRouter()
-  const pathname    = usePathname()
-  const [checking,    setChecking]    = useState(true)
-  const [authorized,  setAuthorized]  = useState(false)
-  const [adminUser,   setAdminUser]   = useState<AdminUser | null>(null)
+  const router = useRouter()
+  const pathname = usePathname()
+  const [checking, setChecking] = useState(true)
+  const [authorized, setAuthorized] = useState(false)
+  const [admin, setAdmin] = useState<{ name: string; email: string } | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const isLogin = pathname === '/admin/login'
+  const isLoginPage = pathname === '/admin/login'
 
   useEffect(() => {
-    if (isLogin) { setChecking(false); return }
+    if (isLoginPage) { setChecking(false); return }
+
     const supabase = createClient()
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.replace('/admin/login'); return }
       const { data: profile } = await supabase
         .from('profiles').select('full_name, is_admin').eq('id', user.id).single()
       if (!profile?.is_admin) { router.replace('/admin/login'); return }
-      setAdminUser({
-        name:  (profile.full_name as string | null) ?? user.email ?? 'Admin',
-        email: user.email ?? '',
-      })
+      setAdmin({ name: profile.full_name || user.email || 'Admin', email: user.email || '' })
       setAuthorized(true)
       setChecking(false)
     })
-  }, [pathname, isLogin, router])
+  }, [pathname])
 
-  async function signOut() {
+  const handleLogout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
     router.replace('/admin/login')
   }
 
-  if (isLogin) return <>{children}</>
+  // Login page — render without sidebar
+  if (isLoginPage) return <>{children}</>
 
-  if (checking) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-10 h-10 border-2 border-[#02A95C] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-white/30 text-xs">Checking access...</p>
+  // Checking auth
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="text-white/30 text-xs">Checking access…</div>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
+  // Not authorized
   if (!authorized) return null
 
   return (
     <div className="min-h-screen bg-gray-950 flex">
 
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-56 bg-[#111827] border-r border-white/5 flex flex-col transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-
-        {/* Logo */}
+      {/* ── SIDEBAR ── */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-60 bg-gray-900 border-r border-white/5 flex flex-col transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="px-5 py-5 border-b border-white/5">
-          <Link href="/admin" className="font-nunito font-black text-lg" onClick={() => setSidebarOpen(false)}>
-            <span className="text-[#02A95C]">Every</span><span className="text-white">Giving</span>
+          <Link href="/admin" className="font-nunito font-black text-lg">
+            <span className="text-primary">Every</span><span className="text-white">Giving</span>
           </Link>
-          <p className="text-white/20 text-[10px] mt-0.5 tracking-widest font-mono">ADMIN</p>
+          <div className="text-white/20 text-xs mt-0.5 font-mono tracking-widest">ADMIN</div>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
           {NAV.map(item => {
             const active = item.exact ? pathname === item.href : pathname.startsWith(item.href)
             return (
-              <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                  active ? 'bg-[#02A95C]/15 text-[#02A95C]' : 'text-white/40 hover:text-white hover:bg-white/5'
-                }`}>
-                <span>{item.icon}</span>
+              <Link key={item.href} href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-primary/15 text-primary' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>
+                <span className="text-base">{item.icon}</span>
                 {item.label}
               </Link>
             )
           })}
         </nav>
 
-        {/* User + actions */}
-        <div className="px-3 py-4 border-t border-white/5 space-y-1">
-          <div className="flex items-center gap-2.5 px-3 py-2">
-            <div className="w-7 h-7 bg-[#02A95C] rounded-full flex items-center justify-center text-white text-xs font-black flex-shrink-0">
-              {adminUser?.name?.[0]?.toUpperCase()}
+        <div className="px-3 py-4 border-t border-white/5">
+          <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
+            <div className="w-7 h-7 bg-primary rounded-full flex items-center justify-center font-black text-white text-xs flex-shrink-0">
+              {admin?.name?.[0]?.toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-white text-xs font-semibold truncate">{adminUser?.name}</p>
-              <p className="text-white/20 text-xs truncate">{adminUser?.email}</p>
+              <div className="text-white text-xs font-bold truncate">{admin?.name}</div>
+              <div className="text-white/20 text-xs truncate">{admin?.email}</div>
             </div>
           </div>
-          <button onClick={signOut}
+          <button onClick={handleLogout}
             className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-white/30 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
-            Sign out
+            🚪 Sign out
           </button>
           <Link href="/" target="_blank"
-            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-white/30 hover:text-[#02A95C] hover:bg-[#02A95C]/5 rounded-lg transition-all">
-            View live site
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-white/30 hover:text-primary hover:bg-primary/5 rounded-lg transition-all">
+            🌐 View live site
           </Link>
         </div>
       </aside>
 
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/60 md:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
+      {sidebarOpen && <div className="fixed inset-0 z-40 bg-black/60 md:hidden" onClick={() => setSidebarOpen(false)} />}
 
-      {/* Main content */}
-      <div className="flex-1 md:ml-56 flex flex-col min-h-screen">
-        <header className="bg-[#111827] border-b border-white/5 px-5 py-3.5 flex items-center justify-between sticky top-0 z-30">
+      {/* ── MAIN ── */}
+      <div className="flex-1 md:ml-60 flex flex-col min-h-screen">
+        <header className="bg-gray-900 border-b border-white/5 px-5 py-3.5 flex items-center justify-between sticky top-0 z-30">
           <button onClick={() => setSidebarOpen(true)} className="md:hidden text-white/40 hover:text-white p-1">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <p className="text-white/20 text-xs font-mono hidden md:block">{pathname}</p>
+          <div className="text-white/20 text-xs font-mono hidden md:block">{pathname}</div>
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-[#02A95C] rounded-full animate-pulse" />
+            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
             <span className="text-white/20 text-xs">Live</span>
           </div>
         </header>
-        <main className="flex-1 p-5 md:p-7">{children}</main>
+        <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
   )

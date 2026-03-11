@@ -4,743 +4,488 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { createClient } from '@/lib/supabase'
 
-const CATEGORIES = [
-  'Medical','Emergency','Education','Charity','Faith','Community',
-  'Environment','Business','Family','Sports','Events','Competition',
-  'Travel','Volunteer','Wishes','Memorial','Other',
-]
-
-const ID_TYPES = [
-  { id: 'ghana-card',      label: 'Ghana Card',       placeholder: 'GHA-XXXXXXXXX-X',  hint: 'Found on the front of your Ghana Card',              icon: '*' },
-  { id: 'passport',        label: 'Passport',          placeholder: 'G 0000000',         hint: 'Found on the photo page of your passport',           icon: '*' },
-  { id: 'drivers-license', label: "Driver's Licence",  placeholder: 'DVLA-XXXXXXXXXX',   hint: 'Found on the front of your DVLA card',               icon: '*' },
-  { id: 'voters-id',       label: "Voter's ID",        placeholder: 'EC-XXXXXXXXXX',     hint: 'Found on your Electoral Commission ID card',         icon: '*' },
-  { id: 'nhis',            label: 'NHIS Card',         placeholder: 'NHIS-XXXXXXXXX',    hint: 'National Health Insurance Scheme card number',       icon: '*' },
-  { id: 'other',           label: 'Other ID',          placeholder: 'ID number',          hint: 'Enter the ID number from your document',             icon: '*' },
-]
+const CATEGORIES = ['Medical', 'Emergency', 'Education', 'Charity', 'Faith', 'Community', 'Environment', 'Business', 'Family', 'Sports', 'Events', 'Competition', 'Travel', 'Volunteer', 'Wishes', 'Memorial', 'Other']
 
 const TIERS = [
   {
-    id: 'basic', name: 'Basic', price: 'Free', priceNum: 0,
-    emoji: '*', badge: 'Basic', badgeColor: 'bg-gray-100 text-gray-600',
-    border: 'border-gray-200', activeBorder: 'border-gray-500',
-    desc: 'ID upload only. No fee ever.',
-    goalRange: 'Up to GH₵5,000', goalMax: 5000,
-    features: ['ID photo upload', 'ID number recorded', 'Basic badge on campaign'],
-    selfie: false, canDefer: false,
+    id: 'basic',
+    name: 'Basic',
+    price: '₵20',
+    priceNum: 20,
+    badge: 'Basic Verified',
+    badgeColor: 'bg-gray-100 text-gray-600',
+    border: 'border-gray-200',
+    activeBorder: 'border-gray-500',
+    desc: 'ID upload + ID number. Basic badge.',
+    limit: 'Campaigns up to ₵5,000',
+    features: ['Ghana Card upload', 'ID number verification', 'Basic Verified badge'],
+    selfie: false,
   },
   {
-    id: 'standard', name: 'Standard', price: 'GH₵50', priceNum: 50,
-    emoji: '*', badge: ' Verified', badgeColor: 'bg-primary-light text-primary-dark',
-    border: 'border-primary/30', activeBorder: 'border-primary',
+    id: 'standard',
+    name: 'Standard',
+    price: '₵50',
+    priceNum: 50,
+    badge: 'Verified ✓',
+    badgeColor: 'bg-primary-light text-primary-dark',
+    border: 'border-primary/30',
+    activeBorder: 'border-primary',
     recommended: true,
-    desc: 'ID + selfie reviewed. Full Verified badge.',
-    goalRange: 'GH₵5,000 - GH₵10,000', goalMax: 10000,
-    features: ['ID + selfie reviewed by our team', 'Full Verified badge', 'Priority in listings'],
-    selfie: true, canDefer: true,
+    desc: 'ID + selfie + NIA check. Full badge.',
+    limit: 'Campaigns up to ₵50,000',
+    features: ['Ghana Card upload', 'ID number verification', 'Selfie + facial recognition', 'NIA database check', 'Full Verified badge'],
+    selfie: true,
   },
   {
-    id: 'premium', name: 'Premium', price: 'GH₵100', priceNum: 100,
-    emoji: '⭐', badge: ' Premium', badgeColor: 'bg-amber-50 text-amber-700',
-    border: 'border-amber-200', activeBorder: 'border-amber-500',
-    desc: 'Full document review. Premium badge.',
-    goalRange: 'GH₵10,000 - GH₵50,000', goalMax: 50000,
-    features: ['Everything in Standard', 'Supporting docs reviewed', 'Premium badge + top placement', 'Priority support'],
-    selfie: true, canDefer: true,
-  },
-  {
-    id: 'gold', name: 'Gold', price: 'GH₵200', priceNum: 200,
-    emoji: '*', badge: ' Gold', badgeColor: 'bg-yellow-50 text-yellow-700',
-    border: 'border-yellow-300', activeBorder: 'border-yellow-500',
-    desc: 'For large campaigns. Gold badge.',
-    goalRange: 'GH₵50,000 - GH₵100,000', goalMax: 100000,
-    features: ['Everything in Premium', 'Gold badge', 'Featured placement', 'Review within 12 hrs'],
-    selfie: true, canDefer: true,
-  },
-  {
-    id: 'diamond', name: 'Diamond', price: 'GH₵500', priceNum: 500,
-    emoji: '*', badge: ' Diamond', badgeColor: 'bg-blue-50 text-blue-700',
-    border: 'border-blue-300', activeBorder: 'border-blue-500',
-    desc: 'Unlimited goal. Diamond badge.',
-    goalRange: 'GH₵100,000 and above', goalMax: Infinity,
-    features: ['Everything in Gold', 'Diamond badge', 'Homepage featured', 'Review within 6 hrs', 'Personal campaign manager'],
-    selfie: true, canDefer: true,
+    id: 'premium',
+    name: 'Premium',
+    price: '₵100',
+    priceNum: 100,
+    badge: 'Premium ★',
+    badgeColor: 'bg-amber-50 text-amber-700',
+    border: 'border-amber-200',
+    activeBorder: 'border-amber-500',
+    desc: 'Full verification + document review.',
+    limit: 'Unlimited campaign goal',
+    features: ['Everything in Standard', 'Supporting documents reviewed', 'Premium badge + top placement', 'Dedicated support'],
+    selfie: true,
   },
 ]
 
-type Step    = 'campaign' | 'details' | 'tier' | 'identity' | 'payment' | 'done'
-type PayMode = 'now' | 'defer'
-
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-const MAX_SIZE_MB   = 5
-
-function suggestedTierId(goal: number): string {
-  if (goal <= 5000)  return 'basic'
-  if (goal <= 10000) return 'standard'
-  if (goal <= 50000) return 'premium'
-  if (goal <= 100000) return 'gold'
-  return 'diamond'
-}
-
-const STEPS = ['Campaign', 'Details', 'Tier', 'Identity', 'Payment']
-const STEP_IDX: Record<Step, number> = {
-  campaign: 0, details: 1, tier: 2, identity: 3, payment: 4, done: 5,
-}
+type Step = 'campaign' | 'tier' | 'identity' | 'payment' | 'done'
 
 export default function CreatePage() {
-  const router  = useRouter()
-  const [step, setStep]           = useState<Step>('campaign')
+  const router = useRouter()
+  const [step, setStep] = useState<Step>('campaign')
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError]         = useState('')
-  const [payMode, setPayMode]     = useState<PayMode>('now')
 
-  const [campaign, setCampaign] = useState({ title: '', category: '', goal: '', story: '' })
-  const [fundraiser, setFundraiser] = useState({
-    fullName: '', phone: '', whatsapp: '', network: '',
-    payoutMethod: 'momo',
-    momoNumber: '', momoNetwork: '',
-    bankName: '', bankAccount: '',
-    address: '', landmark: '', gpsAddress: '',
-    relationship: '',
+  // Campaign form
+  const [campaign, setCampaign] = useState({
+    title: '', category: '', goal: '', story: '', photo: null as File | null,
   })
+  const photoRef = useRef<HTMLInputElement>(null)
 
-  const [tierId, setTierId] = useState('standard')
-  const tier = TIERS.find(t => t.id === tierId) ?? TIERS[1]
+  // Tier
+  const [tierId, setTierId] = useState<string>('standard')
+  const tier = TIERS.find(t => t.id === tierId)!
 
-  const [idTypeId, setIdTypeId] = useState('')
-  const idType = ID_TYPES.find(i => i.id === idTypeId)
+  // Identity
   const [identity, setIdentity] = useState({
-    idNumber: '', idFront: null as File | null, selfie: null as File | null,
+    idNumber: '',
+    idFront: null as File | null,
+    idBack: null as File | null,
+    selfie: null as File | null,
   })
-
   const idFrontRef = useRef<HTMLInputElement>(null)
-  const selfieRef  = useRef<HTMLInputElement>(null)
+  const idBackRef = useRef<HTMLInputElement>(null)
+  const selfieRef = useRef<HTMLInputElement>(null)
 
-  const goalNum = parseFloat(campaign.goal) || 0
+  // Payment (simulate)
+  const [paid, setPaid] = useState(false)
 
-  const canNextCampaign = !!(campaign.title.trim() && campaign.category && campaign.goal && campaign.story.trim().length >= 30)
-  const canNextDetails  = !!(fundraiser.fullName.trim().length > 1 && fundraiser.phone.trim().length > 8 &&
-    (fundraiser.payoutMethod === 'momo' ? fundraiser.momoNumber.trim().length > 8 : fundraiser.bankAccount.trim().length > 4))
-  const canNextIdentity = !!(idTypeId && identity.idNumber.trim() && identity.idFront && (tier.selfie ? !!identity.selfie : true))
+  const steps: { id: Step; label: string }[] = [
+    { id: 'campaign', label: 'Campaign' },
+    { id: 'tier', label: 'Verification' },
+    { id: 'identity', label: 'ID documents' },
+    { id: 'payment', label: 'Payment' },
+  ]
+  const stepIndex = steps.findIndex(s => s.id === step)
 
-  function handleGoalChange(val: string) {
-    setCampaign(p => ({ ...p, goal: val }))
-    const g = parseFloat(val) || 0
-    if (g > 0) setTierId(suggestedTierId(g))
+  const canNextCampaign = campaign.title && campaign.category && campaign.goal && campaign.story
+
+  const canNextIdentity = identity.idNumber && identity.idFront && identity.idBack &&
+    (tier.selfie ? !!identity.selfie : true)
+
+  const handleFileSelect = (
+    ref: React.RefObject<HTMLInputElement>,
+    field: 'idFront' | 'idBack' | 'selfie' | 'photo'
+  ) => {
+    ref.current?.click()
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, field: 'idFront' | 'selfie') {
-    const file = e.target.files?.[0] ?? null
-    if (!file) { setIdentity(p => ({ ...p, [field]: null })); return }
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      setError('Only JPEG, PNG or WebP images are accepted.')
-      e.target.value = ''
-      return
-    }
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setError(`Image must be under ${MAX_SIZE_MB}MB. Please compress and try again.`)
-      e.target.value = ''
-      return
-    }
-    setError('')
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: 'idFront' | 'idBack' | 'selfie'
+  ) => {
+    const file = e.target.files?.[0] || null
     setIdentity(p => ({ ...p, [field]: file }))
   }
 
-  async function uploadFile(file: File, path: string): Promise<string | null> {
-    const supabase = createClient()
-    const { error: uploadErr } = await supabase.storage
-      .from('campaign-docs')
-      .upload(path, file, { upsert: true })
-    if (uploadErr) { console.error('Upload error:', uploadErr); return null }
-    const { data } = supabase.storage.from('campaign-docs').getPublicUrl(path)
-    return data.publicUrl
-  }
-
-  async function handleSubmit() {
+  const handleSubmit = async () => {
     setSubmitting(true)
-    setError('')
-    try {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth/login'); return }
-
-      const ts  = Date.now()
-      const uid = user.id
-      let idFrontUrl: string | null = null
-      let selfieUrl:  string | null = null
-
-      if (identity.idFront) idFrontUrl = await uploadFile(identity.idFront, `${uid}/${ts}-front.jpg`)
-      if (identity.selfie)  selfieUrl  = await uploadFile(identity.selfie,  `${uid}/${ts}-selfie.jpg`)
-
-      const res = await fetch('/api/campaign-submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title:       campaign.title,
-          category:    campaign.category,
-          goal_amount: campaign.goal,
-          story:       campaign.story,
-          tier:        tier.name,
-          fee_amount:  tier.priceNum,
-          fee_deferred: tier.priceNum > 0 && payMode === 'defer',
-          idType:      idType?.label ?? idTypeId,
-          idNumber:    identity.idNumber,
-          idFrontUrl,
-          selfieUrl,
-          fundraiserName:          fundraiser.fullName,
-          fundraiserPhone:         fundraiser.phone,
-          fundraiserWhatsapp:      fundraiser.whatsapp,
-          fundraiserNetwork:       fundraiser.network,
-          fundraiserPayoutMethod:  fundraiser.payoutMethod,
-          fundraiserMomoNumber:    fundraiser.momoNumber,
-          fundraiserMomoNetwork:   fundraiser.momoNetwork,
-          fundraiserBankName:      fundraiser.bankName,
-          fundraiserBankAccount:   fundraiser.bankAccount,
-          fundraiserAddress:       fundraiser.address,
-          fundraiserLandmark:      fundraiser.landmark,
-          fundraiserGpsAddress:    fundraiser.gpsAddress,
-          fundraiserRelationship:  fundraiser.relationship,
-        }),
-      })
-
-      const json = await res.json() as { error?: string }
-      if (!res.ok) { setError(json.error ?? 'Submission failed.'); return }
-
-      // Also create a mirrored campaign in Sanity CMS with pending status
-      try {
-        await fetch('/api/sanity/create-campaign', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: campaign.title,
-            story: campaign.story,
-            category: campaign.category.toLowerCase(),
-            goalAmount: parseFloat(campaign.goal),
-            beneficiaryName: fundraiser.fullName,
-            beneficiaryPhone: fundraiser.phone,
-            verificationLevel: tier.id,
-          }),
-        })
-      } catch {
-        // Non-fatal: keep core flow working even if CMS mirroring fails
-      }
-
-      setStep('done')
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
-    } finally {
-      setSubmitting(false)
-    }
+    // Simulate API call
+    await new Promise(r => setTimeout(r, 1500))
+    setStep('done')
+    setSubmitting(false)
   }
 
-  const stepIdx = STEP_IDX[step]
-
-  // ── DONE ──────────────────────────────────────────────────────────────────
-  if (step === 'done') return (
-    <>
-      <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-16">
-        <div className="max-w-md w-full text-center">
-          <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
-            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30"></div>
-          </div>
-          <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
-          <p className="text-gray-500 text-sm mb-1 max-w-sm mx-auto leading-relaxed">
-            Your campaign is now <strong className="text-navy">under review</strong> by our team.
-          </p>
-          <p className="text-gray-400 text-xs mb-6 max-w-sm mx-auto leading-relaxed">
-            You will receive an email once approved or rejected - usually within 24 hours. Check your spam folder if needed.
-          </p>
-          {payMode === 'defer' && tier.priceNum > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
-              <div className="font-bold text-amber-800 text-sm mb-1">Deferred fee reminder</div>
-              <div className="text-amber-700 text-xs leading-relaxed">
-                Your <strong>{tier.name}</strong> fee of <strong>{tier.price}</strong> will be deducted from your first donations. You pay nothing today.
+  // ── DONE SCREEN ──────────────────────────────────────────────────────────
+  if (step === 'done') {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-16">
+          <div className="max-w-lg w-full text-center">
+            <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
+              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+              <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">🎉</div>
+            </div>
+            <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
+            <p className="text-gray-500 text-sm mb-2">Your campaign and identity documents are being reviewed.</p>
+            <p className="text-gray-400 text-xs mb-8">You'll receive an email once your campaign is live. This usually takes under 10 minutes.</p>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6 text-left">
+              <div className="font-nunito font-black text-navy text-sm mb-4">What happens next</div>
+              <div className="flex flex-col gap-3">
+                {[
+                  { icon: '📧', text: 'Check your email for a verification confirmation' },
+                  { icon: '✅', text: `Your ${tier.name} verification will be processed` },
+                  { icon: '🚀', text: 'Your campaign goes live with your Verified badge' },
+                  { icon: '📱', text: 'Share on WhatsApp to start receiving donations' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                    <span>{item.icon}</span><span>{item.text}</span>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
-          <div className="flex flex-col gap-3 mb-8">
-            {[
-              { icon: '*', text: 'Confirmation email sent to your inbox' },
-              { icon: '*', text: 'Our team reviews your campaign and ID' },
-              { icon: '*', text: "You'll be emailed: approved or rejected" },
-              { icon: '*', text: 'If approved - share on WhatsApp and go live' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm text-gray-600 shadow-sm">
-                <span className="text-xl">{item.icon}</span>{item.text}
-              </div>
-            ))}
+            <div className="flex gap-3 justify-center">
+              <Link href="/campaigns"
+                className="px-7 py-3 bg-primary text-white font-nunito font-black rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-primary/20">
+                Browse campaigns
+              </Link>
+              <Link href="/"
+                className="px-7 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-full text-sm hover:border-primary hover:text-primary transition-all">
+                Go home
+              </Link>
+            </div>
           </div>
-          <Link href="/" className="inline-block text-primary font-bold text-sm hover:underline">Back to homepage</Link>
         </div>
-      </div>
-      <Footer />
-    </>
-  )
+        <Footer />
+      </>
+    )
+  }
 
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gray-50 py-10 px-5">
+      <main className="min-h-screen bg-gray-50 py-12 px-5">
         <div className="max-w-2xl mx-auto">
 
-          {/* Progress bar */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              {STEPS.map((s, i) => (
-                <div key={i} className="flex items-center gap-1.5">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all ${
-                    i < stepIdx ? 'bg-primary text-white' :
-                    i === stepIdx ? 'bg-primary text-white ring-4 ring-primary/20' :
-                    'bg-gray-200 text-gray-400'}`}>
-                    {i < stepIdx ? '' : i + 1}
-                  </div>
-                  <span className={`text-xs font-bold hidden sm:block ${
-                    i === stepIdx ? 'text-primary' :
-                    i < stepIdx ? 'text-gray-400' : 'text-gray-300'}`}>{s}</span>
-                  {i < STEPS.length - 1 && (
-                    <div className={`h-0.5 w-6 sm:w-10 ml-1 rounded-full ${i < stepIdx ? 'bg-primary' : 'bg-gray-200'}`} />
-                  )}
-                </div>
-              ))}
-            </div>
+          {/* Header */}
+          <div className="text-center mb-10">
+            <Link href="/" className="inline-block font-nunito font-black text-xl tracking-tight mb-4">
+              <span className="text-primary">Every</span><span className="text-navy">Giving</span>
+            </Link>
+            <h1 className="font-nunito font-black text-navy text-2xl mb-2">Start your campaign</h1>
+            <p className="text-gray-400 text-sm">Free to create. Verified. MoMo-native.</p>
           </div>
 
-          {/* ── STEP 1: CAMPAIGN ── */}
+          {/* Progress */}
+          <div className="flex items-center gap-0 mb-10">
+            {steps.map((s, i) => (
+              <div key={s.id} className="flex items-center flex-1">
+                <div className="flex flex-col items-center flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                    i < stepIndex ? 'bg-primary text-white' :
+                    i === stepIndex ? 'bg-navy text-white ring-4 ring-navy/20' :
+                    'bg-gray-200 text-gray-400'
+                  }`}>
+                    {i < stepIndex ? '✓' : i + 1}
+                  </div>
+                  <div className={`text-xs mt-1 font-semibold ${i === stepIndex ? 'text-navy' : 'text-gray-400'}`}>{s.label}</div>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className={`h-px flex-1 mx-1 mb-5 transition-all ${i < stepIndex ? 'bg-primary' : 'bg-gray-200'}`} />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* ── STEP 1: CAMPAIGN DETAILS ── */}
           {step === 'campaign' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Tell your story</h2>
-              <p className="text-gray-400 text-sm mb-7">Be specific and honest. Campaigns with detailed stories raise significantly more.</p>
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Tell your story</h2>
+              <p className="text-gray-400 text-sm mb-7">Be honest, specific, and personal. Campaigns with real stories raise more.</p>
+
               <div className="flex flex-col gap-5">
                 <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Campaign title <span className="text-red-400">*</span></label>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Campaign title *</label>
                   <input type="text" value={campaign.title}
                     onChange={e => setCampaign(p => ({ ...p, title: e.target.value }))}
-                    placeholder="e.g. Help cover my mother's surgery costs at Korle Bu"
-                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all" />
+                    placeholder="e.g. Help Ama pay for her kidney surgery"
+                    maxLength={80}
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all" />
+                  <div className="text-xs text-gray-300 mt-1 text-right">{campaign.title.length}/80</div>
                 </div>
+
                 <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Category <span className="text-red-400">*</span></label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Category *</label>
+                  <div className="grid grid-cols-3 gap-2">
                     {CATEGORIES.map(cat => (
-                      <button key={cat} type="button" onClick={() => setCampaign(p => ({ ...p, category: cat }))}
-                        className={`py-2.5 px-2 rounded-xl text-xs font-bold border-2 transition-all ${
-                          campaign.category === cat
-                            ? 'border-primary bg-primary-light text-primary-dark'
-                            : 'border-gray-100 text-gray-500 hover:border-gray-200 bg-gray-50'}`}>
+                      <button key={cat} type="button"
+                        onClick={() => setCampaign(p => ({ ...p, category: cat }))}
+                        className={`text-xs font-semibold px-3 py-2.5 rounded-xl border-2 transition-all text-left ${campaign.category === cat ? 'border-primary bg-primary-light text-primary-dark' : 'border-gray-100 text-gray-500 hover:border-gray-200 bg-gray-50'}`}>
                         {cat}
                       </button>
                     ))}
                   </div>
                 </div>
+
                 <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Goal amount (GHC) <span className="text-red-400">*</span></label>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Fundraising goal (GHC) *</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₵</span>
-                    <input type="number" min="1" value={campaign.goal}
-                      onChange={e => handleGoalChange(e.target.value)}
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
+                    <input type="number" value={campaign.goal} min="100"
+                      onChange={e => setCampaign(p => ({ ...p, goal: e.target.value }))}
                       placeholder="5000"
-                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-9 pr-4 py-3 text-sm outline-none transition-all" />
+                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-8 pr-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all" />
                   </div>
-                  {goalNum > 0 && (
-                    <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-primary">
-                      <span>{TIERS.find(t => t.id === suggestedTierId(goalNum))?.emoji}</span>
-                      <span>Suggested: <strong>{TIERS.find(t => t.id === suggestedTierId(goalNum))?.name}</strong> tier</span>
-                    </div>
-                  )}
                 </div>
+
                 <div>
-                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Your story <span className="text-red-400">*</span></label>
-                  <textarea rows={5} value={campaign.story}
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Your story *</label>
+                  <textarea value={campaign.story} rows={6}
                     onChange={e => setCampaign(p => ({ ...p, story: e.target.value }))}
-                    placeholder="Tell donors who you are, what happened, why you need help, and how the money will be used."
-                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none" />
-                  <div className={`text-xs mt-1 ${campaign.story.length < 30 ? 'text-gray-300' : 'text-primary'}`}>
-                    {campaign.story.length} characters {campaign.story.length < 30 ? `(${30 - campaign.story.length} more needed)` : ''}
-                  </div>
+                    placeholder="Explain your situation in detail. Who are you raising for? What happened? How will the money be used? Be specific — donors give more when they understand the full picture."
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all resize-none" />
                 </div>
-                <button disabled={!canNextCampaign} onClick={() => setStep('details')}
-                  className={`w-full py-4 font-nunito font-black rounded-full text-sm transition-all ${
-                    canNextCampaign
-                      ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20'
-                      : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
-                  Continue to your details
-                </button>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Campaign photo</label>
+                  <input ref={photoRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => setCampaign(p => ({ ...p, photo: e.target.files?.[0] || null }))} />
+                  <button type="button" onClick={() => photoRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-8 text-center transition-all ${campaign.photo ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}>
+                    {campaign.photo ? (
+                      <div>
+                        <div className="text-2xl mb-1">🖼️</div>
+                        <div className="text-primary font-bold text-sm">{campaign.photo.name}</div>
+                        <div className="text-gray-400 text-xs mt-1">Click to change</div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-3xl mb-2">📷</div>
+                        <div className="text-gray-500 font-semibold text-sm">Upload a photo</div>
+                        <div className="text-gray-400 text-xs mt-1">JPG or PNG. Campaigns with photos raise more.</div>
+                      </div>
+                    )}
+                  </button>
+                </div>
               </div>
+
+              <button disabled={!canNextCampaign} onClick={() => setStep('tier')}
+                className={`w-full mt-7 py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextCampaign ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                Continue to verification →
+              </button>
             </div>
           )}
 
-          {/* ── STEP 2: DETAILS ── */}
-          {step === 'details' && (
-            <div>
-              <h2 className="font-nunito font-black text-navy text-2xl mb-2">Your details</h2>
-              <p className="text-gray-400 text-sm mb-7">Kept private. Used only for identity verification and payout processing.</p>
-              <div className="flex flex-col gap-5">
-
-                <div className="bg-gray-50 rounded-2xl p-5">
-                  <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Personal information</div>
-                  <div className="flex flex-col gap-4">
-                    <div>
-                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Full name <span className="text-red-400">*</span></label>
-                      <input type="text" value={fundraiser.fullName}
-                        onChange={e => setFundraiser(p => ({ ...p, fullName: e.target.value }))}
-                        placeholder="As it appears on your ID"
-                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-xs font-bold text-gray-500 block mb-1.5">Phone number <span className="text-red-400">*</span></label>
-                        <input type="tel" value={fundraiser.phone}
-                          onChange={e => setFundraiser(p => ({ ...p, phone: e.target.value }))}
-                          placeholder="024 000 0000"
-                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold text-gray-500 block mb-1.5">WhatsApp number</label>
-                        <input type="tel" value={fundraiser.whatsapp}
-                          onChange={e => setFundraiser(p => ({ ...p, whatsapp: e.target.value }))}
-                          placeholder="Same as phone?"
-                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Mobile network</label>
-                      <select value={fundraiser.network} onChange={e => setFundraiser(p => ({ ...p, network: e.target.value }))}
-                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
-                        <option value="">Select network…</option>
-                        <option value="mtn">MTN</option>
-                        <option value="telecel">Telecel (Vodafone)</option>
-                        <option value="airteltigo">AirtelTigo</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Your role in this campaign</label>
-                      <select value={fundraiser.relationship} onChange={e => setFundraiser(p => ({ ...p, relationship: e.target.value }))}
-                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
-                        <option value="">Select…</option>
-                        <option value="self">I am the beneficiary</option>
-                        <option value="family">Raising for a family member</option>
-                        <option value="friend">Raising for a friend</option>
-                        <option value="community">Raising for my community</option>
-                        <option value="organisation">Raising for an organisation / charity</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 rounded-2xl p-5">
-                  <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Payout method <span className="text-red-400">*</span></div>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    {[
-                      { id: 'momo', label: 'Mobile Money', sub: 'MTN, Telecel, AirtelTigo', icon: '*' },
-                      { id: 'bank', label: 'Bank account',  sub: 'Any Ghana bank',           icon: '*' },
-                    ].map(opt => (
-                      <button key={opt.id} type="button"
-                        onClick={() => setFundraiser(p => ({ ...p, payoutMethod: opt.id }))}
-                        className={`p-4 rounded-xl border-2 text-left transition-all ${fundraiser.payoutMethod === opt.id ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                        <div className="font-bold text-navy text-sm">{opt.icon} {opt.label}</div>
-                        <div className="text-xs text-gray-400 mt-0.5">{opt.sub}</div>
-                      </button>
-                    ))}
-                  </div>
-                  {fundraiser.payoutMethod === 'momo' && (
-                    <div className="flex flex-col gap-3">
-                      <div>
-                        <label className="text-xs font-bold text-gray-500 block mb-1.5">MoMo number <span className="text-red-400">*</span></label>
-                        <input type="tel" value={fundraiser.momoNumber}
-                          onChange={e => setFundraiser(p => ({ ...p, momoNumber: e.target.value }))}
-                          placeholder="024 000 0000"
-                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold text-gray-500 block mb-1.5">MoMo network <span className="text-red-400">*</span></label>
-                        <select value={fundraiser.momoNetwork} onChange={e => setFundraiser(p => ({ ...p, momoNetwork: e.target.value }))}
-                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
-                          <option value="">Select network…</option>
-                          <option value="mtn">MTN MoMo</option>
-                          <option value="telecel">Telecel Cash</option>
-                          <option value="airteltigo">AirtelTigo Money</option>
-                        </select>
-                      </div>
-                    </div>
-                  )}
-                  {fundraiser.payoutMethod === 'bank' && (
-                    <div className="flex flex-col gap-3">
-                      <div>
-                        <label className="text-xs font-bold text-gray-500 block mb-1.5">Bank name <span className="text-red-400">*</span></label>
-                        <select value={fundraiser.bankName} onChange={e => setFundraiser(p => ({ ...p, bankName: e.target.value }))}
-                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white">
-                          <option value="">Select bank…</option>
-                          {['GCB Bank','Absa Ghana','Ecobank Ghana','Fidelity Bank','Stanbic Bank','Cal Bank','Access Bank','Standard Chartered','Republic Bank','Agricultural Development Bank (ADB)','National Investment Bank (NIB)','Consolidated Bank Ghana','OmniBSIC Bank','Prudential Bank','Universal Merchant Bank (UMB)','First Atlantic Bank','Zenith Bank','Guaranty Trust Bank','ARB Apex Bank','Other'].map(b => (
-                            <option key={b} value={b}>{b}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold text-gray-500 block mb-1.5">Account number <span className="text-red-400">*</span></label>
-                        <input type="text" value={fundraiser.bankAccount}
-                          onChange={e => setFundraiser(p => ({ ...p, bankAccount: e.target.value }))}
-                          placeholder="Enter your account number"
-                          className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="bg-gray-50 rounded-2xl p-5">
-                  <div className="text-xs font-black text-navy uppercase tracking-wider mb-4">Address <span className="text-gray-400 font-normal normal-case">(optional)</span></div>
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Home or office address</label>
-                      <input type="text" value={fundraiser.address}
-                        onChange={e => setFundraiser(p => ({ ...p, address: e.target.value }))}
-                        placeholder="e.g. 14 Cantonments Road, Accra"
-                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Nearest landmark</label>
-                      <input type="text" value={fundraiser.landmark}
-                        onChange={e => setFundraiser(p => ({ ...p, landmark: e.target.value }))}
-                        placeholder="e.g. Near Kotoka Airport, Opposite GCB Bank"
-                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-gray-500 block mb-1.5">Ghana Post GPS address</label>
-                      <input type="text" value={fundraiser.gpsAddress}
-                        onChange={e => setFundraiser(p => ({ ...p, gpsAddress: e.target.value }))}
-                        placeholder="e.g. GA-123-4567"
-                        className="w-full border-2 border-white focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white" />
-                      <p className="text-xs text-gray-400 mt-1.5">Find yours at ghanapostgps.com</p>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <div className="flex gap-3 mt-7">
-                <button onClick={() => setStep('campaign')} className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm">Back</button>
-                <button disabled={!canNextDetails} onClick={() => setStep('tier')}
-                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${
-                    canNextDetails
-                      ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20'
-                      : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
-                  Continue
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── STEP 3: TIER ── */}
+          {/* ── STEP 2: TIER SELECTION ── */}
           {step === 'tier' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Choose your verification tier</h2>
-              <p className="text-gray-400 text-sm mb-2">Higher tiers include deeper review and stronger badges - which builds more donor trust.</p>
-              {goalNum > 0 && (
-                <div className="bg-primary-light border border-primary/20 rounded-xl px-4 py-3 mb-6 text-sm text-primary-dark">
-                  Your goal is <strong>GH₵{goalNum.toLocaleString()}</strong> - <strong>{TIERS.find(t => t.id === suggestedTierId(goalNum))?.name} tier</strong> is selected. You can change it below.
-                </div>
-              )}
-              <div className="flex flex-col gap-3 mb-7">
-                {TIERS.map(t => {
-                  const isLocked   = goalNum > 0 && goalNum > t.goalMax
-                  const isSelected = tierId === t.id && !isLocked
-                  return (
-                    <div key={t.id} onClick={() => !isLocked && setTierId(t.id)}
-                      className={`rounded-2xl border-2 p-5 transition-all ${isLocked ? 'opacity-35 cursor-not-allowed' : 'cursor-pointer'} ${isSelected ? t.activeBorder + ' bg-gray-50 shadow-sm' : t.border + ' hover:bg-gray-50'}`}>
-                      <div className="flex items-start gap-4">
-                        <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-all ${isSelected ? 'border-primary bg-primary' : 'border-gray-300'}`}>
-                          {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Choose your verification tier</h2>
+              <p className="text-gray-400 text-sm mb-7">All tiers require your Ghana Card. Higher tiers unlock larger campaigns and more donor trust.</p>
+
+              <div className="flex flex-col gap-4 mb-7">
+                {TIERS.map(t => (
+                  <div key={t.id}
+                    onClick={() => setTierId(t.id)}
+                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all relative ${tierId === t.id ? `${t.activeBorder} bg-gray-50 shadow-md` : `${t.border} hover:bg-gray-50`}`}>
+                    {t.recommended && (
+                      <div className="absolute -top-2.5 left-5 bg-primary text-white text-xs font-bold px-3 py-0.5 rounded-full">Recommended</div>
+                    )}
+                    <div className="flex items-start gap-4">
+                      <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-all ${tierId === t.id ? 'border-primary bg-primary' : 'border-gray-300'}`}>
+                        {tierId === t.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <span className="font-nunito font-black text-navy text-base">{t.name}</span>
+                          <span className="font-nunito font-black text-primary text-lg">{t.price}</span>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${t.badgeColor}`}>{t.badge}</span>
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className="text-xl leading-none">{t.emoji}</span>
-                            <span className="font-nunito font-black text-navy text-base">{t.name}</span>
-                            <span className={`font-nunito font-black text-base ${t.id === 'basic' ? 'text-gray-500' : 'text-primary'}`}>{t.price}</span>
-                            {'recommended' in t && t.recommended && <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full font-bold">Recommended</span>}
-                            {isLocked && <span className="text-xs bg-red-50 text-red-500 border border-red-200 px-2 py-0.5 rounded-full font-bold">Goal exceeds limit</span>}
-                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${t.badgeColor}`}>{t.badge}</span>
-                          </div>
-                          <div className="text-xs text-gray-400 font-semibold mb-2">{t.goalRange}</div>
-                          <div className="flex flex-wrap gap-x-4 gap-y-1">
-                            {t.features.map((f, i) => (
-                              <div key={i} className="text-xs text-gray-500 flex items-center gap-1">
-                                <span className="text-primary font-bold"></span> {f}
-                              </div>
-                            ))}
-                          </div>
-                          {t.canDefer && isSelected && (
-                            <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-amber-700 font-semibold bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
-                              Pay {t.price} now or defer - deducted from first donations
+                        <div className="text-gray-400 text-xs mb-2">{t.limit}</div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                          {t.features.map((f, i) => (
+                            <div key={i} className="text-xs text-gray-500 flex items-center gap-1">
+                              <span className="text-primary font-bold">✓</span> {f}
                             </div>
-                          )}
+                          ))}
                         </div>
                       </div>
                     </div>
-                  )
-                })}
+                  </div>
+                ))}
               </div>
+
               <div className="flex gap-3">
-                <button onClick={() => setStep('details')} className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm">Back</button>
-                <button onClick={() => setStep('identity')} className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm hover:-translate-y-0.5 shadow-lg shadow-primary/20">
-                  Continue to ID upload
+                <button onClick={() => setStep('campaign')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button onClick={() => setStep('identity')}
+                  className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20">
+                  Continue to ID upload →
                 </button>
               </div>
             </div>
           )}
 
-          {/* ── STEP 4: IDENTITY ── */}
+          {/* ── STEP 3: IDENTITY DOCUMENTS ── */}
           {step === 'identity' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Upload your identity document</h2>
-              <p className="text-gray-400 text-sm mb-7">Encrypted and used solely for identity verification. Never shared with donors.</p>
-              <div className="mb-6">
-                <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-3">Select your ID type <span className="text-red-400">*</span></label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {ID_TYPES.map(id => (
-                    <button key={id.id} type="button" onClick={() => setIdTypeId(id.id)}
-                      className={`flex items-center gap-2 px-3 py-3 rounded-xl border-2 text-left transition-all ${idTypeId === id.id ? 'border-primary bg-primary-light' : 'border-gray-100 hover:border-gray-200 bg-gray-50'}`}>
-                      <span className="text-xl flex-shrink-0">{id.icon}</span>
-                      <span className={`text-xs font-bold ${idTypeId === id.id ? 'text-primary-dark' : 'text-gray-600'}`}>{id.label}</span>
-                    </button>
-                  ))}
-                </div>
+              <div className="flex items-center gap-3 mb-1">
+                <h2 className="font-nunito font-black text-navy text-xl">Upload your ID documents</h2>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${tier.badgeColor}`}>{tier.name}</span>
               </div>
-              {idType && (
-                <div className="flex flex-col gap-5">
+              <p className="text-gray-400 text-sm mb-7">
+                All information is encrypted and used only for identity verification. Never shared with donors.
+              </p>
+
+              <div className="flex flex-col gap-6">
+
+                {/* ID Number */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card ID number <span className="text-red-500">*</span>
+                  </label>
+                  <input type="text" value={identity.idNumber}
+                    onChange={e => setIdentity(p => ({ ...p, idNumber: e.target.value }))}
+                    placeholder="GHA-XXXXXXXXX-X"
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all font-mono tracking-wider" />
+                  <div className="text-xs text-gray-400 mt-1.5">Found on the front of your Ghana Card</div>
+                </div>
+
+                {/* ID Front */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card — front <span className="text-red-500">*</span>
+                  </label>
+                  <input ref={idFrontRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => handleFileChange(e, 'idFront')} />
+                  <button type="button" onClick={() => idFrontRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idFront ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                    {identity.idFront ? (
+                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                    ) : (
+                      <div><div className="text-2xl mb-1.5">🪪</div><div className="text-gray-500 font-semibold text-sm">Upload front of Ghana Card</div><div className="text-gray-400 text-xs mt-1">JPG or PNG. Must be clear and in focus.</div></div>
+                    )}
+                  </button>
+                </div>
+
+                {/* ID Back */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card — back <span className="text-red-500">*</span>
+                  </label>
+                  <input ref={idBackRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => handleFileChange(e, 'idBack')} />
+                  <button type="button" onClick={() => idBackRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idBack ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                    {identity.idBack ? (
+                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idBack.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                    ) : (
+                      <div><div className="text-2xl mb-1.5">🪪</div><div className="text-gray-500 font-semibold text-sm">Upload back of Ghana Card</div><div className="text-gray-400 text-xs mt-1">JPG or PNG. Must be clear and in focus.</div></div>
+                    )}
+                  </button>
+                </div>
+
+                {/* Selfie — Standard and Premium only */}
+                {tier.selfie && (
                   <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">
-                      {idType.label} number <span className="text-red-400">*</span>
+                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                      Selfie — facial match <span className="text-red-500">*</span>
                     </label>
-                    <input type="text" value={identity.idNumber}
-                      onChange={e => setIdentity(p => ({ ...p, idNumber: e.target.value }))}
-                      placeholder={idType.placeholder}
-                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-all font-mono tracking-wider" />
-                    <div className="text-xs text-gray-400 mt-1">{idType.hint}</div>
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Photo of your {idType.label} <span className="text-red-400">*</span></label>
-                    <input ref={idFrontRef} type="file" accept="image/*" className="hidden" onChange={e => handleFileChange(e, 'idFront')} />
-                    <button type="button" onClick={() => idFrontRef.current?.click()}
-                      className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idFront ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
-                      {identity.idFront
-                        ? <div><div className="text-2xl mb-1"></div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-gray-400 text-xs mt-0.5">Tap to change</div></div>
-                        : <div><div className="text-2xl mb-1.5">{idType.icon}</div><div className="text-gray-500 font-semibold text-sm">Upload a photo of your {idType.label}</div><div className="text-gray-400 text-xs mt-1">JPG or PNG · Clear and in focus · Max 5MB</div></div>}
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3 text-xs text-amber-700">
+                      <strong>Important:</strong> Take your selfie in good lighting, facing forward. Make sure your face is clearly visible — no sunglasses or hats.
+                    </div>
+                    <input ref={selfieRef} type="file" accept="image/*" capture="user" className="hidden"
+                      onChange={e => handleFileChange(e, 'selfie')} />
+                    <button type="button" onClick={() => selfieRef.current?.click()}
+                      className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.selfie ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                      {identity.selfie ? (
+                        <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                      ) : (
+                        <div><div className="text-2xl mb-1.5">🤳</div><div className="text-gray-500 font-semibold text-sm">Take or upload a selfie</div><div className="text-gray-400 text-xs mt-1">Face forward, good lighting. Used only for ID matching.</div></div>
+                      )}
                     </button>
                   </div>
-                  {tier.selfie && (
-                    <div>
-                      <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Selfie photo <span className="text-red-400">*</span></label>
-                      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3 text-xs text-amber-700">
-                        Good lighting · Face forward · No sunglasses · Must match your ID photo
-                      </div>
-                      <input ref={selfieRef} type="file" accept="image/*" capture="user" className="hidden" onChange={e => handleFileChange(e, 'selfie')} />
-                      <button type="button" onClick={() => selfieRef.current?.click()}
-                        className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.selfie ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
-                        {identity.selfie
-                          ? <div><div className="text-2xl mb-1"></div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-gray-400 text-xs mt-0.5">Tap to change</div></div>
-                          : <div><div className="text-2xl mb-1.5"></div><div className="text-gray-500 font-semibold text-sm">Take or upload a selfie</div><div className="text-gray-400 text-xs mt-1">Face forward · Good lighting</div></div>}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-              {error && <div className="mt-5 bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">{error}</div>}
-              <div className="flex gap-3 mt-4">
-                <button onClick={() => setStep('tier')} className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm">Back</button>
-                <button disabled={!canNextIdentity || submitting}
-                  onClick={() => tier.priceNum === 0 ? handleSubmit() : setStep('payment')}
-                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${
-                    canNextIdentity && !submitting
-                      ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20'
-                      : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
-                  {submitting ? 'Submitting...' : tier.priceNum === 0 ? 'Submit campaign' : 'Continue to payment'}
+                )}
+              </div>
+
+              <div className="flex gap-3 mt-7">
+                <button onClick={() => setStep('tier')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button disabled={!canNextIdentity} onClick={() => setStep('payment')}
+                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextIdentity ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                  Continue to payment →
                 </button>
               </div>
             </div>
           )}
 
-          {/* ── STEP 5: PAYMENT ── */}
+          {/* ── STEP 4: PAYMENT ── */}
           {step === 'payment' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-              <h2 className="font-nunito font-black text-navy text-2xl mb-1">Verification fee</h2>
-              <p className="text-gray-400 text-sm mb-6">One-time fee for your {tier.name} badge. Choose when to pay.</p>
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Pay verification fee</h2>
+              <p className="text-gray-400 text-sm mb-7">One-time fee. Covers your identity verification and campaign badge.</p>
+
+              {/* Order summary */}
               <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6">
                 <div className="font-nunito font-black text-navy text-sm mb-4">Order summary</div>
                 <div className="flex flex-col gap-2.5 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Campaign</span>
-                    <span className="text-navy font-semibold truncate max-w-[200px]">{campaign.title}</span>
+                    <span className="text-navy font-semibold truncate max-w-[200px]">{campaign.title || 'My campaign'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Tier</span>
-                    <span className="text-navy font-semibold">{tier.emoji} {tier.name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Goal limit</span>
-                    <span className="text-navy font-semibold">{tier.goalRange}</span>
+                    <span className="text-gray-500">Verification tier</span>
+                    <span className="text-navy font-semibold">{tier.name}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Badge</span>
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${tier.badgeColor}`}>{tier.badge}</span>
                   </div>
                   <div className="border-t border-gray-200 pt-2.5 mt-1 flex justify-between font-nunito font-black">
-                    <span className="text-navy">Verification fee</span>
+                    <span className="text-navy">Total</span>
                     <span className="text-primary text-lg">{tier.price}</span>
                   </div>
                 </div>
               </div>
+
+              {/* Payment method */}
               <div className="mb-6">
-                <div className="text-xs font-bold text-navy uppercase tracking-wider mb-3">When would you like to pay?</div>
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <button type="button" onClick={() => setPayMode('now')}
-                    className={`rounded-2xl border-2 p-4 text-left transition-all ${payMode === 'now' ? 'border-primary bg-primary-light shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}>
-                    <div className={`w-4 h-4 rounded-full border-2 mb-3 flex items-center justify-center transition-all ${payMode === 'now' ? 'border-primary bg-primary' : 'border-gray-300'}`}>
-                      {payMode === 'now' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                <div className="text-xs font-bold text-navy uppercase tracking-wider mb-3">Pay with mobile money</div>
+                <div className="grid grid-cols-3 gap-3">
+                  {['MTN MoMo', 'Vodafone Cash', 'AirtelTigo'].map((method, i) => (
+                    <div key={i} className="border-2 border-gray-100 hover:border-primary rounded-xl p-3 text-center cursor-pointer transition-all text-xs font-bold text-gray-500 hover:text-primary hover:bg-primary-light">
+                      {method}
                     </div>
-                    <div className="font-nunito font-black text-navy text-sm mb-1">Pay now</div>
-                    <div className="text-xs text-gray-500 leading-relaxed">Pay {tier.price} today by MoMo. Campaign enters review immediately.</div>
-                  </button>
-                  <button type="button" onClick={() => setPayMode('defer')}
-                    className={`rounded-2xl border-2 p-4 text-left transition-all ${payMode === 'defer' ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}>
-                    <div className={`w-4 h-4 rounded-full border-2 mb-3 flex items-center justify-center transition-all ${payMode === 'defer' ? 'border-amber-500 bg-amber-500' : 'border-gray-300'}`}>
-                      {payMode === 'defer' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                    </div>
-                    <div className="font-nunito font-black text-navy text-sm mb-1">Defer payment</div>
-                    <div className="text-xs text-gray-500 leading-relaxed">Pay nothing today. {tier.price} deducted from your first donations.</div>
-                  </button>
+                  ))}
                 </div>
-                {payMode === 'defer' && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 leading-relaxed">
-                    <strong className="block mb-1.5">How deferred payment works:</strong>
-                    Once your campaign is approved and live, the first <strong>{tier.price}</strong> received from donations will cover your verification fee. Every donation after that goes directly to you.
-                  </div>
-                )}
-                {payMode === 'now' && (
-                  <div className="mt-2">
-                    <div className="text-xs font-bold text-navy uppercase tracking-wider mb-3">Pay with mobile money</div>
-                    <div className="grid grid-cols-3 gap-3 mb-4">
-                      {['MTN MoMo', 'Vodafone Cash', 'AirtelTigo'].map((m, i) => (
-                        <div key={i} className="border-2 border-gray-100 hover:border-primary rounded-xl p-3 text-center cursor-pointer transition-all text-xs font-bold text-gray-500 hover:text-primary hover:bg-primary-light">{m}</div>
-                      ))}
-                    </div>
-                    <div className="bg-primary-light border border-primary/15 rounded-xl p-4 text-sm text-gray-600">
-                      <strong className="text-navy">Note:</strong> After tapping Submit, a MoMo prompt will appear on your phone to authorise {tier.price}. Once confirmed, your campaign goes to our review team.
-                    </div>
-                  </div>
-                )}
               </div>
-              {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 mb-4 text-sm">{error}</div>}
+
+              <div className="bg-primary-light border border-primary/15 rounded-xl p-4 mb-6 text-sm text-gray-600">
+                <strong className="text-navy">Note:</strong> After clicking "Pay & Submit", you will receive a MoMo prompt on your phone to confirm the payment of {tier.price}. Once confirmed, your campaign will be submitted for review.
+              </div>
+
               <div className="flex gap-3">
-                <button onClick={() => setStep('identity')} className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm">Back</button>
+                <button onClick={() => setStep('identity')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
                 <button onClick={handleSubmit} disabled={submitting}
-                  className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm hover:-translate-y-0.5 shadow-lg shadow-primary/20 disabled:opacity-60">
-                  {submitting ? 'Submitting...' : payMode === 'defer' ? `Submit & defer ${tier.price}` : `Pay ${tier.price} & Submit`}
+                  className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 disabled:opacity-60">
+                  {submitting ? 'Submitting...' : `Pay ${tier.price} & Submit →`}
                 </button>
               </div>
-              <p className="text-xs text-gray-300 text-center mt-4">Encrypted · Secure · Ghana Data Protection Act 2012 compliant</p>
+
+              <p className="text-xs text-gray-300 text-center mt-4">
+                Secure payment · Encrypted · Ghana Data Protection Act compliant
+              </p>
             </div>
           )}
 

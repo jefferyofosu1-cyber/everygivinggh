@@ -69,7 +69,7 @@ export default function AdminUsersPage() {
           <div className="p-8 text-center text-white/30 text-sm">Loading users…</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="text-4xl mb-3"></div>
+            <div className="text-4xl mb-3">👤</div>
             <div className="text-white/30 text-sm">No users found</div>
           </div>
         ) : (
@@ -99,14 +99,14 @@ export default function AdminUsersPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-white/60">{u.phone || ' - '}</td>
+                    <td className="px-5 py-4 text-white/60">{u.phone || '—'}</td>
                     <td className="px-5 py-4">
                       <div className="text-white/60">{u.campaigns?.length || 0} campaign{u.campaigns?.length !== 1 ? 's' : ''}</div>
                       {u.campaigns?.length > 0 && (
                         <div className="text-white/30 text-xs truncate max-w-[140px]">{u.campaigns[0]?.title}</div>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-white/30 text-xs">{u.created_at ? new Date(u.created_at).toLocaleDateString() : ' - '}</td>
+                    <td className="px-5 py-4 text-white/30 text-xs">{u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}</td>
                     <td className="px-5 py-4">
                       {u.is_admin ? (
                         <span className="bg-primary/20 text-primary text-xs font-bold px-2.5 py-1 rounded-full">Admin</span>

@@ -93,15 +93,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
-    // Has session → check is_admin flag in profiles table
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile?.is_admin) {
-      // Signed in but not admin → boot them out
+    // Check admin by email (consistent with client-side check)
+    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+    if (!adminEmail || user.email !== adminEmail) {
       const loginUrl = new URL('/admin/login', request.url)
       loginUrl.searchParams.set('error', 'access_denied')
       return NextResponse.redirect(loginUrl)

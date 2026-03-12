@@ -10,10 +10,10 @@ interface AdminUser {
 }
 
 const NAV = [
-  { href: '/admin',           label: 'Dashboard', icon: '*', exact: true  },
-  { href: '/admin/campaigns', label: 'Campaigns', icon: '*', exact: false },
-  { href: '/admin/donations', label: 'Donations', icon: '*', exact: false },
-  { href: '/admin/users',     label: 'Users',     icon: '*', exact: false },
+  { href: '/admin',           label: 'Dashboard', icon: '📊', exact: true  },
+  { href: '/admin/campaigns', label: 'Campaigns', icon: '📋', exact: false },
+  { href: '/admin/donations', label: 'Donations', icon: '💰', exact: false },
+  { href: '/admin/users',     label: 'Users',     icon: '👥', exact: false },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -31,11 +31,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const supabase = createClient()
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.replace('/admin/login'); return }
-      const { data: profile } = await supabase
-        .from('profiles').select('full_name, is_admin').eq('id', user.id).single()
-      if (!profile?.is_admin) { router.replace('/admin/login'); return }
+
+      // Auth check via env var only — no DB is_admin query
+      const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+      if (!adminEmail || user.email !== adminEmail) {
+        await supabase.auth.signOut()
+        router.replace('/admin/login')
+        return
+      }
+
       setAdminUser({
-        name:  (profile.full_name as string | null) ?? user.email ?? 'Admin',
+        name:  user.email ?? 'Admin',
         email: user.email ?? '',
       })
       setAuthorized(true)

@@ -15,26 +15,26 @@ export default function AdminLoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const supabase = createClient()
 
+    const supabase = createClient()
     const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+
     if (authError || !data.user) {
       setError('Invalid email or password.')
       setLoading(false)
       return
     }
 
-    const { data: profile } = await supabase
-      .from('profiles').select('is_admin').eq('id', data.user.id).single()
-
-    if (!profile?.is_admin) {
-      await supabase.auth.signOut()
-      setError('You do not have admin access.')
-      setLoading(false)
+    // Check email against NEXT_PUBLIC_ADMIN_EMAIL — no DB needed
+    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+    if (adminEmail && data.user.email === adminEmail) {
+      router.replace('/admin')
       return
     }
 
-    router.replace('/admin')
+    await supabase.auth.signOut()
+    setError('You do not have admin access.')
+    setLoading(false)
   }
 
   return (
@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
             <div>
               <label className="text-xs font-bold text-white/40 block mb-1.5 uppercase tracking-wider">Password</label>
               <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
-                placeholder="********"
+                placeholder="••••••••"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#02A95C] transition-colors" />
             </div>
             <button type="submit" disabled={loading}

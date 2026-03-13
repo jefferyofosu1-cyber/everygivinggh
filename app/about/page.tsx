@@ -2,12 +2,13 @@
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { usePageContent, cms } from '@/lib/content'
 
-const STATS = [
-  { val: '0%', label: 'Platform fee' },
-  { val: '<10 min', label: 'Verification time' },
-  { val: '3', label: 'MoMo networks' },
-  { val: '2026', label: 'Founded in Ghana' },
+const DEFAULT_STATS = [
+  { value: '0%', label: 'Platform fee' },
+  { value: '<10 min', label: 'Verification time' },
+  { value: '3', label: 'MoMo networks' },
+  { value: '2026', label: 'Founded in Ghana' },
 ]
 
 const HOW_STEPS = [
@@ -53,6 +54,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export default function AboutPage() {
+  const c = usePageContent('about')
+  const stats = (cms(c, 'stats', 'items', null) as unknown as any[] || DEFAULT_STATS)
   return (
     <>
       <Navbar />
@@ -67,15 +70,15 @@ export default function AboutPage() {
               About EveryGiving
             </div>
             <h1 className="font-nunito font-black text-white leading-none mb-6" style={{ fontSize: 'clamp(40px,7vw,72px)', letterSpacing: -2 }}>
-              Giving should be<br /><span className="text-primary">trusted.</span>
+              {cms(c, 'hero', 'headline', 'Giving should be')}<br /><span className="text-primary">{cms(c, 'hero', 'highlight', 'trusted.')}</span>
             </h1>
             <p className="text-white/50 text-lg leading-relaxed max-w-xl mb-10">
-              EveryGiving is Ghana's verified crowdfunding platform  -  connecting fundraisers and donors through identity verification, zero platform fees, and same-day MoMo payouts.
+              {cms(c, 'hero', 'subtext', "EveryGiving is Ghana's verified crowdfunding platform  -  connecting fundraisers and donors through identity verification, zero platform fees, and same-day MoMo payouts.")}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 rounded-2xl overflow-hidden">
-              {STATS.map(s => (
+              {stats.map((s: any) => (
                 <div key={s.label} className="bg-navy px-6 py-5 text-center">
-                  <div className="font-nunito font-black text-primary text-2xl md:text-3xl leading-none mb-1">{s.val}</div>
+                  <div className="font-nunito font-black text-primary text-2xl md:text-3xl leading-none mb-1">{s.value || s.val}</div>
                   <div className="text-white/30 text-xs">{s.label}</div>
                 </div>
               ))}
@@ -249,7 +252,7 @@ export default function AboutPage() {
               <div>
                 <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-6 leading-tight">Built in Ghana.<br />For Ghana.</h2>
                 <div className="flex flex-col gap-5 text-sm text-gray-500 leading-relaxed">
-                  <p>EveryGiving was founded in 2026 by Jeffery Ofosu after seeing people he knew struggle to raise money for medical emergencies  -  sending MoMo requests to strangers who had no way to verify if the cause was real.</p>
+                  <p>{cms(c, 'founder', 'originStory', 'EveryGiving was founded in 2026 by Jeffery Ofosu after seeing people he knew struggle to raise money for medical emergencies  -  sending MoMo requests to strangers who had no way to verify if the cause was real.')}</p>
                   <p>The idea was straightforward: verify identity, build trust, and make every cedi count. If donations went straight to MoMo, fundraisers would get their money fast. And if the platform charged 0%, every cedi would reach the person who needs it.</p>
                   <p>Ghana has always had a culture of communal giving  -  from susu groups to church fundraisers to emergency appeals. Every Giving is a modern infrastructure for that ancient generosity.</p>
                 </div>
@@ -257,15 +260,15 @@ export default function AboutPage() {
               <div className="flex flex-col gap-4">
                 <div className="bg-white border border-gray-100 rounded-2xl p-6 text-center shadow-sm">
                   <div className="w-16 h-16 bg-navy rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="font-nunito font-black text-primary text-2xl">J</span>
+                    <span className="font-nunito font-black text-primary text-2xl">{(cms(c, 'founder', 'name', 'Jeffery Ofosu') as string).charAt(0)}</span>
                   </div>
-                  <div className="font-nunito font-black text-navy text-lg mb-0.5">Jeffery Ofosu</div>
-                  <div className="text-primary text-xs font-bold uppercase tracking-widest mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Founder & CEO</div>
-                  <div className="text-gray-500 text-sm leading-relaxed">Building Every Giving to make verified crowdfunding accessible to every Ghanaian.</div>
+                  <div className="font-nunito font-black text-navy text-lg mb-0.5">{cms(c, 'founder', 'name', 'Jeffery Ofosu')}</div>
+                  <div className="text-primary text-xs font-bold uppercase tracking-widest mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>{cms(c, 'founder', 'title', 'Founder & CEO')}</div>
+                  <div className="text-gray-500 text-sm leading-relaxed">{cms(c, 'founder', 'bio', 'Building Every Giving to make verified crowdfunding accessible to every Ghanaian.')}</div>
                 </div>
                 <div className="bg-navy rounded-2xl p-6 text-center">
-                  <div className="font-nunito font-black text-white text-lg mb-1">"Ghana has always given."</div>
-                  <div className="text-white/40 text-sm">"We're making it easier."</div>
+                  <div className="font-nunito font-black text-white text-lg mb-1">{cms(c, 'founder', 'missionQuote', '"Ghana has always given."')}</div>
+                  <div className="text-white/40 text-sm">&quot;We&apos;re making it easier.&quot;</div>
                 </div>
               </div>
             </div>
@@ -287,17 +290,17 @@ export default function AboutPage() {
               <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                 <div className="font-nunito font-black text-navy text-base mb-3">Key facts for press</div>
                 <div className="flex flex-col gap-2 text-sm">
-                  {[
-                    ['Founded', '2026, Ghana'],
-                    ['Platform type', 'Verified crowdfunding'],
-                    ['Platform fee', '0%  -  always'],
-                    ['Verification', 'Ghana Card reviewed by our team'],
-                    ['Payments', 'MTN MoMo, Vodafone Cash, AirtelTigo'],
-                    ['Contact', 'business@everygiving.org'],
-                  ].map(([k, v]) => (
-                    <div key={k} className="flex justify-between">
-                      <span className="text-gray-400">{k}</span>
-                      <span className="text-navy font-medium">{v}</span>
+                  {(cms(c, 'pressFacts', 'items', null) as unknown as any[] || [
+                    { key: 'Founded', value: '2026, Ghana' },
+                    { key: 'Platform type', value: 'Verified crowdfunding' },
+                    { key: 'Platform fee', value: '0%  -  always' },
+                    { key: 'Verification', value: 'Ghana Card reviewed by our team' },
+                    { key: 'Payments', value: 'MTN MoMo, Vodafone Cash, AirtelTigo' },
+                    { key: 'Contact', value: 'business@everygiving.org' },
+                  ]).map((item: any) => (
+                    <div key={item.key} className="flex justify-between">
+                      <span className="text-gray-400">{item.key}</span>
+                      <span className="text-navy font-medium">{item.value}</span>
                     </div>
                   ))}
                 </div>

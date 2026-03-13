@@ -32,6 +32,7 @@ function maybeCleanup() {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+  const isDev = process.env.NODE_ENV !== 'production'
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
     || request.headers.get('x-real-ip')
     || 'unknown'
@@ -140,15 +141,21 @@ export async function middleware(request: NextRequest) {
   headers.set('X-XSS-Protection', '1; mode=block')
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  const scriptSrc = isDev
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com"
+    : "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
+  const connectSrc = isDev
+    ? "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com https://cdn.sanity.io ws://localhost:3000 wss://localhost:3000 http://localhost:3000"
+    : "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com https://cdn.sanity.io"
   headers.set(
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      scriptSrc,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://cdn.sanity.io",
+      connectSrc,
       "frame-ancestors 'none'",
     ].join('; ')
   )

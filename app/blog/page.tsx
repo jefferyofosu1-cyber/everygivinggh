@@ -1,6 +1,8 @@
+'use client'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { usePageContent, cms } from '@/lib/content'
 
 const POSTS = [
   {
@@ -88,8 +90,25 @@ const POSTS = [
 const CATEGORIES = ['All', 'Tips', 'Verification', 'Sharing', 'Medical', 'Faith', 'Education', 'Team', 'Strategy']
 
 export default function BlogPage() {
-  const featured = POSTS.find(p => p.featured)
-  const rest = POSTS.filter(p => !p.featured)
+  const c = usePageContent('blog')
+
+  // Use CMS posts if available, otherwise fall back to hardcoded
+  const cmsPosts = cms(c, 'posts', 'items', null) as unknown as any[] | null
+  const allPosts = cmsPosts
+    ? cmsPosts.map((p: any) => ({
+        slug: p.slug || '',
+        category: p.category || '',
+        title: p.title || '',
+        excerpt: p.excerpt || '',
+        readTime: p.readTime || '',
+        date: p.date || '',
+        emoji: '*',
+        featured: p.featured === 'yes',
+      }))
+    : POSTS
+
+  const featured = allPosts.find((p: any) => p.featured)
+  const rest = allPosts.filter((p: any) => !p.featured)
 
   return (
     <>
@@ -101,9 +120,9 @@ export default function BlogPage() {
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-block bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5">Fundraising blog</div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-4" style={{ letterSpacing: -1 }}>
-              Tips, stories<br />and guides
+              {cms(c, 'settings', 'headline', 'Tips, stories\nand guides')}
             </h1>
-            <p className="text-white/50 text-sm max-w-lg mx-auto">Practical guides, fundraising tactics, and real stories  -  written by the EveryGiving team.</p>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">{cms(c, 'settings', 'subtext', 'Practical guides, fundraising tactics, and real stories  -  written by the EveryGiving team.')}</p>
           </div>
         </section>
 

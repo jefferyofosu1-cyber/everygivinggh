@@ -1,12 +1,8 @@
+'use client'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Fundraising Tips',
-  description: '9 proven fundraising tips to raise more money on EveryGiving. Learn how to write a compelling story, share effectively on WhatsApp, and build donor trust.',
-}
+import { usePageContent, cms } from '@/lib/content'
 
 const TIPS = [
   {
@@ -75,6 +71,7 @@ const TIPS = [
 ]
 
 export default function FundraisingTipsPage() {
+  const c = usePageContent('fundraising-tips')
   return (
     <>
       <Navbar />
@@ -86,14 +83,14 @@ export default function FundraisingTipsPage() {
           <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
-               9 proven tips
+               {cms(c, 'settings', 'headline', '9 proven tips')}
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-4" style={{ letterSpacing: -1 }}>
               Raise more money.<br />
               <span className="text-primary">Here is how.</span>
             </h1>
             <p className="text-white/55 text-base max-w-xl mx-auto leading-relaxed">
-              These are the patterns we see in EveryGiving campaigns that consistently hit their goals. Apply them and raise significantly more.
+              {cms(c, 'settings', 'subtext', 'These are the patterns we see in EveryGiving campaigns that consistently hit their goals. Apply them and raise significantly more.')}
             </p>
           </div>
         </section>

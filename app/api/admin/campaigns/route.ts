@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requirePermission, sanitiseString, sanitiseNumber, logAdminAudit } from '@/lib/api-security'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 
 export async function GET(req: NextRequest) {
   const auth = await requirePermission('campaigns.review')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { searchParams } = new URL(req.url)
   const status = searchParams.get('status')
 
@@ -33,7 +33,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Missing campaign id' }, { status: 400 })
     }
 
-    const supabase = createAdminClient()
+    const supabase = await getAdminClient()
 
     // --- Status change flow (approve / reject) ---
     if (body.status && (body.status === 'approved' || body.status === 'rejected')) {
@@ -151,7 +151,7 @@ export async function DELETE(req: NextRequest) {
     const { id } = await req.json()
     if (!id) return NextResponse.json({ error: 'Missing campaign id' }, { status: 400 })
 
-    const supabase = createAdminClient()
+    const supabase = await getAdminClient()
 
     // Delete related donations first
     await supabase.from('donations').delete().eq('campaign_id', id)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function GET(request: NextRequest) {
@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   if (auth.error) return auth.error
 
   const status = new URL(request.url).searchParams.get('status') || 'all'
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   let query = supabase.from('donation_disputes').select('*').order('created_at', { ascending: false })
   if (status !== 'all') query = query.eq('status', status)
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
   if (!reason) return NextResponse.json({ error: 'reason is required' }, { status: 400 })
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('donation_disputes')
     .insert({

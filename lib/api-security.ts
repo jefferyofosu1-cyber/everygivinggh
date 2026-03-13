@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from './supabase-server'
-import { createAdminClient } from './supabase-admin'
+import { createAdminClient, getAdminClient } from './supabase-admin'
 
 export const ADMIN_PERMISSION_MAP = {
   super_admin: ['*'],
@@ -125,7 +125,7 @@ export async function requirePermission(permission?: string): Promise<{ user: an
       return { user, role: 'super_admin' }
     }
 
-    const adminDb = createAdminClient()
+    const adminDb = await getAdminClient()
 
     const { data: roleRow } = await adminDb
       .from('admin_roles')
@@ -178,7 +178,7 @@ export async function logAdminAudit(params: {
   userAgent?: string
 }) {
   try {
-    const adminDb = createAdminClient()
+    const adminDb = await getAdminClient()
     await adminDb.from('admin_audit_logs').insert({
       actor_user_id: params.actorUserId,
       action: params.action,

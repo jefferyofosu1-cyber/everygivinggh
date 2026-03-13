@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function POST(_request: Request, { params }: { params: { id: string } }) {
   const auth = await requirePermission('verification.review')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase.from('verification_reviews').select('*').eq('id', params.id).maybeSingle()
 
   const { data, error } = await supabase

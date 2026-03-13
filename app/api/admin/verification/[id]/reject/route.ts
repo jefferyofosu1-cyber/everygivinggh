@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   const body = await request.json().catch(() => ({}))
   const reason = body?.reason || null
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase.from('verification_reviews').select('*').eq('id', params.id).maybeSingle()
 
   const { data, error } = await supabase

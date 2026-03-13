@@ -207,26 +207,6 @@ export default function CreatePage() {
 
       const json = await res.json() as { error?: string }
       if (!res.ok) { setError(json.error ?? 'Submission failed.'); return }
-
-      // Also create a mirrored campaign in Sanity CMS with pending status
-      try {
-        await fetch('/api/sanity/create-campaign', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: campaign.title,
-            story: campaign.story,
-            category: campaign.category.toLowerCase(),
-            goalAmount: parseFloat(campaign.goal),
-            beneficiaryName: fundraiser.fullName,
-            beneficiaryPhone: fundraiser.phone,
-            verificationLevel: tier.id,
-          }),
-        })
-      } catch {
-        // Non-fatal: keep core flow working even if CMS mirroring fails
-      }
-
       setStep('done')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')

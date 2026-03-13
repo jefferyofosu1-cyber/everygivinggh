@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
+import NextImage from 'next/image'
 import { createClient } from '@/lib/supabase'
 
 interface AdminUser {
@@ -10,10 +11,21 @@ interface AdminUser {
 }
 
 const NAV = [
-  { href: '/admin',           label: 'Dashboard', icon: '*', exact: true  },
-  { href: '/admin/campaigns', label: 'Campaigns', icon: '*', exact: false },
-  { href: '/admin/donations', label: 'Donations', icon: '*', exact: false },
-  { href: '/admin/users',     label: 'Users',     icon: '*', exact: false },
+  { href: '/admin',            label: 'Dashboard',    icon: '📊', exact: true  },
+  { href: '/admin/campaigns',  label: 'Campaigns',    icon: '📋', exact: false },
+  { href: '/admin/donations',  label: 'Donations',    icon: '💰', exact: false },
+  { href: '/admin/users',      label: 'Users',        icon: '👥', exact: false },
+  { href: '/admin/roles',      label: 'Roles',        icon: '🛡️', exact: false },
+  { href: '/admin/audit-logs', label: 'Audit Logs',   icon: '📜', exact: false },
+  { href: '/admin/verification', label: 'Verification', icon: '✅', exact: false },
+  { href: '/admin/payouts',    label: 'Payouts',      icon: '🏦', exact: false },
+  { href: '/admin/payments',   label: 'Payments',     icon: '💳', exact: false },
+  { href: '/admin/support',    label: 'Support',      icon: '🎫', exact: false },
+  { href: '/admin/disputes',   label: 'Disputes',     icon: '⚖️', exact: false },
+  { href: '/admin/reports',    label: 'Reports',      icon: '📈', exact: false },
+  { href: '/admin/settings',   label: 'Settings',     icon: '⚙️', exact: false },
+  { href: '/admin/media',      label: 'Media',        icon: '🖼', exact: false },
+  { href: '/admin/content',    label: 'Content',      icon: '📝', exact: false },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -31,11 +43,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const supabase = createClient()
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.replace('/admin/login'); return }
-      const { data: profile } = await supabase
-        .from('profiles').select('full_name, is_admin').eq('id', user.id).single()
-      if (!profile?.is_admin) { router.replace('/admin/login'); return }
+
+      // Check DB is_admin OR env var root admin email
+      const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+      const isEnvAdmin = adminEmail && user.email?.toLowerCase() === adminEmail.toLowerCase()
+
+      if (!isEnvAdmin) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single()
+
+        if (!profile?.is_admin) {
+          await supabase.auth.signOut()
+          router.replace('/admin/login')
+          return
+        }
+      }
+
       setAdminUser({
-        name:  (profile.full_name as string | null) ?? user.email ?? 'Admin',
+        name:  user.email ?? 'Admin',
         email: user.email ?? '',
       })
       setAuthorized(true)
@@ -66,12 +94,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-gray-950 flex">
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-56 bg-[#111827] border-r border-white/5 flex flex-col transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-56 bg-[#111827] border-r border-white/5 flex flex-col overflow-y-auto transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 
         {/* Logo */}
         <div className="px-5 py-5 border-b border-white/5">
-          <Link href="/admin" className="font-nunito font-black text-lg" onClick={() => setSidebarOpen(false)}>
-            <span className="text-[#02A95C]">Every</span><span className="text-white">Giving</span>
+          <Link href="/admin" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
+            <NextImage src="/logo.jpeg" alt="EveryGiving" width={28} height={28} className="rounded-md" />
+            <span className="font-nunito font-black text-lg"><span className="text-[#02A95C]">Every</span><span className="text-white">Giving</span></span>
           </Link>
           <p className="text-white/20 text-[10px] mt-0.5 tracking-widest font-mono">ADMIN</p>
         </div>

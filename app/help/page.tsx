@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { usePageContent, cms } from '@/lib/content'
 
 const CATEGORIES = [
   { id: 'all', label: 'All questions' },
@@ -176,8 +177,15 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 export default function HelpPage() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [search, setSearch] = useState('')
+  const c = usePageContent('help')
 
-  const filtered = FAQS.filter(faq => {
+  // Use CMS FAQs if available, otherwise fall back to hardcoded
+  const cmsFaqs = cms(c, 'faqs', 'items', null) as unknown as any[] | null
+  const allFaqs = cmsFaqs
+    ? cmsFaqs.map((f: any) => ({ cat: f.category || 'all', q: f.question, a: f.answer }))
+    : FAQS
+
+  const filtered = allFaqs.filter((faq: any) => {
     const matchCat = activeCategory === 'all' || faq.cat === activeCategory
     const matchSearch = search === '' ||
       faq.q.toLowerCase().includes(search.toLowerCase()) ||
@@ -199,9 +207,9 @@ export default function HelpPage() {
               Help Centre
             </div>
             <h1 className="font-nunito font-black text-white text-3xl md:text-5xl tracking-tight mb-4 leading-tight" style={{ letterSpacing: -1 }}>
-              How can we help?
+              {cms(c, 'settings', 'headline', 'How can we help?')}
             </h1>
-            <p className="text-white/40 text-sm mb-8">Common questions about fundraising, verification, and payments on EveryGiving.</p>
+            <p className="text-white/40 text-sm mb-8">{cms(c, 'settings', 'subtext', 'Common questions about fundraising, verification, and payments on EveryGiving.')}</p>
 
             {/* Search */}
             <div className="relative max-w-lg mx-auto">

@@ -3,8 +3,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { usePageContent, cms } from '@/lib/content'
 
 export default function FeesPage() {
+  const c = usePageContent('fees')
   const [amount, setAmount] = useState(100)
   const fee = parseFloat((amount * 0.02 + 0.25).toFixed(2))
   const receives = parseFloat((amount - fee).toFixed(2))
@@ -31,10 +33,10 @@ export default function FeesPage() {
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-block bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5">Honest fees</div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-4" style={{letterSpacing:-1}}>
-              Let's do the<br /><span className="text-primary">math together</span>
+              {cms(c, 'hero', 'headline', "Let's do the math together")}
             </h1>
             <p className="text-white/50 text-sm max-w-xl mx-auto leading-relaxed">
-              No hidden charges. No surprises. We deduct a small transaction fee from each donation automatically  -  so you never receive a bill.
+              {cms(c, 'hero', 'subtext', 'No hidden charges. No surprises. We deduct a small transaction fee from each donation automatically  -  so you never receive a bill.')}
             </p>
           </div>
         </section>

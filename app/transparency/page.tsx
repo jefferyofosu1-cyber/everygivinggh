@@ -1,8 +1,11 @@
+'use client'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { usePageContent, cms } from '@/lib/content'
 
 export default function TransparencyPage() {
+  const c = usePageContent('transparency')
   return (
     <>
       <Navbar />
@@ -16,10 +19,10 @@ export default function TransparencyPage() {
               Transparency
             </div>
             <h1 className="font-nunito font-black text-white text-3xl md:text-5xl tracking-tight mb-4 leading-tight" style={{ letterSpacing: -1 }}>
-              Nothing to hide.
+              {cms(c, 'hero', 'headline', 'Nothing to hide.')}
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-lg mx-auto">
-              EveryGiving operates with full transparency. This page explains exactly how the platform works, where money goes, and how we protect everyone who uses it.
+              {cms(c, 'hero', 'subtext', 'EveryGiving operates with full transparency. This page explains exactly how the platform works, where money goes, and how we protect everyone who uses it.')}
             </p>
           </div>
         </section>

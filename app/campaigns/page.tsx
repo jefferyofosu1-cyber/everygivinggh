@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { createClient } from '@/lib/supabase'
 
 const CATEGORIES = ['All', 'Medical', 'Education', 'Church & Faith', 'Emergency', 'Business', 'Memorial', 'Community', 'Events']
 
@@ -75,16 +74,40 @@ function PlaceholderCard({ i }: { i: number }) {
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [category, setCategory] = useState('All')
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.from('campaigns').select('*').eq('status', 'approved').order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setCampaigns(data || [])
-        setLoading(false)
-      })
+    let cancelled = false
+
+    async function loadCampaigns() {
+      try {
+        const res = await fetch('/api/campaigns', { cache: 'no-store' })
+        const json = await res.json() as { campaigns?: any[]; error?: string }
+
+        if (!res.ok) {
+          throw new Error(json.error || 'Failed to load campaigns')
+        }
+
+        if (!cancelled) {
+          setCampaigns(json.campaigns || [])
+          setError('')
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setCampaigns([])
+          setError(err instanceof Error ? err.message : 'Failed to load campaigns')
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadCampaigns()
+    return () => { cancelled = true }
   }, [])
 
   const filtered = campaigns.filter(c => {
@@ -126,6 +149,11 @@ export default function CampaignsPage() {
 
         <section className="py-12 bg-gray-50">
           <div className="max-w-5xl mx-auto px-5">
+            {!!error && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 text-center text-sm text-red-700">
+                Could not load campaigns right now. {error}
+              </div>
+            )}
             {loading ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[...Array(6)].map((_, i) => (

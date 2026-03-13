@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
@@ -117,8 +118,9 @@ export default function Navbar() {
     <nav ref={navRef} className={`sticky top-0 z-50 bg-white transition-shadow ${scrolled ? 'shadow-md' : 'border-b border-gray-100'}`}>
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
 
-        <Link href="/" className="font-nunito font-black text-xl tracking-tight flex-shrink-0" onClick={() => setOpenDropdown(null)}>
-          <span className="text-primary">Every</span><span className="text-navy">Giving</span>
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={() => setOpenDropdown(null)}>
+          <Image src="/logo.jpeg" alt="EveryGiving" width={36} height={36} className="rounded-lg" priority />
+          <span className="font-nunito font-black text-xl tracking-tight"><span className="text-primary">Every</span><span className="text-navy">Giving</span></span>
         </Link>
 
         {/* Desktop nav */}

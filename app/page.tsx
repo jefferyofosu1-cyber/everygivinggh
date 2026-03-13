@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
+import { usePageContent, cms } from '@/lib/content'
 
 // ── PHOTOS ────────────────────────────────────────────────────────────────────
 const P = {
@@ -72,6 +73,7 @@ function CampaignCard({ c }: { c: any }) {
 export default function HomePage() {
   const [campaigns, setCampaigns] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const c = usePageContent('home')
 
 
   useEffect(() => {
@@ -98,12 +100,11 @@ export default function HomePage() {
             {/* Left  -  text + search */}
             <div className="pb-14 md:pb-20 pr-0 md:pr-12 flex flex-col justify-center">
               <h1 className="font-nunito font-black text-[#1A2B3C] text-5xl md:text-[4rem] leading-[1.02] tracking-tight mb-4" style={{letterSpacing:-2}}>
-                Raise money with
-                confidence in<br />
-                <span className="text-[#02A95C]">Ghana</span>
+                {cms(c, 'hero', 'headline', 'Raise money with confidence in')}<br />
+                <span className="text-[#02A95C]">{cms(c, 'hero', 'highlight', 'Ghana')}</span>
               </h1>
               <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-md">
-                Every fundraiser is identity-verified by our team. Donations are released to your MoMo wallet as you hit milestones. Zero platform fees  -  always.
+                {cms(c, 'hero', 'subtext', 'Every fundraiser is identity-verified by our team. Donations are released to your MoMo wallet as you hit milestones. Zero platform fees  -  always.')}
               </p>
 
               {/* Search bar  -  GoFundMe style */}
@@ -181,13 +182,13 @@ export default function HomePage() {
         ══════════════════════════════════════════ */}
         <section className="border-y border-gray-100 bg-gray-50 py-5">
           <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-8 text-xs font-semibold text-gray-400">
-            {[
+            {(cms(c, 'trustBadges', 'items', null) as unknown as any[] || [
               { icon: '*', text: 'Identity verified' },
               { icon: '*', text: 'MTN · Vodafone · AirtelTigo' },
               { icon: '*', text: 'Milestone-based payouts' },
               { icon: '*', text: '2% + ₵0.25 per donation · 0% platform fee' },
               { icon: '*', text: 'Encrypted & secure' },
-            ].map((t, i) => (
+            ]).map((t: any, i: number) => (
               <div key={i} className="flex items-center gap-2">
                 <span className="text-base">{t.icon}</span>
                 <span>{t.text}</span>
@@ -398,21 +399,23 @@ export default function HomePage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-5">
-              {[
-                { name:'Ama Korantema', location:'Accra', raised:'₵18,500', cat:'Medical', quote:'I raised ₵18,500 in three weeks. Strangers donated because they could see my identity was verified. EveryGiving gave them a reason to trust me.', img: P.hero },
-                { name:'Pastor Isaac Asare', location:'Kumasi', raised:'₵42,000', cat:'Faith', quote:'Our church needed a new roof. I shared the campaign across five WhatsApp groups and in two months we had more than we needed. The Verified badge changed everything.', img: P.faith },
-                { name:'Adjoa Mensah', location:'Tema', raised:'₵9,200', cat:'Education', quote:'My daughter got into university but we couldn\'t pay the fees. In two weeks, 67 people donated. She started school. I still cry when I think about it.', img: P.education },
-              ].map((t, i) => (
+              {(cms(c, 'testimonials', 'items', null) as unknown as any[] || [
+                { name:'Ama Korantema', location:'Accra', amount:'₵18,500', category:'Medical', quote:'I raised ₵18,500 in three weeks. Strangers donated because they could see my identity was verified. EveryGiving gave them a reason to trust me.' },
+                { name:'Pastor Isaac Asare', location:'Kumasi', amount:'₵42,000', category:'Faith', quote:'Our church needed a new roof. I shared the campaign across five WhatsApp groups and in two months we had more than we needed. The Verified badge changed everything.' },
+                { name:'Adjoa Mensah', location:'Tema', amount:'₵9,200', category:'Education', quote:'My daughter got into university but we couldn\'t pay the fees. In two weeks, 67 people donated. She started school. I still cry when I think about it.' },
+              ]).map((t: any, i: number) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
                   <div className="flex items-center gap-3 mb-4">
-                    <Image src={t.img} alt={t.name} width={48} height={48} className="rounded-full object-cover border-2 border-[#02A95C]" />
+                    <div className="w-12 h-12 rounded-full bg-[#02A95C]/20 border-2 border-[#02A95C] flex items-center justify-center">
+                      <span className="text-[#02A95C] font-black text-sm">{t.name?.charAt(0) || ''}</span>
+                    </div>
                     <div>
                       <div className="font-nunito font-black text-white text-sm">{t.name}</div>
-                      <div className="text-[#02A95C] text-xs font-semibold">{t.location} · Raised {t.raised}</div>
+                      <div className="text-[#02A95C] text-xs font-semibold">{t.location} · Raised {t.amount}</div>
                     </div>
                   </div>
-                  <div className="text-white/60 text-xs bg-white/5 rounded-full px-3 py-1 inline-block mb-3">{t.cat}</div>
-                  <p className="text-white/70 text-sm leading-relaxed italic">"{t.quote}"</p>
+                  <div className="text-white/60 text-xs bg-white/5 rounded-full px-3 py-1 inline-block mb-3">{t.category}</div>
+                  <p className="text-white/70 text-sm leading-relaxed italic">&quot;{t.quote}&quot;</p>
                 </div>
               ))}
             </div>
@@ -459,10 +462,10 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-[#1A2B3C]/85" />
           <div className="relative max-w-2xl mx-auto px-6 text-center">
             <h2 className="font-nunito font-black text-white text-5xl tracking-tight mb-4" style={{letterSpacing:-2}}>
-              Create your campaign<br /><span className="text-[#02A95C]">today</span>
+              {cms(c, 'cta', 'headline', 'Create your campaign')}<br /><span className="text-[#02A95C]">today</span>
             </h2>
             <p className="text-white/60 text-lg mb-8 leading-relaxed">
-              Free to create. Verified by our team.<br />Funds released as you hit your milestones.
+              {cms(c, 'cta', 'subtext', 'Free to create. Verified by our team.\nFunds released as you hit your milestones.')}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/create"

@@ -12,8 +12,12 @@ export type Campaign = {
   verified: boolean
   deadline: string | null
   location: string | null
+  id_type: string | null
+  id_number: string | null
+  id_front_url: string | null
+  selfie_url: string | null
   created_at: string
-  profiles?: { full_name: string; phone: string }
+  profiles?: { full_name: string; phone: string; email?: string }
   donations?: Donation[]
 }
 
@@ -34,6 +38,7 @@ export type Profile = {
   id: string
   full_name: string
   phone: string
+  email: string | null
   avatar_url: string | null
   is_admin: boolean
   created_at: string

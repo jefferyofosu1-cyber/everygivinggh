@@ -1,15 +1,17 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
 
 interface Stats {
-  totalCampaigns:   number
+  totalCampaigns: number
   pendingCampaigns: number
-  activeCampaigns:  number
-  totalUsers:       number
-  totalDonations:   number
-  totalRaised:      number
+  activeCampaigns: number
+  totalUsers: number
+  totalDonations: number
+  totalRaised: number
+  pendingPayouts: number
+  openDisputes: number
+  paymentMismatches: number
 }
 
 interface RecentCampaign {
@@ -50,43 +52,27 @@ export default function AdminDashboard() {
   const [loading,         setLoading]         = useState(true)
 
   useEffect(() => {
-    const supabase = createClient()
-    Promise.all([
-      supabase.from('campaigns').select('id', { count: 'exact', head: true }),
-      supabase.from('campaigns').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('campaigns').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
-      supabase.from('profiles').select('id', { count: 'exact', head: true }),
-      supabase.from('donations').select('id, amount').eq('status', 'success'),
-      supabase.from('campaigns')
-        .select('id, title, status, verification_tier, created_at, profiles(full_name)')
-        .order('created_at', { ascending: false }).limit(5),
-      supabase.from('donations')
-        .select('id, amount, donor_name, created_at, campaigns(title)')
-        .eq('status', 'success').order('created_at', { ascending: false }).limit(5),
-    ]).then(([all, pending, active, users, donations, recent, recentDon]) => {
-      const raised = ((donations.data ?? []) as { amount: number }[])
-        .reduce((s, d) => s + (d.amount ?? 0), 0)
-      setStats({
-        totalCampaigns:   all.count      ?? 0,
-        pendingCampaigns: pending.count  ?? 0,
-        activeCampaigns:  active.count   ?? 0,
-        totalUsers:       users.count    ?? 0,
-        totalDonations:   donations.count ?? 0,
-        totalRaised:      raised,
+    fetch('/api/admin/stats')
+      .then(r => r.json())
+      .then(data => {
+        setStats(data.stats)
+        setRecentCampaigns(data.recentCampaigns ?? [])
+        setRecentDonations(data.recentDonations ?? [])
+        setLoading(false)
       })
-      setRecentCampaigns((recent.data ?? []) as unknown as RecentCampaign[])
-      setRecentDonations((recentDon.data ?? []) as unknown as RecentDonation[])
-      setLoading(false)
-    })
+      .catch(() => setLoading(false))
   }, [])
 
   const STAT_CARDS = stats ? [
-    { label: 'Total campaigns',  val: stats.totalCampaigns,                        color: 'text-blue-400',   href: '/admin/campaigns',                urgent: false },
-    { label: 'Pending review',   val: stats.pendingCampaigns,                      color: 'text-amber-400',  href: '/admin/campaigns?status=pending', urgent: stats.pendingCampaigns > 0 },
-    { label: 'Active campaigns', val: stats.activeCampaigns,                       color: 'text-green-400',  href: '/admin/campaigns',                urgent: false },
-    { label: 'Registered users', val: stats.totalUsers,                            color: 'text-purple-400', href: '/admin/users',                    urgent: false },
-    { label: 'Total donations',  val: stats.totalDonations,                        color: 'text-green-400',  href: '/admin/donations',                urgent: false },
-    { label: 'Total raised',     val: `GH${String.fromCharCode(8373)}${stats.totalRaised.toLocaleString()}`, color: 'text-amber-400', href: '/admin/donations', urgent: false },
+    { label: 'Total campaigns', val: stats.totalCampaigns, color: 'text-blue-400', href: '/admin/campaigns', urgent: false },
+    { label: 'Pending review', val: stats.pendingCampaigns, color: 'text-amber-400', href: '/admin/campaigns?status=pending', urgent: stats.pendingCampaigns > 0 },
+    { label: 'Active campaigns', val: stats.activeCampaigns, color: 'text-green-400', href: '/admin/campaigns', urgent: false },
+    { label: 'Registered users', val: stats.totalUsers, color: 'text-purple-400', href: '/admin/users', urgent: false },
+    { label: 'Total donations', val: stats.totalDonations, color: 'text-green-400', href: '/admin/donations', urgent: false },
+    { label: 'Total raised', val: `GH${String.fromCharCode(8373)}${stats.totalRaised.toLocaleString()}`, color: 'text-amber-400', href: '/admin/donations', urgent: false },
+    { label: 'Pending payouts', val: stats.pendingPayouts, color: 'text-amber-300', href: '/admin/payouts', urgent: stats.pendingPayouts > 0 },
+    { label: 'Open disputes', val: stats.openDisputes, color: 'text-red-400', href: '/admin/disputes', urgent: stats.openDisputes > 0 },
+    { label: 'Payment mismatches', val: stats.paymentMismatches, color: 'text-orange-300', href: '/admin/payments', urgent: stats.paymentMismatches > 0 },
   ] : []
 
   return (

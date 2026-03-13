@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function GET(request: NextRequest) {
   const auth = await requirePermission('verification.review')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const status = new URL(request.url).searchParams.get('status') || 'all'
   let query = supabase.from('verification_reviews').select('*').order('created_at', { ascending: false })
 
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
   if (!campaignId) return NextResponse.json({ error: 'campaign_id is required' }, { status: 400 })
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('verification_reviews')
     .insert({

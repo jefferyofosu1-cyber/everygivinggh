@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function POST() {
   const auth = await requirePermission('payments.manage')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const startedAt = new Date().toISOString()
 
   const { data: events, error: eventError } = await supabase

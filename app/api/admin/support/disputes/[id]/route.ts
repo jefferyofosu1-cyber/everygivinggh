@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
@@ -7,7 +7,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   if (auth.error) return auth.error
 
   const body = await request.json()
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
 
   const { data: before } = await supabase.from('donation_disputes').select('*').eq('id', params.id).maybeSingle()
   const { data, error } = await supabase
@@ -31,7 +31,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
   const auth = await requirePermission('disputes.manage')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase.from('donation_disputes').select('*').eq('id', params.id).maybeSingle()
   if (!before) return NextResponse.json({ error: 'Dispute not found' }, { status: 404 })
 

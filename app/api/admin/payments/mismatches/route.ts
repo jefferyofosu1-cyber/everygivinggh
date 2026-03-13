@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission } from '@/lib/api-security'
 
 export async function GET() {
   const auth = await requirePermission('payments.manage')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('payment_events')
     .select('*')

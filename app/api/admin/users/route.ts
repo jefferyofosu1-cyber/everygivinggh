@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin, sanitiseString, sanitiseEmail } from '@/lib/api-security'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 
 export async function GET() {
   const auth = await requireAdmin()
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('profiles')
     .select('*, campaigns(id, title, status)')
@@ -46,7 +46,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
     }
 
-    const supabase = createAdminClient()
+    const supabase = await getAdminClient()
     const { error } = await supabase.from('profiles').update(updates).eq('id', id)
 
     if (error) {
@@ -70,7 +70,7 @@ export async function DELETE(req: NextRequest) {
     const { id } = await req.json()
     if (!id) return NextResponse.json({ error: 'Missing user id' }, { status: 400 })
 
-    const supabase = createAdminClient()
+    const supabase = await getAdminClient()
 
     // Delete user's donations first, then campaigns, then profile
     const { data: campaigns } = await supabase.from('campaigns').select('id').eq('user_id', id)

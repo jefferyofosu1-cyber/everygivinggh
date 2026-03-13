@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function GET() {
   const auth = await requirePermission('content.manage')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('platform_settings')
     .select('key, value, updated_by, updated_at')
@@ -25,7 +25,7 @@ export async function PATCH(request: NextRequest) {
   const value = body?.value
   if (!key) return NextResponse.json({ error: 'key is required' }, { status: 400 })
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase.from('platform_settings').select('*').eq('key', key).maybeSingle()
 
   const { data, error } = await supabase
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   const value = body?.value
   if (!key) return NextResponse.json({ error: 'key is required' }, { status: 400 })
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: existing } = await supabase.from('platform_settings').select('*').eq('key', key).maybeSingle()
   if (existing) return NextResponse.json({ error: 'Setting already exists. Use PATCH to update.' }, { status: 409 })
 
@@ -73,7 +73,7 @@ export async function DELETE(request: NextRequest) {
   const key = body?.key as string
   if (!key) return NextResponse.json({ error: 'key is required' }, { status: 400 })
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase.from('platform_settings').select('*').eq('key', key).maybeSingle()
   if (!before) return NextResponse.json({ error: 'Setting not found' }, { status: 404 })
 

@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/api-security'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 
 export async function GET() {
   const auth = await requireAdmin()
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
 
   const [all, pending, active, users, donations, recent, recentDon, pendingPayouts, openDisputes, paymentMismatches] = await Promise.all([
     supabase.from('campaigns').select('id', { count: 'exact', head: true }),

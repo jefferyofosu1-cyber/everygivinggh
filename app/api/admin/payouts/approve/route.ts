@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function POST(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   const { id, note } = await request.json()
   if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase.from('payout_requests').select('*').eq('id', id).maybeSingle()
 
   const { data, error } = await supabase

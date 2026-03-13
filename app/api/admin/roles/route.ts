@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase-admin'
+import { getAdminClient } from '@/lib/supabase-admin'
 import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 export async function GET() {
   const auth = await requirePermission('users.read')
   if (auth.error) return auth.error
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('admin_roles')
     .select('id, user_id, role, permissions, created_at, updated_at')
@@ -29,7 +29,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'userId and role are required' }, { status: 400 })
   }
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase
     .from('admin_roles')
     .select('*')
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'userId and role are required' }, { status: 400 })
   }
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: existing } = await supabase
     .from('admin_roles')
     .select('*')
@@ -119,7 +119,7 @@ export async function DELETE(request: NextRequest) {
   const userId = body?.userId as string
   if (!userId) return NextResponse.json({ error: 'userId is required' }, { status: 400 })
 
-  const supabase = createAdminClient()
+  const supabase = await getAdminClient()
   const { data: before } = await supabase
     .from('admin_roles')
     .select('*')

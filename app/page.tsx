@@ -1,483 +1,318 @@
-'use client'
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { createClient } from '@/lib/supabase'
-import { usePageContent, cms } from '@/lib/content'
+import CampaignCard from '@/components/ui/CampaignCard'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
-// ── PHOTOS ────────────────────────────────────────────────────────────────────
-const P = {
-  hero:      'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=1200&q=90&auto=format&fit=crop',
-  hero2:     'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=900&q=85&auto=format&fit=crop',
-  medical:   'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=480&q=80&auto=format&fit=crop',
-  education: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=480&q=80&auto=format&fit=crop',
-  faith:     'https://images.unsplash.com/photo-1519491050282-cf00c82424c4?w=480&q=80&auto=format&fit=crop',
-  community: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=480&q=80&auto=format&fit=crop',
-  giving:    'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80&auto=format&fit=crop',
-  phone:     'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80&auto=format&fit=crop',
-  accra:     'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600&q=80&auto=format&fit=crop',
-  family:    'https://images.unsplash.com/photo-1520350094754-f0fdcac35c1c?w=480&q=80&auto=format&fit=crop',
-  sport:     'https://images.unsplash.com/photo-1459865264687-595d652de67e?w=480&q=80&auto=format&fit=crop',
-  volunteer: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=480&q=80&auto=format&fit=crop',
-}
+export const revalidate = 60
 
-const CATEGORIES = [
-  { name: 'Medical',     img: P.medical,   slug: 'medical' },
-  { name: 'Education',   img: P.education, slug: 'education' },
-  { name: 'Faith',       img: P.faith,     slug: 'faith' },
-  { name: 'Community',   img: P.community, slug: 'community' },
-  { name: 'Family',      img: P.family,    slug: 'family' },
-  { name: 'Sports',      img: P.sport,     slug: 'sports' },
-  { name: 'Volunteer',   img: P.volunteer, slug: 'volunteer' },
-  { name: 'Emergency',   img: P.giving,    slug: 'emergency' },
-]
+export default async function HomePage() {
+  const supabase = createServerSupabaseClient()
+  const { data: campaigns } = await supabase
+    .from('campaigns')
+    .select('*, profiles(full_name)')
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(6)
 
-const EMOJI: Record<string, string> = {
-  medical:'MD',emergency:'EM',education:'ED',charity:'CH',faith:'FA',
-  community:'CM',environment:'EN',business:'BS',family:'FM',
-  sports:'SP',events:'EV',wishes:'WS',memorial:'MM',other:'OT',
-}
+  const { count: totalCampaigns } = await supabase
+    .from('campaigns')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'approved')
 
+  const { data: donationStats } = await supabase
+    .from('donations')
+    .select('amount')
+    .eq('status', 'success')
 
+  const totalRaised = donationStats?.reduce((sum, d) => sum + (d.amount || 0), 0) ?? 0
+  const totalDonors = donationStats?.length ?? 0
 
-function CampaignCard({ c }: { c: any }) {
-  const pct = c.goal_amount ? Math.min(Math.round((c.raised_amount / c.goal_amount) * 100), 100) : 0
-  return (
-    <Link href={`/campaigns/${c.id}`}
-      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300">
-      <div className="h-48 relative overflow-hidden bg-gray-100">
-        {c.image_url
-          ? <Image src={c.image_url} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
-          : <div className="w-full h-full bg-gradient-to-br from-[#e6f9f1] to-blue-50 flex items-center justify-center text-5xl">{EMOJI[c.category?.toLowerCase()] || ''}</div>}
-        {c.verified && <div className="absolute top-3 right-3 bg-[#02A95C] text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide"> VERIFIED</div>}
-      </div>
-      <div className="p-5">
-        <div className="font-bold text-[#1A2B3C] text-sm mb-1 line-clamp-2 group-hover:text-[#02A95C] transition-colors leading-snug">{c.title}</div>
-        <div className="text-gray-400 text-xs mb-3">{c.profiles?.full_name || 'Anonymous'}</div>
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2">
-          <div className="h-full bg-[#02A95C] rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="font-black text-[#1A2B3C] text-sm">₵{(c.raised_amount||0).toLocaleString()} <span className="text-gray-400 font-normal text-xs">raised</span></span>
-          <span className="text-[#02A95C] font-black text-xs">{pct}%</span>
-        </div>
-      </div>
-    </Link>
-  )
-}
+  const categories = [
+    { name: 'Medical', emoji: '🏥', slug: 'medical', desc: 'Surgery, treatment, hospital bills' },
+    { name: 'Education', emoji: '🎓', slug: 'education', desc: 'School fees, uniforms, books' },
+    { name: 'Emergency', emoji: '🆘', slug: 'emergency', desc: 'Fire, floods, urgent needs' },
+    { name: 'Funeral', emoji: '🕊️', slug: 'funeral', desc: 'Burial and funeral support' },
+    { name: 'Community', emoji: '🏡', slug: 'community', desc: 'Boreholes, roads, projects' },
+    { name: 'Church', emoji: '⛪', slug: 'church', desc: 'Building funds, missions' },
+  ]
 
-// Placeholder cards
-
-export default function HomePage() {
-  const [campaigns, setCampaigns] = useState<any[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const c = usePageContent('home')
-
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.from('campaigns').select('*, profiles(full_name)')
-      .eq('status', 'approved').order('created_at', { ascending: false }).limit(6)
-      .then(({ data }) => setCampaigns(data || []))
-
-  }, [])
-
+  const stats = [
+    { label: 'Raised across Ghana', value: totalRaised >= 1000 ? `₵${(totalRaised/1000).toFixed(0)}K+` : `₵${totalRaised.toLocaleString()}`, icon: '💰', color: 'bg-primary-light' },
+    { label: 'Active campaigns', value: `${totalCampaigns ?? 0}+`, icon: '📋', color: 'bg-blue-50' },
+    { label: 'Donors helped', value: `${totalDonors}+`, icon: '🤝', color: 'bg-amber-50' },
+    { label: 'Avg. verification', value: '24hrs', icon: '⚡', color: 'bg-purple-50' },
+  ]
 
   return (
     <>
       <Navbar />
-      <main className="overflow-x-hidden">
+      <main>
 
-        {/* ══════════════════════════════════════════
-            HERO  -  GoFundMe style: big headline,
-            search bar, split photo layout
-        ══════════════════════════════════════════ */}
-        <section className="relative bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 md:px-10 pt-14 pb-0 grid md:grid-cols-2 gap-0 items-end min-h-[560px]">
-
-            {/* Left  -  text + search */}
-            <div className="pb-14 md:pb-20 pr-0 md:pr-12 flex flex-col justify-center">
-              <h1 className="font-nunito font-black text-[#1A2B3C] text-5xl md:text-[4rem] leading-[1.02] tracking-tight mb-4" style={{letterSpacing:-2}}>
-                {cms(c, 'hero', 'headline', 'Raise money with confidence in')}<br />
-                <span className="text-[#02A95C]">{cms(c, 'hero', 'highlight', 'Ghana')}</span>
-              </h1>
-              <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-md">
-                {cms(c, 'hero', 'subtext', 'Every fundraiser is identity-verified by our team. Donations are released to your MoMo wallet as you hit milestones. Zero platform fees  -  always.')}
-              </p>
-
-              {/* Search bar  -  GoFundMe style */}
-              <div className="flex gap-0 max-w-md mb-6">
-                <div className="relative flex-1">
-                  <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                  </svg>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && window.location.assign(`/campaigns?q=${searchQuery}`)}
-                    placeholder="Search campaigns…"
-                    className="w-full pl-10 pr-4 py-4 border-2 border-r-0 border-gray-200 rounded-l-full text-sm outline-none focus:border-[#02A95C] transition-colors bg-white"
-                  />
-                </div>
-                <Link href={`/campaigns?q=${searchQuery}`}
-                  className="bg-[#02A95C] hover:bg-[#028a4a] text-white font-nunito font-black text-sm px-7 rounded-r-full transition-all whitespace-nowrap flex items-center">
-                  Search
-                </Link>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {['Medical','Education','Emergency','Faith','Community'].map(cat => (
-                  <Link key={cat} href={`/campaigns?category=${cat.toLowerCase()}`}
-                    className="text-xs font-semibold text-gray-500 hover:text-[#02A95C] border border-gray-200 hover:border-[#02A95C]/40 px-3.5 py-2 rounded-full transition-all bg-gray-50 hover:bg-[#f0fdf6]">
-                    {cat}
-                  </Link>
-                ))}
-              </div>
+        {/* ── HERO ─────────────────────────────────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-5 py-16 grid md:grid-cols-2 gap-14 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-primary-light text-primary-dark px-3 py-1.5 rounded-full text-xs font-bold mb-5 border border-primary/20">
+              <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+              Ghana's crowdfunding platform
             </div>
-
-            {/* Right  -  stacked campaign cards over photo */}
-            <div className="relative hidden md:block self-end h-[500px] rounded-tl-[40px] overflow-hidden">
-              <Image src={P.hero} alt="Fundraiser" fill className="object-cover object-top" sizes="50vw" priority />
-              <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-tl-[40px]" />
-
-              {/* Floating verified card */}
-              <div className="absolute -left-10 bottom-16 bg-white rounded-2xl shadow-2xl p-4 w-64 border border-gray-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <Image src={P.accra} alt="" width={40} height={40} className="rounded-full object-cover border-2 border-[#02A95C]" />
-                  <div>
-                    <div className="font-black text-[#1A2B3C] text-xs">Ama Mensah</div>
-                    <div className="text-[#02A95C] text-[10px] font-bold flex items-center gap-1"> Ghana Card Verified · Accra</div>
-                  </div>
+            <h1 className="text-4xl md:text-5xl font-black text-navy leading-[1.08] tracking-tight mb-5">
+              Support people and<br />
+              <span className="text-primary">causes across Ghana.</span>
+            </h1>
+            <p className="text-gray-500 leading-relaxed mb-6 text-base max-w-md">
+              EveryGiving helps Ghanaians raise funds for medical bills, school fees, emergencies,
+              funerals, and community projects — with identity verification, transparent tracking,
+              and instant Mobile Money payouts.
+            </p>
+            <div className="flex flex-col gap-2 mb-7">
+              {[
+                'Built for Ghana — Mobile Money first',
+                'Ghana Card identity verification',
+                'Easy for family and diaspora to donate',
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs flex-shrink-0">✓</div>
+                  {item}
                 </div>
-                <div className="text-xs text-gray-500 mb-2.5 leading-snug">Help with kidney surgery at Korle Bu Teaching Hospital</div>
-                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1.5">
-                  <div className="h-full bg-[#02A95C] rounded-full w-[72%]" />
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="font-black text-[#1A2B3C]">₵14,400 raised</span>
-                  <span className="text-[#02A95C] font-black">72%</span>
-                </div>
-              </div>
-
-              {/* Donation notification */}
-              <div className="absolute top-8 -left-8 bg-white rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 border border-gray-100">
-                <div className="w-8 h-8 bg-[#02A95C] rounded-full flex items-center justify-center text-sm flex-shrink-0"></div>
-                <div>
-                  <div className="text-xs font-black text-[#1A2B3C]">New donation</div>
-                  <div className="text-[10px] text-gray-400">Kwame donated ₵200 via MTN MoMo</div>
-                </div>
-              </div>
+              ))}
             </div>
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <Link href="/create"
+                className="px-7 py-3.5 bg-primary hover:bg-primary-dark text-white font-black rounded-full transition-all hover:-translate-y-0.5 shadow hover:shadow-lg text-sm">
+                Start a fundraiser — free
+              </Link>
+              <Link href="/campaigns"
+                className="px-6 py-3.5 border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-700 font-bold rounded-full transition-all text-sm">
+                Donate to a campaign
+              </Link>
+            </div>
+            <p className="text-xs text-gray-400">🔒 Ghana Card verified · Instant MoMo payout · Free to start</p>
           </div>
 
-          {/* Bottom wave into next section */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gray-100" />
-        </section>
-
-        {/* ══════════════════════════════════════════
-            TRUST STRIP  -  like GoFundMe's "as seen in"
-        ══════════════════════════════════════════ */}
-        <section className="border-y border-gray-100 bg-gray-50 py-5">
-          <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-8 text-xs font-semibold text-gray-400">
-            {(cms(c, 'trustBadges', 'items', null) as unknown as any[] || [
-              { icon: '*', text: 'Identity verified' },
-              { icon: '*', text: 'MTN · Vodafone · AirtelTigo' },
-              { icon: '*', text: 'Milestone-based payouts' },
-              { icon: '*', text: '2% + ₵0.25 per donation · 0% platform fee' },
-              { icon: '*', text: 'Encrypted & secure' },
-            ]).map((t: any, i: number) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="text-base">{t.icon}</span>
-                <span>{t.text}</span>
+          {/* Stats grid */}
+          <div className="hidden md:grid grid-cols-2 gap-4">
+            {stats.map((s, i) => (
+              <div key={i} className={`${s.color} rounded-2xl p-6 flex flex-col gap-2`}>
+                <div className="text-2xl">{s.icon}</div>
+                <div className="font-nunito font-black text-2xl text-navy tracking-tight">{s.value}</div>
+                <div className="text-xs text-gray-500 font-medium">{s.label}</div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════
-            WHY TRUST  -  simple honest platform values
-        ══════════════════════════════════════════ */}
-        <section className="py-16 bg-white">
-          <div className="max-w-5xl mx-auto px-6 text-center">
-            <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-4" style={{fontFamily:'DM Mono, monospace'}}>Why EveryGiving</p>
-            <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl md:text-4xl mb-12 tracking-tight" style={{letterSpacing:-1}}>
-              Ghana's most trusted crowdfunding platform
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
-              {[
-                { icon: '*', title: 'Every fundraiser verified', desc: 'We review every ID before a campaign goes live. No anonymous campaigns  -  ever.' },
-                { icon: '*', title: '2% + ₵0.25 per donation', desc: 'The only fee. Deducted automatically. Zero platform fee. Zero monthly charges.' },
-                { icon: '*', title: 'Milestone-based payouts', desc: 'Donations are released to your MoMo wallet when you hit milestones  -  keeping donors confident.' },
-              ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <div className="text-4xl mb-3">{item.icon}</div>
-                  <div className="font-nunito font-black text-[#1A2B3C] text-base mb-2">{item.title}</div>
-                  <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
+        {/* ── VALUE BANNER ─────────────────────────────────────────────── */}
+        <div className="bg-navy">
+          <div className="max-w-6xl mx-auto px-5 grid md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
+            {[
+              { icon: '📱', title: 'Mobile Money first', desc: 'MTN MoMo, Vodafone Cash & AirtelTigo' },
+              { icon: '🪪', title: 'Identity verified', desc: 'Ghana Card verification on every campaign' },
+              { icon: '🌍', title: 'Diaspora friendly', desc: 'Card & international payments accepted' },
+              { icon: '🔒', title: 'Secure & transparent', desc: 'Every cedi tracked and publicly visible' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-4 px-6 py-6">
+                <div className="text-xl flex-shrink-0">{item.icon}</div>
+                <div>
+                  <div className="font-nunito font-bold text-white text-xs mb-0.5">{item.title}</div>
+                  <div className="text-xs text-white/40 leading-relaxed">{item.desc}</div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════
-            BROWSE BY CAUSE  -  real photos, GoFundMe grid
-        ══════════════════════════════════════════ */}
-        <section className="py-16 bg-[#f8fafb]">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex items-end justify-between mb-8">
-              <div>
-                <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-2" style={{fontFamily:'DM Mono, monospace'}}>Find your cause</p>
-                <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl tracking-tight" style={{letterSpacing:-1}}>Browse by category</h2>
               </div>
-              <Link href="/fundraising-categories" className="text-[#02A95C] font-bold text-sm hover:underline hidden md:block">See all 17 categories →</Link>
-            </div>
+            ))}
+          </div>
+        </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {CATEGORIES.map((cat, i) => (
-                <Link key={i} href={`/campaigns?category=${cat.slug}`}
-                  className="group relative rounded-2xl overflow-hidden aspect-[4/3] shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <Image src={cat.img} alt={cat.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="(max-width: 640px) 50vw, 25vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <div className="font-nunito font-black text-white text-sm drop-shadow-sm">{cat.name}</div>
-                  </div>
+        {/* ── CATEGORIES ───────────────────────────────────────────────── */}
+        <div className="bg-gray-50 border-y border-gray-100 py-12">
+          <div className="max-w-6xl mx-auto px-5">
+            <div className="text-center mb-8">
+              <h2 className="font-nunito font-black text-navy text-2xl mb-2">What do you need help with?</h2>
+              <p className="text-gray-400 text-sm">Every cause matters. Start your campaign in minutes.</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              {categories.map((cat) => (
+                <Link key={cat.slug} href={`/campaigns?category=${cat.slug}`}
+                  className="bg-white border-2 border-gray-100 hover:border-primary hover:bg-primary-light rounded-xl p-4 text-center transition-all hover:-translate-y-1 group">
+                  <div className="text-2xl mb-2">{cat.emoji}</div>
+                  <div className="font-nunito font-extrabold text-navy text-xs group-hover:text-primary-dark mb-1">{cat.name}</div>
+                  <div className="text-[10px] text-gray-400 leading-tight hidden md:block">{cat.desc}</div>
                 </Link>
               ))}
             </div>
-
-            <div className="text-center mt-6 md:hidden">
-              <Link href="/fundraising-categories" className="text-[#02A95C] font-bold text-sm hover:underline">See all 17 categories →</Link>
-            </div>
           </div>
-        </section>
+        </div>
 
-        {/* ══════════════════════════════════════════
-            HOW IT WORKS  -  3 steps with real images
-            (GoFundMe-style horizontal steps)
-        ══════════════════════════════════════════ */}
-        <section className="py-20 bg-white border-t border-gray-100">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-14">
-              <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Simple process</p>
-              <h2 className="font-nunito font-black text-[#1A2B3C] text-4xl tracking-tight" style={{letterSpacing:-1}}>
-                From idea to funded  -  in three steps
-              </h2>
+        {/* ── HOW IT WORKS ─────────────────────────────────────────────── */}
+        <section className="py-16">
+          <div className="max-w-6xl mx-auto px-5">
+            <div className="text-center mb-12">
+              <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-2">How EveryGiving works</h2>
+              <p className="text-gray-400 text-sm">From idea to funded — takes less than 5 minutes to start</p>
             </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-4 gap-8 relative">
+              <div className="hidden md:block absolute top-7 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
               {[
-                { n:'1', img: P.phone, title: 'Create your campaign', desc: 'Write your story, set your goal, add a photo. Under 15 minutes  -  no technical skills required.', cta:'Start free →', href:'/create' },
-                { n:'2', img: P.accra, title: 'Verify your identity', desc: 'Upload your Ghana Card or accepted ID. Verified fundraisers raise 3× more  -  because donors trust people whose identity is confirmed.', cta:'See how →', href:'/verification' },
-                { n:'3', img: P.giving, title: 'Share and receive donations', desc: 'Share on WhatsApp. Donations are held securely and released to your wallet in milestones. You set the milestones  -  donors can see progress before each payout.', cta:'Learn more →', href:'/how-it-works' },
-              ].map((step, i) => (
-                <div key={i} className="group">
-                  <div className="relative rounded-2xl overflow-hidden h-52 mb-5 shadow-sm">
-                    <Image src={step.img} alt={step.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
-                    <div className="absolute inset-0 bg-[#1A2B3C]/30 group-hover:bg-[#1A2B3C]/15 transition-all" />
-                    <div className="absolute top-4 left-4 w-10 h-10 bg-[#02A95C] rounded-full flex items-center justify-center shadow-lg">
-                      <span className="font-nunito font-black text-white text-sm">{step.n}</span>
-                    </div>
+                { n: '1', icon: '📝', title: 'Create your campaign', desc: 'Tell your story, set your goal, upload a photo. Takes less than 5 minutes.' },
+                { n: '2', icon: '🪪', title: 'Get verified free', desc: 'Submit your Ghana Card. Verified campaigns raise 3× more money.' },
+                { n: '3', icon: '📲', title: 'Share on WhatsApp', desc: 'Share your campaign link with family, friends, and WhatsApp groups.' },
+                { n: '4', icon: '💸', title: 'Receive via MoMo', desc: 'Donations land in your Mobile Money wallet. Fast and transparent.' },
+              ].map((step) => (
+                <div key={step.n} className="text-center relative z-10">
+                  <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center font-nunito font-black text-white text-xl mx-auto mb-4 shadow-lg shadow-primary/30 border-4 border-white">
+                    {step.n}
                   </div>
-                  <h3 className="font-nunito font-black text-[#1A2B3C] text-xl mb-2">{step.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-3">{step.desc}</p>
-                  <Link href={step.href} className="text-[#02A95C] font-bold text-sm hover:underline">{step.cta}</Link>
+                  <div className="text-2xl mb-2">{step.icon}</div>
+                  <h3 className="font-nunito font-extrabold text-navy text-sm mb-2">{step.title}</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════
-            LIVE CAMPAIGNS  -  GoFundMe discovery grid
-        ══════════════════════════════════════════ */}
-        <section className="py-16 bg-[#f8fafb] border-t border-gray-100">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex items-end justify-between mb-8">
+        {/* ── FEATURED CAMPAIGNS ───────────────────────────────────────── */}
+        <section className="bg-gray-50 border-y border-gray-100 py-14">
+          <div className="max-w-6xl mx-auto px-5">
+            <div className="flex justify-between items-end mb-8">
               <div>
-                <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-2" style={{fontFamily:'DM Mono, monospace'}}>Verified campaigns</p>
-                <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl tracking-tight" style={{letterSpacing:-1}}>Live right now</h2>
+                <h2 className="font-nunito font-black text-navy text-2xl tracking-tight">Active campaigns</h2>
+                <p className="text-gray-400 text-sm mt-1">Real people. Real causes. Across Ghana.</p>
               </div>
-              <Link href="/donate" className="hidden md:block text-[#02A95C] font-bold text-sm hover:underline">See all campaigns →</Link>
+              <Link href="/campaigns" className="text-sm font-bold text-primary border border-primary px-4 py-2 rounded-lg hover:bg-primary-light transition-colors">
+                See all →
+              </Link>
             </div>
 
-            {campaigns.length > 0 ? (
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
-                {campaigns.map(c => <CampaignCard key={c.id} c={c} />)}
+            {campaigns && campaigns.length > 0 ? (
+              <div className="grid md:grid-cols-3 gap-5">
+                {campaigns.map((c: any) => <CampaignCard key={c.id} campaign={c} />)}
               </div>
             ) : (
-              <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-                <div className="text-5xl mb-4"></div>
-                <h3 className="font-nunito font-black text-[#1A2B3C] text-xl mb-2">Be the first to start a campaign</h3>
-                <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">EveryGiving is live and accepting campaigns. Create yours today  -  verified and trusted by donors across Ghana.</p>
-                <Link href="/create" className="inline-block bg-[#02A95C] text-white font-nunito font-black px-8 py-4 rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-[#02A95C]/25">
+              <div className="text-center py-20 text-gray-400">
+                <div className="text-4xl mb-4">🌱</div>
+                <p className="font-bold text-gray-500 mb-2">No campaigns yet</p>
+                <p className="text-sm mb-6">Be the first to start a fundraiser on EveryGiving</p>
+                <Link href="/create" className="px-6 py-3 bg-primary text-white font-bold rounded-full hover:bg-primary-dark transition-colors text-sm">
                   Start the first campaign →
                 </Link>
               </div>
             )}
+          </div>
+        </section>
 
-            <div className="text-center mt-8">
-              <Link href="/donate"
-                className="inline-flex items-center gap-2 border-2 border-[#02A95C] text-[#02A95C] font-nunito font-black px-8 py-3.5 rounded-full hover:bg-[#02A95C] hover:text-white transition-all text-sm">
-                See all verified campaigns →
+        {/* ── TRUST & SAFETY ───────────────────────────────────────────── */}
+        <section className="py-16">
+          <div className="max-w-6xl mx-auto px-5">
+            <div className="text-center mb-10">
+              <h2 className="font-nunito font-black text-navy text-2xl mb-2">Built on trust</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">
+                EveryGiving takes fraud seriously. Every campaign is reviewed before going live.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-5">
+              {[
+                {
+                  icon: '🪪',
+                  badge: 'Identity Verified',
+                  badgeColor: 'bg-primary text-white',
+                  title: 'Ghana Card verification',
+                  desc: 'Every fundraiser submits their Ghana Card. Our team confirms identity before issuing a verified badge. Donors know exactly who they are giving to.',
+                },
+                {
+                  icon: '🛡️',
+                  badge: 'Fraud Protected',
+                  badgeColor: 'bg-blue-600 text-white',
+                  title: 'Fraud prevention',
+                  desc: 'We monitor all campaigns for suspicious activity. Reported campaigns are paused immediately. Funds are only released after milestone verification.',
+                },
+                {
+                  icon: '🔐',
+                  badge: 'Secure Payments',
+                  badgeColor: 'bg-amber-500 text-white',
+                  title: 'Secure payment processing',
+                  desc: 'All transactions are encrypted. We partner with licensed Ghanaian payment providers. We never store your MoMo PIN or card details.',
+                },
+              ].map(item => (
+                <div key={item.title} className="bg-white border border-gray-100 rounded-2xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-3xl">{item.icon}</span>
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${item.badgeColor}`}>
+                      {item.badge}
+                    </span>
+                  </div>
+                  <h3 className="font-nunito font-black text-navy text-sm mb-2">{item.title}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link href="/transparency" className="text-primary text-sm font-semibold hover:underline">
+                Learn how we protect donors and fundraisers →
               </Link>
             </div>
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════
-            WHY EVERYGIVING  -  feature split
-            (GoFundMe "why us" section)
-        ══════════════════════════════════════════ */}
-        <section className="py-20 bg-white border-t border-gray-100">
-          <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-
-            {/* Photo collage */}
-            <div className="relative h-[480px]">
-              <Image src={P.hero2} alt="Community"
-                width={288} height={288} className="absolute top-0 left-0 object-cover rounded-2xl shadow-xl border-4 border-white" />
-              <Image src={P.medical} alt="Medical"
-                width={224} height={224} className="absolute bottom-0 left-20 object-cover rounded-2xl shadow-xl border-4 border-white" />
-              <Image src={P.accra} alt="Accra"
-                width={192} height={256} className="absolute top-10 right-0 object-cover rounded-2xl shadow-xl border-4 border-white" />
-              <div className="absolute bottom-12 right-4 bg-[#02A95C] text-white rounded-2xl px-5 py-3 shadow-xl">
-                <div className="font-nunito font-black text-2xl">₵0 platform fee</div>
-                <div className="text-white/70 text-xs">forever 🇬🇭</div>
-              </div>
-            </div>
-
-            {/* Text */}
-            <div>
-              <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Built for Ghana</p>
-              <h2 className="font-nunito font-black text-[#1A2B3C] text-4xl tracking-tight mb-6" style={{letterSpacing:-1}}>
-                Built for Ghana.
-                <span className="text-[#02A95C]">Unlike anything else.</span>
-              </h2>
-              <div className="flex flex-col gap-6">
-                {[
-                  { icon: '*', title:'Ghana Card identity verification', desc:'Every fundraiser confirms their identity before going live. Donors give 3× more to verified campaigns  -  and now they have a reason to trust you.' },
-                  { icon: '*', title:'Built for mobile money from day one', desc:'MTN MoMo, Vodafone Cash, and AirtelTigo are built into the platform from the ground up. No bank account needed. Donations land same day.' },
-                  { icon: '*', title:'Honest fees  -  no surprises', desc:'Just 2% + ₵0.25 per donation, automatically deducted. Zero platform fee. Zero monthly bills. Nothing hidden. Ever.' },
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-5">
-                    <div className="w-12 h-12 bg-[#f0fdf6] border border-[#02A95C]/15 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">{item.icon}</div>
-                    <div>
-                      <div className="font-nunito font-black text-[#1A2B3C] text-base mb-1">{item.title}</div>
-                      <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-4 mt-8">
-                <Link href="/create"
-                  className="px-8 py-4 bg-[#02A95C] hover:bg-[#028a4a] text-white font-nunito font-black rounded-full transition-all hover:-translate-y-0.5 shadow-lg shadow-[#02A95C]/25 text-sm">
-                  Start a campaign →
-                </Link>
-                <Link href="/about"
-                  className="px-7 py-4 border-2 border-gray-200 hover:border-[#02A95C] text-gray-600 hover:text-[#02A95C] font-bold rounded-full transition-all text-sm">
-                  Learn more
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════
-            TESTIMONIAL / SOCIAL PROOF
-            (GoFundMe "people like you" section)
-        ══════════════════════════════════════════ */}
-        <section className="py-20 bg-[#1A2B3C] overflow-hidden">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Real stories</p>
-              <h2 className="font-nunito font-black text-white text-4xl tracking-tight" style={{letterSpacing:-1}}>
-                Real people.
-                <span className="text-[#02A95C]">Real results.</span>
-              </h2>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-5">
-              {(cms(c, 'testimonials', 'items', null) as unknown as any[] || [
-                { name:'Ama Korantema', location:'Accra', amount:'₵18,500', category:'Medical', quote:'I raised ₵18,500 in three weeks. Strangers donated because they could see my identity was verified. EveryGiving gave them a reason to trust me.' },
-                { name:'Pastor Isaac Asare', location:'Kumasi', amount:'₵42,000', category:'Faith', quote:'Our church needed a new roof. I shared the campaign across five WhatsApp groups and in two months we had more than we needed. The Verified badge changed everything.' },
-                { name:'Adjoa Mensah', location:'Tema', amount:'₵9,200', category:'Education', quote:'My daughter got into university but we couldn\'t pay the fees. In two weeks, 67 people donated. She started school. I still cry when I think about it.' },
-              ]).map((t: any, i: number) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-[#02A95C]/20 border-2 border-[#02A95C] flex items-center justify-center">
-                      <span className="text-[#02A95C] font-black text-sm">{t.name?.charAt(0) || ''}</span>
-                    </div>
-                    <div>
-                      <div className="font-nunito font-black text-white text-sm">{t.name}</div>
-                      <div className="text-[#02A95C] text-xs font-semibold">{t.location} · Raised {t.amount}</div>
-                    </div>
-                  </div>
-                  <div className="text-white/60 text-xs bg-white/5 rounded-full px-3 py-1 inline-block mb-3">{t.category}</div>
-                  <p className="text-white/70 text-sm leading-relaxed italic">&quot;{t.quote}&quot;</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════
-            FEES EXPLAINER  -  transparent pricing
-        ══════════════════════════════════════════ */}
-        <section className="py-16 bg-white border-t border-gray-100">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <p className="text-[#02A95C] font-bold text-xs uppercase tracking-widest mb-3" style={{fontFamily:'DM Mono, monospace'}}>Transparent pricing</p>
-            <h2 className="font-nunito font-black text-[#1A2B3C] text-3xl tracking-tight mb-3" style={{letterSpacing:-1}}>Simple, honest fees</h2>
-            <p className="text-gray-500 text-base mb-10 max-w-lg mx-auto leading-relaxed">
-              One transaction fee per donation  -  automatically deducted so you never receive a bill. No platform fee. No monthly charges. Nothing hidden.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-4 mb-8">
+        {/* ── SOCIAL PROOF ─────────────────────────────────────────────── */}
+        <div className="bg-navy py-14">
+          <div className="max-w-6xl mx-auto px-5 text-center">
+            <h2 className="font-nunito font-black text-white text-2xl mb-2">
+              Ghanaians helping Ghanaians
+            </h2>
+            <p className="text-white/50 text-sm mb-10">Every cedi raised goes directly to a person or cause in Ghana.</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { icon: '*', title:'0% platform fee', desc:'We never charge a platform fee. Creating a campaign is always completely free.' },
-                { icon: '*', title:'2% + ₵0.25 per donation', desc:'The only cost. Deducted automatically from each donation before it reaches the fundraiser.' },
-                { icon: '*', title:'No payout fee', desc:'Withdrawing to your MoMo wallet is always free. Funds are released to your wallet as milestones are completed.' },
-              ].map((item, i) => (
-                <div key={i} className="bg-[#f8fafb] border border-gray-100 rounded-2xl p-6 text-left">
-                  <div className="text-3xl mb-3">{item.icon}</div>
-                  <div className="font-nunito font-black text-[#1A2B3C] text-base mb-2">{item.title}</div>
-                  <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
+                { value: totalRaised >= 1000 ? `₵${(totalRaised/1000).toFixed(0)}K+` : `₵${totalRaised.toLocaleString()}`, label: 'Raised across Ghana' },
+                { value: `${totalCampaigns ?? 0}+`, label: 'Active campaigns' },
+                { value: `${totalDonors}+`, label: 'People supported' },
+                { value: '24hrs', label: 'Avg. verification time' },
+              ].map((s, i) => (
+                <div key={i}>
+                  <div className="font-nunito font-black text-primary text-3xl mb-1">{s.value}</div>
+                  <div className="text-white/40 text-xs">{s.label}</div>
                 </div>
               ))}
             </div>
+          </div>
+        </div>
 
-            <Link href="/fees" className="text-[#02A95C] font-bold text-sm hover:underline">
-              Calculate exactly what you'll receive →
+        {/* ── DIASPORA SECTION ─────────────────────────────────────────── */}
+        <section className="py-16 bg-gray-50 border-y border-gray-100">
+          <div className="max-w-4xl mx-auto px-5 text-center">
+            <div className="text-3xl mb-4">🌍</div>
+            <h2 className="font-nunito font-black text-navy text-2xl mb-3">
+              In the UK, US, or Canada? You can still help.
+            </h2>
+            <p className="text-gray-500 text-base leading-relaxed max-w-xl mx-auto mb-7">
+              EveryGiving accepts international card payments so the Ghanaian diaspora can donate to campaigns back home. No MoMo account needed.
+            </p>
+            <Link href="/campaigns"
+              className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-8 py-3.5 rounded-full transition-all text-sm shadow hover:shadow-lg">
+              Browse campaigns to support
             </Link>
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════
-            FINAL CTA  -  full bleed, photo bg
-            (GoFundMe bottom CTA)
-        ══════════════════════════════════════════ */}
-        <section className="relative py-28 overflow-hidden">
-          <Image src={P.hero2} alt="" fill className="object-cover" sizes="100vw" />
-          <div className="absolute inset-0 bg-[#1A2B3C]/85" />
-          <div className="relative max-w-2xl mx-auto px-6 text-center">
-            <h2 className="font-nunito font-black text-white text-5xl tracking-tight mb-4" style={{letterSpacing:-2}}>
-              {cms(c, 'cta', 'headline', 'Create your campaign')}<br /><span className="text-[#02A95C]">today</span>
+        {/* ── FINAL CTA ────────────────────────────────────────────────── */}
+        <section className="bg-gradient-to-br from-primary-dark to-primary py-20 text-center">
+          <div className="max-w-xl mx-auto px-5">
+            <h2 className="font-nunito font-black text-white text-3xl mb-3 tracking-tight">
+              Ready to start raising money?
             </h2>
-            <p className="text-white/60 text-lg mb-8 leading-relaxed">
-              {cms(c, 'cta', 'subtext', 'Free to create. Verified by our team.\nFunds released as you hit your milestones.')}
+            <p className="text-white/75 mb-8 leading-relaxed text-sm">
+              Free to start. Verified in 24hrs. Instant MoMo payout.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex gap-3 justify-center flex-wrap">
               <Link href="/create"
-                className="px-10 py-4 bg-[#02A95C] hover:bg-[#028a4a] text-white font-nunito font-black rounded-full transition-all hover:-translate-y-0.5 shadow-2xl shadow-[#02A95C]/30 text-base">
-                Start a campaign  -  free →
+                className="px-8 py-3.5 bg-white text-primary font-black rounded-full hover:-translate-y-0.5 transition-all shadow hover:shadow-lg text-sm">
+                Start a fundraiser — free
               </Link>
-              <Link href="/donate"
-                className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-full transition-all text-base">
+              <Link href="/campaigns"
+                className="px-7 py-3.5 border-2 border-white/40 hover:border-white text-white font-bold rounded-full transition-all text-sm">
                 Donate to a campaign
               </Link>
             </div>
-            <p className="text-white/30 text-xs mt-6">No credit card · No platform fee · Identity verified</p>
+            <p className="text-white/50 text-xs mt-5">🔒 Ghana Card verified · Free to start · Instant MoMo payout</p>
           </div>
         </section>
 

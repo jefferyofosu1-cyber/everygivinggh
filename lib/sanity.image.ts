@@ -1,10 +1,11 @@
 import imageUrlBuilder from '@sanity/image-url'
-import type { Image } from 'sanity'
 import { sanityClient } from './sanity.client'
+
+type SanityImageSource = { asset?: { _ref?: string; _id?: string } } | string
 
 const builder = imageUrlBuilder(sanityClient)
 
-export function urlFor(source: Image) {
-  return builder.image(source)
+export function urlFor(source: SanityImageSource) {
+  return builder.image(source as any)
 }
 

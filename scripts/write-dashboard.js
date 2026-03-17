@@ -1,4 +1,7 @@
-'use client'
+const fs = require('fs');
+const path = require('path');
+
+const content = `'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -47,7 +50,7 @@ const MOCK_NOTIFS: Notif[] = [
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 function pct(r: number, g: number) { return Math.min(100, Math.round((r/g)*100)) }
-function fmt(n: number) { return n >= 1000 ? `₵${(n/1000).toFixed(n%1000===0?0:1)}k` : `₵${n.toLocaleString()}` }
+function fmt(n: number) { return n >= 1000 ? \`₵\${(n/1000).toFixed(n%1000===0?0:1)}k\` : \`₵\${n.toLocaleString()}\` }
 
 const STATUS_CFG: Record<string, {label:string;color:string;bg:string}> = {
   draft:               { label:'Draft',        color:'#8A8A82', bg:'#F2F3F4' },
@@ -101,7 +104,7 @@ function CampaignCard({ campaign, onAction }: { campaign: Campaign; onAction: (c
           <span style={{ fontSize:11, color:'#8A8A82' }}>of {fmt(campaign.goalGHS)} · {p}%</span>
         </div>
         <div style={{ height:4, background:'#E8E4DC', borderRadius:2, overflow:'hidden', marginBottom:6 }}>
-          <div style={{ height:'100%', width:`${p}%`, borderRadius:2, background:campaign.status==='funded'?'#185FA5':'#0A6B4B', transition:'width .6s ease' }} />
+          <div style={{ height:'100%', width:\`\${p}%\`, borderRadius:2, background:campaign.status==='funded'?'#185FA5':'#0A6B4B', transition:'width .6s ease' }} />
         </div>
         <div style={{ display:'flex', gap:12, fontSize:11, color:'#8A8A82', marginBottom:10 }}>
           <span>{campaign.donorCount} donors</span>
@@ -120,7 +123,7 @@ function CampaignCard({ campaign, onAction }: { campaign: Campaign; onAction: (c
           </button>
         )}
         <div style={{ display:'flex', gap:4, flexWrap:'wrap' as const }}>
-          {[['View',`/campaigns/${campaign.slug}`],['Update',`/dashboard/campaigns/${campaign.id}/update`],['Edit',`/dashboard/campaigns/${campaign.id}/edit`]].map(([l,h]) => (
+          {[['View',\`/campaigns/\${campaign.slug}\`],['Update',\`/dashboard/campaigns/\${campaign.id}/update\`],['Edit',\`/dashboard/campaigns/\${campaign.id}/edit\`]].map(([l,h]) => (
             <Link key={l} href={h} style={{ fontSize:11, fontWeight:500, color:'#4A4A44', background:'#F5F4F0', padding:'4px 8px', borderRadius:5 }}>{l}</Link>
           ))}
         </div>
@@ -173,10 +176,10 @@ export default function DashboardPage() {
   const markAllRead = () => setNotifs(prev => prev.map(n => ({...n,read:true})))
 
   const handleAction = (campaign: Campaign, action: string) => {
-    if (action==='post_update') router.push(`/dashboard/campaigns/${campaign.id}/update`)
+    if (action==='post_update') router.push(\`/dashboard/campaigns/\${campaign.id}/update\`)
     if (action==='submit_proof') {
       const ms = campaign.milestones.find(m=>m.status==='collecting')
-      if (ms) router.push(`/dashboard/campaigns/${campaign.id}/milestones/${ms.id}`)
+      if (ms) router.push(\`/dashboard/campaigns/\${campaign.id}/milestones/\${ms.id}\`)
     }
   }
 
@@ -184,7 +187,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}
@@ -195,7 +198,7 @@ export default function DashboardPage() {
         .quick-link:hover{background:#E8F5EF !important;color:#0A6B4B !important}
         .notif-row:hover{background:#F5F4F0}
         .new-cam-card:hover{border-color:#B7DEC9 !important;background:#FDFAF5 !important}
-      `}</style>
+      \`}</style>
 
       {/* NAV */}
       <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 28px', height:56, background:'#fff', borderBottom:'1px solid #E8E4DC', position:'sticky' as const, top:0, zIndex:100 }}>
@@ -292,7 +295,7 @@ export default function DashboardPage() {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:28 }}>
             {([
               ['Total raised', fmt(totalRaised), 'across all campaigns', '#0A6B4B'],
-              ['Active campaigns', String(activeCampaigns), `${campaigns.length} total`, '#1A1A18'],
+              ['Active campaigns', String(activeCampaigns), \`\${campaigns.length} total\`, '#1A1A18'],
               ['Total donors', String(totalDonors), 'across all campaigns', '#1A1A18'],
               ['Pending payouts', String(pendingPayouts), 'awaiting review', pendingPayouts>0?'#185FA5':'#1A1A18'],
             ] as [string,string,string,string][]).map(([label,value,sub,color]) => (
@@ -416,3 +419,8 @@ export default function DashboardPage() {
     </>
   )
 }
+`;
+
+const out = require('path').join(__dirname, '..', 'app', 'dashboard', 'page.tsx');
+require('fs').writeFileSync(out, content, 'utf8');
+console.log('Written', require('fs').statSync(out).size, 'bytes');

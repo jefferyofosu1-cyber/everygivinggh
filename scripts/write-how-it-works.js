@@ -1,4 +1,7 @@
-'use client'
+const fs = require('fs');
+const path = require('path');
+
+const content = `'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -61,7 +64,7 @@ export default function HowItWorksPage() {
 
   return (
     <>
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
@@ -70,7 +73,7 @@ export default function HowItWorksPage() {
         .fade-in{animation:fadeup .35s ease both}
         .step-card{transition:border-color .15s,background .15s}
         .step-card:hover{background:#F5F2EC !important}
-      `}</style>
+      \`}</style>
 
       {/* NAV */}
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 60, background: '#fff', borderBottom: '1px solid #E8E4DC', position: 'sticky', top: 0, zIndex: 200 }}>
@@ -132,7 +135,7 @@ export default function HowItWorksPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {CAMPAIGNER_STEPS.map((step, i) => (
                   <div key={i} className="step-card" onClick={() => setActiveStep(i)}
-                    style={{ background: '#fff', border: `1.5px solid ${activeStep === i ? '#0A6B4B' : '#E8E4DC'}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer' }}>
+                    style={{ background: '#fff', border: \`1.5px solid \${activeStep === i ? '#0A6B4B' : '#E8E4DC'}\`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div style={{ width: 36, height: 36, borderRadius: 8, background: step.color, color: step.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Serif Display',serif", fontSize: 14, fontWeight: 600, flexShrink: 0 }}>{step.num}</div>
                       <div style={{ flex: 1 }}>
@@ -329,3 +332,8 @@ export default function HowItWorksPage() {
     </>
   )
 }
+`;
+
+const outPath = path.join(__dirname, '..', 'app', 'how-it-works', 'page.tsx');
+fs.writeFileSync(outPath, content, 'utf8');
+console.log('Written', fs.statSync(outPath).size, 'bytes to', outPath);

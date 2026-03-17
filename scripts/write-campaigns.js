@@ -1,53 +1,25 @@
-'use client'
+const fs = require('fs');
+const path = require('path');
+
+const content = `'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
 
-// ─── CATEGORY VISUALS ────────────────────────────────────────────────────────
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+// TODO: Replace with Supabase query: SELECT * FROM campaigns WHERE status='active'
 
-const CATEGORY_EMOJIS: Record<string, string> = {
-  medical: '🏥', education: '📚', emergency: '🚨',
-  faith: '⛪', community: '💧', funeral: '🕊️',
-  family: '🏠', business: '💼', environment: '🌿', other: '💛',
-}
-
-const CATEGORY_GRADIENTS: Record<string, string> = {
-  medical:     'linear-gradient(135deg,#1B4332,#52B788)',
-  education:   'linear-gradient(135deg,#5C3317,#A0522D)',
-  emergency:   'linear-gradient(135deg,#922B21,#C0392B)',
-  faith:       'linear-gradient(135deg,#2C3E50,#4A6FA5)',
-  community:   'linear-gradient(135deg,#014F86,#2196F3)',
-  funeral:     'linear-gradient(135deg,#2D2D2D,#6D6D6D)',
-  family:      'linear-gradient(135deg,#7B3F00,#C68642)',
-  business:    'linear-gradient(135deg,#3D0C02,#9B2335)',
-  environment: 'linear-gradient(135deg,#0D3B00,#2D6A0D)',
-  other:       'linear-gradient(135deg,#3A3A3A,#707070)',
-}
-
-function mapDbCampaign(c: any): Campaign {
-  const cat = (c.category || 'other').toLowerCase()
-  const daysLeft = c.deadline
-    ? Math.max(0, Math.ceil((new Date(c.deadline).getTime() - Date.now()) / 86_400_000))
-    : 999
-  return {
-    id: c.id,
-    slug: c.id,
-    category: cat,
-    title: c.title || '',
-    organiser: c.profiles?.full_name || 'Anonymous',
-    location: c.location || '',
-    goalGHS: c.goal_amount || 1,
-    raisedGHS: c.raised_amount || 0,
-    donorCount: 0,
-    daysLeft,
-    verified: c.verified ?? true,
-    emoji: CATEGORY_EMOJIS[cat] || '💛',
-    gradient: CATEGORY_GRADIENTS[cat] || CATEGORY_GRADIENTS.other,
-    excerpt: c.story || '',
-    createdAt: c.created_at,
-  }
-}
+const MOCK_CAMPAIGNS = [
+  { id: '1', slug: 'ama-kidney-surgery', title: 'Help Ama get life-saving kidney surgery at Korle Bu', category: 'medical', organiser: 'Kwame Mensah', location: 'Accra', goalGHS: 20000, raisedGHS: 14400, donorCount: 143, daysLeft: 12, verified: true, emoji: '🫀', gradient: 'linear-gradient(135deg,#1B4332,#52B788)', excerpt: 'My mother Ama has woken up at 4am every day for thirty years to sell at Makola Market. She needs surgery within 90 days.' },
+  { id: '2', slug: 'bethel-church-roof', title: 'New roof for Bethel Assembly — Kumasi Central', category: 'faith', organiser: 'Pastor Isaac Asare', location: 'Kumasi', goalGHS: 42000, raisedGHS: 42000, donorCount: 312, daysLeft: 0, verified: true, emoji: '⛪', gradient: 'linear-gradient(135deg,#2C3E50,#4A6FA5)', excerpt: 'Our congregation of 400 families has worshipped under a leaking roof for three years.' },
+  { id: '3', slug: 'adjoa-university-fees', title: 'Help Adjoa pay her first-year fees at KNUST', category: 'education', organiser: 'Adjoa Mensah', location: 'Tema', goalGHS: 10500, raisedGHS: 9200, donorCount: 67, daysLeft: 5, verified: true, emoji: '📚', gradient: 'linear-gradient(135deg,#5C3317,#A0522D)', excerpt: "My daughter worked for two years to earn her place at KNUST. We cannot let fees be the reason she doesn't go." },
+  { id: '4', slug: 'accra-community-borehole', title: 'Clean water borehole for Abokobi community', category: 'community', organiser: 'Emmanuel Tetteh', location: 'Abokobi', goalGHS: 35000, raisedGHS: 18200, donorCount: 204, daysLeft: 28, verified: true, emoji: '💧', gradient: 'linear-gradient(135deg,#1A5276,#2E86C1)', excerpt: 'Over 600 families in Abokobi walk 4km daily for water. A single borehole changes everything.' },
+  { id: '5', slug: 'kofi-accident-recovery', title: 'Help Kofi recover from road accident — physiotherapy needed', category: 'emergency', organiser: 'Abena Boateng', location: 'Accra', goalGHS: 8000, raisedGHS: 3100, donorCount: 28, daysLeft: 21, verified: true, emoji: '🏥', gradient: 'linear-gradient(135deg,#922B21,#C0392B)', excerpt: 'Kofi was hit by a vehicle in January. He survived but cannot walk. Six months of physiotherapy will get him back on his feet.' },
+  { id: '6', slug: 'yaa-funeral-support', title: "Support for Yaa's family — funeral and bereavement costs", category: 'funeral', organiser: 'Yaw Darko', location: 'Cape Coast', goalGHS: 6000, raisedGHS: 5400, donorCount: 89, daysLeft: 3, verified: true, emoji: '🕊️', gradient: 'linear-gradient(135deg,#4A235A,#7D3C98)', excerpt: 'Our mother Yaa passed suddenly last week. She served this community for 40 years.' },
+  { id: '7', slug: 'kwame-medical-trip', title: 'Send Kwame to India for specialist heart surgery', category: 'medical', organiser: 'Gifty Asante', location: 'Kumasi', goalGHS: 55000, raisedGHS: 22000, donorCount: 189, daysLeft: 45, verified: true, emoji: '❤️', gradient: 'linear-gradient(135deg,#0B3D2E,#1A6B4A)', excerpt: 'Kwame is 34 and a father of three. The surgery he needs is not available in Ghana.' },
+  { id: '8', slug: 'esi-school-supplies', title: 'School supplies for 120 children in Volta Region', category: 'education', organiser: 'Esi Nyarko', location: 'Ho', goalGHS: 4500, raisedGHS: 4500, donorCount: 54, daysLeft: 0, verified: true, emoji: '✏️', gradient: 'linear-gradient(135deg,#784212,#CA6F1E)', excerpt: 'These children travel 2 hours each way to school. The least we can do is make sure they have what they need.' },
+  { id: '9', slug: 'north-ghana-solar', title: 'Solar panels for three-classroom school in Tamale', category: 'community', organiser: 'Ibrahim Mahama', location: 'Tamale', goalGHS: 18000, raisedGHS: 7600, donorCount: 71, daysLeft: 60, verified: true, emoji: '☀️', gradient: 'linear-gradient(135deg,#7D6608,#B7950B)', excerpt: 'When the power goes out — which is often — 240 students sit in the dark. Solar panels mean learning never stops.' },
+]
 
 const CATEGORIES = [
   { id: 'all', label: 'All campaigns', emoji: '✦' },
@@ -71,7 +43,7 @@ const PER_PAGE = 6
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 function pct(raised: number, goal: number) { return Math.min(100, Math.round((raised / goal) * 100)) }
-function fmt(n: number) { return n >= 1000 ? `₵${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : `₵${n.toLocaleString()}` }
+function fmt(n: number) { return n >= 1000 ? \`₵\${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k\` : \`₵\${n.toLocaleString()}\` }
 function useDebounce(value: string, delay = 300) {
   const [d, setD] = useState(value)
   useEffect(() => { const t = setTimeout(() => setD(value), delay); return () => clearTimeout(t) }, [value, delay])
@@ -86,7 +58,7 @@ function SkeletonCard() {
       <div style={{ height: 160, background: '#E8E4DC', animation: 'shimmer 1.4s ease infinite' }} />
       <div style={{ padding: 16 }}>
         {[60, '90%', '70%', '50%', '100%'].map((w, i) => (
-          <div key={i} style={{ width: w, height: i === 3 ? 4 : 12, background: '#E8E4DC', borderRadius: 4, marginBottom: 10, animation: `shimmer 1.4s ease ${i * 0.1}s infinite` }} />
+          <div key={i} style={{ width: w, height: i === 3 ? 4 : 12, background: '#E8E4DC', borderRadius: 4, marginBottom: 10, animation: \`shimmer 1.4s ease \${i * 0.1}s infinite\` }} />
         ))}
       </div>
     </div>
@@ -99,7 +71,6 @@ interface Campaign {
   id: string; slug: string; title: string; category: string; organiser: string;
   location: string; goalGHS: number; raisedGHS: number; donorCount: number;
   daysLeft: number; verified: boolean; emoji: string; gradient: string; excerpt: string;
-  createdAt?: string;
 }
 
 function CampaignCard({ campaign, index }: { campaign: Campaign; index: number }) {
@@ -110,7 +81,7 @@ function CampaignCard({ campaign, index }: { campaign: Campaign; index: number }
 
   return (
     <div
-      style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 16, overflow: 'hidden', transition: 'all .2s', transform: hovered ? 'translateY(-4px)' : 'none', boxShadow: hovered ? '0 16px 40px rgba(0,0,0,.1)' : '0 1px 3px rgba(0,0,0,.04)', animation: `fadeup .4s ease ${index * 60}ms both` }}
+      style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 16, overflow: 'hidden', transition: 'all .2s', transform: hovered ? 'translateY(-4px)' : 'none', boxShadow: hovered ? '0 16px 40px rgba(0,0,0,.1)' : '0 1px 3px rgba(0,0,0,.04)', animation: \`fadeup .4s ease \${index * 60}ms both\` }}
       onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
     >
       <div style={{ height: 160, background: campaign.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', fontSize: 36 }}>
@@ -128,16 +99,16 @@ function CampaignCard({ campaign, index }: { campaign: Campaign; index: number }
           {campaign.organiser} · {campaign.location}
         </div>
         <div style={{ height: 4, background: '#E8E4DC', borderRadius: 2, overflow: 'hidden', marginBottom: 8 }}>
-          <div style={{ height: '100%', width: `${p}%`, background: funded ? '#B85C00' : '#0A6B4B', borderRadius: 2, transition: 'width .6s ease' }} />
+          <div style={{ height: '100%', width: \`\${p}%\`, background: funded ? '#B85C00' : '#0A6B4B', borderRadius: 2, transition: 'width .6s ease' }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A18' }}>{fmt(campaign.raisedGHS)} raised</span>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <span style={{ fontSize: 11, color: '#8A8A82' }}>{campaign.donorCount} donors</span>
-            <span style={{ fontSize: 11, fontWeight: 600, color: funded ? '#B85C00' : '#0A6B4B' }}>{funded ? 'Funded' : `${p}%`}</span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: funded ? '#B85C00' : '#0A6B4B' }}>{funded ? 'Funded' : \`\${p}%\`}</span>
           </div>
         </div>
-        <Link href={`/campaigns/${campaign.slug}`} style={{ display: 'block', width: '100%', padding: '10px 0', background: hovered ? '#085C3F' : '#0A6B4B', color: '#fff', textAlign: 'center', borderRadius: 8, fontSize: 13, fontWeight: 600, transition: 'background .15s' }}>
+        <Link href={\`/campaigns/\${campaign.slug}\`} style={{ display: 'block', width: '100%', padding: '10px 0', background: hovered ? '#085C3F' : '#0A6B4B', color: '#fff', textAlign: 'center', borderRadius: 8, fontSize: 13, fontWeight: 600, transition: 'background .15s' }}>
           {funded ? 'View campaign' : 'Donate now'}
         </Link>
       </div>
@@ -152,7 +123,7 @@ function EmptyState({ query, category, onClear }: { query: string; category: str
     <div style={{ textAlign: 'center', padding: '64px 32px', background: '#fff', border: '1.5px dashed #E8E4DC', borderRadius: 16 }}>
       <div style={{ fontSize: 40, marginBottom: 14 }}>🔍</div>
       <h3 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 22, color: '#1A1A18', marginBottom: 8 }}>
-        {query ? `No campaigns found for "${query}"` : `No ${category} campaigns yet`}
+        {query ? \`No campaigns found for "\${query}"\` : \`No \${category} campaigns yet\`}
       </h3>
       <p style={{ fontSize: 14, color: '#8A8A82', marginBottom: 20, lineHeight: 1.6 }}>
         {query ? 'Try a different search term or browse all categories.' : 'Be the first to start a campaign in this category.'}
@@ -172,31 +143,18 @@ export default function CampaignsPage() {
   const [category, setCategory] = useState('all')
   const [sort, setSort] = useState('newest')
   const [page, setPage] = useState(1)
-  const [loading, setLoading] = useState(true)
-  const [campaigns, setCampaigns] = useState<Campaign[]>([])
+  const [loading, setLoading] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
   const debouncedQuery = useDebounce(query)
 
-  // Fetch all approved campaigns once on mount
   useEffect(() => {
-    const supabase = createClient()
-    supabase
-      .from('campaigns')
-      .select('id, title, category, story, goal_amount, raised_amount, image_url, status, deadline, location, created_at, verified, profiles(full_name)')
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setCampaigns((data || []).map(mapDbCampaign))
-        setLoading(false)
-      })
-  }, [])
-
-  // Reset to page 1 whenever filters change
-  useEffect(() => {
+    setLoading(true)
     setPage(1)
+    const t = setTimeout(() => setLoading(false), 450)
+    return () => clearTimeout(t)
   }, [debouncedQuery, category, sort])
 
-  const filtered = campaigns.filter(c => {
+  const filtered = MOCK_CAMPAIGNS.filter(c => {
     const matchCat = category === 'all' || c.category === category
     const q = debouncedQuery.toLowerCase()
     const matchQ = !q || c.title.toLowerCase().includes(q) || c.organiser.toLowerCase().includes(q) || c.location.toLowerCase().includes(q) || c.excerpt.toLowerCase().includes(q)
@@ -205,7 +163,7 @@ export default function CampaignsPage() {
     if (sort === 'ending_soon') return (a.daysLeft || 999) - (b.daysLeft || 999)
     if (sort === 'most_funded') return pct(b.raisedGHS, b.goalGHS) - pct(a.raisedGHS, a.goalGHS)
     if (sort === 'most_donors') return b.donorCount - a.donorCount
-    return (b.createdAt || '') > (a.createdAt || '') ? 1 : -1
+    return parseInt(b.id) - parseInt(a.id)
   })
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE)
@@ -214,7 +172,7 @@ export default function CampaignsPage() {
 
   return (
     <>
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
@@ -229,7 +187,7 @@ export default function CampaignsPage() {
         .page-btn.active{background:#0A6B4B !important;color:#fff !important;border-color:#0A6B4B !important}
         .page-btn:disabled{opacity:.35;cursor:not-allowed}
         input:focus{outline:none}
-      `}</style>
+      \`}</style>
 
       {/* NAV */}
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 60, background: '#fff', borderBottom: '1px solid #E8E4DC', position: 'sticky', top: 0, zIndex: 200 }}>
@@ -266,7 +224,7 @@ export default function CampaignsPage() {
               {query && <button style={{ background: 'none', border: 'none', fontSize: 18, color: '#8A8A82', cursor: 'pointer' }} onClick={() => setQuery('')}>×</button>}
             </div>
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,.4)', paddingLeft: 4 }}>
-              {filtered.length} verified campaign{filtered.length !== 1 ? 's' : ''}{debouncedQuery ? ` matching "${debouncedQuery}"` : ''}
+              {filtered.length} verified campaign{filtered.length !== 1 ? 's' : ''}{debouncedQuery ? \` matching "\${debouncedQuery}"\` : ''}
             </div>
           </div>
         </div>
@@ -279,18 +237,18 @@ export default function CampaignsPage() {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', flex: 1 }}>
             {CATEGORIES.map(cat => (
-              <button key={cat.id} className={`cat-tab${category === cat.id ? ' active' : ''}`}
+              <button key={cat.id} className={\`cat-tab\${category === cat.id ? ' active' : ''}\`}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 500, padding: '7px 14px', border: '0.5px solid #E8E4DC', borderRadius: 20, background: '#fff', color: '#4A4A44', cursor: 'pointer', transition: 'all .15s', fontFamily: 'inherit', whiteSpace: 'nowrap' as const }}
                 onClick={() => setCategory(cat.id)}>
                 <span style={{ fontSize: 14 }}>{cat.emoji}</span>{cat.label}
-                {cat.id !== 'all' && <span style={{ fontSize: 10, fontWeight: 600, opacity: .6, background: 'rgba(0,0,0,.06)', padding: '1px 6px', borderRadius: 10 }}>{campaigns.filter(c => c.category === cat.id).length}</span>}
+                {cat.id !== 'all' && <span style={{ fontSize: 10, fontWeight: 600, opacity: .6, background: 'rgba(0,0,0,.06)', padding: '1px 6px', borderRadius: 10 }}>{MOCK_CAMPAIGNS.filter(c => c.category === cat.id).length}</span>}
               </button>
             ))}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             <span style={{ fontSize: 12, color: '#8A8A82', marginRight: 2 }}>Sort:</span>
             {SORT_OPTIONS.map(opt => (
-              <button key={opt.id} className={`sort-opt${sort === opt.id ? ' active' : ''}`}
+              <button key={opt.id} className={\`sort-opt\${sort === opt.id ? ' active' : ''}\`}
                 style={{ fontSize: 12, fontWeight: 500, padding: '6px 12px', borderRadius: 20, border: '0.5px solid #E8E4DC', background: '#fff', color: '#4A4A44', cursor: 'pointer', transition: 'all .15s', fontFamily: 'inherit', whiteSpace: 'nowrap' as const }}
                 onClick={() => setSort(opt.id)}>{opt.label}</button>
             ))}
@@ -315,7 +273,7 @@ export default function CampaignsPage() {
                 <button className="page-btn" style={{ fontSize: 13, fontWeight: 500, padding: '8px 14px', border: '0.5px solid #E8E4DC', borderRadius: 8, background: '#fff', color: '#4A4A44', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .15s' }}
                   disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Previous</button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                  <button key={p} className={`page-btn${page === p ? ' active' : ''}`}
+                  <button key={p} className={\`page-btn\${page === p ? ' active' : ''}\`}
                     style={{ fontSize: 13, fontWeight: 500, padding: '8px 14px', border: '0.5px solid #E8E4DC', borderRadius: 8, background: '#fff', color: '#4A4A44', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .15s' }}
                     onClick={() => setPage(p)}>{p}</button>
                 ))}
@@ -349,3 +307,8 @@ export default function CampaignsPage() {
     </>
   )
 }
+`;
+
+const out = path.join(__dirname, '..', 'app', 'campaigns', 'page.tsx');
+fs.writeFileSync(out, content, 'utf8');
+console.log('Written', fs.statSync(out).size, 'bytes');

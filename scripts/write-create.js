@@ -1,4 +1,7 @@
-'use client'
+const fs = require('fs');
+const path = require('path');
+
+const content = `'use client'
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
@@ -47,8 +50,6 @@ interface FormState {
   momoName: string
   agreedToTerms: boolean
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type SetFn = (k: keyof FormState, v: any) => void
 
 const emptyMilestone = (): Milestone => ({ id: Date.now(), name: '', amount: '' })
 
@@ -119,7 +120,7 @@ export default function CreateCampaignPage() {
 
   return (
     <>
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
@@ -130,7 +131,7 @@ export default function CreateCampaignPage() {
         .opt-card:hover{border-color:#B7DEC9!important}
         .cat-card:hover{border-color:#B7DEC9!important;transform:translateY(-2px)}
         .drop-zone:hover{border-color:#0A6B4B!important;background:#F3FAF7}
-      `}</style>
+      \`}</style>
 
       {/* NAV */}
       <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:56, background:'#fff', borderBottom:'1px solid #E8E4DC', position:'sticky', top:0, zIndex:100 }}>
@@ -141,7 +142,7 @@ export default function CreateCampaignPage() {
 
       {/* PROGRESS BAR */}
       <div style={{ height:3, background:'#E8E4DC', position:'sticky', top:56, zIndex:99 }}>
-        <div style={{ height:'100%', background:'#0A6B4B', transition:'width .4s ease', width:`${(step/STEPS.length)*100}%` }} />
+        <div style={{ height:'100%', background:'#0A6B4B', transition:'width .4s ease', width:\`\${(step/STEPS.length)*100}%\` }} />
       </div>
 
       {/* STEP LABELS */}
@@ -188,7 +189,7 @@ export default function CreateCampaignPage() {
 
 // ─── STEP 1 ──────────────────────────────────────────────────────────────────
 
-function Step1({ form, set }: { form: FormState; set: SetFn }) {
+function Step1({ form, set }: { form: FormState; set: (k: keyof FormState, v: FormState[keyof FormState]) => void }) {
   const options = [
     { id:'myself',       label:'Myself',        desc:"I am the person who needs help",                      emoji:'🙋' },
     { id:'someone',      label:'Someone else',  desc:"I'm raising on behalf of another person",            emoji:'🤝' },
@@ -201,7 +202,7 @@ function Step1({ form, set }: { form: FormState; set: SetFn }) {
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:20 }}>
         {options.map(o => (
           <div key={o.id} className="opt-card"
-            style={{ border:`1.5px solid ${form.raisingFor===o.id?'#0A6B4B':'#E8E4DC'}`, background:form.raisingFor===o.id?'#E8F5EF':'#fff', borderRadius:12, cursor:'pointer', padding:'16px 12px', textAlign:'center' as const, transition:'all .15s', position:'relative' as const }}
+            style={{ border:\`1.5px solid \${form.raisingFor===o.id?'#0A6B4B':'#E8E4DC'}\`, background:form.raisingFor===o.id?'#E8F5EF':'#fff', borderRadius:12, cursor:'pointer', padding:'16px 12px', textAlign:'center' as const, transition:'all .15s', position:'relative' as const }}
             onClick={()=>set('raisingFor', o.id)}>
             {form.raisingFor===o.id && <div style={{ position:'absolute', top:7, right:7, width:20, height:20, borderRadius:'50%', background:'#0A6B4B', color:'#fff', fontSize:11, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center' }}>✓</div>}
             <div style={{ fontSize:28, marginBottom:8 }}>{o.emoji}</div>
@@ -226,7 +227,7 @@ function Step1({ form, set }: { form: FormState; set: SetFn }) {
 
 // ─── STEP 2 ──────────────────────────────────────────────────────────────────
 
-function Step2({ form, set }: { form: FormState; set: SetFn }) {
+function Step2({ form, set }: { form: FormState; set: (k: keyof FormState, v: FormState[keyof FormState]) => void }) {
   return (
     <div>
       <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>What category best fits your campaign?</h2>
@@ -234,7 +235,7 @@ function Step2({ form, set }: { form: FormState; set: SetFn }) {
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10 }}>
         {CATEGORIES.map(c => (
           <div key={c.id+c.label} className="cat-card"
-            style={{ border:`1.5px solid ${form.category===c.id && form.catLabel===c.label?'#0A6B4B':'#E8E4DC'}`, borderRadius:10, cursor:'pointer', overflow:'hidden', position:'relative', transition:'all .15s', background:'#fff' }}
+            style={{ border:\`1.5px solid \${form.category===c.id && form.catLabel===c.label?'#0A6B4B':'#E8E4DC'}\`, borderRadius:10, cursor:'pointer', overflow:'hidden', position:'relative', transition:'all .15s', background:'#fff' }}
             onClick={()=>{set('category',c.id);set('catLabel',c.label)}}>
             {form.category===c.id && form.catLabel===c.label && <div style={{ position:'absolute', top:7, right:7, width:20, height:20, borderRadius:'50%', background:'#0A6B4B', color:'#fff', fontSize:11, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center' }}>✓</div>}
             <div style={{ height:64, background:'#F5F2EB', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>{c.emoji}</div>
@@ -248,7 +249,7 @@ function Step2({ form, set }: { form: FormState; set: SetFn }) {
 
 // ─── STEP 3 ──────────────────────────────────────────────────────────────────
 
-function Step3({ form, set }: { form: FormState; set: SetFn }) {
+function Step3({ form, set }: { form: FormState; set: (k: keyof FormState, v: FormState[keyof FormState]) => void }) {
   return (
     <div>
       <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Tell your story</h2>
@@ -263,7 +264,7 @@ function Step3({ form, set }: { form: FormState; set: SetFn }) {
       <div>
         <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>Your story</label>
         <textarea style={{ width:'100%', padding:'10px 13px', border:'1.5px solid #E8E4DC', borderRadius:9, fontSize:14, color:'#1A1A18', background:'#fff', minHeight:180, resize:'vertical', display:'block' }}
-          placeholder={"Start with the person's name and one specific detail.\n\n\"My mother Ama is 54 years old. She has woken up at 4am every day for thirty years to sell at Makola Market so her children could go to school...\""}
+          placeholder={"Start with the person's name and one specific detail.\\n\\n\"My mother Ama is 54 years old. She has woken up at 4am every day for thirty years to sell at Makola Market so her children could go to school…\""}
           value={form.story} onChange={e=>set('story', e.target.value)} maxLength={5000} />
         <div style={{ fontSize:10, color:'#8A8A82', marginTop:4, textAlign:'right' as const }}>{form.story.length}/5000 · minimum 50 characters</div>
       </div>
@@ -303,7 +304,7 @@ function Step4({ form, onPhoto }: { form: FormState; onPhoto: (f: File | null) =
 
 function Step5({ form, set, addMilestone, updateMilestone, removeMilestone }: {
   form: FormState
-  set: SetFn
+  set: (k: keyof FormState, v: FormState[keyof FormState]) => void
   addMilestone: () => void
   updateMilestone: (id: number, k: keyof Milestone, v: string) => void
   removeMilestone: (id: number) => void
@@ -330,7 +331,7 @@ function Step5({ form, set, addMilestone, updateMilestone, removeMilestone }: {
           <div key={m.id} style={{ display:'flex', gap:8, alignItems:'center', marginBottom:8 }}>
             <div style={{ width:24, height:24, borderRadius:'50%', background:'#0A6B4B', color:'#fff', fontSize:11, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{i+1}</div>
             <input style={{ flex:2, padding:'10px 13px', border:'1.5px solid #E8E4DC', borderRadius:9, fontSize:14, color:'#1A1A18', background:'#fff' }}
-              placeholder={`e.g. ${['Pay hospital deposit','Fund surgery','Post-op care'][i]||'Milestone name'}`}
+              placeholder={\`e.g. \${['Pay hospital deposit','Fund surgery','Post-op care'][i]||'Milestone name'}\`}
               value={m.name} onChange={e=>updateMilestone(m.id,'name',e.target.value)} />
             <div style={{ display:'flex', alignItems:'center', border:'1.5px solid #E8E4DC', borderRadius:9, background:'#fff', flex:1 }}>
               <span style={{ fontSize:14, fontWeight:600, color:'#8A8A82', padding:'10px 10px', borderRight:'1px solid #E8E4DC', flexShrink:0 }}>₵</span>
@@ -347,7 +348,7 @@ function Step5({ form, set, addMilestone, updateMilestone, removeMilestone }: {
         )}
         {msTotal>0 && goalNum>0 && (
           <div style={{ fontSize:11, color:matched?'#0A6B4B':'#B85C00', marginTop:8, lineHeight:1.5 }}>
-            Milestone total: ₵{msTotal.toLocaleString()} {matched?'✓ matches goal':`(goal is ₵${goalNum.toLocaleString()})`}
+            Milestone total: ₵{msTotal.toLocaleString()} {matched?'✓ matches goal':\`(goal is ₵\${goalNum.toLocaleString()})\`}
           </div>
         )}
       </div>
@@ -357,7 +358,7 @@ function Step5({ form, set, addMilestone, updateMilestone, removeMilestone }: {
 
 // ─── STEP 6 ──────────────────────────────────────────────────────────────────
 
-function Step6({ form, set }: { form: FormState; set: SetFn }) {
+function Step6({ form, set }: { form: FormState; set: (k: keyof FormState, v: FormState[keyof FormState]) => void }) {
   return (
     <div>
       <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Where should we send the funds?</h2>
@@ -367,7 +368,7 @@ function Step6({ form, set }: { form: FormState; set: SetFn }) {
         <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
           {NETWORKS.map(n => (
             <button key={n.id}
-              style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 13px', border:`1.5px solid ${form.network===n.id?'#0A6B4B':'#E8E4DC'}`, borderRadius:9, background:'#fff', cursor:'pointer', width:'100%', boxShadow:form.network===n.id?'0 0 0 2px rgba(10,107,75,.12)':'none', transition:'all .15s' }}
+              style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 13px', border:\`1.5px solid \${form.network===n.id?'#0A6B4B':'#E8E4DC'}\`, borderRadius:9, background:'#fff', cursor:'pointer', width:'100%', boxShadow:form.network===n.id?'0 0 0 2px rgba(10,107,75,.12)':'none', transition:'all .15s' }}
               onClick={()=>set('network',n.id)}>
               <div style={{ width:14, height:14, borderRadius:'50%', background:n.color, flexShrink:0 }} />
               <span style={{ flex:1, fontSize:14, fontWeight:500, textAlign:'left' as const }}>{n.label}</span>
@@ -396,12 +397,12 @@ function Step6({ form, set }: { form: FormState; set: SetFn }) {
 
 // ─── STEP 7 ──────────────────────────────────────────────────────────────────
 
-function Step7({ form, set, submitting, onSubmit }: { form: FormState; set: SetFn; submitting: boolean; onSubmit: () => void }) {
+function Step7({ form, set, submitting, onSubmit }: { form: FormState; set: (k: keyof FormState, v: FormState[keyof FormState]) => void; submitting: boolean; onSubmit: () => void }) {
   const net = NETWORKS.find(n=>n.id===form.network)
   const rows: [string, string][] = [
-    ['Goal', `₵${parseFloat(form.goalAmount||'0').toLocaleString()}`],
-    ['Milestones', `${form.milestones.length} milestone${form.milestones.length>1?'s':''}`],
-    ['Payout', `${net?.label??''} · ${form.momoNumber}`],
+    ['Goal', \`₵\${parseFloat(form.goalAmount||'0').toLocaleString()}\`],
+    ['Milestones', \`\${form.milestones.length} milestone\${form.milestones.length>1?'s':''}\`],
+    ['Payout', \`\${net?.label??''} · \${form.momoNumber}\`],
     ['Raising for', form.raisingFor==='myself'?'Myself':form.beneficiaryName],
   ]
   return (
@@ -480,7 +481,7 @@ function StepTip({ step }: { step: number }) {
 function SuccessScreen({ form }: { form: FormState }) {
   return (
     <div style={{ minHeight:'100vh', background:'#FDFAF5', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'DM Sans',sans-serif" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap'); *{box-sizing:border-box;margin:0;padding:0} a{text-decoration:none;color:inherit}`}</style>
+      <style>{\`@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap'); *{box-sizing:border-box;margin:0;padding:0} a{text-decoration:none;color:inherit}\`}</style>
       <div style={{ maxWidth:480, textAlign:'center' }}>
         <div style={{ width:64, height:64, borderRadius:'50%', background:'#E8F5EF', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#0A6B4B" strokeWidth="2.5" strokeLinecap="round"/></svg>
@@ -495,3 +496,8 @@ function SuccessScreen({ form }: { form: FormState }) {
     </div>
   )
 }
+`;
+
+const out = require('path').join(__dirname, '..', 'app', 'create', 'page.tsx');
+require('fs').writeFileSync(out, content, 'utf8');
+console.log('Written', require('fs').statSync(out).size, 'bytes');

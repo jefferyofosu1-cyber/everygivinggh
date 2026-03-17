@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import type { Image } from 'sanity'
+type SanityImage = { asset?: { _ref?: string; _id?: string } } | string | null
 import { urlFor } from '@/lib/sanity.image'
 import { ProgressBar } from './ProgressBar'
 
 export type CampaignCardProps = {
   slug: string
   title: string
-  coverImage?: Image
+  coverImage?: SanityImage
   category?: string
   goalAmount: number
   amountRaised: number

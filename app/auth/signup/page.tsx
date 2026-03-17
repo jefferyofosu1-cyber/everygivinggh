@@ -1,180 +1,132 @@
 'use client'
+
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
+import { AuthLayout, Field, Input, PasswordStrength, PrimaryBtn } from '@/components/auth/shared'
 import { trackFundraiserSignup } from '@/lib/crm'
 
+interface FormState { name: string; email: string; phone: string; password: string }
+
 export default function SignupPage() {
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '' })
+  const [step, setStep] = useState(1)  // 1=role 2=details 3=confirm 4=done
+  const [role, setRole] = useState<'campaigner'|'donor'|''>('')
+  const [form, setForm] = useState<FormState>({ name:'', email:'', phone:'', password:'' })
+  const [showPw, setShowPw] = useState(false)
+  const [errors, setErrors] = useState<Record<string,string>>({})
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [serverError, setServerError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+  function setField(k: keyof FormState, v: string) {
+    setForm(f=>({...f,[k]:v})); setErrors(e=>({...e,[k]:''})); setServerError('')
+  }
 
+  function validateDetails() {
+    const errs: Record<string,string> = {}
+    if (!form.name.trim()) errs.name = 'Enter your full name'
+    if (!form.email.includes('@')) errs.email = 'Enter a valid email address'
+    if (form.phone && !form.phone.match(/^0[0-9]{9}$/)) errs.phone = 'Enter a valid 10-digit Ghana number'
+    if (form.password.length < 8) errs.password = 'Password must be at least 8 characters'
+    setErrors(errs); return !Object.keys(errs).length
+  }
+
+  async function handleDetails() {
+    if (!validateDetails()) return
+    setLoading(true); setServerError('')
     const supabase = createClient()
-    const redirectTo = `${window.location.origin}/auth/callback?next=/create`
-
-    const { data, error: authError } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
+    const [firstName, ...rest] = form.name.trim().split(' ')
+    const lastName = rest.join(' ')
+    const { data, error } = await supabase.auth.signUp({
+      email: form.email, password: form.password,
       options: {
-        emailRedirectTo: redirectTo,
-        data: {
-          full_name: `${form.firstName} ${form.lastName}`.trim(),
-          phone: form.phone,
-        },
-      },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${role==='campaigner'?'/create':'/campaigns'}`,
+        data: { full_name: form.name.trim(), phone: form.phone, role }
+      }
     })
-
-    if (authError) {
-      setError(authError.message)
-      setLoading(false)
-      return
-    }
-
+    if (error) { setServerError(error.message); setLoading(false); return }
     if (data.user) {
-      await supabase.from('profiles').upsert({
-        id: data.user.id,
-        full_name: `${form.firstName} ${form.lastName}`.trim(),
-        phone: form.phone,
-        email: form.email,
-      })
-      trackFundraiserSignup({
-        email: form.email,
-        firstName: form.firstName,
-        lastName: form.lastName,
-        phone: form.phone,
-      })
+      await supabase.from('profiles').upsert({ id:data.user.id, full_name:form.name.trim(), phone:form.phone, email:form.email, role })
+      if (role==='campaigner') {
+        trackFundraiserSignup({ email:form.email, firstName, lastName:lastName||'', phone:form.phone }).catch(()=>{})
+      }
     }
-
-    setLoading(false)
-    setSubmitted(true)
+    setLoading(false); setStep(3)
   }
 
-  // ── CHECK EMAIL SCREEN ────────────────────────────────────────────────────
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-5 py-12">
-        <div className="max-w-md w-full text-center">
-          <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
-            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">
-              
-            </div>
-          </div>
-          <h1 className="font-nunito font-black text-white text-3xl mb-3">Check your email</h1>
-          <p className="text-white/50 text-sm mb-2">
-            We sent a confirmation link to
-          </p>
-          <p className="text-primary font-bold text-base mb-6">{form.email}</p>
-          <p className="text-white/30 text-xs leading-relaxed mb-8 max-w-xs mx-auto">
-            Click the link in the email to confirm your account. After confirming, you'll be taken straight to start your campaign.
-          </p>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-left mb-6">
-            <div className="text-white/60 text-xs font-bold mb-3 uppercase tracking-widest">Didn't get the email?</div>
-            <div className="flex flex-col gap-2 text-xs text-white/40 leading-relaxed">
-              <div>— Check your spam or junk folder</div>
-              <div>— Make sure you typed your email correctly</div>
-              <div>— Contact us at <a href="mailto:business@everygiving.org" className="text-primary">business@everygiving.org</a></div>
-            </div>
-          </div>
-          <Link href="/auth/signup"
-            className="text-white/30 text-sm hover:text-white transition-colors">
-            ← Use a different email
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
-  // ── SIGNUP FORM ───────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-5 py-12">
-      <div className="w-full max-w-md">
+    <AuthLayout
+      title={step===1?'Create your account':step===2?'Your details':step===3?'Check your email':'Welcome!'}
+      sub={step===1?'Already have one? Sign in':step===3?'We sent a confirmation link':undefined}>
 
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex flex-col items-center gap-3">
-            <Image src="/logo.jpeg" alt="EveryGiving" width={48} height={48} className="rounded-xl" />
-            <span className="font-nunito font-black text-2xl tracking-tight"><span className="text-primary">Every</span><span className="text-white">Giving</span></span>
-          </Link>
-          <div className="text-white/40 text-sm mt-2">Create your free account</div>
-        </div>
-
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-          <h1 className="font-nunito font-black text-white text-xl mb-1">Get started</h1>
-          <p className="text-white/40 text-sm mb-6">Free forever. No platform fee.</p>
-
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-5 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-bold text-white/50 block mb-1.5">First name</label>
-                <input type="text" required value={form.firstName}
-                  onChange={e => setForm(p => ({ ...p, firstName: e.target.value }))}
-                  placeholder="Ama"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
+      {/* STEP 1 — ROLE */}
+      {step===1 && (
+        <div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:20 }}>
+            {([
+              ['campaigner','🙋','I want to raise money','Start a campaign for medical, education, or community causes'],
+              ['donor','🤝','I want to donate','Give to verified campaigns and track your impact'],
+            ] as [string,string,string,string][]).map(([r,emoji,title,sub])=>(
+              <div key={r} style={{ border:`1.5px solid ${role===r?'#0A6B4B':'#E8E4DC'}`, background:role===r?'#E8F5EF':'#fff', borderRadius:12, padding:'20px 16px', cursor:'pointer', transition:'all .15s', textAlign:'center' as const }}
+                onClick={()=>setRole(r as 'campaigner'|'donor')}>
+                <div style={{ fontSize:32, marginBottom:10 }}>{emoji}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'#1A1A18', marginBottom:4 }}>{title}</div>
+                <div style={{ fontSize:11, color:'#8A8A82', lineHeight:1.5 }}>{sub}</div>
+                {role===r && <div style={{ marginTop:10, fontSize:11, fontWeight:700, color:'#0A6B4B' }}>✓ Selected</div>}
               </div>
-              <div>
-                <label className="text-xs font-bold text-white/50 block mb-1.5">Last name</label>
-                <input type="text" value={form.lastName}
-                  onChange={e => setForm(p => ({ ...p, lastName: e.target.value }))}
-                  placeholder="Mensah"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Email address</label>
-              <input type="email" required value={form.email}
-                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                placeholder="ama@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Phone (MoMo number)</label>
-              <input type="tel" value={form.phone}
-                onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-                placeholder="024 000 0000"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Password</label>
-              <input type="password" required minLength={8} value={form.password}
-                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                placeholder="At least 8 characters"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
-            </div>
-
-            <button type="submit" disabled={loading}
-              className="w-full py-3.5 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm mt-2">
-              {loading ? 'Creating account...' : 'Create free account →'}
-            </button>
-          </form>
-
-          <div className="mt-6 pt-5 border-t border-white/10 text-center">
-            <span className="text-white/40 text-sm">Already have an account? </span>
-            <Link href="/auth/login" className="text-primary font-bold text-sm hover:text-primary-dark transition-colors">Sign in</Link>
+            ))}
+          </div>
+          <PrimaryBtn disabled={!role} onClick={()=>role&&setStep(2)}>Continue →</PrimaryBtn>
+          <div style={{ textAlign:'center' as const, fontSize:13, color:'#8A8A82', marginTop:16 }}>
+            Already have an account? <Link href="/auth/login" style={{ color:'#0A6B4B', fontWeight:600 }}>Sign in</Link>
           </div>
         </div>
+      )}
 
-        <p className="text-center text-white/20 text-xs mt-5 leading-relaxed">
-          By creating an account you agree to our{' '}
-          <Link href="/terms" className="text-white/40 hover:text-primary">Terms</Link> and{' '}
-          <Link href="/privacy" className="text-white/40 hover:text-primary">Privacy Policy</Link>.
-        </p>
-      </div>
-    </div>
+      {/* STEP 2 — DETAILS */}
+      {step===2 && (
+        <div>
+          {serverError && <div style={{ background:'#FCEBEB', border:'1px solid #F0B0B0', borderRadius:8, padding:'10px 12px', fontSize:13, color:'#C0392B', marginBottom:16 }}>{serverError}</div>}
+          <Field label="Full name" error={errors.name}>
+            <Input type="text" placeholder="e.g. Kwame Mensah" value={form.name} onChange={e=>setField('name',e.target.value)} error={errors.name} />
+          </Field>
+          <Field label="Email address" error={errors.email}>
+            <Input type="email" placeholder="e.g. kwame@gmail.com" value={form.email} onChange={e=>setField('email',e.target.value)} error={errors.email} />
+          </Field>
+          <Field label="Phone number (optional)" error={errors.phone} hint="Your MTN, Vodafone, or AirtelTigo number — for MoMo payouts">
+            <Input type="tel" placeholder="e.g. 024 123 4567" value={form.phone} onChange={e=>setField('phone',e.target.value.replace(/\s/g,''))} prefix="+233" error={errors.phone} />
+          </Field>
+          <Field label="Password" error={errors.password}>
+            <Input type={showPw?'text':'password'} placeholder="At least 8 characters" value={form.password}
+              onChange={e=>setField('password',e.target.value)} error={errors.password}
+              suffix={<button style={{ background:'none',border:'none',fontSize:11,fontWeight:600,color:'#8A8A82',cursor:'pointer',padding:'0 2px',fontFamily:"'DM Sans',sans-serif" }} onClick={()=>setShowPw(v=>!v)}>{showPw?'Hide':'Show'}</button>} />
+            <PasswordStrength password={form.password} />
+          </Field>
+          <PrimaryBtn loading={loading} onClick={handleDetails}>{loading?'Creating account…':'Create account'}</PrimaryBtn>
+          <p style={{ fontSize:12, color:'#8A8A82', textAlign:'center' as const, marginTop:12, lineHeight:1.6 }}>
+            By continuing you agree to our{' '}
+            <Link href="/terms" style={{ color:'#0A6B4B' }}>Terms</Link> and{' '}
+            <Link href="/privacy" style={{ color:'#0A6B4B' }}>Privacy Policy</Link>
+          </p>
+        </div>
+      )}
+
+      {/* STEP 3 — CHECK EMAIL */}
+      {step===3 && (
+        <div style={{ textAlign:'center' as const }}>
+          <div style={{ width:56, height:56, borderRadius:'50%', background:'#E8F5EF', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px', fontSize:24 }}>📧</div>
+          <p style={{ fontSize:14, color:'#4A4A44', marginBottom:6, lineHeight:1.7 }}>We sent a confirmation link to</p>
+          <p style={{ fontSize:15, fontWeight:600, color:'#1A1A18', marginBottom:24 }}>{form.email}</p>
+          <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:28 }}>
+            Click the link in your email to activate your account. Check your spam folder if you don't see it.
+          </p>
+          <button style={{ width:'100%', padding:12, background:'transparent', color:'#1A1A18', borderRadius:10, fontSize:14, fontWeight:500, border:'1px solid #E8E4DC', cursor:'pointer', fontFamily:"'DM Sans',sans-serif", marginBottom:10 }}
+            onClick={async()=>{ const s=createClient(); await s.auth.resend({ type:'signup', email:form.email }) }}>
+            Resend email
+          </button>
+          <Link href="/auth/login" style={{ fontSize:13, color:'#8A8A82', display:'block' }}>← Back to sign in</Link>
+        </div>
+      )}
+
+    </AuthLayout>
   )
 }

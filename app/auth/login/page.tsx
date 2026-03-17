@@ -1,91 +1,102 @@
 'use client'
+
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { AuthLayout, Field, Input, Divider, PrimaryBtn } from '@/components/auth/shared'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [method, setMethod] = useState<'phone'|'email'>('phone')
+  const [form, setForm] = useState({ identity: '', password: '' })
+  const [showPw, setShowPw] = useState(false)
+  const [errors, setErrors] = useState<Record<string,string>>({})
+  const [loginError, setLoginError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  function setField(k: string, v: string) {
+    setForm(f => ({...f, [k]:v}))
+    setErrors(e => ({...e, [k]:''}))
+    setLoginError('')
+  }
+
+  function validate() {
+    const errs: Record<string,string> = {}
+    if (!form.identity) errs.identity = method==='phone'?'Enter your phone number':'Enter your email address'
+    if (!form.password) errs.password = 'Enter your password'
+    setErrors(errs)
+    return !Object.keys(errs).length
+  }
+
+  async function handleLogin() {
+    if (!validate()) return
     setLoading(true)
-    setError('')
     const supabase = createClient()
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: form.email,
+    // Phone users sign in with email derived from phone, or just use email field
+    const emailInput = method==='phone'
+      ? form.identity.replace(/\s/g,'') + '@everygiving.phone' // fallback pattern
+      : form.identity
+    const { error } = await supabase.auth.signInWithPassword({
+      email: emailInput,
       password: form.password,
     })
-    if (authError) {
-      setError(authError.message === 'Invalid login credentials'
-        ? 'Incorrect email or password. Please try again.'
-        : authError.message)
+    if (error) {
+      setLoginError(error.message==='Invalid login credentials'
+        ? 'Incorrect credentials. Please try again.'
+        : error.message)
       setLoading(false)
       return
     }
     router.push('/dashboard')
+    router.refresh()
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-5 py-12">
-      <div className="w-full max-w-md">
-
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex flex-col items-center gap-3">
-            <Image src="/logo.jpeg" alt="EveryGiving" width={48} height={48} className="rounded-xl" />
-            <span className="font-nunito font-black text-2xl tracking-tight"><span className="text-primary">Every</span><span className="text-white">Giving</span></span>
-          </Link>
-          <div className="text-white/40 text-sm mt-2">Sign in to your account</div>
+    <AuthLayout title="Welcome back" sub="Sign in to your EveryGiving account">
+      {loginError && (
+        <div style={{ background:'#FCEBEB', border:'1px solid #F0B0B0', borderRadius:8, padding:'10px 12px', fontSize:13, color:'#C0392B', marginBottom:16, lineHeight:1.5 }}>
+          {loginError}
         </div>
+      )}
 
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-          <h1 className="font-nunito font-black text-white text-xl mb-1">Welcome back</h1>
-          <p className="text-white/40 text-sm mb-6">Sign in to manage your campaign</p>
-
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-5 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Email address</label>
-              <input type="email" required value={form.email}
-                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                placeholder="you@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-white/50">Password</label>
-                <Link href="/auth/forgot-password" className="text-xs text-primary hover:text-primary-dark font-semibold transition-colors">
-                  Forgot password?
-                </Link>
-              </div>
-              <input type="password" required value={form.password}
-                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                placeholder="Your password"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
-            </div>
-
-            <button type="submit" disabled={loading}
-              className="w-full py-3.5 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm mt-2">
-              {loading ? 'Signing in…' : 'Sign in →'}
-            </button>
-          </form>
-
-          <div className="mt-6 pt-5 border-t border-white/10 text-center">
-            <span className="text-white/40 text-sm">No account? </span>
-            <Link href="/auth/signup" className="text-primary font-bold text-sm hover:text-primary-dark transition-colors">Create one free</Link>
-          </div>
-        </div>
-
+      <div style={{ display:'flex', gap:6, marginBottom:20 }}>
+        {(['phone','email'] as const).map(m => (
+          <button key={m} style={{ flex:1, padding:'8px 12px', border:`1.5px solid ${method===m?'#0A6B4B':'transparent'}`, borderRadius:8, fontSize:12, fontWeight:600, cursor:'pointer', transition:'all .15s', fontFamily:"'DM Sans',sans-serif", background:method===m?'#E8F5EF':'transparent', color:method===m?'#0A6B4B':'#8A8A82' }}
+            onClick={()=>{ setMethod(m); setField('identity','') }}>
+            {m==='phone'?'Phone number':'Email address'}
+          </button>
+        ))}
       </div>
-    </div>
+
+      <Field label={method==='phone'?'Phone number':'Email address'} error={errors.identity}>
+        <Input type={method==='phone'?'tel':'email'}
+          placeholder={method==='phone'?'e.g. 024 123 4567':'e.g. kwame@example.com'}
+          value={form.identity}
+          onChange={e=>setField('identity',e.target.value)}
+          prefix={method==='phone'?'+233':undefined}
+          error={errors.identity} />
+      </Field>
+
+      <Field label="Password" error={errors.password}>
+        <Input type={showPw?'text':'password'} placeholder="Your password"
+          value={form.password} onChange={e=>setField('password',e.target.value)}
+          error={errors.password}
+          suffix={<button style={{ background:'none', border:'none', fontSize:11, fontWeight:600, color:'#8A8A82', cursor:'pointer', padding:'0 2px', fontFamily:"'DM Sans',sans-serif" }} onClick={()=>setShowPw(v=>!v)}>{showPw?'Hide':'Show'}</button>} />
+      </Field>
+
+      <div style={{ textAlign:'right' as const, marginBottom:16, marginTop:-8 }}>
+        <Link href="/auth/forgot-password" style={{ fontSize:12, color:'#0A6B4B', fontWeight:600 }}>Forgot your password?</Link>
+      </div>
+
+      <PrimaryBtn loading={loading} onClick={handleLogin}>{loading?'Signing in…':'Sign in'}</PrimaryBtn>
+
+      <Divider text="or" />
+
+      <div style={{ textAlign:'center' as const, fontSize:13, color:'#8A8A82', marginTop:8 }}>
+        Don't have an account?{' '}
+        <Link href="/auth/signup" style={{ color:'#0A6B4B', fontWeight:600 }}>Create one free →</Link>
+      </div>
+    </AuthLayout>
   )
 }

@@ -1,4 +1,7 @@
-'use client'
+const fs = require('fs');
+const path = require('path');
+
+const content = `'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -50,7 +53,7 @@ export default function FundraisingCategoriesPage() {
 
   return (
     <>
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
@@ -63,7 +66,7 @@ export default function FundraisingCategoriesPage() {
         .cat-browse-btn:hover{background:#D1EDDF !important}
         .spotlight{animation:fadeup .3s ease both}
         input:focus{outline:none}
-      `}</style>
+      \`}</style>
 
       {/* NAV */}
       <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 32px', height:60, background:'#fff', borderBottom:'1px solid #E8E4DC', position:'sticky', top:0, zIndex:200 }}>
@@ -98,7 +101,7 @@ export default function FundraisingCategoriesPage() {
             {([
               [CATEGORIES.length, 'Categories supported'],
               [liveCats, 'With live campaigns'],
-              [`${avgSuccess}%`, 'Avg success rate'],
+              [\`\${avgSuccess}%\`, 'Avg success rate'],
             ] as [number|string, string][]).map(([n, l], i) => (
               <div key={i} style={{ textAlign:'center' as const }}>
                 <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:32, color:'#B7DEC9', lineHeight:1, marginBottom:4 }}>{n}</div>
@@ -124,14 +127,14 @@ export default function FundraisingCategoriesPage() {
             {search && <button style={{ background:'none', border:'none', fontSize:16, color:'#8A8A82', cursor:'pointer', padding:'0 2px', lineHeight:1 }} onClick={()=>setSearch('')}>×</button>}
           </div>
           <div style={{ fontSize:13, color:'#8A8A82' }}>
-            {filtered.length} categor{filtered.length!==1?'ies':'y'}{search?` matching "${search}"`:''}
+            {filtered.length} categor{filtered.length!==1?'ies':'y'}{search?\` matching "\${search}"\`:''}
           </div>
         </div>
 
         {/* CATEGORY GRID */}
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:16, marginBottom:28 }}>
           {filtered.map(cat => (
-            <div key={cat.id} className={`cat-card${selected===cat.id?' active':''}`}
+            <div key={cat.id} className={\`cat-card\${selected===cat.id?' active':''}\`}
               onClick={()=>setSelected(selected===cat.id?null:cat.id)}>
               <div style={{ height:120, background:cat.gradient, display:'flex', alignItems:'center', justifyContent:'center', position:'relative', fontSize:36 }}>
                 {cat.emoji}
@@ -155,7 +158,7 @@ export default function FundraisingCategoriesPage() {
                     <div style={{ fontSize:10, color:'#8A8A82', marginTop:2 }}>success rate</div>
                   </div>
                 </div>
-                <Link href={`/campaigns?category=${cat.id}`} className="cat-browse-btn"
+                <Link href={\`/campaigns?category=\${cat.id}\`} className="cat-browse-btn"
                   style={{ fontSize:12, fontWeight:600, color:'#0A6B4B', background:'#E8F5EF', padding:'7px 12px', borderRadius:7, display:'block', textAlign:'center' as const, transition:'background .15s' }}
                   onClick={e=>e.stopPropagation()}>
                   Browse {cat.label} →
@@ -176,7 +179,7 @@ export default function FundraisingCategoriesPage() {
 
         {/* SPOTLIGHT */}
         {selectedCat && (
-          <div className="spotlight" key={selectedCat.id} style={{ background:'#fff', border:`1.5px solid ${selectedCat.accent}40`, borderRadius:16, padding:'28px 24px', marginBottom:24 }}>
+          <div className="spotlight" key={selectedCat.id} style={{ background:'#fff', border:\`1.5px solid \${selectedCat.accent}40\`, borderRadius:16, padding:'28px 24px', marginBottom:24 }}>
             <div style={{ display:'flex', alignItems:'flex-start', gap:14, marginBottom:24 }}>
               <div style={{ width:52, height:52, borderRadius:12, background:selectedCat.gradient, display:'flex', alignItems:'center', justifyContent:'center', fontSize:26, flexShrink:0 }}>{selectedCat.emoji}</div>
               <div style={{ flex:1 }}>
@@ -208,10 +211,10 @@ export default function FundraisingCategoriesPage() {
                   <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:28, lineHeight:1, marginBottom:4, color:selectedCat.accent }}>{selectedCat.successRate}</div>
                   <div style={{ fontSize:12, color:selectedCat.accent+'BB' }}>campaign success rate</div>
                 </div>
-                <Link href={`/create?category=${selectedCat.id}`} style={{ display:'block', padding:'11px 16px', background:selectedCat.accent, color:'#fff', borderRadius:9, fontSize:13, fontWeight:600, textAlign:'center' as const }}>
+                <Link href={\`/create?category=\${selectedCat.id}\`} style={{ display:'block', padding:'11px 16px', background:selectedCat.accent, color:'#fff', borderRadius:9, fontSize:13, fontWeight:600, textAlign:'center' as const }}>
                   Start a {selectedCat.label.toLowerCase()} campaign →
                 </Link>
-                <Link href={`/campaigns?category=${selectedCat.id}`} style={{ display:'block', padding:'10px 16px', borderRadius:9, fontSize:13, fontWeight:500, textAlign:'center' as const, border:`1px solid ${selectedCat.accent}40`, color:selectedCat.accent }}>
+                <Link href={\`/campaigns?category=\${selectedCat.id}\`} style={{ display:'block', padding:'10px 16px', borderRadius:9, fontSize:13, fontWeight:500, textAlign:'center' as const, border:\`1px solid \${selectedCat.accent}40\`, color:selectedCat.accent }}>
                   Browse {selectedCat.label} campaigns →
                 </Link>
               </div>
@@ -259,3 +262,8 @@ export default function FundraisingCategoriesPage() {
     </>
   )
 }
+`;
+
+const out = require('path').join(__dirname, '..', 'app', 'fundraising-categories', 'page.tsx');
+require('fs').writeFileSync(out, content, 'utf8');
+console.log('Written', require('fs').statSync(out).size, 'bytes');

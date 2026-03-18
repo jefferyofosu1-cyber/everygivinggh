@@ -121,4 +121,39 @@ h1,h2,h3,h4,h5,h6 {
 .prose li { margin-bottom:0.4em; }
 .prose a  { color:var(--primary); text-decoration:underline; }
 
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+html.dark .glass {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+html.dark .glass-dark {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Z-index management */
+html {
+  --z-background: -10;
+  --z-overlay: -9;
+  --z-base: 1;
+  --z-dropdown: 50;
+  --z-modal: 100;
+  --z-tooltip: 110;
+}
+
 main { animation: fadeIn 0.3s ease both; }

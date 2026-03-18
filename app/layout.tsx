@@ -59,6 +59,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        {/* Suppress Paystack iframe deprecation warning */}
+        <script dangerouslySetInnerHTML={{__html: `
+          if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+              if (args[0] && typeof args[0] === 'string' && args[0].includes('Allow attribute will take precedence')) {
+                return;
+              }
+              originalWarn.apply(console, args);
+            };
+          }
+        `}} />
       </head>
       <body className="min-h-screen flex flex-col" style={{ fontFamily: "'DM Sans', sans-serif", background: '#FDFAF5', margin: 0 }}>
         {children}

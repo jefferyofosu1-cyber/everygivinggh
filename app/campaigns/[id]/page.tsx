@@ -140,8 +140,15 @@ export default function CampaignPage() {
         setErrorMsg('Payment cancelled. Your donation was not processed.')
       }
 
-      // Initiate Paystack payment with updated config
-      initializePayment({ onSuccess, onClose })
+      // Initiate Paystack payment with updated config containing the true donationId
+      const dynamicConfig = {
+        ...paystackConfig,
+        metadata: {
+          ...paystackConfig.metadata,
+          donation_id: createData.donationId
+        }
+      }
+      initializePayment({ onSuccess, onClose, config: dynamicConfig } as any)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'An unexpected error occurred'
       setErrorMsg(msg)

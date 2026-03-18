@@ -5,9 +5,11 @@ ALTER TABLE public.campaigns ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Enable read access for approved campaigns" ON public.campaigns;
 DROP POLICY IF EXISTS "Users can view all approved campaigns" ON public.campaigns;
 DROP POLICY IF EXISTS "Enable select for all users" ON public.campaigns;
+DROP POLICY IF EXISTS "Enable select for all users on public campaigns" ON public.campaigns;
+DROP POLICY IF EXISTS "Users can create and manage their own campaigns" ON public.campaigns;
 
--- Create policy allowing anyone (authenticated or anon) to read approved/active/live campaigns
-CREATE POLICY "Enable select for all users on public campaigns"
+-- Create policy allowing anyone (authenticated or anon) to read campaigns with public statuses
+CREATE POLICY "Allow public campaigns to be viewed by anyone"
   ON public.campaigns
   FOR SELECT
   USING (status IN ('approved', 'active', 'live'));

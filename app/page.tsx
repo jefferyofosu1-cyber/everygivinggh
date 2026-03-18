@@ -244,6 +244,8 @@ export default function HomePage() {
         .transition-hover { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .campaign-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.06); }
         .hero-bg { background: linear-gradient(180deg, #F9F8F6 0%, #FDFAF5 100%); }
+        .play-button { transition: all 0.3s ease; }
+        a:has(.play-button):hover .play-button { transform: scale(1.1); background: rgba(255, 0, 0, 1) !important; }
       `}} />
 
       {/* ── 1. NEW TEXT HERO SECTION ── */}
@@ -277,17 +279,19 @@ export default function HomePage() {
             </Link>
           </div>
           
-          <div style={{ flex: '1 1 400px', height: '100%', minHeight: 400, background: '#000', borderRadius: 16, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <iframe
-              width="100%"
-              height="100%"
-              src="https://www.youtube.com/embed/yYKsEvqutvg"
-              title="Beautiful communities in Ghana"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              style={{ minHeight: 400 }}
-            />
+          <div style={{ flex: '1 1 400px', height: '100%', minHeight: 400, background: '#000', borderRadius: 16, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+            <a 
+              href="https://youtube.com/shorts/yYKsEvqutvg" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'url(https://img.youtube.com/vi/yYKsEvqutvg/maxresdefault.jpg) center/cover, #000', zIndex: 1, textDecoration: 'none' }}
+            >
+              <div style={{ width: 80, height: 80, background: 'rgba(255, 0, 0, 0.9)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.3s' }} className="play-button">
+                <svg style={{ width: 32, height: 32, color: '#fff', marginLeft: 4 }} viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </a>
           </div>
         </div>
       </div>

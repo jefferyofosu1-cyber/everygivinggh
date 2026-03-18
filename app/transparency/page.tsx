@@ -87,27 +87,8 @@ export default function TransparencyPage() {
           </div>
         </section>
 
-        {/* How payments work */}
-        <section className="py-16 bg-white border-t border-gray-100">
-          <div className="max-w-4xl mx-auto px-5">
-            <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Payments</div>
-            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">How Payments Work</h2>
-            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 max-w-2xl">
-              <div className="space-y-4">
-                <p className="text-gray-700"><span className="font-nunito font-black text-navy">All payments are securely processed through Paystack.</span></p>
-                <div className="space-y-3 ml-4">
-                  <p className="text-gray-600"><span className="font-medium">✓</span> Paystack deducts their processing fee (1.95% per transaction)</p>
-                  <p className="text-gray-600"><span className="font-medium">✓</span> EveryGiving applies the platform fee (2.9% + GHS 0.50)</p>
-                  <p className="text-gray-600"><span className="font-medium">✓</span> Remaining funds go directly to the campaign</p>
-                </div>
-                <p className="text-gray-600 italic pt-2">We standardize the fees to keep the experience simple and predictable.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* How verification works */}
-        <section className="py-16 bg-gray-50 border-t border-gray-100">
+        <section className="py-16 bg-white border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Verification</div>
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Verification Process</h2>

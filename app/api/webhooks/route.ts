@@ -57,30 +57,81 @@ export async function POST(req: NextRequest) {
     // ━━━━━ DONATION SUCCESS ━━━━━
     if (event === 'charge.success') {
       const campaignId = data.metadata?.campaign_id
+      const donationId = data.metadata?.donation_id
       const amountGHS = data.amount / 100
 
+      if (donationId) {
+        // Step 1: Confirm the donation status
+        const { error: updateErr } = await supabase
+          .from('donations')
+          .update({ 
+            status: 'confirmed',
+            paystack_reference: data.reference
+          })
+          .eq('id', donationId)
+
+        if (updateErr) {
+          console.error('Error updating donation:', updateErr)
+        }
+      }
+
+      // Step 2: Update campaign totals and mark event as processed
       if (campaignId) {
-        // Confirm the donation by updating the campaign totals
-        const { error } = await supabase.rpc('confirm_donation', {
+        const { error: rpcErr } = await supabase.rpc('confirm_donation', {
           p_campaign_id: campaignId,
           p_amount: amountGHS
         })
         
-        if (error) {
-          console.error('Error in confirm_donation RPC:', error)
-          // We don't throw, we just log and return 200 to Paystack
-        } else {
-          // Mark event as processed
-          await supabase.from('payment_events')
-            .update({ processed: true })
-            .eq('external_event_id', String(data.id))
-            .eq('event_type', event)
+        if (rpcErr) {
+          console.error('Error in confirm_donation RPC:', rpcErr)
+          // Update campaign manually if RPC doesn't exist
+          const { data: campaign } = await supabase
+            .from('campaigns')
+            .select('raised_amount, donor_count')
+            .eq('id', campaignId)
+            .single()
+
+          if (campaign) {
+            await supabase
+              .from('campaigns')
+              .update({
+                raised_amount: (campaign.raised_amount || 0) + amountGHS,
+                donor_count: (campaign.donor_count || 0) + 1
+              })
+              .eq('id', campaignId)
+          }
         }
+
+        // Mark event as processed
+        await supabase.from('payment_events')
+          .update({ processed: true })
+          .eq('external_event_id', String(data.id))
+          .eq('event_type', event)
       }
 
-      // (Optional) Send receipt email here via Brevo or Resend
+      // Step 3: Send receipt email here via Brevo or Resend (optional)
       if (data.customer?.email && process.env.BREVO_API_KEY) {
         // e.g. await sendDonorReceipt(data.customer.email, amountGHS, data.metadata?.campaign_title)
+      }
+
+    // ━━━━━ DONATION FAILED ━━━━━
+    } else if (event === 'charge.failed') {
+      const donationId = data.metadata?.donation_id
+
+      if (donationId) {
+        await supabase
+          .from('donations')
+          .update({ 
+            status: 'failed',
+            rejection_reason: data.gateway_response || 'Payment declined'
+          })
+          .eq('id', donationId)
+
+        // Mark event as processed
+        await supabase.from('payment_events')
+          .update({ processed: true })
+          .eq('external_event_id', String(data.id))
+          .eq('event_type', event)
       }
 
     // ━━━━━ PAYOUT SUCCESS ━━━━━

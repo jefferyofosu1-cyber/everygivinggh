@@ -20,7 +20,9 @@ export default function CampaignPage() {
   const [loading, setLoading] = useState(true)
   const [donating, setDonating] = useState(false)
   const [donated, setDonated] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', amount: '', message: '', method: 'MTN MoMo' })
+  const [form, setForm] = useState({ name: '', email: '', amount: '', tip: '', message: '', method: 'MTN MoMo' })
+  const [errorMsg, setErrorMsg] = useState('')
+  const [donationId, setDonationId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!params?.id) return
@@ -37,24 +39,26 @@ export default function CampaignPage() {
 
   // Calculate values with safe defaults
   const rawAmount = parseFloat(form.amount) || 0
-  const fee = rawAmount > 0 ? (rawAmount * 0.02 + 0.25) : 0
-  const fundraiserReceives = rawAmount > 0 ? (rawAmount - fee) : 0
+  const tipAmount = parseFloat(form.tip) || 0
+  const totalAmount = rawAmount + tipAmount
+  const fee = totalAmount > 0 ? (totalAmount * 0.02 + 0.25) : 0
+  const fundraiserReceives = totalAmount > 0 ? (rawAmount - (fee * (rawAmount / totalAmount))) : 0
   const pct = campaign?.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
   const emoji = campaign?.category ? EMOJI[campaign.category.toLowerCase()] : '💚'
 
   // Setup Paystack BEFORE any early returns - hooks must be at top level
   const paystackConfig = {
-    reference: (new Date()).getTime().toString(),
+    reference: `${campaign?.id}-${Date.now()}`,
     email: form.email,
-    amount: rawAmount * 100,
+    amount: (rawAmount + (parseFloat(form.tip) || 0)) * 100,
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
     currency: 'GHS',
     metadata: {
       campaign_id: campaign?.id,
+      donation_id: donationId,
       donor_name: form.name || 'Anonymous',
       message: form.message,
       payment_method: form.method,
-      custom_fields: []
     }
   }
 
@@ -62,29 +66,87 @@ export default function CampaignPage() {
 
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!rawAmount || rawAmount <= 0 || !form.email || !campaign) return
+    setErrorMsg('')
+    
+    if (!rawAmount || rawAmount <= 0 || !form.email || !campaign) {
+      setErrorMsg('Please fill in all required fields')
+      return
+    }
+
+    if (rawAmount < 1 || rawAmount > 50000) {
+      setErrorMsg('Donation must be between ₵1 and ₵50,000')
+      return
+    }
+
+    if (!form.email.includes('@')) {
+      setErrorMsg('Please enter a valid email address')
+      return
+    }
+
     setDonating(true)
 
-    const onSuccess = async (reference: any) => {
-      const supabase = createClient()
-      await supabase.from('donations').insert({
-        campaign_id: campaign.id,
-        donor_name: form.name || 'Anonymous',
-        donor_email: form.email,
-        amount: rawAmount,
-        message: form.message,
-        payment_method: form.method,
-        status: 'pending',
+    try {
+      // Step 1: Create donation record via API (validation happens here)
+      const createRes = await fetch('/api/donate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          campaign_id: campaign.id,
+          donor_name: form.name || 'Anonymous',
+          donor_email: form.email,
+          amount: rawAmount,
+          tip_amount: parseFloat(form.tip) || 0,
+          message: form.message,
+          payment_method: form.method,
+        })
       })
-      setDonating(false)
-      setDonated(true)
-    }
 
-    const onClose = () => {
+      const createData = await createRes.json()
+
+      if (!createRes.ok) {
+        setErrorMsg(createData.error || 'Failed to process donation')
+        setDonating(false)
+        return
+      }
+
+      // Step 2: Store donation ID and initialize Paystack payment
+      setDonationId(createData.donationId)
+
+      const onSuccess = async (reference: any) => {
+        try {
+          // Step 3: Confirm donation by updating status
+          const supabase = createClient()
+          const { error } = await supabase
+            .from('donations')
+            .update({ 
+              status: 'confirmed',
+              paystack_reference: reference.reference 
+            })
+            .eq('id', createData.donationId)
+
+          if (error) throw error
+
+          setDonating(false)
+          setDonated(true)
+        } catch (err) {
+          console.error('Error confirming donation:', err)
+          setErrorMsg('Donation received but confirmation failed. Please contact support.')
+          setDonating(false)
+        }
+      }
+
+      const onClose = () => {
+        setDonating(false)
+        setErrorMsg('Payment cancelled. Your donation was not processed.')
+      }
+
+      // Initiate Paystack payment with updated config
+      initializePayment({ onSuccess, onClose })
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'An unexpected error occurred'
+      setErrorMsg(msg)
       setDonating(false)
     }
-
-    initializePayment({ onSuccess, onClose })
   }
 
   const shareUrl = `https://everygiving.org/campaigns/${campaign?.id}`
@@ -190,6 +252,11 @@ export default function CampaignPage() {
 
                 {/* Donate form */}
                 <form onSubmit={handleDonate} className="flex flex-col gap-3">
+                  {errorMsg && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+                      {errorMsg}
+                    </div>
+                  )}
                   <div>
                     <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Your name</label>
                     <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
@@ -203,19 +270,48 @@ export default function CampaignPage() {
                       className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-3.5 py-3 text-sm outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Amount (GHC) *</label>
+                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Donation amount (GHC) *</label>
                     <div className="relative">
                       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
-                      <input type="number" required min="1" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
+                      <input type="number" required min="1" max="50000" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
                         placeholder="50"
                         className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-8 pr-3.5 py-3 text-sm outline-none transition-all" />
                     </div>
-                    {rawAmount > 0 && (
-                      <div className="mt-1.5 bg-gray-50 rounded-lg px-3 py-2 text-xs text-gray-400">
-                        Fee: ₵{fee.toFixed(2)} (2% + ₵0.25) · Fundraiser receives: <strong className="text-primary">₵{fundraiserReceives.toFixed(2)}</strong>
-                      </div>
-                    )}
                   </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Platform tip (optional)</label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
+                      <input type="number" min="0" max="500" value={form.tip} onChange={e => setForm(p => ({ ...p, tip: e.target.value }))}
+                        placeholder="5"
+                        className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-8 pr-3.5 py-3 text-sm outline-none transition-all" />
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">Helps us keep EveryGiving free</div>
+                  </div>
+
+                  {rawAmount > 0 && (
+                    <div className="mt-1.5 bg-gray-50 rounded-lg px-3 py-2.5 text-xs text-gray-600 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Donation:</span>
+                        <strong className="text-navy">₵{rawAmount.toFixed(2)}</strong>
+                      </div>
+                      {tipAmount > 0 && (
+                        <div className="flex justify-between">
+                          <span>Tip:</span>
+                          <strong className="text-navy">₵{tipAmount.toFixed(2)}</strong>
+                        </div>
+                      )}
+                      <div className="border-t border-gray-200 pt-1 mt-1 flex justify-between">
+                        <span>Fee (2% + ₵0.25):</span>
+                        <strong className="text-orange-600">-₵{fee.toFixed(2)}</strong>
+                      </div>
+                      <div className="flex justify-between font-semibold text-navy pt-1">
+                        <span>Fundraiser receives:</span>
+                        <strong className="text-primary">₵{fundraiserReceives.toFixed(2)}</strong>
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Pay with</label>
                     <div className="grid grid-cols-3 gap-1.5">

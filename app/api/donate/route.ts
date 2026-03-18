@@ -77,18 +77,24 @@ export async function POST(req: NextRequest) {
     const campaignAmount = amount - platformFee
     const everygivingRevenue = platformFee - paystackFee + tipAmount
 
-    // Insert donation with core fields only
+    // Insert donation with all financial tracking fields
     const { data: donation, error: insertErr } = await supabase
       .from('donations')
       .insert({
-        campaign_id:    campaignId,
-        donor_name:     donorName,
-        donor_email:    donorEmail,
-        amount:         amount,
-        tip_amount:     tipAmount,
-        message:        message || null,
-        payment_method: method,
-        status:         'pending',
+        campaign_id:         campaignId,
+        donor_name:          donorName,
+        donor_email:         donorEmail,
+        amount:              amount,
+        tip_amount:          tipAmount,
+        amount_paid:         amountPaid,
+        platform_fee:        platformFee,
+        paystack_fee:        paystackFee,
+        net_received:        netReceived,
+        campaign_amount:     campaignAmount,
+        everygiving_revenue: everygivingRevenue,
+        message:             message || null,
+        payment_method:      method,
+        status:              'pending',
       })
       .select('id')
       .single()

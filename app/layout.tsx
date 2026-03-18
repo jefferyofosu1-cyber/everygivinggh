@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Nunito, Nunito_Sans } from 'next/font/google'
 import { validateEnv } from '@/lib/env'
+import { ThemeProvider } from '@/components/ThemeProvider'
 import './globals.css'
 
 validateEnv()
@@ -59,6 +60,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        {/* Prevent theme flash on page load */}
+        <script dangerouslySetInnerHTML={{__html: `
+          (function() {
+            const theme = localStorage.getItem('theme') || 'system';
+            let isDark = false;
+            
+            if (theme === 'dark') {
+              isDark = true;
+            } else if (theme === 'system') {
+              isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            
+            if (isDark) {
+              document.documentElement.classList.add('dark');
+            }
+          })()
+        `}} />
         {/* Suppress Paystack iframe deprecation warning */}
         <script dangerouslySetInnerHTML={{__html: `
           if (typeof console !== 'undefined' && typeof console.warn === 'function') {
@@ -72,8 +90,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
         `}} />
       </head>
-      <body className="min-h-screen flex flex-col" style={{ fontFamily: "'DM Sans', sans-serif", background: '#FDFAF5', margin: 0 }}>
-        {children}
+      <body className="min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-50 transition-colors" style={{ fontFamily: "'DM Sans', sans-serif", margin: 0 }}>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -20,7 +20,7 @@ export default function CampaignPage() {
   const [loading, setLoading] = useState(true)
   const [donating, setDonating] = useState(false)
   const [donated, setDonated] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', amount: '', tip: '', message: '', method: 'MTN MoMo' })
+  const [form, setForm] = useState({ name: '', email: '', amount: '', tip: '5', message: '', method: 'MTN MoMo' })
   const [errorMsg, setErrorMsg] = useState('')
   const [donationId, setDonationId] = useState<string | null>(null)
 
@@ -41,8 +41,8 @@ export default function CampaignPage() {
   const rawAmount = parseFloat(form.amount) || 0
   const tipAmount = parseFloat(form.tip) || 0
   const totalAmount = rawAmount + tipAmount
-  const fee = totalAmount > 0 ? (totalAmount * 0.02 + 0.25) : 0
-  const fundraiserReceives = totalAmount > 0 ? (rawAmount - (fee * (rawAmount / totalAmount))) : 0
+  const fee = rawAmount > 0 ? (rawAmount * 0.029 + 0.50) : 0
+  const fundraiserReceives = rawAmount > 0 ? (rawAmount - fee) : 0
   const pct = campaign?.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
   const emoji = campaign?.category ? EMOJI[campaign.category.toLowerCase()] : '💚'
 
@@ -310,7 +310,7 @@ export default function CampaignPage() {
                         </div>
                       )}
                       <div className="border-t border-gray-200 pt-1 mt-1 flex justify-between">
-                        <span>Fee (2% + ₵0.25):</span>
+                        <span>Platform fee (2.9% + ₵0.50):</span>
                         <strong className="text-orange-600">-₵{fee.toFixed(2)}</strong>
                       </div>
                       <div className="flex justify-between font-semibold text-navy pt-1">
@@ -340,7 +340,10 @@ export default function CampaignPage() {
                     className="w-full py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm disabled:opacity-60">
                     {donating ? 'Processing…' : `Donate ₵${form.amount || '—'} →`}
                   </button>
-                  <p className="text-xs text-gray-400 text-center">Secure · MoMo prompt will appear on your phone</p>
+                  <p className="text-xs text-gray-400 text-center">
+                    Secure payments powered by Paystack<br />
+                    <span className="opacity-75">MoMo prompt will appear on your phone</span>
+                  </p>
                 </form>
               </div>
             </div>

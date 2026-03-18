@@ -29,7 +29,7 @@ const TIERS = [
     id: 'standard', name: 'Standard', emoji: '*', price: 'GH₵50', priceNum: 50,
     badge: 'Verified', badgeStyle: 'bg-primary-light text-primary border-primary/20',
     border: 'border-primary', headerBg: 'bg-primary-light',
-    limit: 'Up to GH₵10,000', limitNum: 10000,
+    limit: 'Up to GH₵50,000', limitNum: 50000,
     canDefer: true, recommended: true,
     desc: 'The most popular tier. ID and selfie reviewed. Full Verified badge.',
     checks: [
@@ -39,54 +39,21 @@ const TIERS = [
       'Priority placement in listings',
       'Can defer fee until first donation',
     ],
-    notIncluded: ['Supporting document review', 'Gold/Diamond placement'],
+    notIncluded: ['Supporting document review', 'Premium placement'],
   },
   {
-    id: 'premium', name: 'Premium', emoji: '⭐', price: 'GH₵100', priceNum: 100,
+    id: 'premium', name: 'Premium', emoji: '⭐', price: 'Future', priceNum: -1,
     badge: 'Premium', badgeStyle: 'bg-amber-50 text-amber-700 border-amber-200',
-    border: 'border-amber-400', headerBg: 'bg-amber-50',
-    limit: 'Up to GH₵50,000', limitNum: 50000,
-    canDefer: true, recommended: false,
-    desc: 'Full document review for medium-to-large campaigns. Premium badge.',
+    border: 'border-amber-400 opacity-60', headerBg: 'bg-amber-50',
+    limit: 'Unlimited goal', limitNum: Infinity,
+    canDefer: false, recommended: false,
+    desc: 'Coming soon. Full document and situational review for large campaigns.',
     checks: [
       'Everything in Standard',
       'Supporting documents reviewed',
       'Premium badge + top placement',
       'Priority support from our team',
-      'Review completed within 24 hours',
-    ],
-    notIncluded: ['Gold/Diamond homepage featured'],
-  },
-  {
-    id: 'gold', name: 'Gold', emoji: '*', price: 'GH₵200', priceNum: 200,
-    badge: 'Gold', badgeStyle: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-    border: 'border-yellow-400', headerBg: 'bg-yellow-50',
-    limit: 'Up to GH₵100,000', limitNum: 100000,
-    canDefer: true, recommended: false,
-    desc: 'For large campaigns. Gold badge and featured placement.',
-    checks: [
-      'Everything in Premium',
-      'Gold badge on campaign',
-      'Featured placement on homepage',
-      'Review completed within 12 hours',
-      'Dedicated account support',
-    ],
-    notIncluded: ['Diamond homepage hero slot'],
-  },
-  {
-    id: 'diamond', name: 'Diamond', emoji: '*', price: 'GH₵500', priceNum: 500,
-    badge: 'Diamond', badgeStyle: 'bg-blue-50 text-blue-700 border-blue-200',
-    border: 'border-blue-400', headerBg: 'bg-blue-50',
-    limit: 'Unlimited goal', limitNum: Infinity,
-    canDefer: true, recommended: false,
-    desc: 'No goal limit. Diamond badge, hero placement, personal campaign manager.',
-    checks: [
-      'Everything in Gold',
-      'Diamond badge on campaign',
-      'Homepage hero featured slot',
-      'Review completed within 6 hours',
-      'Personal campaign manager assigned',
-      'No fundraising goal limit',
+      'Dedicated account manager',
     ],
     notIncluded: [],
   },
@@ -113,7 +80,7 @@ export default function VerificationPage() {
           <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
-               5 verification tiers
+               3 verification tiers
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl mb-4" style={{ letterSpacing: -1 }}>
               Build donor trust.<br />
@@ -158,7 +125,7 @@ export default function VerificationPage() {
               <h2 className="font-nunito font-black text-navy text-3xl mb-3">Choose your verification tier</h2>
               <p className="text-gray-400 text-sm max-w-md mx-auto">Higher tiers include deeper review, stronger badges, and higher fundraising limits. Most fundraisers start at Standard.</p>
             </div>
-            <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               {TIERS.map((tier) => (
                 <div key={tier.id} className={`relative bg-white rounded-2xl border-2 ${tier.border} overflow-hidden flex flex-col`}>
                   {tier.recommended && (
@@ -194,10 +161,16 @@ export default function VerificationPage() {
                     </div>
                   </div>
                   <div className="px-5 pb-5">
-                    <Link href="/create"
-                      className={`block text-center py-2.5 rounded-full text-xs font-nunito font-black transition-all ${tier.recommended ? 'bg-primary hover:bg-primary-dark text-white shadow-md shadow-primary/20' : 'border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600'}`}>
-                      {tier.priceNum === 0 ? 'Start free' : `Start - ${tier.price}`}
-                    </Link>
+                    {tier.priceNum === -1 ? (
+                      <span className="block text-center py-2.5 rounded-full text-xs font-nunito font-black border-2 border-gray-200 text-gray-400 cursor-not-allowed">
+                        Coming soon
+                      </span>
+                    ) : (
+                      <Link href="/create"
+                        className={`block text-center py-2.5 rounded-full text-xs font-nunito font-black transition-all ${tier.recommended ? 'bg-primary hover:bg-primary-dark text-white shadow-md shadow-primary/20' : 'border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600'}`}>
+                        {tier.priceNum === 0 ? 'Start free' : `Start - ${tier.price}`}
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))}

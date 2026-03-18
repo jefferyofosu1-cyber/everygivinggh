@@ -62,45 +62,61 @@ export async function POST(req: NextRequest) {
 
       if (donationId) {
         // Step 1: Confirm the donation status
-        const { error: updateErr } = await supabase
+        const { data: updatedDonation, error: updateErr } = await supabase
           .from('donations')
           .update({ 
             status: 'confirmed',
             paystack_reference: data.reference
           })
           .eq('id', donationId)
+          .select('amount')
+          .single()
 
         if (updateErr) {
           console.error('Error updating donation:', updateErr)
         }
-      }
 
-      // Step 2: Update campaign totals and mark event as processed
-      if (campaignId) {
+        const baseDonationGHS = updatedDonation?.amount || amountGHS
+
+        // Step 2: Update campaign totals and mark event as processed
+        if (campaignId) {
+          const { error: rpcErr } = await supabase.rpc('confirm_donation', {
+            p_campaign_id: campaignId,
+            p_amount: baseDonationGHS
+          })
+          
+          if (rpcErr) {
+            console.error('Error in confirm_donation RPC:', rpcErr)
+            // Update campaign manually if RPC doesn't exist
+            const { data: campaign } = await supabase
+              .from('campaigns')
+              .select('raised_amount, donor_count')
+              .eq('id', campaignId)
+              .single()
+
+            if (campaign) {
+              await supabase
+                .from('campaigns')
+                .update({
+                  raised_amount: (campaign.raised_amount || 0) + baseDonationGHS,
+                  donor_count: (campaign.donor_count || 0) + 1
+                })
+                .eq('id', campaignId)
+            }
+          }
+
+          // Mark event as processed
+          await supabase.from('payment_events')
+            .update({ processed: true })
+            .eq('external_event_id', String(data.id))
+            .eq('event_type', event)
+        }
+      } else if (campaignId) {
+        // Fallback if there is no donation_id metadata
         const { error: rpcErr } = await supabase.rpc('confirm_donation', {
           p_campaign_id: campaignId,
           p_amount: amountGHS
         })
-        
-        if (rpcErr) {
-          console.error('Error in confirm_donation RPC:', rpcErr)
-          // Update campaign manually if RPC doesn't exist
-          const { data: campaign } = await supabase
-            .from('campaigns')
-            .select('raised_amount, donor_count')
-            .eq('id', campaignId)
-            .single()
-
-          if (campaign) {
-            await supabase
-              .from('campaigns')
-              .update({
-                raised_amount: (campaign.raised_amount || 0) + amountGHS,
-                donor_count: (campaign.donor_count || 0) + 1
-              })
-              .eq('id', campaignId)
-          }
-        }
 
         // Mark event as processed
         await supabase.from('payment_events')

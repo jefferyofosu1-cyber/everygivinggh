@@ -69,17 +69,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'This campaign is not currently accepting donations.' }, { status: 403 })
     }
 
+    const amountPaid = amount + tipAmount
+    const platformFee = (amount * 0.029) + 0.50
+    const paystackFee = amountPaid * 0.0195
+    const netReceived = amountPaid - paystackFee
+    const campaignAmount = amount - platformFee
+    const everygivingRevenue = platformFee - paystackFee + tipAmount
+
     const { data: donation, error: insertErr } = await supabase
       .from('donations')
       .insert({
-        campaign_id:    campaignId,
-        donor_name:     donorName,
-        donor_email:    donorEmail,
-        amount,
-        tip_amount:     tipAmount,
-        message:        message || null,
-        payment_method: method,
-        status:         'pending',
+        campaign_id:         campaignId,
+        donor_name:          donorName,
+        donor_email:         donorEmail,
+        amount:              amount,
+        tip_amount:          tipAmount,
+        amount_paid:         amountPaid,
+        platform_fee:        platformFee,
+        paystack_fee:        paystackFee,
+        net_received:        netReceived,
+        campaign_amount:     campaignAmount,
+        everygiving_revenue: everygivingRevenue,
+        message:             message || null,
+        payment_method:      method,
+        status:              'pending',
       })
       .select('id')
       .single()

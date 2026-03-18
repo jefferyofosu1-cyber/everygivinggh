@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Nunito, Nunito_Sans } from 'next/font/google'
 import { validateEnv } from '@/lib/env'
-import Navbar from '@/components/layout/Navbar'
 import './globals.css'
 
 validateEnv()
@@ -62,7 +61,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-screen flex flex-col" style={{ fontFamily: "'DM Sans', sans-serif", background: '#FDFAF5', margin: 0 }}>
-        <Navbar />
         {children}
       </body>
     </html>

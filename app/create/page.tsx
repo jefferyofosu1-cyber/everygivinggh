@@ -124,7 +124,6 @@ export default function CreatePage() {
   if (step === 'done') {
     return (
       <>
-        <Navbar />
         <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-16">
           <div className="max-w-lg w-full text-center">
             <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">

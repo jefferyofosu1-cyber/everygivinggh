@@ -37,11 +37,9 @@ export default function CampaignPage() {
 
   if (loading) return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
-      <Footer />
     </>
   )
 
@@ -96,7 +94,7 @@ export default function CampaignPage() {
       setDonating(false)
     }
 
-    initializePayment({ onSuccess, onClose } as any)
+    initializePayment(onSuccess, onClose)
   }
 
   const shareUrl = `https://everygiving.org/campaigns/${campaign.id}`
@@ -105,7 +103,6 @@ export default function CampaignPage() {
   if (donated) {
     return (
       <>
-        <Navbar />
         <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-12">
           <div className="max-w-md w-full text-center">
             <div className="relative inline-flex w-24 h-24 mb-6">

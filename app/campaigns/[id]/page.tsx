@@ -35,32 +35,22 @@ export default function CampaignPage() {
       })
   }, [params?.id])
 
-  if (loading) return (
-    <>
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    </>
-  )
-
-  if (!campaign) return null
-
-  const pct = campaign.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
-  const emoji = EMOJI[campaign.category?.toLowerCase()] || '💚'
-
-  // Fee calculation: 2% + ₵0.25 per donation
+  // Calculate values with safe defaults
   const rawAmount = parseFloat(form.amount) || 0
   const fee = rawAmount > 0 ? (rawAmount * 0.02 + 0.25) : 0
   const fundraiserReceives = rawAmount > 0 ? (rawAmount - fee) : 0
+  const pct = campaign?.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
+  const emoji = campaign?.category ? EMOJI[campaign.category.toLowerCase()] : '💚'
 
+  // Setup Paystack BEFORE any early returns - hooks must be at top level
   const paystackConfig = {
     reference: (new Date()).getTime().toString(),
     email: form.email,
-    amount: rawAmount * 100, // pesewas
+    amount: rawAmount * 100,
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
     currency: 'GHS',
     metadata: {
-      campaign_id: campaign.id,
+      campaign_id: campaign?.id,
       donor_name: form.name || 'Anonymous',
       message: form.message,
       payment_method: form.method,
@@ -72,7 +62,7 @@ export default function CampaignPage() {
 
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!rawAmount || rawAmount <= 0 || !form.email) return
+    if (!rawAmount || rawAmount <= 0 || !form.email || !campaign) return
     setDonating(true)
 
     const onSuccess = async (reference: any) => {
@@ -84,7 +74,7 @@ export default function CampaignPage() {
         amount: rawAmount,
         message: form.message,
         payment_method: form.method,
-        status: 'pending', // Webhook handles success
+        status: 'pending',
       })
       setDonating(false)
       setDonated(true)
@@ -94,16 +84,26 @@ export default function CampaignPage() {
       setDonating(false)
     }
 
-    initializePayment(onSuccess, onClose)
+    initializePayment({ onSuccess, onClose })
   }
 
-  const shareUrl = `https://everygiving.org/campaigns/${campaign.id}`
-  const shareText = `Help support "${campaign.title}" on Every Giving 💚`
+  const shareUrl = `https://everygiving.org/campaigns/${campaign?.id}`
+  const shareText = `Help support "${campaign?.title}" on Every Giving 💚`
 
-  if (donated) {
-    return (
-      <>
-        <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-12">
+  // Now use conditional rendering instead of early returns
+  if (!params?.id) return null
+
+  return (
+    <>
+      <Navbar />
+      {loading ? (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : !campaign ? (
+        <div />
+      ) : donated ? (
+        <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-12\">
           <div className="max-w-md w-full text-center">
             <div className="relative inline-flex w-24 h-24 mb-6">
               <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
@@ -127,14 +127,7 @@ export default function CampaignPage() {
             <Link href="/campaigns" className="text-primary text-sm font-bold hover:underline">← Back to campaigns</Link>
           </div>
         </div>
-        <Footer />
-      </>
-    )
-  }
-
-  return (
-    <>
-      <Navbar />
+      ) : (
       <main className="bg-gray-50 min-h-screen">
         <div className="max-w-5xl mx-auto px-5 py-10">
           <Link href="/campaigns" className="text-gray-400 text-sm hover:text-primary transition-colors mb-6 inline-block">← Back to campaigns</Link>
@@ -251,6 +244,7 @@ export default function CampaignPage() {
           </div>
         </div>
       </main>
+      )}
       <Footer />
     </>
   )

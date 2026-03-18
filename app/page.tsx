@@ -427,9 +427,6 @@ export default function HomePage() {
             <Link href="/create" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: '#0A6B4B', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(10,107,75,0.25)', transition: 'transform 0.2s', className: 'transition-hover' } as any}>
               Start a fundraiser
             </Link>
-            <Link href="#campaigns" onClick={(e) => { e.preventDefault(); document.getElementById('campaigns')?.scrollIntoView({ behavior: 'smooth' }); }} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 600, color: '#1A1A18', background: '#fff', border: '1px solid #E8E4DC', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', transition: 'background 0.2s' }}>
-              Explore campaigns
-            </Link>
             <Link href="/donate" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: '#02A95C', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(2,169,92,0.25)', transition: 'transform 0.2s' }}>
               Donate now →
             </Link>

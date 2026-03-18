@@ -1,7 +1,5 @@
 'use client'
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import { usePageContent, cms } from '@/lib/content'
 
 const TIPS = [
@@ -74,7 +72,6 @@ export default function FundraisingTipsPage() {
   const c = usePageContent('fundraising-tips')
   return (
     <>
-      <Navbar />
       <main>
 
         {/* Hero */}
@@ -132,7 +129,6 @@ export default function FundraisingTipsPage() {
         </section>
 
       </main>
-      <Footer />
     </>
   )
 }

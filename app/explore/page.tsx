@@ -1,5 +1,3 @@
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import { sanityClient } from '@/lib/sanity.client'
 import {
   allCampaignsQuery,
@@ -49,7 +47,6 @@ export default async function ExplorePage({
 
   return (
     <>
-      <Navbar />
       <main className="bg-gray-50 min-h-screen">
         <section className="bg-navy text-white py-14">
           <div className="max-w-5xl mx-auto px-6 text-center">
@@ -145,7 +142,6 @@ export default async function ExplorePage({
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

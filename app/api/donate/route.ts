@@ -5,7 +5,7 @@ const MIN_AMOUNT = 1
 const MAX_AMOUNT = 50000
 const MAX_TIP    = 500
 
-const VALID_METHODS = ['MTN MoMo', 'Vodafone', 'AirtelTigo', 'Bank'] as const
+const VALID_METHODS = ['MTN MoMo', 'Vodafone', 'AirtelTigo', 'Bank', 'momo', 'card', 'paystack'] as const
 
 function str(val: unknown, max: number): string {
   if (typeof val !== 'string') return ''

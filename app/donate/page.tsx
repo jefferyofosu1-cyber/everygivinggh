@@ -1,8 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
 
 const EMOJI: Record<string, string> = {
@@ -62,7 +60,6 @@ export default function DonatePage() {
 
   return (
     <>
-      <Navbar />
       <main>
         {/* Hero  -  emotional, donation-focused */}
         <section className="bg-gradient-to-br from-navy via-navy to-[#0d2035] py-20 px-5 relative overflow-hidden">
@@ -139,7 +136,6 @@ export default function DonatePage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

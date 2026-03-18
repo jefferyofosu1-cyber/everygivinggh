@@ -80,24 +80,7 @@ export default function FeesPage() {
 
   return (
     <>
-      <style>{BASE}</style>
-
-      {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', height: 58, background: '#FFFFFF', borderBottom: '1px solid #E8E4DC', position: 'sticky', top: 0, zIndex: 100 }}>
-        <Link href="/" style={{ fontFamily: "'DM Serif Display',serif", fontSize: 19, color: '#1A1A18', textDecoration: 'none' }}>
-          Every<em style={{ color: '#0A6B4B', fontStyle: 'normal' }}>Giving</em>
-        </Link>
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          {([['/', 'Home'], ['/campaigns', 'Browse'], ['/how-it-works', 'How it works'], ['/fees', 'Fees']] as [string, string][]).map(([href, label]) => (
-            <Link key={href} href={href} style={{ fontSize: 13, fontWeight: href === '/fees' ? 600 : 500, color: href === '/fees' ? '#0A6B4B' : '#4A4A44', padding: '7px 11px', borderRadius: 6, textDecoration: 'none' }}>{label}</Link>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Link href="/auth/login" style={{ fontSize: 13, fontWeight: 500, color: '#1A1A18', padding: '7px 13px', border: '1px solid #E8E4DC', borderRadius: 8, textDecoration: 'none' }}>Sign in</Link>
-          <Link href="/create" style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: '#0A6B4B', padding: '8px 16px', borderRadius: 8, textDecoration: 'none' }}>Start a campaign</Link>
-        </div>
-      </nav>
-
+      <style dangerouslySetInnerHTML={{ __html: BASE }} />
       {/* HERO */}
       <div style={{ background: '#1A1A18', padding: '72px 32px 64px', textAlign: 'center' }}>
         <div style={{ maxWidth: 680, margin: '0 auto' }}>

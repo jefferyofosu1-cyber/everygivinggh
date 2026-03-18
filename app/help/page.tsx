@@ -1,8 +1,6 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import { usePageContent, cms } from '@/lib/content'
 
 const CATEGORIES = [
@@ -195,7 +193,6 @@ export default function HelpPage() {
 
   return (
     <>
-      <Navbar />
       <main>
 
         {/* ── HEADER ── */}
@@ -313,7 +310,6 @@ export default function HelpPage() {
         </section>
 
       </main>
-      <Footer />
     </>
   )
 }

@@ -1,7 +1,5 @@
 'use client'
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -52,7 +50,6 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export default function FundraisePage() {
   return (
     <>
-      <Navbar />
       <main>
 
         {/* ════════════════════════════════════
@@ -543,7 +540,6 @@ export default function FundraisePage() {
         </section>
 
       </main>
-      <Footer />
     </>
   )
 }

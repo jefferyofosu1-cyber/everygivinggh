@@ -119,7 +119,7 @@ export default function CreateCampaignPage() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
@@ -130,15 +130,7 @@ export default function CreateCampaignPage() {
         .opt-card:hover{border-color:#B7DEC9!important}
         .cat-card:hover{border-color:#B7DEC9!important;transform:translateY(-2px)}
         .drop-zone:hover{border-color:#0A6B4B!important;background:#F3FAF7}
-      `}</style>
-
-      {/* NAV */}
-      <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:56, background:'#fff', borderBottom:'1px solid #E8E4DC', position:'sticky', top:0, zIndex:100 }}>
-        <Link href="/" style={{ fontFamily:"'DM Serif Display',serif", fontSize:18, color:'#1A1A18' }}>Every<span style={{ color:'#0A6B4B' }}>Giving</span></Link>
-        <div style={{ fontSize:12, color:'#8A8A82' }}>Campaign creation · Step {step} of {STEPS.length}</div>
-        <Link href="/dashboard" style={{ fontSize:12, fontWeight:500, color:'#8A8A82' }}>Save & exit</Link>
-      </nav>
-
+      ` }} />
       {/* PROGRESS BAR */}
       <div style={{ height:3, background:'#E8E4DC', position:'sticky', top:56, zIndex:99 }}>
         <div style={{ height:'100%', background:'#0A6B4B', transition:'width .4s ease', width:`${(step/STEPS.length)*100}%` }} />
@@ -480,7 +472,7 @@ function StepTip({ step }: { step: number }) {
 function SuccessScreen({ form }: { form: FormState }) {
   return (
     <div style={{ minHeight:'100vh', background:'#FDFAF5', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'DM Sans',sans-serif" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap'); *{box-sizing:border-box;margin:0;padding:0} a{text-decoration:none;color:inherit}`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap'); *{box-sizing:border-box;margin:0;padding:0} a{text-decoration:none;color:inherit}` }} />
       <div style={{ maxWidth:480, textAlign:'center' }}>
         <div style={{ width:64, height:64, borderRadius:'50%', background:'#E8F5EF', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#0A6B4B" strokeWidth="2.5" strokeLinecap="round"/></svg>

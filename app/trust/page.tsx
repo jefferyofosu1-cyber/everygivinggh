@@ -1,5 +1,3 @@
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 
 export const metadata = {
   title: 'Trust & safety · Every Giving',
@@ -33,7 +31,6 @@ export default function TrustPage() {
 
   return (
     <>
-      <Navbar />
       <main className="bg-gray-50 min-h-screen">
         <section className="bg-navy text-white py-16">
           <div className="max-w-4xl mx-auto px-6 text-center">
@@ -65,7 +62,6 @@ export default function TrustPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

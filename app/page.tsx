@@ -1,29 +1,9 @@
-'use client';
+'use client'
 
-/**
- * EveryGiving — Browse Campaigns Page
- * Route: /campaigns
- *
- * Features:
- * - Full-text search across title, organiser, location
- * - Category tab filtering (Medical, Education, Emergency, etc.)
- * - Filter chips: Urgent, Fully funded, Diaspora friendly
- * - Sort: Most urgent, Most recent, Most donors, Closest to goal
- * - Paginated grid with Load More
- * - Featured first card when no filter active
- * - Search term highlighting
- * - Empty state with clear-all CTA
- *
- * Data:
- * Replace the SAMPLE_CAMPAIGNS array with a real API call.
- * Recommended: fetch('/api/campaigns') from your Node.js backend.
- * The component is fully client-side rendered — add Suspense + loading.jsx
- * in the app directory if you want server-side rendering.
- */
-
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import Link from 'next/link';
-import { createClient } from '@/lib/supabase';
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase'
+import VideoModal from '@/components/ui/VideoModal'
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
@@ -34,92 +14,50 @@ const CATEGORIES = [
   { id: 'emergency', label: 'Emergency' },
   { id: 'faith',     label: 'Faith' },
   { id: 'community', label: 'Community' },
-  { id: 'funeral',   label: 'Funeral' },
   { id: 'family',    label: 'Family' },
-];
+]
 
 const FILTER_CHIPS = [
   { id: 'urgent',   label: 'Urgent' },
   { id: 'funded',   label: 'Fully funded' },
-  { id: 'diaspora', label: 'Diaspora friendly' },
-];
+]
 
 const SORT_OPTIONS = [
   { value: 'urgent',  label: 'Most urgent' },
   { value: 'recent',  label: 'Most recent' },
   { value: 'popular', label: 'Most donors' },
   { value: 'pct',     label: 'Closest to goal' },
-];
+]
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 6
 
-// ─── CATEGORY VISUALS ─────────────────────────────────────────────────────────
+// ─── SVG ICONS ────────────────────────────────────────────────────────────────
 
-const CATEGORY_EMOJIS: Record<string, string> = {
-  medical: '🏥', education: '📚', emergency: '🚨',
-  faith: '⛪', community: '💧', funeral: '🕊️',
-  family: '🏠', business: '💼', environment: '🌿', other: '💛',
-};
+const IconVerify = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+const IconShield = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+const IconEye = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+const IconHeart = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
 
-const CATEGORY_GRADIENTS: Record<string, string> = {
-  medical:     'linear-gradient(135deg,#1B4332,#52B788)',
-  education:   'linear-gradient(135deg,#5C3317,#A0522D)',
-  emergency:   'linear-gradient(135deg,#922B21,#C0392B)',
-  faith:       'linear-gradient(135deg,#2C3E50,#4A6FA5)',
-  community:   'linear-gradient(135deg,#014F86,#2196F3)',
-  funeral:     'linear-gradient(135deg,#2D2D2D,#6D6D6D)',
-  family:      'linear-gradient(135deg,#7B3F00,#C68642)',
-  business:    'linear-gradient(135deg,#3D0C02,#9B2335)',
-  environment: 'linear-gradient(135deg,#0D3B00,#2D6A0D)',
-  other:       'linear-gradient(135deg,#3A3A3A,#707070)',
-};
+// ─── SAMPLE DATA ──────────────────────────────────────────────────────────────
 
-function mapDbCampaign(c: any): Campaign {
-  const cat = (c.category || 'other').toLowerCase();
-  const goalAmt = c.goal_amount || 1;
-  const raisedAmt = c.raised_amount || 0;
-  const daysLeft = c.deadline
-    ? Math.max(0, Math.ceil((new Date(c.deadline).getTime() - Date.now()) / 86_400_000))
-    : 999;
-  return {
-    id: c.id,
-    slug: c.id,
-    category: cat,
-    title: c.title || '',
-    organiserName: c.profiles?.full_name || 'Anonymous',
-    location: c.location || '',
-    raisedGHS: raisedAmt,
-    goalGHS: goalAmt,
-    donorCount: 0,
-    daysLeft,
-    isUrgent: daysLeft > 0 && daysLeft <= 7,
-    isFunded: raisedAmt >= goalAmt,
-    isDiasporaFriendly: false,
-    coverEmoji: CATEGORY_EMOJIS[cat] || '💛',
-    coverGradient: CATEGORY_GRADIENTS[cat] || CATEGORY_GRADIENTS.other,
-    coverImageUrl: c.image_url || undefined,
-    createdAt: c.created_at,
-  };
-}
 
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
 function formatGHS(amount: number) {
-  return `₵${amount.toLocaleString()}`;
+  return `₵${amount.toLocaleString()}`
 }
 
 function highlightText(text: string, query: string): React.ReactNode {
-  if (!query.trim()) return text;
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+  if (!query.trim()) return text
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'))
   return parts.map((part, i) =>
     part.toLowerCase() === query.toLowerCase()
       ? <mark key={i} style={{ background: '#fef08a', borderRadius: 2, padding: '0 1px' }}>{part}</mark>
       : part
-  );
+  )
 }
-
 
 // ─── CAMPAIGN CARD ────────────────────────────────────────────────────────────
 
@@ -127,308 +65,358 @@ interface Campaign {
   id: string; slug: string; category: string; title: string;
   organiserName: string; location: string; raisedGHS: number; goalGHS: number;
   donorCount: number; daysLeft: number; isUrgent: boolean; isFunded: boolean;
-  isDiasporaFriendly: boolean; coverEmoji: string; coverGradient: string;
-  coverImageUrl?: string; createdAt?: string;
+  coverAbbr: string; coverGradient: string; coverImageUrl?: string;
 }
+
 function CampaignCard({ campaign, query, featured = false }: { campaign: Campaign; query: string; featured?: boolean }) {
-  const pct = Math.min(100, Math.round(campaign.raisedGHS / campaign.goalGHS * 100));
+  const pct = Math.min(100, Math.round(campaign.raisedGHS / campaign.goalGHS * 100))
 
   return (
     <Link
       href={`/campaigns/${campaign.slug}`}
       style={{
-        display: 'block',
-        background: '#FFFFFF',
-        border: '1px solid #E8E4DC',
-        borderRadius: 14,
-        overflow: 'hidden',
-        cursor: 'pointer',
-        transition: 'all 0.22s',
-        textDecoration: 'none',
+        display: 'block', background: '#FFFFFF', border: '1px solid #E8E4DC', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', textDecoration: 'none',
         gridColumn: featured ? 'span 2' : 'span 1',
       }}
-      className="campaign-card"
+      className="campaign-card transition-hover"
     >
-      {/* Cover image */}
-      <div style={{
-        height: featured ? 200 : 158,
-        background: campaign.coverGradient,
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-      }}>
+      {/* Cover image area */}
+      <div style={{ height: featured ? 220 : 170, background: campaign.coverGradient, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
         {campaign.coverImageUrl ? (
-          <img src={campaign.coverImageUrl} alt={campaign.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
+          <img src={campaign.coverImageUrl} alt={campaign.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
         ) : (
-          <span style={{ fontSize: featured ? 48 : 36, position: 'relative', zIndex: 1 }}>{campaign.coverEmoji}</span>
+          <span style={{ fontSize: featured ? 48 : 36, fontWeight: 700, color: 'rgba(255,255,255,0.7)', position: 'relative', zIndex: 1 }}>{campaign.coverAbbr}</span>
         )}
 
-        {/* Verified badge */}
-        <div style={{
-          position: 'absolute', top: 10, right: 10,
-          background: 'rgba(255,255,255,0.95)',
-          borderRadius: 20, padding: '3px 8px',
-          fontSize: 10, fontWeight: 700, color: '#0A6B4B',
-          display: 'flex', alignItems: 'center', gap: 3,
-        }}>✓ Verified</div>
+        {/* Verification Shield Badge */}
+        <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(255,255,255,0.95)', borderRadius: 24, padding: '4px 10px', fontSize: 11, fontWeight: 700, color: '#0A6B4B', display: 'flex', alignItems: 'center', gap: 4, letterSpacing: '0.02em' }}>
+          <IconVerify /> Verified
+        </div>
 
-        {/* Urgent / Funded badge */}
+        {/* Urgency/Funded Badges */}
         {campaign.isFunded && (
-          <div style={{ position: 'absolute', top: 10, left: 10, background: '#B85C00', borderRadius: 20, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#fff' }}>
-            Funded ✓
+          <div style={{ position: 'absolute', top: 12, left: 12, background: '#1A1A18', borderRadius: 24, padding: '4px 10px', fontSize: 11, fontWeight: 700, color: '#fff' }}>
+            Fully Funded
           </div>
         )}
         {campaign.isUrgent && !campaign.isFunded && (
-          <div style={{ position: 'absolute', top: 10, left: 10, background: '#B85C00', borderRadius: 20, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#fff' }}>
-            Urgent
+          <div style={{ position: 'absolute', top: 12, left: 12, background: '#B85C00', borderRadius: 24, padding: '4px 10px', fontSize: 11, fontWeight: 700, color: '#fff' }}>
+            {campaign.daysLeft <= 3 ? (campaign.daysLeft === 0 ? "Ends today" : `Only ${campaign.daysLeft} days left`) : "Urgent needs"}
           </div>
         )}
       </div>
 
       {/* Card body */}
-      <div style={{ padding: '14px 15px' }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 5 }}>
+      <div style={{ padding: '20px' }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 8 }}>
           {campaign.category}
         </div>
 
-        <div style={{ fontSize: featured ? 15 : 13, fontWeight: 600, color: '#1A1A18', lineHeight: 1.45, marginBottom: 6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        <div style={{ fontSize: featured ? 18 : 15, fontWeight: 600, color: '#1A1A18', lineHeight: 1.4, marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>
           {highlightText(campaign.title, query)}
         </div>
 
-        <div style={{ fontSize: 12, color: '#8A8A82', marginBottom: 11, display: 'flex', alignItems: 'center', gap: 4 }}>
-          {highlightText(campaign.organiserName, query)} · {campaign.location}
-          {campaign.isDiasporaFriendly && (
-            <span style={{ fontSize: 10, fontWeight: 600, color: '#B85C00', background: '#FEF3E2', padding: '1px 5px', borderRadius: 8, marginLeft: 4 }}>
-              🌍 Diaspora
-            </span>
+        <div style={{ fontSize: 13, color: '#8A8A82', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 4 }}>
+          {highlightText(campaign.organiserName, query)} &middot; {campaign.location}
+        </div>
+
+        {/* Progress System */}
+        <div style={{ height: 6, background: '#F0EFEA', borderRadius: 3, overflow: 'hidden', marginBottom: 10 }}>
+          <div style={{ height: '100%', width: `${pct}%`, background: campaign.isFunded ? '#1A1A18' : '#0A6B4B', borderRadius: 3, transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }} />
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1A18' }}>{formatGHS(campaign.raisedGHS)} <span style={{ fontSize: 13, fontWeight: 500, color: '#8A8A82' }}>raised</span></span>
+          <span style={{ fontSize: 13, color: '#8A8A82', fontWeight: 500 }}>{pct}%</span>
+        </div>
+
+        {/* Action / Donors Footer */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #F0EFEA', paddingTop: 16 }}>
+          <div style={{ fontSize: 13, color: '#4A4A44', fontWeight: 500 }}>
+            <span style={{ color: '#1A1A18', fontWeight: 700 }}>{campaign.donorCount}</span> people donated
+          </div>
+          {!campaign.isFunded && (
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#0A6B4B', background: '#E8F5EF', padding: '6px 12px', borderRadius: 20 }}>
+              Donate
+            </div>
           )}
-        </div>
-
-        {/* Progress bar */}
-        <div style={{ height: 4, background: '#E8E4DC', borderRadius: 2, overflow: 'hidden', marginBottom: 7 }}>
-          <div style={{ height: '100%', width: `${pct}%`, background: campaign.isFunded ? '#B85C00' : '#0A6B4B', borderRadius: 2, transition: 'width 0.6s ease' }} />
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A18' }}>{formatGHS(campaign.raisedGHS)} raised</span>
-          <span style={{ fontSize: 11, color: '#8A8A82' }}>
-            {campaign.donorCount > 0 && `${campaign.donorCount} donors · `}
-            {campaign.isFunded
-              ? <span style={{ color: '#B85C00', fontWeight: 700 }}>Fully funded</span>
-              : campaign.daysLeft === 0
-                ? <span style={{ color: '#B85C00' }}>Ends today</span>
-                : `${campaign.daysLeft}d left`
-            }
-          </span>
         </div>
       </div>
     </Link>
-  );
+  )
 }
-
 
 // ─── MAIN PAGE COMPONENT ──────────────────────────────────────────────────────
 
 export default function HomePage() {
-  const [query, setQuery]               = useState('');
-  const [activeCategory, setCategory]   = useState('all');
-  const [activeFilters, setFilters]     = useState(new Set<string>());
-  const [sortBy, setSortBy]             = useState('urgent');
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [campaigns, setCampaigns]       = useState<Campaign[]>([]);
-  const [loading, setLoading]           = useState(true);
+  const [campaigns, setCampaigns]       = useState<Campaign[]>([])
+  const [loading, setLoading]           = useState(true)
+  const [query, setQuery]               = useState('')
+  const [activeCategory, setCategory]   = useState('all')
+  const [activeFilters, setFilters]     = useState(new Set<string>())
+  const [sortBy, setSortBy]             = useState('urgent')
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   useEffect(() => {
-    const supabase = createClient();
+    const supabase = createClient()
     supabase
       .from('campaigns')
-      .select('id, title, category, story, goal_amount, raised_amount, image_url, status, deadline, location, created_at, verified, profiles(full_name)')
-      .eq('status', 'approved')
+      .select('*')
+      .eq('status', 'live')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        setCampaigns((data || []).map(mapDbCampaign));
-        setLoading(false);
-      });
-  }, []);
+        if (data) {
+          setCampaigns(data.map(c => ({
+            id: c.id,
+            slug: c.slug || c.id,
+            category: c.category || 'other',
+            title: c.title,
+            organiserName: c.organiser_name || 'Anonymous',
+            location: c.location || 'Ghana',
+            raisedGHS: c.raised_amount || 0,
+            goalGHS: c.goal_amount || 1000,
+            donorCount: c.donor_count || 0,
+            daysLeft: c.deadline ? Math.max(0, Math.ceil((new Date(c.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 30,
+            isUrgent: c.is_urgent || false,
+            isFunded: (c.raised_amount || 0) >= (c.goal_amount || 1000),
+            coverAbbr: c.title ? c.title.substring(0, 2).toUpperCase() : 'EG',
+            coverGradient: 'linear-gradient(135deg,#1B4332,#52B788)',
+            coverImageUrl: c.cover_image,
+          })))
+        }
+        setLoading(false)
+      })
+  }, [])
 
   // ── Filter + sort ──
   const filtered = useMemo(() => {
-    let list = campaigns.filter(c => {
-      if (activeCategory !== 'all' && c.category !== activeCategory) return false;
-      if (activeFilters.has('urgent') && !c.isUrgent) return false;
-      if (activeFilters.has('funded') && !c.isFunded) return false;
-      if (activeFilters.has('diaspora') && !c.isDiasporaFriendly) return false;
+    const list = campaigns.filter(c => {
+      if (activeCategory !== 'all' && c.category !== activeCategory) return false
+      if (activeFilters.has('urgent') && !c.isUrgent) return false
+      if (activeFilters.has('funded') && !c.isFunded) return false
       if (query) {
-        const q = query.toLowerCase();
+        const q = query.toLowerCase()
         if (
           !c.title.toLowerCase().includes(q) &&
           !c.organiserName.toLowerCase().includes(q) &&
           !c.location.toLowerCase().includes(q)
-        ) return false;
+        ) return false
       }
-      return true;
-    });
+      return true
+    })
 
     return [...list].sort((a, b) => {
-      if (sortBy === 'urgent')  return (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0) || a.daysLeft - b.daysLeft;
-      if (sortBy === 'recent')  return (b.createdAt || '') > (a.createdAt || '') ? 1 : -1;
-      if (sortBy === 'popular') return b.donorCount - a.donorCount;
-      if (sortBy === 'pct')     return (b.raisedGHS / b.goalGHS) - (a.raisedGHS / a.goalGHS);
-      return 0;
-    });
-  }, [query, activeCategory, activeFilters, sortBy, campaigns]);
+      if (sortBy === 'urgent')  return (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0) || a.daysLeft - b.daysLeft
+      if (sortBy === 'recent')  return parseInt(b.id) - parseInt(a.id)
+      if (sortBy === 'popular') return b.donorCount - a.donorCount
+      if (sortBy === 'pct')     return (b.raisedGHS / b.goalGHS) - (a.raisedGHS / a.goalGHS)
+      return 0
+    })
+  }, [campaigns, query, activeCategory, activeFilters, sortBy])
 
-  const visible = filtered.slice(0, visibleCount);
+  const visible = filtered.slice(0, visibleCount)
 
   // ── Handlers ──
   const toggleFilter = useCallback((id: string) => {
     setFilters(prev => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-    setVisibleCount(PAGE_SIZE);
-  }, []);
+      const next = new Set(prev)
+      if (next.has(id)) { next.delete(id) } else { next.add(id) }
+      return next
+    })
+    setVisibleCount(PAGE_SIZE)
+  }, [])
 
   const clearAll = useCallback(() => {
-    setQuery('');
-    setCategory('all');
-    setFilters(new Set());
-    setSortBy('urgent');
-    setVisibleCount(PAGE_SIZE);
-  }, []);
+    setQuery('')
+    setCategory('all')
+    setFilters(new Set())
+    setSortBy('urgent')
+    setVisibleCount(PAGE_SIZE)
+  }, [])
 
-  const isFeaturedMode = !query && activeCategory === 'all' && activeFilters.size === 0;
+  const isFeaturedMode = !query && activeCategory === 'all' && activeFilters.size === 0
 
   return (
     <>
-      {/* ── NAV ── */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', height: 58, background: '#FFFFFF', borderBottom: '1px solid #E8E4DC', position: 'sticky', top: 0, zIndex: 100 }}>
-        <Link href="/" style={{ fontFamily: "'DM Serif Display', serif", fontSize: 19, color: '#1A1A18', textDecoration: 'none' }}>
-          Every<em style={{ color: '#0A6B4B', fontStyle: 'normal' }}>Giving</em>
-        </Link>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Link href="/auth/login" style={{ fontSize: 13, fontWeight: 500, color: '#1A1A18', padding: '7px 13px', border: '1px solid #E8E4DC', borderRadius: 8, textDecoration: 'none' }}>Sign in</Link>
-          <Link href="/create" style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: '#0A6B4B', padding: '8px 16px', borderRadius: 8, textDecoration: 'none' }}>Start a campaign</Link>
-        </div>
-      </nav>
+      <style dangerouslySetInnerHTML={{ __html: `
+        body { background: #FDFAF5; color: #1A1A18; }
+        .transition-hover { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .campaign-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.06); }
+        .hero-bg { background: linear-gradient(180deg, #F9F8F6 0%, #FDFAF5 100%); }
+      `}} />
 
-      {/* ── HEADER + SEARCH ── */}
-      <div style={{ background: '#1A1A18', padding: '40px 28px 0' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B7DEC9', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 20, height: 1, background: '#B7DEC9', display: 'inline-block' }} />
-            Verified campaigns
-          </div>
-          <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 36, color: '#fff', marginBottom: 6, lineHeight: 1.15 }}>
-            Every cause.<br /><em style={{ color: '#B7DEC9' }}>Every community.</em>
+      {/* ── 1. NEW TEXT HERO SECTION ── */}
+      <div className="hero-bg" style={{ padding: '80px 28px 60px', textAlign: 'center', borderBottom: '1px solid #E8E4DC' }}>
+        <div style={{ maxWidth: 840, margin: '0 auto' }}>
+          <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(40px, 7vw, 72px)', color: '#1A1A18', marginBottom: 24, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
+            Raise money for what <span style={{ color: '#0A6B4B' }}>matters most</span>
           </h1>
-          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>
-            All campaigns are identity-verified. Every fundraiser has had their Ghana Card confirmed by our team.
+          <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: '#4A4A44', lineHeight: 1.6, marginBottom: 40, maxWidth: 680, marginInline: 'auto' }}>
+            Create a fundraiser in minutes and get support from people who care across Ghana and beyond. 100% verified. No platform fees.
           </p>
-
-          {/* Search */}
-          <div style={{ position: 'relative', maxWidth: 600, marginBottom: 24 }}>
-            <svg style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, opacity: 0.4, pointerEvents: 'none' }} viewBox="0 0 20 20" fill="none">
-              <circle cx="8.5" cy="8.5" r="5.5" stroke="white" strokeWidth="1.5" />
-              <path d="M13 13l3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            <input
-              type="text"
-              value={query}
-              onChange={e => { setQuery(e.target.value); setVisibleCount(PAGE_SIZE); }}
-              placeholder="Search campaigns, names, causes…"
-              style={{ width: '100%', padding: '13px 42px 13px 42px', border: '1.5px solid rgba(255,255,255,0.12)', borderRadius: 12, background: 'rgba(255,255,255,0.07)', color: '#fff', fontSize: 14, fontFamily: 'inherit', outline: 'none' }}
-            />
-            {query && (
-              <button onClick={clearAll} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', width: 22, height: 22, borderRadius: '50%', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
-            )}
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link href="/create" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: '#0A6B4B', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(10,107,75,0.25)', transition: 'transform 0.2s', className: 'transition-hover' } as any}>
+              Start a fundraiser
+            </Link>
+            <Link href="#campaigns" onClick={(e) => { e.preventDefault(); document.getElementById('campaigns')?.scrollIntoView({ behavior: 'smooth' }); }} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 600, color: '#1A1A18', background: '#fff', border: '1px solid #E8E4DC', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', transition: 'background 0.2s' }}>
+              Donate now
+            </Link>
           </div>
         </div>
+      </div>
 
+      {/* ── 2. VIDEO MODAL SECTION ── */}
+      <div style={{ padding: '60px 28px', background: '#1A1A18' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 60, flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 400px', textAlign: 'left', color: '#fff' }}>
+            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, marginBottom: 16 }}>See it in action</h2>
+            <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 32 }}>Watch how easy it is to set up a campaign, verify your identity using the Ghana Card, and receive funds directly to your MoMo wallet instantly.</p>
+            <Link href="/create" style={{ fontSize: 15, fontWeight: 600, color: '#000', background: '#fff', padding: '12px 24px', borderRadius: 8, textDecoration: 'none', display: 'inline-block' }}>
+              Start your fundraiser in minutes
+            </Link>
+          </div>
+          
+          <VideoModal 
+            videoId="yYKsEvqutvg" 
+            thumbnailUrl="/og-image.png" 
+            title="EveryGiving - How it Works" 
+          />
+        </div>
+      </div>
+
+      {/* ── 3. TRUST LAYER ── */}
+      <div style={{ padding: '80px 28px', background: '#F9F8F6', borderBottom: '1px solid #E8E4DC' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 36, color: '#1A1A18', marginBottom: 12 }}>Why people trust EveryGiving</h2>
+            <p style={{ fontSize: 16, color: '#8A8A82' }}>Built to protect both the people giving and the people receiving.</p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 32 }}>
+            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
+              <div style={{ width: 48, height: 48, background: '#E8F5EF', color: '#0A6B4B', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconVerify /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Verified fundraisers</h3>
+              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>Every single campaign organizer is identity-checked using the national Ghana Card database.</p>
+            </div>
+            
+            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
+              <div style={{ width: 48, height: 48, background: '#F0F4F8', color: '#185FA5', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconShield /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Secure payments</h3>
+              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>We use bank-level security via Paystack for instant MoMo, Telecel Cash, and Card processing.</p>
+            </div>
+
+            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
+              <div style={{ width: 48, height: 48, background: '#FEF3E2', color: '#B85C00', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconEye /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Transparent fees</h3>
+              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>0% platform fee to start. A small, clear transaction fee ensures maximum funds reach the cause.</p>
+            </div>
+
+            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
+              <div style={{ width: 48, height: 48, background: '#FCE8E8', color: '#C0392B', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconHeart /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Real impact stories</h3>
+              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>Track milestones and see exactly how your donation changes lives within the community.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 4. CAMPAIGNS DIRECTORY ── */}
+      <div id="campaigns" style={{ padding: '80px 28px', background: '#FDFAF5' }}>
         {/* Category tabs */}
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', gap: 0, overflowX: 'auto' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 24 }}>
           {CATEGORIES.map(cat => (
-            <button key={cat.id} onClick={() => { setCategory(cat.id); setVisibleCount(PAGE_SIZE); }}
-              style={{ fontSize: 13, fontWeight: 500, color: activeCategory === cat.id ? '#fff' : 'rgba(255,255,255,0.45)', padding: '12px 14px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', borderBottom: activeCategory === cat.id ? '2px solid #B7DEC9' : '2px solid transparent', cursor: 'pointer', whiteSpace: 'nowrap', background: 'none', fontFamily: 'inherit', transition: 'all 0.15s' }}>
+            <button key={cat.id} onClick={() => { setCategory(cat.id); setVisibleCount(PAGE_SIZE) }}
+              style={{ fontSize: 13, fontWeight: 600, color: activeCategory === cat.id ? '#0A6B4B' : '#4A4A44', padding: '10px 16px', borderRadius: 24, background: activeCategory === cat.id ? '#E8F5EF' : '#fff', border: activeCategory === cat.id ? '1px solid #B7DEC9' : '1px solid #E8E4DC', cursor: 'pointer', whiteSpace: 'nowrap' as const, fontFamily: 'inherit', transition: 'all 0.15s' }}>
               {cat.label}
             </button>
           ))}
         </div>
-      </div>
 
-      {/* ── TOOLBAR ── */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '16px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, color: '#8A8A82' }}>
-            <strong style={{ color: '#1A1A18' }}>{filtered.length}</strong> campaign{filtered.length !== 1 ? 's' : ''}
-            {query && <em style={{ color: '#0A6B4B' }}> for "{query}"</em>}
-          </span>
-          {FILTER_CHIPS.map(f => (
-            <button key={f.id} onClick={() => toggleFilter(f.id)}
-              style={{ fontSize: 12, fontWeight: 500, padding: '5px 12px', borderRadius: 20, border: activeFilters.has(f.id) ? '1px solid #0A6B4B' : '1px solid #E8E4DC', background: activeFilters.has(f.id) ? '#E8F5EF' : '#fff', color: activeFilters.has(f.id) ? '#0A6B4B' : '#4A4A44', cursor: 'pointer', transition: 'all 0.15s', fontFamily: 'inherit' }}>
-              {f.label}
-            </button>
-          ))}
+        {/* Toolbar */}
+        <div style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 32, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            {FILTER_CHIPS.map(f => (
+              <button key={f.id} onClick={() => toggleFilter(f.id)}
+                style={{ fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 20, border: activeFilters.has(f.id) ? '1px solid #1A1A18' : '1px dashed #A0A09A', background: activeFilters.has(f.id) ? '#1A1A18' : 'transparent', color: activeFilters.has(f.id) ? '#fff' : '#4A4A44', cursor: 'pointer', transition: 'all 0.15s', fontFamily: 'inherit' }}>
+                {activeFilters.has(f.id) ? '✓ ' : '+ '}{f.label}
+              </button>
+            ))}
+          </div>
+          <select value={sortBy} onChange={e => { setSortBy(e.target.value); setVisibleCount(PAGE_SIZE) }}
+            style={{ fontSize: 13, fontWeight: 500, color: '#4A4A44', padding: '10px 14px', border: '1px solid #E8E4DC', borderRadius: 8, background: '#fff', cursor: 'pointer', fontFamily: 'inherit', outline: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+            {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>Sort by: {o.label}</option>)}
+          </select>
         </div>
-        <select value={sortBy} onChange={e => { setSortBy(e.target.value); setVisibleCount(PAGE_SIZE); }}
-          style={{ fontSize: 13, color: '#4A4A44', padding: '6px 10px', border: '1px solid #E8E4DC', borderRadius: 8, background: '#fff', cursor: 'pointer', fontFamily: 'inherit', outline: 'none' }}>
-          {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
+
+        {/* Campaign Grid */}
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          {filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '80px 20px', background: '#fff', border: '1px dashed #D4D4D0', borderRadius: 16 }}>
+              <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 24, color: '#1A1A18', marginBottom: 8 }}>No campaigns found</h3>
+              <p style={{ fontSize: 15, color: '#8A8A82', marginBottom: 24 }}>Expand your search to find causes that need your help right now.</p>
+              <button onClick={clearAll} style={{ fontSize: 14, fontWeight: 600, color: '#1A1A18', background: '#F9F8F6', padding: '12px 24px', borderRadius: 8, border: '1px solid #E8E4DC', cursor: 'pointer', fontFamily: 'inherit' }}>
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
+              {visible.map((campaign, i) => (
+                <CampaignCard
+                  key={campaign.id}
+                  campaign={campaign}
+                  query={query}
+                  featured={i === 0 && isFeaturedMode && typeof window !== 'undefined' && window.innerWidth > 900}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Load more */}
+          {filtered.length > visibleCount && (
+            <div style={{ textAlign: 'center', marginTop: 40 }}>
+              <button
+                onClick={() => setVisibleCount(v => v + PAGE_SIZE)}
+                style={{ fontSize: 15, fontWeight: 600, color: '#1A1A18', background: '#fff', border: '1px solid #E8E4DC', padding: '14px 32px', borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.15s', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}
+              >
+                Show more campaigns
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ── CAMPAIGN GRID ── */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 28px 60px' }}>
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', background: '#fff', border: '1px solid #E8E4DC', borderRadius: 14 }}>
-            <div style={{ fontSize: 40, marginBottom: 14, opacity: 0.4 }}>🔍</div>
-            <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#1A1A18', marginBottom: 6 }}>No campaigns found</h3>
-            <p style={{ fontSize: 14, color: '#8A8A82', marginBottom: 20 }}>Try a different search or clear your filters</p>
-            <button onClick={clearAll} style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: '#0A6B4B', padding: '11px 22px', borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
-              Clear all filters
-            </button>
+      {/* ── FOOTER ── */}
+      <footer style={{ background: '#111110', padding: '48px 32px 28px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 24, marginBottom: 24, borderBottom: '1px solid rgba(255,255,255,0.07)', flexWrap: 'wrap', gap: 16 }}>
+            <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: 19, color: '#fff' }}>
+              Every<em style={{ color: '#B7DEC9', fontStyle: 'normal' }}>Giving</em>
+            </span>
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              {[
+                ['About', '/about'], ['How it Works', '/how-it-works'], ['Trust & Safety', '/trust'],
+                ['Privacy', '/privacy'], ['Terms', '/terms'], ['Contact', '/contact'],
+              ].map(([label, href]) => (
+                <Link key={href} href={href} style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', textDecoration: 'none', transition: 'color 0.15s' }}>
+                  {label}
+                </Link>
+              ))}
+            </div>
           </div>
-        ) : loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
-            {[...Array(PAGE_SIZE)].map((_, i) => (
-              <div key={i} style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 14, overflow: 'hidden' }}>
-                <div style={{ height: 158, background: '#E8E4DC', opacity: 0.6 }} />
-                <div style={{ padding: 14 }}>
-                  {[60, '90%', '70%'].map((w, j) => (
-                    <div key={j} style={{ width: w, height: 12, background: '#E8E4DC', borderRadius: 4, marginBottom: 10, opacity: 0.6 }} />
-                  ))}
-                </div>
-              </div>
-            ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
+              &copy; {new Date().getFullYear()} EveryGiving Ltd &middot; Accra, Ghana
+            </div>
+            <div style={{ display: 'flex', gap: 16 }}>
+              {['MoMo', 'Visa', 'Mastercard'].map(method => (
+                <span key={method} style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', padding: '4px 10px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6 }}>
+                  {method}
+                </span>
+              ))}
+            </div>
           </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
-            {visible.map((campaign, i) => (
-              <CampaignCard
-                key={campaign.id}
-                campaign={campaign}
-                query={query}
-                featured={i === 0 && isFeaturedMode}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Load more */}
-        {filtered.length > visibleCount && (
-          <div style={{ textAlign: 'center', marginTop: 28 }}>
-            <button
-              onClick={() => setVisibleCount(v => v + PAGE_SIZE)}
-              style={{ fontSize: 14, fontWeight: 600, color: '#0A6B4B', background: 'transparent', border: '1.5px solid #0A6B4B', padding: '11px 28px', borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.15s' }}
-            >
-              Load more — {filtered.length - visibleCount} remaining
-            </button>
-          </div>
-        )}
-      </div>
+        </div>
+      </footer>
     </>
-  );
+  )
 }

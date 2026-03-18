@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { sanityClient } from '@/lib/sanity.client'
 import {
@@ -81,7 +80,6 @@ export default async function CampaignPage({
 
   return (
     <>
-      <Navbar />
       <main className="bg-gray-50 min-h-screen">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
           <div className="grid lg:grid-cols-5 gap-8">

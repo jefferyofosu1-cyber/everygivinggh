@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase';
 
 // ─── constants ────────────────────────────────────────────────────────────────
 const PRESETS_LOCAL = [50, 100, 200, 500, 1000];
@@ -15,24 +16,22 @@ const CURRENCIES = [
   { code:'EUR', symbol:'€', rate: 15.8, flag:'🇪🇺' },
 ];
 function getImpact(amt: number): string {
-  if (amt >= 1000) return "covers Ama's surgery booking deposit";
+  if (amt >= 1000) return 'covers the first surgical milestone';
   if (amt >= 500)  return 'pays for a month of post-op medication';
-  if (amt >= 200)  return 'covers transport costs to Korle Bu Teaching Hospital';
-  if (amt >= 100)  return "feeds Ama's family for a week during recovery";
-  if (amt >= 50)   return 'helps buy medical supplies for the hospital room';
+  if (amt >= 200)  return 'covers transport costs to a major hospital';
+  if (amt >= 100)  return 'helps feed a family during recovery';
+  if (amt >= 50)   return 'helps buy essential medical supplies';
   return 'makes a real difference';
 }
 
-// ─── mock campaign ────────────────────────────────────────────────────────────
-const MOCK_CAMPAIGN = {
-  title: 'Help Ama get life-saving kidney surgery at Korle Bu',
-  organiser: 'Kwame Mensah',
-  category: 'Medical',
-  coverImg: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=480&q=80',
-  raisedGHS: 14400,
-  goalGHS: 20000,
-  donorCount: 87,
-  verified: true,
+type CampaignData = {
+  title: string; organiser_name: string; category: string;
+  cover_image: string | null; raised_amount: number; goal_amount: number;
+  donor_count: number; is_verified: boolean;
+};
+const FALLBACK_CAMPAIGN: CampaignData = {
+  title: 'Campaign', organiser_name: 'Organiser', category: 'General',
+  cover_image: null, raised_amount: 0, goal_amount: 10000, donor_count: 0, is_verified: false,
 };
 
 // ─── sub-components ──────────────────────────────────────────────────────────
@@ -192,10 +191,10 @@ function StepProcessing({ amount, onConfirmed, onFailed }: { amount: number; onC
 
   return (
     <div style={{textAlign:'center',padding:'20px 0'}}>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes spin{to{transform:rotate(360deg)}}
         @keyframes spinBack{to{transform:rotate(-360deg)}}
-      `}</style>
+      ` }} />
       {state==='waiting' && (
         <>
           <div style={{position:'relative',width:72,height:72,margin:'0 auto 24px'}}>
@@ -222,14 +221,14 @@ function StepProcessing({ amount, onConfirmed, onFailed }: { amount: number; onC
 }
 
 function StepConfirmation({ amount, mode, campaign, currency, paymentData }: {
-  amount: number; mode: 'local'|'diaspora'; campaign: typeof MOCK_CAMPAIGN;
+  amount: number; mode: 'local'|'diaspora'; campaign: CampaignData;
   currency: typeof CURRENCIES[0]; paymentData: Record<string,string>;
 }) {
-  const pct = Math.round((campaign.raisedGHS + (mode==='local'?amount:amount*currency.rate)) / campaign.goalGHS * 100);
+  const pct = Math.round(((campaign.raised_amount || 0) + (mode==='local'?amount:amount*currency.rate)) / (campaign.goal_amount || 1) * 100);
   return (
     <div style={{animation:'fadeup .4s ease both'}}>
       <div style={{position:'relative',height:200,borderRadius:12,overflow:'hidden',marginBottom:-30}}>
-        <img src={campaign.coverImg} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>
+        {campaign.cover_image && <img src={campaign.cover_image} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>}
         <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom, rgba(10,107,75,.55), rgba(10,107,75,.82))'}}/>
         <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:20}}>
           <div style={{width:48,height:48,borderRadius:'50%',background:'rgba(255,255,255,.18)',border:'2px solid rgba(255,255,255,.6)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,marginBottom:8}}>✓</div>
@@ -251,7 +250,7 @@ function StepConfirmation({ amount, mode, campaign, currency, paymentData }: {
           <div style={{height:7,background:'#E8E4DC',borderRadius:4,overflow:'hidden'}}>
             <div style={{height:'100%',background:'#0A6B4B',borderRadius:4,width:`${Math.min(pct,100)}%`,transition:'width 1.2s ease'}}/>
           </div>
-          <div style={{fontSize:11,color:'#8A8A82',marginTop:3}}>{campaign.donorCount+1} donors · ₵{(campaign.raisedGHS+(mode==='local'?amount:Math.round(amount*currency.rate))).toLocaleString()} raised</div>
+          <div style={{fontSize:11,color:'#8A8A82',marginTop:3}}>{(campaign.donor_count||0)+1} donors · ₵{((campaign.raised_amount||0)+(mode==='local'?amount:Math.round(amount*currency.rate))).toLocaleString()} raised</div>
         </div>
 
         {/* Receipt */}
@@ -260,7 +259,7 @@ function StepConfirmation({ amount, mode, campaign, currency, paymentData }: {
           {[
             ['Amount donated', mode==='local'?`₵${amount.toLocaleString()}`:`${currency.symbol}${amount} ${currency.code}`],
             ['To', campaign.title.slice(0,50)+(campaign.title.length>50?'…':'')],
-            ['Organiser', campaign.organiser],
+            ['Organiser', campaign.organiser_name],
             ['Payment via', mode==='local'?'MTN MoMo':'Zeepay'],
             ['Status', 'Received & processing'],
           ].map(([l,v],i)=>(
@@ -297,22 +296,32 @@ export default function DonatePage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState(0);
   const [currency, setCurrency] = useState(CURRENCIES[0]);
   const [paymentData, setPaymentData] = useState<Record<string,string>>({});
-  const [confirmed, setConfirmed] = useState(false);
+  const [campaign, setCampaign] = useState<CampaignData>(FALLBACK_CAMPAIGN);
 
-  const campaign = MOCK_CAMPAIGN; // TODO: fetch from API using params.id
+  // Fetch real campaign from Supabase
+  useEffect(() => {
+    if (!params.id) return;
+    const supabase = createClient();
+    supabase
+      .from('campaigns')
+      .select('title, organiser_name, category, cover_image, raised_amount, goal_amount, donor_count, is_verified')
+      .or(`id.eq.${params.id},slug.eq.${params.id}`)
+      .single()
+      .then(({ data }) => { if (data) setCampaign(data as CampaignData); });
+  }, [params.id]);
 
   const handlePaymentNext = useCallback((data: Record<string,string>) => {
     setPaymentData(data);
     setStep(3);
   }, []);
-  const handleConfirmed = useCallback(()=>{ setConfirmed(true); setStep(4); }, []);
-  const handleFailed = useCallback(()=>{ setStep(2); }, []);
+  const handleConfirmed = useCallback(() => { setStep(4); }, []);
+  const handleFailed = useCallback(() => { setStep(2); }, []);
 
   const showProgress = step < 4;
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}
@@ -320,11 +329,7 @@ export default function DonatePage({ params }: { params: { id: string } }) {
         button,input{font-family:'DM Sans',sans-serif}
         input:focus{outline:none;border-color:#0A6B4B!important}
         @keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-      `}</style>
-      <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',height:56,background:'#fff',borderBottom:'1px solid #E8E4DC',position:'sticky',top:0,zIndex:100}}>
-        <Link href="/" style={{fontFamily:"'DM Serif Display',serif",fontSize:17,color:'#1A1A18'}}>Every<span style={{color:'#0A6B4B'}}>Giving</span></Link>
-        <Link href={`/campaigns/${params.id}`} style={{fontSize:12,color:'#8A8A82'}}>Cancel</Link>
-      </nav>
+      ` }} />
 
       <div style={{maxWidth:860,margin:'0 auto',padding:'24px 24px 64px',display:'grid',gridTemplateColumns:step<4?'1fr 280px':'1fr',gap:24,alignItems:'start'}}>
         {/* Left — form */}
@@ -334,7 +339,7 @@ export default function DonatePage({ params }: { params: { id: string } }) {
             <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:22}}>
               {[{n:1,l:'Amount'},{n:2,l:'Payment'},{n:3,l:'Confirm'}].map((s,i)=>(
                 <div key={s.n} style={{display:'flex',alignItems:'center',gap:8}}>
-                  {i>0&&<div style={{height:1,width:18,background:step>i?'#0A6B4B':'#E8E4DC'}}/>}
+                  {i > 0 ? <div style={{height:1,width:18,background:step>i?'#0A6B4B':'#E8E4DC'}}/> : null}
                   <div style={{display:'flex',alignItems:'center',gap:5}}>
                     <div style={{width:22,height:22,borderRadius:'50%',background:step===s.n?'#0A6B4B':step>s.n?'#B7DEC9':'#E8E4DC',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,color:step>=s.n?'#fff':'#8A8A82',transition:'all .2s'}}>{step>s.n?'✓':s.n}</div>
                     <div style={{fontSize:11,fontWeight:step===s.n?700:400,color:step===s.n?'#1A1A18':'#8A8A82'}}>{s.l}</div>
@@ -356,14 +361,14 @@ export default function DonatePage({ params }: { params: { id: string } }) {
         {showProgress && (
           <div style={{position:'sticky',top:72}}>
             <div style={{background:'#fff',border:'1px solid #E8E4DC',borderRadius:12,overflow:'hidden',marginBottom:10}}>
-              <img src={campaign.coverImg} style={{width:'100%',height:130,objectFit:'cover',display:'block'}} alt=""/>
+              {campaign.cover_image && <img src={campaign.cover_image} style={{width:'100%',height:130,objectFit:'cover',display:'block'}} alt=""/>}
               <div style={{padding:'12px 14px'}}>
                 <div style={{fontSize:13,fontWeight:600,color:'#1A1A18',lineHeight:1.4,marginBottom:6}}>{campaign.title}</div>
-                <div style={{fontSize:11,color:'#8A8A82',marginBottom:8}}>By {campaign.organiser} · {campaign.category}</div>
+                <div style={{fontSize:11,color:'#8A8A82',marginBottom:8}}>By {campaign.organiser_name} · {campaign.category}</div>
                 <div style={{height:4,background:'#E8E4DC',borderRadius:2,overflow:'hidden',marginBottom:4}}>
-                  <div style={{height:'100%',background:'#0A6B4B',borderRadius:2,width:`${Math.round(campaign.raisedGHS/campaign.goalGHS*100)}%`}}/>
+                  <div style={{height:'100%',background:'#0A6B4B',borderRadius:2,width:`${Math.round((campaign.raised_amount||0)/(campaign.goal_amount||1)*100)}%`}}/>
                 </div>
-                <div style={{fontSize:11,color:'#8A8A82'}}>₵{campaign.raisedGHS.toLocaleString()} raised · {campaign.donorCount} donors</div>
+                <div style={{fontSize:11,color:'#8A8A82'}}>₵{(campaign.raised_amount||0).toLocaleString()} raised · {campaign.donor_count||0} donors</div>
               </div>
             </div>
 

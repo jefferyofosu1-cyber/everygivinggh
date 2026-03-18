@@ -1,13 +1,21 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import type { Campaign, Donation } from '@/types'
 
-const EMOJI: Record<string, string> = { medical: '🏥', education: '🎓', church: '⛪', emergency: '🆘', business: '💼', community: '🏡' }
+const CAT_DATA: Record<string, {abbr:string;color:string;bg:string}> = {
+  medical:   { abbr: 'MED', color: '#0A6B4B', bg: '#E1F5EE' },
+  education: { abbr: 'EDU', color: '#B85C00', bg: '#FEF3E2' },
+  emergency: { abbr: 'EMR', color: '#A32D2D', bg: '#FCEBEB' },
+  faith:     { abbr: 'RLG', color: '#185FA5', bg: '#E6F1FB' },
+  community: { abbr: 'COM', color: '#1A5276', bg: '#EBF5FB' },
+  funeral:   { abbr: 'FNL', color: '#534AB7', bg: '#EEEDFE' },
+  family:    { abbr: 'FAM', color: '#117A65', bg: '#E8F8F5' },
+  other:     { abbr: 'OTH', color: '#424949', bg: '#F2F3F4' },
+}
 
 export default function CampaignPage() {
   const { id } = useParams()
@@ -28,8 +36,34 @@ export default function CampaignPage() {
   }, [id])
 
   const fetchCampaign = async () => {
-    const { data: c } = await supabase.from('campaigns').select('*, profiles(full_name, phone)').eq('id', id).single()
-    const { data: d } = await supabase.from('donations').select('*').eq('campaign_id', id).eq('status', 'success').order('created_at', { ascending: false }).limit(10)
+    // 1. Fetch by slug
+    const { data: c } = await supabase
+      .from('campaigns')
+      .select('*, profiles(full_name, phone)')
+      .eq('slug', id)
+      .single()
+      
+    if (!c) {
+      // 2. Fallback to ID if slug misses
+      const { data: cById } = await supabase
+        .from('campaigns')
+        .select('*, profiles(full_name, phone)')
+        .eq('id', id)
+        .single()
+        
+      if (!cById) {
+        setLoading(false)
+        return
+      }
+      
+      const { data: d } = await supabase.from('donations').select('*').eq('campaign_id', cById.id).eq('status', 'success').order('created_at', { ascending: false }).limit(10)
+      setCampaign(cById)
+      setDonations(d || [])
+      setLoading(false)
+      return
+    }
+
+    const { data: d } = await supabase.from('donations').select('*').eq('campaign_id', c.id).eq('status', 'success').order('created_at', { ascending: false }).limit(10)
     setCampaign(c)
     setDonations(d || [])
     setLoading(false)
@@ -48,35 +82,47 @@ export default function CampaignPage() {
     const fee = calcFee(finalAmount)
     const netAmount = calcNet(finalAmount)
 
-    // Save pending donation — store gross amount donor paid, fee, and net to campaign
-    const { data: donation } = await supabase.from('donations').insert({
-      campaign_id: id, donor_name: donorName, amount: finalAmount,
-      message, payment_method: 'momo', status: 'pending'
-    }).select().single()
+    // Call api to initialize donation securely
+    const res = await fetch('/api/donate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        campaign_id: id,
+        amount: finalAmount,
+        donor_name: donorName,
+        donor_email: `${donorName.replace(/\s/g, '').toLowerCase()}@everygiving.com`,
+        message,
+        payment_method: 'paystack'
+      })
+    })
+
+    if (!res.ok) {
+      const err = await res.json()
+      toast.error(err.error || 'Failed to initialize donation')
+      setDonating(false)
+      return
+    }
+
+    const { donationId } = await res.json()
 
     const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY
     if (!paystackKey || paystackKey.includes('REPLACE')) {
-      // Demo mode — mark as success, credit net amount to campaign
-      await supabase.from('donations').update({ status: 'success' }).eq('id', donation.id)
-      await supabase.from('campaigns').update({ raised_amount: (campaign?.raised_amount || 0) + netAmount }).eq('id', id)
-      toast.success(`₵${finalAmount} donated! Thank you ${donorName} 🎉`)
+      // Demo mode — mark as success (only for local dev without paystack key)
+      toast.success(`₵${finalAmount} donated! Thank you ${donorName} 🎉 (Demo)`)
       setShowModal(false)
-      fetchCampaign()
     } else {
       const handler = (window as any).PaystackPop.setup({
         key: paystackKey,
         email: `${donorName.replace(/\s/g, '').toLowerCase()}@everygiving.com`,
         amount: finalAmount * 100,
         currency: 'GHS',
-        ref: donation.id,
+        ref: donationId,
         onClose: () => { toast.error('Payment cancelled'); setDonating(false) },
         callback: async (response: any) => {
-          // Credit net amount (after fee) to campaign
-          await supabase.from('donations').update({ status: 'success', payment_reference: response.reference }).eq('id', donation.id)
-          await supabase.from('campaigns').update({ raised_amount: (campaign?.raised_amount || 0) + netAmount }).eq('id', id)
-          toast.success(`₵${finalAmount} donated! Thank you ${donorName} 🎉`)
+          toast.success(`Processing donation... Thank you ${donorName} 🎉`)
           setShowModal(false)
-          fetchCampaign()
+          // Webhook handles the database update, just refetch
+          setTimeout(() => fetchCampaign(), 2500)
         }
       })
       handler.openIframe()
@@ -86,7 +132,6 @@ export default function CampaignPage() {
 
   if (loading) return (
     <>
-      <Navbar />
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4 animate-bounce">💚</div>
@@ -98,7 +143,6 @@ export default function CampaignPage() {
 
   if (!campaign) return (
     <>
-      <Navbar />
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">😔</div>
@@ -110,22 +154,22 @@ export default function CampaignPage() {
   )
 
   const pct = Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100)
-  const emoji = EMOJI[campaign.category] || '💚'
+  const catInfo = CAT_DATA[campaign.category] || CAT_DATA.other
+  const isFunded = campaign.raised_amount >= campaign.goal_amount
   const quickAmounts = [50, 100, 200, 500, 1000]
 
   return (
     <>
-      <Navbar />
       <main className="max-w-6xl mx-auto px-5 py-10">
         <div className="grid md:grid-cols-3 gap-8">
 
           {/* LEFT */}
           <div className="md:col-span-2">
             {/* Hero image */}
-            <div className="bg-primary-light rounded-2xl h-64 flex items-center justify-center text-7xl mb-6 relative overflow-hidden">
-              {campaign.image_url ? (
-                <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover absolute inset-0" />
-              ) : <span>{emoji}</span>}
+            <div style={{ background: catInfo.color }} className=" rounded-2xl h-64 flex items-center justify-center text-7xl mb-6 relative overflow-hidden">
+              {campaign.cover_image ? (
+                <img src={campaign.cover_image} alt={campaign.title} className="w-full h-full object-cover absolute inset-0" />
+              ) : <span style={{ fontSize: 64, fontWeight: 700, color: 'rgba(255,255,255,0.7)', position: 'relative', zIndex: 1 }}>{catInfo.abbr}</span>}
               {campaign.verified && (
                 <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
                   ✓ Verified Campaign
@@ -139,7 +183,7 @@ export default function CampaignPage() {
               <span>·</span>
               <span>📍 {campaign.location || 'Ghana'}</span>
               <span>·</span>
-              <span className="capitalize">{emoji} {campaign.category}</span>
+              <span className="capitalize">{campaign.category}</span>
             </p>
 
             {/* Story */}
@@ -185,7 +229,7 @@ export default function CampaignPage() {
                 💚 Donate now
               </button>
 
-              <button onClick={() => { navigator.share?.({ url: window.location.href, title: campaign.title }) || navigator.clipboard.writeText(window.location.href).then(() => toast.success('Link copied!')) }}
+              <button onClick={() => { void (navigator.share?.({ url: window.location.href, title: campaign.title }) ?? navigator.clipboard.writeText(window.location.href).then(() => toast.success('Link copied!'))) }}
                 className="w-full border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold py-3 rounded-xl transition-all text-sm">
                 🔗 Share campaign
               </button>

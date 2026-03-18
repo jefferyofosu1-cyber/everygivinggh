@@ -159,17 +159,6 @@ export default function PostUpdatePage({ params }: { params: { id: string } }) {
     <>
       <style dangerouslySetInnerHTML={{__html:`@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}a{text-decoration:none;color:inherit}button,input,textarea{font-family:'DM Sans',sans-serif}[contenteditable]:empty::before{content:attr(data-placeholder);color:#C8C4BC;pointer-events:none}[contenteditable]:focus{outline:none}input:focus{outline:none;border-color:#0A6B4B}`}}/>
 
-      <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',height:56,background:'#fff',borderBottom:'1px solid #E8E4DC',position:'sticky',top:0,zIndex:100}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <Link href="/" style={{fontFamily:"'DM Serif Display',serif",fontSize:17,color:'#1A1A18'}}>Every<span style={{color:'#0A6B4B'}}>Giving</span></Link>
-          <div style={{width:1,height:14,background:'#E8E4DC'}}/>
-          <span style={{fontSize:12,color:'#8A8A82'}}>Post update</span>
-        </div>
-        <div style={{display:'flex',gap:8}}>
-          <button style={{fontSize:12,color:'#4A4A44',background:'transparent',border:'1px solid #E8E4DC',padding:'6px 12px',borderRadius:8,cursor:'pointer'}} onClick={()=>setShowPreview(true)}>Preview</button>
-          <Link href="/dashboard" style={{fontSize:12,color:'#8A8A82',display:'flex',alignItems:'center'}}>Cancel</Link>
-        </div>
-      </nav>
 
       {/* Draft restore banner */}
       {hasDraft && (

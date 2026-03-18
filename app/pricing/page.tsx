@@ -1,5 +1,3 @@
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import Link from 'next/link'
 
 export const metadata = { title: 'Pricing — Every Giving' }
@@ -7,7 +5,6 @@ export const metadata = { title: 'Pricing — Every Giving' }
 export default function PricingPage() {
   return (
     <>
-      <Navbar />
       <main className="max-w-3xl mx-auto px-5 py-16">
 
         {/* Header */}
@@ -121,7 +118,6 @@ export default function PricingPage() {
         </div>
 
       </main>
-      <Footer />
     </>
   )
 }

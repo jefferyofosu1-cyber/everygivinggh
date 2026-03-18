@@ -44,29 +44,14 @@ export default function CampaignEditorPage({ params }: { params: { id: string } 
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}
         a{text-decoration:none;color:inherit}
         button,input,textarea{font-family:'DM Sans',sans-serif}
         input:focus,textarea:focus{outline:none;border-color:#0A6B4B!important}
-      `}</style>
-      <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',height:56,background:'#fff',borderBottom:'1px solid #E8E4DC',position:'sticky',top:0,zIndex:100}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <Link href="/" style={{fontFamily:"'DM Serif Display',serif",fontSize:17,color:'#1A1A18'}}>Every<span style={{color:'#0A6B4B'}}>Giving</span></Link>
-          <div style={{width:1,height:14,background:'#E8E4DC'}}/>
-          <span style={{fontSize:12,color:'#8A8A82'}}>Edit campaign</span>
-        </div>
-        <div style={{display:'flex',gap:8,alignItems:'center'}}>
-          {saved && <span style={{fontSize:11,color:'#0A6B4B',fontWeight:500}}>✓ Saved</span>}
-          {dirty && <span style={{fontSize:11,color:'#B85C00'}}>Unsaved changes</span>}
-          <Link href="/dashboard" style={{fontSize:12,color:'#8A8A82'}}>Cancel</Link>
-          <button style={{fontSize:13,fontWeight:600,color:'#fff',background:'#0A6B4B',border:'none',padding:'7px 16px',borderRadius:8,cursor:'pointer',opacity:dirty&&!saving?1:.5}} disabled={!dirty||saving} onClick={handleSave}>
-            {saving?'Saving…':'Save changes'}
-          </button>
-        </div>
-      </nav>
+      ` }} />
 
       <div style={{maxWidth:860,margin:'0 auto',padding:'24px 24px 80px'}}>
         <div style={{display:'flex',gap:4,marginBottom:20,background:'#fff',border:'1px solid #E8E4DC',borderRadius:10,padding:4}}>

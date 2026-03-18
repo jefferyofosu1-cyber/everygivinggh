@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
 
@@ -53,7 +52,6 @@ export default function EditProfilePage() {
 
   if (loading) return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
@@ -81,7 +79,6 @@ export default function EditProfilePage() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-gray-50 py-12 px-5">
         <div className="max-w-lg mx-auto">
           <Link href="/dashboard" className="text-sm text-gray-400 hover:text-primary mb-6 inline-block">← Back to dashboard</Link>

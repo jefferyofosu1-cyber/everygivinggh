@@ -1,8 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 
@@ -196,7 +194,6 @@ function ProofTicker() {
 export default function OfferPage() {
   return (
     <>
-      <Navbar />
       <main className="bg-gray-50">
 
         {/* ══ 1. THE PROMISE ═══════════════════════════════════════════════ */}
@@ -409,7 +406,6 @@ export default function OfferPage() {
 
         <div className="h-4" />
       </main>
-      <Footer />
     </>
   )
 }

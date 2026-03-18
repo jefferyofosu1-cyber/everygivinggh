@@ -61,7 +61,7 @@ export default function HowItWorksPage() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
@@ -70,23 +70,7 @@ export default function HowItWorksPage() {
         .fade-in{animation:fadeup .35s ease both}
         .step-card{transition:border-color .15s,background .15s}
         .step-card:hover{background:#F5F2EC !important}
-      `}</style>
-
-      {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 60, background: '#fff', borderBottom: '1px solid #E8E4DC', position: 'sticky', top: 0, zIndex: 200 }}>
-        <Link href="/" style={{ fontFamily: "'DM Serif Display',serif", fontSize: 20, color: '#1A1A18' }}>
-          Every<span style={{ color: '#0A6B4B' }}>Giving</span>
-        </Link>
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          {([['/', 'Home'], ['/campaigns', 'Browse'], ['/how-it-works', 'How it works'], ['/fees', 'Fees']] as [string, string][]).map(([href, label]) => (
-            <Link key={href} href={href} style={{ fontSize: 13, fontWeight: href === '/how-it-works' ? 600 : 500, color: href === '/how-it-works' ? '#0A6B4B' : '#4A4A44', padding: '7px 12px', borderRadius: 6 }}>{label}</Link>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/auth/login" style={{ fontSize: 13, fontWeight: 500, color: '#1A1A18', padding: '7px 14px', border: '1px solid #E8E4DC', borderRadius: 8 }}>Sign in</Link>
-          <Link href="/create" style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: '#0A6B4B', padding: '8px 18px', borderRadius: 8 }}>Start a campaign</Link>
-        </div>
-      </nav>
+      ` }} />
 
       {/* HERO */}
       <div style={{ background: '#1A1A18', padding: '64px 32px 56px' }}>

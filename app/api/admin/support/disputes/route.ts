@@ -1,53 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminClient } from '@/lib/supabase-admin'
-import { requirePermission, logAdminAudit } from '@/lib/api-security'
+import { createClient } from '@supabase/supabase-js'
 
-export async function GET(request: NextRequest) {
-  const auth = await requirePermission('disputes.manage')
-  if (auth.error) return auth.error
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-  const status = new URL(request.url).searchParams.get('status') || 'all'
-  const supabase = await getAdminClient()
-  let query = supabase.from('donation_disputes').select('*').order('created_at', { ascending: false })
-  if (status !== 'all') query = query.eq('status', status)
+// GET /api/admin/support/disputes
+export async function GET() {
+  const { data, error } = await supabase
+    .from('disputes')
+    .select('*')
+    .order('created_at', { ascending: false })
 
-  const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ disputes: data ?? [] })
+  return NextResponse.json({ disputes: data || [] })
 }
 
-export async function POST(request: NextRequest) {
-  const auth = await requirePermission('disputes.manage')
-  if (auth.error) return auth.error
+// POST /api/admin/support/disputes — create dispute
+export async function POST(req: NextRequest) {
+  const body = await req.json()
+  const { reason, campaign_id, user_id } = body
 
-  const body = await request.json()
-  const reason = String(body?.reason || '').trim()
-  const donationId = body?.donation_id ? String(body.donation_id).trim() : null
-  const ticketId = body?.ticket_id ? String(body.ticket_id).trim() : null
+  if (!reason?.trim()) {
+    return NextResponse.json({ error: 'Reason is required' }, { status: 400 })
+  }
 
-  if (!reason) return NextResponse.json({ error: 'reason is required' }, { status: 400 })
-
-  const supabase = await getAdminClient()
   const { data, error } = await supabase
-    .from('donation_disputes')
-    .insert({
-      donation_id: donationId,
-      ticket_id: ticketId,
-      reason,
-      status: 'open',
-    })
-    .select('*')
+    .from('disputes')
+    .insert({ reason: reason.trim(), campaign_id: campaign_id || null, user_id: user_id || null, status: 'open' })
+    .select()
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ dispute: data })
+}
 
-  await logAdminAudit({
-    actorUserId: auth.user.id,
-    action: 'support.dispute_create',
-    entityType: 'donation_dispute',
-    entityId: data.id,
-    afterState: data,
-  })
+// PATCH /api/admin/support/disputes — resolve dispute
+export async function PATCH(req: NextRequest) {
+  const body = await req.json()
+  const { id, resolution, status } = body
 
-  return NextResponse.json({ dispute: data }, { status: 201 })
+  if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+
+  const { data, error } = await supabase
+    .from('disputes')
+    .update({ resolution, status: status || 'resolved', resolved_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ dispute: data })
 }

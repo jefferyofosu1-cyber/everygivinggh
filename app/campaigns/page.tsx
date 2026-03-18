@@ -168,28 +168,49 @@ function EmptyState({ query, category, onClear }: { query: string; category: str
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 export default function CampaignsPage() {
+    const [campaigns, setCampaigns] = useState<Campaign[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('status', 'live')
+        .order('created_at', { ascending: false })
+      
+      if (data) {
+        const mapped = data.map(c => ({
+          id: c.id,
+          slug: c.slug || c.id,
+          category: c.category || 'other',
+          title: c.title,
+          organiserName: c.organiser_name || 'Anonymous',
+          location: c.location || 'Ghana',
+          raisedGHS: c.raised_amount || 0,
+          goalGHS: c.goal_amount || 1000,
+          donorCount: c.donor_count || 0,
+          daysLeft: c.deadline ? Math.max(0, Math.ceil((new Date(c.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 30,
+          isUrgent: c.is_urgent || false,
+          isFunded: (c.raised_amount || 0) >= (c.goal_amount || 1000),
+          coverAbbr: c.title ? c.title.substring(0, 2).toUpperCase() : 'EG',
+          coverGradient: 'linear-gradient(135deg,#1B4332,#52B788)',
+          coverImageUrl: c.cover_image
+        }))
+        setCampaigns(mapped)
+      }
+      setLoading(false)
+    }
+    fetchCampaigns()
+  }, [])
+
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
   const [sort, setSort] = useState('newest')
   const [page, setPage] = useState(1)
-  const [loading, setLoading] = useState(true)
-  const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const searchRef = useRef<HTMLInputElement>(null)
   const debouncedQuery = useDebounce(query)
-
-  // Fetch all approved campaigns once on mount
-  useEffect(() => {
-    const supabase = createClient()
-    supabase
-      .from('campaigns')
-      .select('id, title, category, story, goal_amount, raised_amount, image_url, status, deadline, location, created_at, verified, profiles(full_name)')
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setCampaigns((data || []).map(mapDbCampaign))
-        setLoading(false)
-      })
-  }, [])
 
   // Reset to page 1 whenever filters change
   useEffect(() => {
@@ -214,7 +235,7 @@ export default function CampaignsPage() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
@@ -229,22 +250,7 @@ export default function CampaignsPage() {
         .page-btn.active{background:#0A6B4B !important;color:#fff !important;border-color:#0A6B4B !important}
         .page-btn:disabled{opacity:.35;cursor:not-allowed}
         input:focus{outline:none}
-      `}</style>
-
-      {/* NAV */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 60, background: '#fff', borderBottom: '1px solid #E8E4DC', position: 'sticky', top: 0, zIndex: 200 }}>
-        <Link href="/" style={{ fontFamily: "'DM Serif Display',serif", fontSize: 20, color: '#1A1A18' }}>Every<span style={{ color: '#0A6B4B' }}>Giving</span></Link>
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          {([['/', 'Home'], ['/campaigns', 'Browse'], ['/how-it-works', 'How it works'], ['/fees', 'Fees']] as [string,string][]).map(([href, label]) => (
-            <Link key={href} href={href} style={{ fontSize: 13, fontWeight: href === '/campaigns' ? 600 : 500, color: href === '/campaigns' ? '#0A6B4B' : '#4A4A44', padding: '7px 12px', borderRadius: 6 }}>{label}</Link>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/auth/login" style={{ fontSize: 13, fontWeight: 500, color: '#1A1A18', padding: '7px 14px', border: '1px solid #E8E4DC', borderRadius: 8 }}>Sign in</Link>
-          <Link href="/create" style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: '#0A6B4B', padding: '8px 18px', borderRadius: 8 }}>Start a campaign</Link>
-        </div>
-      </nav>
-
+      ` }} />
       {/* HEADER */}
       <div style={{ background: '#1A1A18', padding: '56px 32px 48px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center' }}>

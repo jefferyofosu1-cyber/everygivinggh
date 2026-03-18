@@ -71,15 +71,7 @@ export default function VerifyIdPage() {
 
   return (
     <>
-      <style>{BASE_CSS}</style>
-      <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',height:56,background:'#fff',borderBottom:'1px solid #E8E4DC',position:'sticky',top:0,zIndex:100}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <Link href="/" style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:'#1A1A18'}}>Every<span style={{color:'#0A6B4B'}}>Giving</span></Link>
-          <div style={{width:1,height:16,background:'#E8E4DC'}}/>
-          <span style={{fontSize:12,color:'#8A8A82'}}>Identity verification</span>
-        </div>
-        <Link href="/dashboard" style={{fontSize:12,color:'#8A8A82'}}>← Dashboard</Link>
-      </nav>
+      <style dangerouslySetInnerHTML={{ __html: BASE_CSS }} />
 
       <div style={{maxWidth:900,margin:'0 auto',padding:'28px 24px 64px',display:'grid',gridTemplateColumns:'1fr 260px',gap:24,alignItems:'start'}}>
         <div>

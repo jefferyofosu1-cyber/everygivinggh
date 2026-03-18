@@ -1,6 +1,4 @@
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -33,7 +31,6 @@ const STATS = [
 export default function TeamFundraisingPage() {
   return (
     <>
-      <Navbar />
       <main>
 
         {/* Hero */}
@@ -158,7 +155,6 @@ export default function TeamFundraisingPage() {
         </section>
 
       </main>
-      <Footer />
     </>
   )
 }

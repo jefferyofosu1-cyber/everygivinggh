@@ -24,7 +24,7 @@ export default function MilestoneProofPage({ params }: { params: { id: string; m
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}
@@ -32,15 +32,7 @@ export default function MilestoneProofPage({ params }: { params: { id: string; m
         button,input,textarea{font-family:'DM Sans',sans-serif}
         input:focus,textarea:focus{outline:none;border-color:#0A6B4B!important}
         @keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-      `}</style>
-      <nav style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',height:56,background:'#fff',borderBottom:'1px solid #E8E4DC',position:'sticky',top:0,zIndex:100}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <Link href="/" style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:'#1A1A18'}}>Every<span style={{color:'#0A6B4B'}}>Giving</span></Link>
-          <div style={{width:1,height:16,background:'#E8E4DC'}}/>
-          <span style={{fontSize:12,color:'#8A8A82'}}>Milestone proof</span>
-        </div>
-        <Link href="/dashboard" style={{fontSize:12,color:'#8A8A82'}}>← Dashboard</Link>
-      </nav>
+      ` }} />
 
       <div style={{maxWidth:900,margin:'0 auto',padding:'28px 24px 64px',display:'grid',gridTemplateColumns:'1fr 260px',gap:24,alignItems:'start'}}>
         <div>

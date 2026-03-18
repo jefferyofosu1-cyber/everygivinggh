@@ -1,8 +1,6 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -134,7 +132,6 @@ function Swatch({ hex, name, use, dark }: { hex: string; name: string; use: stri
 export default function BrandGuidePage() {
   return (
     <>
-      <Navbar />
       <main>
         {/* ── COVER ── */}
         <div className="bg-navy relative overflow-hidden">
@@ -472,7 +469,6 @@ module.exports = {
           <div className="text-white/30 text-sm">Brand Style Guide v1.0 · 2026 · Built in Ghana</div>
         </div>
       </main>
-      <Footer />
     </>
   )
 }

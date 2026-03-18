@@ -57,9 +57,9 @@ const STATUS_CFG: Record<string, {label:string;color:string;bg:string}> = {
   closed:              { label:'Closed',       color:'#4A4A44', bg:'#EAECEE' },
 }
 const ACTION_CFG: Record<string, {label:string;color:string;bg:string;icon:string}> = {
-  post_update:  { label:'Post an update',         color:'#B85C00', bg:'#FEF3E2', icon:'📝' },
-  submit_proof: { label:'Submit milestone proof',  color:'#185FA5', bg:'#E6F1FB', icon:'📄' },
-  verify_id:    { label:'Verify your identity',    color:'#C0392B', bg:'#FCEBEB', icon:'🪪' },
+  post_update:  { label:'Post an update',         color:'#B85C00', bg:'#FEF3E2', icon:'update' },
+  submit_proof: { label:'Submit milestone proof', color:'#185FA5', bg:'#E6F1FB', icon:'proof' },
+  verify_id:    { label:'Verify your identity',   color:'#C0392B', bg:'#FCEBEB', icon:'verify' },
 }
 const MS_CFG: Record<string, {label:string;color:string;bg:string}> = {
   released:        { label:'Released',    color:'#0A6B4B', bg:'#E8F5EF' },
@@ -68,10 +68,10 @@ const MS_CFG: Record<string, {label:string;color:string;bg:string}> = {
   pending:         { label:'Pending',     color:'#8A8A82', bg:'#F2F3F4' },
 }
 const NOTIF_CFG: Record<string, {icon:string;color:string;bg:string}> = {
-  donation:      { icon:'₵', color:'#0A6B4B', bg:'#E8F5EF' },
-  milestone:     { icon:'✓', color:'#185FA5', bg:'#E6F1FB' },
-  update_prompt: { icon:'📝',color:'#B85C00', bg:'#FEF3E2' },
-  system:        { icon:'ℹ', color:'#534AB7', bg:'#EEEDFE' },
+  donation:      { icon:'GHS', color:'#0A6B4B', bg:'#E8F5EF' },
+  milestone:     { icon:'OK', color:'#185FA5', bg:'#E6F1FB' },
+  update_prompt: { icon:'UP', color:'#B85C00', bg:'#FEF3E2' },
+  system:        { icon:'INF', color:'#534AB7', bg:'#EEEDFE' },
 }
 
 // ─── CAMPAIGN CARD ────────────────────────────────────────────────────────────
@@ -129,6 +129,48 @@ function CampaignCard({ campaign, onAction }: { campaign: Campaign; onAction: (c
   )
 }
 
+// ─── Withdraw modal (stashed changes) ───────────────────────────────────────────
+
+type PayMode = 'momo' | 'bank'
+type WStep = 'form' | 'sent'
+
+// Provide a stub of WithdrawModal so the stashed payout logic is preserved
+export function WithdrawModal({ available, profile, onClose }: {
+  available: number
+  profile:   any | null
+  onClose:   () => void
+}) {
+  const [method,  setMethod]  = useState<PayMode>((profile?.payout_method as PayMode) ?? 'momo')
+  const [amount,  setAmount]  = useState('')
+  const [wStep,   setWStep]   = useState<WStep>('form')
+  const [loading, setLoading] = useState(false)
+
+  const amtNum  = parseFloat(amount) || 0
+  const fee     = +(amtNum * 0.02 + 0.25).toFixed(2)
+  const receive = +(amtNum - fee).toFixed(2)
+
+  async function handleConfirm() {
+    setLoading(true)
+    const res = await fetch('/api/dashboard/withdraw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: amtNum, method })
+    })
+
+    if (!res.ok) {
+      const { error } = await res.json()
+      alert(error || 'Failed to request withdrawal')
+      setLoading(false)
+      return
+    }
+
+    setLoading(false)
+    setWStep('sent')
+  }
+
+  return null
+}
+
 // ─── EMPTY STATE ──────────────────────────────────────────────────────────────
 
 function EmptyDashboard({ verificationStatus }: { verificationStatus: User['verificationStatus'] }) {
@@ -184,7 +226,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}
@@ -195,27 +237,7 @@ export default function DashboardPage() {
         .quick-link:hover{background:#E8F5EF !important;color:#0A6B4B !important}
         .notif-row:hover{background:#F5F4F0}
         .new-cam-card:hover{border-color:#B7DEC9 !important;background:#FDFAF5 !important}
-      `}</style>
-
-      {/* NAV */}
-      <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 28px', height:56, background:'#fff', borderBottom:'1px solid #E8E4DC', position:'sticky' as const, top:0, zIndex:100 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-          <Link href="/" style={{ fontFamily:"'DM Serif Display',serif", fontSize:18, color:'#1A1A18' }}>Every<span style={{ color:'#0A6B4B' }}>Giving</span></Link>
-          <div style={{ width:1, height:16, background:'#E8E4DC' }} />
-          <span style={{ fontSize:13, color:'#8A8A82' }}>Dashboard</span>
-        </div>
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <Link href="/campaigns" style={{ fontSize:13, color:'#8A8A82', padding:'6px 10px', borderRadius:6 }}>Browse campaigns</Link>
-          <Link href="/create" style={{ fontSize:13, fontWeight:600, color:'#fff', background:'#0A6B4B', padding:'7px 14px', borderRadius:8 }}>+ New campaign</Link>
-          <button style={{ position:'relative' as const, width:34, height:34, borderRadius:'50%', background:'transparent', border:'1px solid #E8E4DC', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', color:'#4A4A44' }}
-            onClick={()=>setTab(t=>t==='notifications'?'campaigns':'notifications')}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
-            {unread > 0 && <div style={{ position:'absolute' as const, top:-3, right:-3, width:16, height:16, borderRadius:'50%', background:'#C0392B', color:'#fff', fontSize:9, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center' }}>{unread}</div>}
-          </button>
-          <div style={{ width:32, height:32, borderRadius:'50%', background:'#0A6B4B', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, color:'#fff', cursor:'pointer' }}>{user.initials}</div>
-        </div>
-      </nav>
-
+      ` }} />
       {/* VERIFICATION BANNERS */}
       {user.verificationStatus === 'pending' && (
         <div style={{ background:'#E8F5EF', borderBottom:'1px solid #B7DEC9', padding:'10px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, flexWrap:'wrap' as const }}>

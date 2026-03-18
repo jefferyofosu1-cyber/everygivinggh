@@ -272,8 +272,8 @@ export default function HomePage() {
       <div style={{ padding: '60px 28px', background: '#1A1A18' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 60, flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 400px', textAlign: 'left', color: '#fff' }}>
-            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, marginBottom: 16 }}>Beautiful communities in Ghana</h2>
-            <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 32 }}>Watch real stories from Ghanaians using EveryGiving to transform their communities. From medical emergencies to educational dreams, see the impact of verified giving.</p>
+            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, marginBottom: 16 }}>See it in action</h2>
+            <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 32 }}>Watch how easy it is to set up a campaign, verify your identity using the Ghana Card, and receive funds directly to your MoMo wallet instantly.</p>
             <Link href="/create" style={{ fontSize: 15, fontWeight: 600, color: '#000', background: '#fff', padding: '12px 24px', borderRadius: 8, textDecoration: 'none', display: 'inline-block' }}>
               Start your fundraiser in minutes
             </Link>

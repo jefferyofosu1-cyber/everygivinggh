@@ -3,6 +3,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
@@ -236,6 +238,7 @@ export default function HomePage() {
 
   return (
     <>
+      <Navbar />
       <style dangerouslySetInnerHTML={{ __html: `
         body { background: #FDFAF5; color: #1A1A18; }
         .transition-hover { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -381,38 +384,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── FOOTER ── */}
-      <footer style={{ background: '#111110', padding: '48px 32px 28px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 24, marginBottom: 24, borderBottom: '1px solid rgba(255,255,255,0.07)', flexWrap: 'wrap', gap: 16 }}>
-            <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: 19, color: '#fff' }}>
-              Every<em style={{ color: '#B7DEC9', fontStyle: 'normal' }}>Giving</em>
-            </span>
-            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-              {[
-                ['About', '/about'], ['How it Works', '/how-it-works'], ['Trust & Safety', '/trust'],
-                ['Privacy', '/privacy'], ['Terms', '/terms'], ['Contact', '/contact'],
-              ].map(([label, href]) => (
-                <Link key={href} href={href} style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', textDecoration: 'none', transition: 'color 0.15s' }}>
-                  {label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
-              &copy; {new Date().getFullYear()} EveryGiving Ltd &middot; Accra, Ghana
-            </div>
-            <div style={{ display: 'flex', gap: 16 }}>
-              {['MoMo', 'Visa', 'Mastercard'].map(method => (
-                <span key={method} style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', padding: '4px 10px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6 }}>
-                  {method}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   )
 }

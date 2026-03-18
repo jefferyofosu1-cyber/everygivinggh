@@ -52,7 +52,7 @@ function Dropdown({ label, items, isOpen, onToggle, pathname }: {
   return (
     <div className="relative">
       <button onClick={onToggle}
-        className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${isOpen || active ? 'text-primary bg-primary-light dark:bg-primary/20' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary'}`}>
+        className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${isOpen || active ? 'text-primary bg-primary-light dark:text-primary dark:bg-slate-800' : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-primary'}`}>
         {label}
         <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
           <path d="m6 9 6 6 6-6"/>
@@ -60,14 +60,14 @@ function Dropdown({ label, items, isOpen, onToggle, pathname }: {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl shadow-gray-200/80 dark:shadow-gray-950 border border-gray-100 dark:border-gray-700 p-2 z-50">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl shadow-gray-200/80 dark:shadow-black/50 border border-gray-200 dark:border-slate-700 p-2 z-50">
           {items.map((item, i) => (
             <Link key={i} href={item.href}
-              className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 group transition-all">
+              className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 group transition-all">
               <span className="text-lg mt-0.5 flex-shrink-0">{item.icon}</span>
               <div>
-                <div className="font-semibold text-navy dark:text-gray-200 text-sm group-hover:text-primary transition-colors leading-snug">{item.label}</div>
-                <div className="text-gray-400 dark:text-gray-500 text-xs leading-snug mt-0.5">{item.sub}</div>
+                <div className="font-semibold text-navy dark:text-slate-100 text-sm group-hover:text-primary transition-colors leading-snug">{item.label}</div>
+                <div className="text-gray-400 dark:text-slate-400 text-xs leading-snug mt-0.5">{item.sub}</div>
               </div>
             </Link>
           ))}
@@ -116,7 +116,7 @@ export default function Navbar() {
   const toggle = (name: string) => setOpenDropdown(v => v === name ? null : name)
 
   return (
-    <nav ref={navRef} className={`sticky top-0 z-50 bg-white dark:bg-gray-900 transition-shadow ${scrolled ? 'shadow-md dark:shadow-gray-950' : 'border-b border-gray-100 dark:border-gray-800'}`}>
+    <nav ref={navRef} className={`sticky top-0 z-50 bg-white dark:bg-slate-900 transition-shadow ${scrolled ? 'shadow-md dark:shadow-black/30' : 'border-b border-gray-200 dark:border-slate-800'}`}>
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
 
         <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={() => setOpenDropdown(null)}>

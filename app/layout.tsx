@@ -90,7 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
         `}} />
       </head>
-      <body className="min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-50 transition-colors" style={{ fontFamily: "'DM Sans', sans-serif", margin: 0 }}>
+      <body className="min-h-screen flex flex-col bg-white dark:bg-slate-950 text-gray-900 dark:text-slate-50 transition-colors" style={{ fontFamily: "'DM Sans', sans-serif", margin: 0 }}>
         <ThemeProvider>
           {children}
         </ThemeProvider>

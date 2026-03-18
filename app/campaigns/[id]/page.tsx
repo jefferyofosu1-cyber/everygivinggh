@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase'
+import { usePaystackPayment } from 'react-paystack'
 
 const EMOJI: Record<string, string> = {
   medical: '🏥', emergency: '🆘', education: '🎓', charity: '🤲', faith: '⛪',
@@ -54,24 +55,48 @@ export default function CampaignPage() {
   const fee = rawAmount > 0 ? (rawAmount * 0.02 + 0.25) : 0
   const fundraiserReceives = rawAmount > 0 ? (rawAmount - fee) : 0
 
-  const handleDonate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setDonating(true)
-    // Simulate payment processing
-    await new Promise(r => setTimeout(r, 1500))
-    // In production: call MoMo payment API, then record donation
-    const supabase = createClient()
-    await supabase.from('donations').insert({
+  const paystackConfig = {
+    reference: (new Date()).getTime().toString(),
+    email: form.email,
+    amount: rawAmount * 100, // pesewas
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
+    currency: 'GHS',
+    metadata: {
       campaign_id: campaign.id,
       donor_name: form.name || 'Anonymous',
-      donor_email: form.email,
-      amount: parseFloat(form.amount),
       message: form.message,
       payment_method: form.method,
-      status: 'pending', // set to 'success' after MoMo confirms
-    })
-    setDonating(false)
-    setDonated(true)
+      custom_fields: []
+    }
+  }
+
+  const initializePayment = usePaystackPayment(paystackConfig as any)
+
+  const handleDonate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!rawAmount || rawAmount <= 0 || !form.email) return
+    setDonating(true)
+
+    const onSuccess = async (reference: any) => {
+      const supabase = createClient()
+      await supabase.from('donations').insert({
+        campaign_id: campaign.id,
+        donor_name: form.name || 'Anonymous',
+        donor_email: form.email,
+        amount: rawAmount,
+        message: form.message,
+        payment_method: form.method,
+        status: 'pending', // Webhook handles success
+      })
+      setDonating(false)
+      setDonated(true)
+    }
+
+    const onClose = () => {
+      setDonating(false)
+    }
+
+    initializePayment({ onSuccess, onClose } as any)
   }
 
   const shareUrl = `https://everygiving.org/campaigns/${campaign.id}`
@@ -179,6 +204,12 @@ export default function CampaignPage() {
                     <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Your name</label>
                     <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
                       placeholder="Ama Mensah"
+                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-3.5 py-3 text-sm outline-none transition-all" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Email address *</label>
+                    <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                      placeholder="ama@example.com"
                       className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-3.5 py-3 text-sm outline-none transition-all" />
                   </div>
                   <div>

@@ -134,7 +134,7 @@ export async function createCampaign(input: CampaignInput): Promise<Campaign> {
     createdAt: new Date().toISOString(),
   })
 
-  return getCampaignById(doc._id)
+  return getCampaignById(doc._id) as Promise<Campaign>
 }
 
 export async function updateCampaign(
@@ -160,7 +160,7 @@ export async function updateCampaign(
     patch.slug = { _type: 'slug', current: toSlug(input.slug) }
 
   await sanityWriteClient.patch(id).set(patch).commit()
-  return getCampaignById(id)
+  return getCampaignById(id) as Promise<Campaign>
 }
 
 export async function deleteCampaign(id: string): Promise<void> {

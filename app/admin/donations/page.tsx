@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase'
 
 const STATUS_BADGE: Record<string, string> = {
   success: 'bg-green-500/20 text-green-400',
@@ -8,22 +7,131 @@ const STATUS_BADGE: Record<string, string> = {
   failed: 'bg-red-500/20 text-red-400',
 }
 
+function DonationModal({ donation, onClose, onUpdate }: { donation: any; onClose: () => void; onUpdate: () => void }) {
+  const [newStatus, setNewStatus] = useState(donation.status)
+  const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const updateStatus = async () => {
+    if (newStatus === donation.status) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/admin/donations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: donation.id, status: newStatus }),
+      })
+      if (res.ok) { onUpdate(); onClose() }
+    } catch (e) { console.error('updateStatus error:', e) }
+    setSaving(false)
+  }
+
+  const deleteDonation = async () => {
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/admin/donations', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: donation.id }),
+      })
+      if (res.ok) { onUpdate(); onClose() }
+    } catch (e) { console.error('deleteDonation error:', e) }
+    setDeleting(false)
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
+        <div className="flex items-start justify-between p-6 border-b border-white/10">
+          <div>
+            <h2 className="font-nunito font-black text-white text-lg mb-1">Donation Details</h2>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_BADGE[donation.status] || ''}`}>{donation.status}</span>
+          </div>
+          <button onClick={onClose} className="text-white/30 hover:text-white text-2xl leading-none ml-4">×</button>
+        </div>
+
+        <div className="p-6 flex flex-col gap-4">
+          <div className="bg-white/5 rounded-xl p-4">
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div><div className="text-white/30 text-xs mb-0.5">Donor</div><div className="text-white font-semibold">{donation.donor_name || 'Anonymous'}</div></div>
+              <div><div className="text-white/30 text-xs mb-0.5">Email</div><div className="text-white font-semibold truncate">{donation.donor_email || ' - '}</div></div>
+              <div><div className="text-white/30 text-xs mb-0.5">Amount</div><div className="text-primary font-black">₵{donation.amount?.toLocaleString()}</div></div>
+              <div><div className="text-white/30 text-xs mb-0.5">Method</div><div className="text-white font-semibold">{donation.payment_method || ' - '}</div></div>
+              <div><div className="text-white/30 text-xs mb-0.5">Reference</div><div className="text-white font-mono text-xs">{donation.payment_reference || ' - '}</div></div>
+              <div><div className="text-white/30 text-xs mb-0.5">Date</div><div className="text-white font-semibold">{new Date(donation.created_at).toLocaleString()}</div></div>
+              <div className="col-span-2"><div className="text-white/30 text-xs mb-0.5">Campaign</div><div className="text-white font-semibold">{donation.campaigns?.title || ' - '}</div></div>
+              {donation.message && <div className="col-span-2"><div className="text-white/30 text-xs mb-0.5">Message</div><div className="text-white/70 text-sm">{donation.message}</div></div>}
+            </div>
+          </div>
+
+          {/* Status update */}
+          <div>
+            <label className="text-white/40 text-xs font-bold uppercase tracking-wider block mb-1.5">Update Status</label>
+            <div className="flex gap-2">
+              {['pending', 'success', 'failed'].map(s => (
+                <button key={s} onClick={() => setNewStatus(s)}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg border transition-all capitalize ${
+                    newStatus === s
+                      ? s === 'success' ? 'bg-green-500/20 border-green-500/30 text-green-400'
+                        : s === 'failed' ? 'bg-red-500/20 border-red-500/30 text-red-400'
+                        : 'bg-amber-500/20 border-amber-500/30 text-amber-400'
+                      : 'bg-white/5 border-white/10 text-white/40 hover:text-white'
+                  }`}>
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {newStatus !== donation.status && (
+            <button onClick={updateStatus} disabled={saving}
+              className="w-full py-3 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl transition-all text-sm disabled:opacity-50 shadow-lg shadow-primary/20">
+              {saving ? 'Saving…' : 'Save Status Change'}
+            </button>
+          )}
+
+          {/* Delete */}
+          {confirmDelete ? (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+              <p className="text-red-400 text-xs mb-3">Permanently delete this donation record? This cannot be undone.</p>
+              <div className="flex gap-2">
+                <button onClick={() => setConfirmDelete(false)} className="flex-1 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 text-xs font-bold rounded-lg transition-all">Cancel</button>
+                <button onClick={deleteDonation} disabled={deleting} className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50">
+                  {deleting ? 'Deleting…' : 'Yes, delete'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button onClick={() => setConfirmDelete(true)} className="w-full text-center text-xs text-red-400/60 hover:text-red-400 transition-colors py-2">
+              Delete donation
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminDonationsPage() {
   const [donations, setDonations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [selected, setSelected] = useState<any>(null)
 
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.from('donations')
-      .select('*, campaigns(title, user_id, profiles(full_name))')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setDonations(data || [])
+  const load = () => {
+    setLoading(true)
+    fetch('/api/admin/donations')
+      .then(r => r.json())
+      .then(data => {
+        setDonations(data.donations || [])
         setLoading(false)
       })
-  }, [])
+      .catch(() => setLoading(false))
+  }
+
+  useEffect(() => { load() }, [])
 
   const filtered = donations.filter(d => {
     const matchStatus = statusFilter === 'all' || d.status === statusFilter
@@ -129,6 +237,7 @@ export default function AdminDonationsPage() {
                   <th className="px-5 py-3.5 text-white/30 text-xs font-bold uppercase tracking-wider">Method</th>
                   <th className="px-5 py-3.5 text-white/30 text-xs font-bold uppercase tracking-wider">Reference</th>
                   <th className="px-5 py-3.5 text-white/30 text-xs font-bold uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3.5 text-white/30 text-xs font-bold uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -149,6 +258,12 @@ export default function AdminDonationsPage() {
                     <td className="px-5 py-4">
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_BADGE[d.status] || ''}`}>{d.status}</span>
                     </td>
+                    <td className="px-5 py-4">
+                      <button onClick={() => setSelected(d)}
+                        className="bg-white/5 hover:bg-primary/20 hover:text-primary border border-white/10 hover:border-primary/30 text-white/60 text-xs font-bold px-3 py-1.5 rounded-lg transition-all">
+                        View →
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -156,6 +271,8 @@ export default function AdminDonationsPage() {
           </div>
         )}
       </div>
+
+      {selected && <DonationModal donation={selected} onClose={() => setSelected(null)} onUpdate={load} />}
     </div>
   )
 }

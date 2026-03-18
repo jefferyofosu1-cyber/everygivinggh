@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -6,8 +7,9 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-5 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pb-10 border-b border-white/10">
           <div className="col-span-2 md:col-span-1">
-            <div className="font-nunito font-black text-xl mb-2">
-              <span className="text-primary">Every</span>Giving
+            <div className="flex items-center gap-2 mb-2">
+              <Image src="/logo.jpeg" alt="EveryGiving" width={32} height={32} className="rounded-lg" />
+              <span className="font-nunito font-black text-xl"><span className="text-primary">Every</span>Giving</span>
             </div>
             <p className="text-sm text-white/50 leading-relaxed max-w-[200px]">
               Ghana's trusted crowdfunding platform. Verified giving. Mobile money. Full transparency.

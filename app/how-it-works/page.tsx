@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import Link from 'next/link'
+import { usePageContent, cms } from '@/lib/content'
 
 // ─── TUTORIAL CHARACTER ───────────────────────────────────────────────────────
 
@@ -243,6 +244,7 @@ const FAQS = [
 ]
 
 export default function HowItWorksPage() {
+  const c = usePageContent('how-it-works')
   return (
     <>
       <Navbar />
@@ -253,13 +255,13 @@ export default function HowItWorksPage() {
           <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-block bg-primary/20 text-primary border border-primary/30 text-xs font-bold px-3 py-1.5 rounded-full mb-5">
-              Simple. Fast. Free.
+              {cms(c, 'hero', 'badge', 'Simple. Fast. Free.')}
             </div>
             <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-5 leading-tight">
-              How EveryGiving works
+              {cms(c, 'hero', 'headline', 'How EveryGiving works')}
             </h1>
             <p className="text-white/60 text-base leading-relaxed max-w-xl mx-auto mb-8">
-              From creating your campaign to receiving money in your MoMo wallet  -  the complete process, step by step.
+              {cms(c, 'hero', 'subtext', 'From creating your campaign to receiving money in your MoMo wallet  -  the complete process, step by step.')}
             </p>
             <div className="flex flex-wrap justify-center gap-8">
               {[

@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
@@ -34,8 +35,9 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
 
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block font-nunito font-black text-2xl tracking-tight">
-            <span className="text-primary">Every</span><span className="text-white">Giving</span>
+          <Link href="/" className="inline-flex flex-col items-center gap-3">
+            <Image src="/logo.jpeg" alt="EveryGiving" width={48} height={48} className="rounded-xl" />
+            <span className="font-nunito font-black text-2xl tracking-tight"><span className="text-primary">Every</span><span className="text-white">Giving</span></span>
           </Link>
           <div className="text-white/40 text-sm mt-2">Sign in to your account</div>
         </div>

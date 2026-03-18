@@ -19,10 +19,10 @@ export default function TransparencyPage() {
               Transparency
             </div>
             <h1 className="font-nunito font-black text-white text-3xl md:text-5xl tracking-tight mb-4 leading-tight" style={{ letterSpacing: -1 }}>
-              {cms(c, 'hero', 'headline', 'Nothing to hide.')}
+              {cms(c, 'hero', 'headline', 'Nothing to hide. Everything explained.')}
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-lg mx-auto">
-              {cms(c, 'hero', 'subtext', 'EveryGiving operates with full transparency. This page explains exactly how the platform works, where money goes, and how we protect everyone who uses it.')}
+              {cms(c, 'hero', 'subtext', 'EveryGiving is built on trust and transparency. This page shows exactly how the platform works, where money goes, and how we protect both donors and fundraisers in Ghana.')}
             </p>
           </div>
         </section>
@@ -31,15 +31,15 @@ export default function TransparencyPage() {
         <section className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Our commitments</div>
-            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-10">How Every Giving works</h2>
+            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-10">Our Commitments</h2>
             <div className="grid md:grid-cols-2 gap-5">
               {[
-                { icon: '₵', title: '0% platform fee on funds raised', body: 'EveryGiving does not take a cut of your funds raised for profit. We only deduct a standard 2.9% + ₵0.50 fee per transaction to cover secure Paystack payment processing and essential operations. Donor tips and verification fees keep the platform running.' },
-                { icon: '*', title: 'Identity verified against NIA', body: 'Every fundraiser\'s identity is checked against the National Identification Authority database using their Ghana Card. Donors can see the Verified badge as proof.' },
-                { icon: '*', title: 'Every donation is visible', body: 'Donors can see all contributions on a campaign page. The total raised, the goal, and individual donations are all publicly visible. No hidden numbers.' },
-                { icon: '*', title: 'Same-day MoMo payouts', body: 'We never hold fundraiser money. Donations flow directly to the registered MoMo wallet the same day they are received.' },
-                { icon: '*', title: 'Fraud is reported to authorities', body: 'Any fraudulent campaign is removed immediately. We report fraud to the Ghana Police Service and EOCO. Fraudsters are not simply banned  -  they are reported to the authorities.' },
-                { icon: '*', title: 'No ads. No data selling. Ever.', body: 'EveryGiving is entirely ad-free. We do not sell user data to advertisers or any third party. Our business model is supported entirely by voluntary donor tips and verification fees.' },
+                { icon: '₵', title: '0% Platform Fee on Funds Raised', body: 'EveryGiving does not take a cut of the funds raised for a cause. We charge a small service fee of 2.9% + GHS 0.50 per donation to cover secure payment processing and platform operations. Optional donor tips and verification fees help us sustain and grow the platform.' },
+                { icon: '✓', title: 'Identity Verified', body: 'All fundraisers are required to verify their identity before raising funds. This ensures campaigns are created by real people, building trust for donors. Verified campaigns display a badge that donors can easily recognize.' },
+                { icon: '👁', title: 'Every Donation is Visible', body: 'Transparency builds confidence. All donations are publicly visible on the campaign page. Total amount raised and campaign goal are shown in real time. Donors can see individual contributions. No hidden numbers. No manipulation.' },
+                { icon: '⚡', title: 'Fast & Direct Payouts', body: 'Donations are processed securely and sent directly to the fundraiser\'s registered account or wallet as quickly as possible.' },
+                { icon: '🚨', title: 'Fraud is Reported', body: 'We take fraud seriously: Fraudulent campaigns are removed immediately. Cases are reported to the authorities. Fraudsters are not just banned — they are held accountable.' },
+                { icon: '🔒', title: 'No Ads. No Data Selling. Ever.', body: 'EveryGiving is completely ad-free. We do not sell or share user data with third parties. Our platform is supported entirely through service fees, donor tips, and verification fees.' },
               ].map((item, i) => (
                 <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                   <div className="text-2xl mb-3">{item.icon}</div>
@@ -55,24 +55,24 @@ export default function TransparencyPage() {
         <section className="py-16 bg-gray-50 border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Fee breakdown</div>
-            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Exactly what you pay, and why</h2>
+            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Fee Breakdown</h2>
             <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm mb-8">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50">
-                    <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Fee type</th>
+                    <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Fee Type</th>
                     <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Amount</th>
-                    <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Paid by</th>
+                    <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Paid By</th>
                     <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Purpose</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    { fee: 'Platform operations fee', amount: '2.9% + ₵0.50', by: 'Fundraiser', purpose: 'Covers secure Paystack processing and platform maintenance' },
-                    { fee: 'Voluntary Donor Tip', amount: 'Optional', by: 'Donor', purpose: 'Supports EveryGiving sustainability and growth' },
-                    { fee: 'Basic verification', amount: 'Free', by: 'Fundraiser', purpose: 'ID upload + basic review' },
-                    { fee: 'Standard verification', amount: '₵50 one-time', by: 'Fundraiser', purpose: 'Full ID + selfie + NIA check + Verified badge' },
-                    { fee: 'Premium verification', amount: 'Optional future', by: 'Fundraiser', purpose: 'Premium features coming soon' },
+                    { fee: 'Service Fee', amount: '2.9% + GHS 0.50', by: 'Fundraiser', purpose: 'Covers payment processing and platform operations' },
+                    { fee: 'Donor Tip', amount: 'Optional', by: 'Donor', purpose: 'Supports EveryGiving sustainability and growth' },
+                    { fee: 'Basic Verification', amount: 'Free', by: 'Fundraiser', purpose: 'Basic identity check' },
+                    { fee: 'Standard Verification', amount: 'GHS 50 (one-time)', by: 'Fundraiser', purpose: 'Full ID verification + Verified badge' },
+                    { fee: 'Premium Verification', amount: 'Coming soon', by: 'Fundraiser', purpose: 'Advanced verification features' },
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
                       <td className="px-6 py-4 font-medium text-navy">{row.fee}</td>
@@ -87,24 +87,43 @@ export default function TransparencyPage() {
           </div>
         </section>
 
-        {/* How verification works */}
+        {/* How payments work */}
         <section className="py-16 bg-white border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-5">
+            <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Payments</div>
+            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">How Payments Work</h2>
+            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 max-w-2xl">
+              <div className="space-y-4">
+                <p className="text-gray-700"><span className="font-nunito font-black text-navy">All payments are securely processed through Paystack.</span></p>
+                <div className="space-y-3 ml-4">
+                  <p className="text-gray-600"><span className="font-medium">✓</span> Paystack deducts their processing fee (1.95% per transaction)</p>
+                  <p className="text-gray-600"><span className="font-medium">✓</span> EveryGiving applies the platform fee (2.9% + GHS 0.50)</p>
+                  <p className="text-gray-600"><span className="font-medium">✓</span> Remaining funds go directly to the campaign</p>
+                </div>
+                <p className="text-gray-600 italic pt-2">We standardize the fees to keep the experience simple and predictable.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How verification works */}
+        <section className="py-16 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Verification</div>
-            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">How we confirm identities</h2>
+            <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Verification Process</h2>
             <div className="flex flex-col gap-4 max-w-2xl">
               {[
-                { step: '1', title: 'Fundraiser uploads Ghana Card', desc: 'Front and back photo of their National Identification Card, plus manually entering their ID number.' },
-                { step: '2', title: 'Document review', desc: 'The ID document is checked by our team to confirm it is valid, unaltered, and matches the submitted details.' },
-                { step: '3', title: 'Selfie review (Standard & Premium)', desc: 'For Standard and Premium campaigns, the selfie is reviewed alongside the ID photo to confirm the same person appears in both.' },
-                { step: '4', title: 'Document review (Premium only)', desc: 'Supporting documents  -  such as hospital admission letters  -  are reviewed manually by our team before the Premium badge is granted.' },
-                { step: '5', title: 'Badge awarded', desc: 'Once verified, the appropriate badge appears on the campaign. Donors can see the badge and understand exactly what level of verification it represents.' },
+                { step: '1', title: 'ID Submission', desc: 'Fundraiser provides a valid ID.' },
+                { step: '2', title: 'Document Review', desc: 'We verify that the ID is authentic and matches the user\'s details.' },
+                { step: '3', title: 'Selfie Confirmation (Standard & Premium)', desc: 'Confirms the person in the ID matches the selfie.' },
+                { step: '4', title: 'Supporting Documents (Premium)', desc: 'Optional review of additional documents, such as hospital letters.' },
+                { step: '5', title: 'Verified Badge', desc: 'Fundraisers receive a badge on their campaign, signaling trust to donors.' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-4">
                   <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="font-nunito font-black text-primary text-xs">{item.step}</span>
                   </div>
-                  <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 flex-1">
+                  <div className="bg-white border border-gray-100 rounded-xl p-4 flex-1">
                     <div className="font-nunito font-extrabold text-navy text-sm mb-1">{item.title}</div>
                     <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
                   </div>
@@ -118,8 +137,8 @@ export default function TransparencyPage() {
         <section className="py-12 bg-primary relative overflow-hidden">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-3xl mx-auto px-5 text-center">
-            <div className="font-nunito font-black text-white text-2xl mb-2">Questions about how we operate?</div>
-            <p className="text-white/60 text-sm mb-6">We are happy to explain anything in more detail.</p>
+            <div className="font-nunito font-black text-white text-2xl mb-2">Questions?</div>
+            <p className="text-white/60 text-sm mb-6">We believe in full transparency. If you have any questions about how EveryGiving works, we're happy to explain.</p>
             <div className="flex flex-wrap gap-3 justify-center">
               <a href="mailto:business@everygiving.org"
                 className="inline-block bg-white text-primary font-nunito font-black px-7 py-3 rounded-full text-sm hover:-translate-y-0.5 transition-all">

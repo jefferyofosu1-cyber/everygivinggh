@@ -9,7 +9,8 @@ alter table if exists public.donations
 -- 2. Ensure campaigns table has funding tracking columns
 alter table if exists public.campaigns
   add column if not exists raised_amount numeric(12,2) not null default 0,
-  add column if not exists donor_count int not null default 0;
+  add column if not exists donor_count int not null default 0,
+  add column if not exists updated_at timestamptz default now();
 
 -- 3. Add indexes for payment queries
 create index if not exists idx_donations_status on public.donations(status);

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { createClient } from '@/lib/supabase'
 
 const EMOJI: Record<string, string> = {
   medical: 'MD', emergency: 'EM', education: 'ED', charity: 'CH', faith: 'FA',
@@ -33,7 +32,7 @@ function CampaignCard({ c }: { c: any }) {
       </div>
       <div className="p-5">
         <div className="font-nunito font-black text-navy text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">{c.title}</div>
-        <div className="text-gray-400 text-xs mb-3">{c.profiles?.full_name || 'Anonymous'}</div>
+        <div className="text-gray-400 text-xs mb-3">Campaign</div>
         <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1.5">
           <div className="h-full bg-primary rounded-full" style={{ width: `${pct}%` }} />
         </div>
@@ -47,18 +46,29 @@ function CampaignCard({ c }: { c: any }) {
 }
 
 export default function DonatePage() {
-  const [campaigns, setCampaigns] = useState<any[]>([])
+  const [allCampaigns, setAllCampaigns] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
 
   useEffect(() => {
-    const supabase = createClient()
-    let q = supabase.from('campaigns').select('*, profiles(full_name)').eq('status', 'approved').order('created_at', { ascending: false }).limit(9)
-    if (activeCategory) {
-      q = supabase.from('campaigns').select('*, profiles(full_name)').eq('status', 'approved').ilike('category', activeCategory).limit(9)
+    async function loadCampaigns() {
+      try {
+        const res = await fetch('/api/campaigns', { cache: 'no-store' })
+        const json = await res.json()
+        setAllCampaigns(json.campaigns || [])
+      } catch (err) {
+        console.error('Failed to load campaigns:', err)
+        setAllCampaigns([])
+      } finally {
+        setLoading(false)
+      }
     }
-    q.then(({ data }) => { setCampaigns(data || []); setLoading(false) })
-  }, [activeCategory])
+    loadCampaigns()
+  }, [])
+
+  const campaigns = allCampaigns
+    .filter(c => !activeCategory || c.category?.toLowerCase() === activeCategory.toLowerCase())
+    .slice(0, 9)
 
   return (
     <>

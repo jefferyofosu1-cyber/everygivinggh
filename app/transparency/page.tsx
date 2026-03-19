@@ -30,12 +30,12 @@ export default function TransparencyPage() {
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-10">Our Commitments</h2>
             <div className="grid md:grid-cols-2 gap-5">
               {[
-                { icon: '₵', title: '0% Platform Fee on Funds Raised', body: 'EveryGiving does not take a cut of the funds raised for a cause. We charge a small service fee of 2.9% + GHS 0.50 per donation to cover secure payment processing and platform operations. Optional donor tips and verification fees help us sustain and grow the platform.' },
+                { icon: '₵', title: '0% Platform Fee on Funds Raised', body: 'EveryGiving does not take a cut of the funds raised for a cause. We charge a service fee of 2.9% + GHS 0.50 per donation to cover secure payment processing and platform operations. Verification fees help us sustain and grow the platform.' },
                 { icon: '✓', title: 'Identity Verified', body: 'All fundraisers are required to verify their identity before raising funds. This ensures campaigns are created by real people, building trust for donors. Verified campaigns display a badge that donors can easily recognize.' },
                 { icon: '👁', title: 'Every Donation is Visible', body: 'Transparency builds confidence. All donations are publicly visible on the campaign page. Total amount raised and campaign goal are shown in real time. Donors can see individual contributions. No hidden numbers. No manipulation.' },
                 { icon: '⚡', title: 'Fast & Direct Payouts', body: 'Donations are processed securely and sent directly to the fundraiser\'s registered account or wallet as quickly as possible.' },
                 { icon: '🚨', title: 'Fraud is Reported', body: 'We take fraud seriously: Fraudulent campaigns are removed immediately. Cases are reported to the authorities. Fraudsters are not just banned — they are held accountable.' },
-                { icon: '🔒', title: 'No Ads. No Data Selling. Ever.', body: 'EveryGiving is completely ad-free. We do not sell or share user data with third parties. Our platform is supported entirely through service fees, donor tips, and verification fees.' },
+                { icon: '🔒', title: 'No Ads. No Data Selling. Ever.', body: 'EveryGiving is completely ad-free. We do not sell or share user data with third parties. Our platform is supported through service fees and verification fees.' },
               ].map((item, i) => (
                 <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
                   <div className="text-2xl mb-3">{item.icon}</div>
@@ -65,7 +65,6 @@ export default function TransparencyPage() {
                 <tbody>
                   {[
                     { fee: 'Service Fee', amount: '2.9% + GHS 0.50', by: 'Fundraiser', purpose: 'Covers payment processing and platform operations' },
-                    { fee: 'Donor Tip', amount: 'Optional', by: 'Donor', purpose: 'Supports EveryGiving sustainability and growth' },
                     { fee: 'Basic Verification', amount: 'Free', by: 'Fundraiser', purpose: 'Basic identity check' },
                     { fee: 'Standard Verification', amount: 'GHS 50 (one-time)', by: 'Fundraiser', purpose: 'Full ID verification + Verified badge' },
                     { fee: 'Premium Verification', amount: 'Coming soon', by: 'Fundraiser', purpose: 'Advanced verification features' },

@@ -58,40 +58,47 @@ export async function POST(req: NextRequest) {
 
     const { data: campaign, error: campErr } = await supabase
       .from('campaigns')
-      .select('id, status')
+      .select('id, status, title')
       .eq('id', campaignId)
       .single()
 
     if (campErr || !campaign) {
       return NextResponse.json({ error: 'Campaign not found.' }, { status: 404 })
     }
-    if (campaign.status !== 'approved' && campaign.status !== 'live') {
+    
+    // Accept donations for approved or live campaigns
+    const allowedStatuses = ['approved', 'live', 'published']
+    if (!allowedStatuses.includes(campaign.status)) {
       return NextResponse.json({ error: 'This campaign is not currently accepting donations.' }, { status: 403 })
     }
 
-    // Calculate financial breakdown for payment processing
-    const amountPaid = amount + tipAmount
-    const platformFee = (amount * 0.029) + 0.50
-    const paystackFee = amountPaid * 0.0195
-    const netReceived = amountPaid - paystackFee
-    const campaignAmount = amount - platformFee
-    const everygivingRevenue = platformFee - paystackFee + tipAmount
+    // Standardized financial breakdown in pesewas (BIGINT equivalent)
+    // 1. Convert to pesewas
+    const amountPesewas = Math.round(amount * 100)
+    const tipPesewas = Math.round(tipAmount * 100)
+    
+    // 2. Calculate platform fee: 2.9% + GHS 0.50
+    const platformFeePesewas = Math.round(amountPesewas * 0.029) + 50
+    
+    // 3. Final calculations
+    const amountPaidPesewas = amountPesewas + tipPesewas
+    const transactionFeePesewas = platformFeePesewas + tipPesewas
+    const netAmountPesewas = amountPaidPesewas - transactionFeePesewas // What fundraiser gets
 
-    // Insert donation with all financial tracking fields
+    const reference = `EVG_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`
+
+    // Insert donation with standardized columns
     const { data: donation, error: insertErr } = await supabase
       .from('donations')
       .insert({
         campaign_id:         campaignId,
         donor_name:          donorName,
         donor_email:         donorEmail,
-        amount:              amount,
-        tip_amount:          tipAmount,
-        amount_paid:         amountPaid,
-        platform_fee:        platformFee,
-        paystack_fee:        paystackFee,
-        net_received:        netReceived,
-        campaign_amount:     campaignAmount,
-        everygiving_revenue: everygivingRevenue,
+        amount_paid:         amountPaidPesewas,    // Total (Gross + Tip)
+        transaction_fee:     transactionFeePesewas, // Platform takes (Fee + Tip)
+        net_amount:          netAmountPesewas,      // Fundraiser gets (Gross - Fee)
+        donor_tip:           tipPesewas,            // Tracked separately for analytics
+        reference:           reference,
         message:             message || null,
         payment_method:      method,
         status:              'pending',
@@ -104,16 +111,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not process donation. Please try again.' }, { status: 500 })
     }
 
-    // Return donation ID and payment details for Paystack integration
     return NextResponse.json({ 
       success: true, 
       donationId: donation.id,
-      amount: amount,
-      tip_amount: tipAmount,
-      total: amount + tipAmount,
+      reference,
+      amount: amountPesewas,
+      tip_amount: tipPesewas,
+      total: amountPaidPesewas,
       donor_email: donorEmail,
       donor_name: donorName,
-      campaign_id: campaignId
+      campaign_title: campaign.title
     })
 
   } catch (err) {

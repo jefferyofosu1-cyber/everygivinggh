@@ -8,15 +8,11 @@ import { createClient } from '@/lib/supabase'
 export default function DonationForm({ campaign }: { campaign: any }) {
   const [donating, setDonating] = useState(false)
   const [donated, setDonated] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', amount: '', tip: '5', message: '', method: 'MTN MoMo' })
+  const [form, setForm] = useState({ name: '', email: '', amount: '', message: '', method: 'MTN MoMo' })
   const [errorMsg, setErrorMsg] = useState('')
   const [donationId, setDonationId] = useState<string | null>(null)
 
-  const rawAmount = parseFloat(form.amount) || 0
-  const tipAmount = parseFloat(form.tip) || 0
-  const totalAmount = rawAmount + tipAmount
-  const fee = rawAmount > 0 ? (rawAmount * 0.029 + 0.50) : 0
-  const fundraiserReceives = rawAmount > 0 ? (rawAmount - fee) : 0
+  const totalAmount = parseFloat(form.amount) || 0
 
   const paystackConfig = {
     reference: `${campaign?.id}-${Date.now()}`,
@@ -39,7 +35,7 @@ export default function DonationForm({ campaign }: { campaign: any }) {
     e.preventDefault()
     setErrorMsg('')
     
-    if (!rawAmount || rawAmount <= 0 || !form.email || !campaign) {
+    if (!totalAmount || totalAmount <= 0 || !form.email || !campaign) {
       setErrorMsg('Please enter an amount and your email')
       return
     }
@@ -54,8 +50,8 @@ export default function DonationForm({ campaign }: { campaign: any }) {
           campaign_id: campaign.id,
           donor_name: form.name || 'Anonymous',
           donor_email: form.email,
-          amount: rawAmount,
-          tip_amount: tipAmount,
+          amount: totalAmount,
+          tip_amount: 0,
           message: form.message,
           payment_method: form.method,
         })
@@ -105,7 +101,7 @@ export default function DonationForm({ campaign }: { campaign: any }) {
       <div className="text-center py-8">
         <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4">💚</div>
         <h2 className="font-nunito font-black text-navy text-2xl mb-2">Thank you!</h2>
-        <p className="text-gray-500 text-sm mb-6">Your donation of <strong>₵{rawAmount}</strong> helps make a difference.</p>
+        <p className="text-gray-500 text-sm mb-6">Your donation of <strong>₵{totalAmount}</strong> helps make a difference.</p>
         <button onClick={() => setDonated(false)} className="text-primary text-sm font-bold hover:underline">Make another donation</button>
       </div>
     )
@@ -130,35 +126,16 @@ export default function DonationForm({ campaign }: { campaign: any }) {
             className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-xl px-4 py-3 text-sm outline-none transition-all" />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 ml-1">Amount (GHC) *</label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
-              <input type="number" required min="1" max="50000" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
-                placeholder="50"
-                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-xl pl-8 pr-4 py-3 text-sm outline-none transition-all" />
-            </div>
-          </div>
-          <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 ml-1">Platform Tip</label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
-              <input type="number" min="0" max="500" value={form.tip} onChange={e => setForm(p => ({ ...p, tip: e.target.value }))}
-                placeholder="5"
-                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-xl pl-8 pr-4 py-3 text-sm outline-none transition-all" />
-            </div>
+        <div>
+          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 ml-1">Amount (GHC) *</label>
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
+            <input type="number" required min="1" max="50000" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
+              placeholder="50"
+              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-xl pl-8 pr-4 py-3 text-sm outline-none transition-all" />
           </div>
         </div>
 
-        {rawAmount > 0 && (
-          <div className="bg-primary/5 rounded-xl p-3 text-xs space-y-1 border border-primary/10">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-500">Total charge:</span>
-              <span className="font-black text-navy text-sm">₵{totalAmount.toFixed(2)}</span>
-            </div>
-          </div>
-        )}
 
         <button type="submit" disabled={donating}
           className="w-full py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm disabled:opacity-60">

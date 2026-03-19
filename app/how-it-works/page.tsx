@@ -45,7 +45,7 @@ const SCENES = [
   { mood:'happy' as const, holding:'phone' as const, bg:'from-green-50 to-white', accent:'#02A95C', label:'The discovery', name:'She finds Every Giving', bubble:"Every Giving lets me create a verified page  -  people can donate even if they don't know me!", narration:"A friend shares a link to Every Giving. In 5 minutes, Ama fills in her campaign  -  her story, goal, and a photo. Simple guided form, no tech skills needed." },
   { mood:'proud' as const, holding:'card' as const, bg:'from-amber-50 to-white', accent:'#D97706', label:'Verification', name:'Verified in minutes', bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!", narration:"Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the EveryGiving team review. Within 24 hours  -  no waiting." },
   { mood:'pointing' as const, holding:null, bg:'from-blue-50 to-white', accent:'#0066CC', label:'Going live', name:'Campaign goes live', bubble:"My campaign is live with a Verified badge! I'm sharing it everywhere right now.", narration:"The moment verification passes, her campaign goes live with a Verified badge. She shares on WhatsApp and Facebook. Donations come in from people she has never met." },
-  { mood:'excited' as const, holding:'money' as const, bg:'from-green-50 to-emerald-50', accent:'#02A95C', label:'Success', name:'₵18,500 raised', bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Zero fees!", narration:"In 3 weeks, Ama raises ₵18,500  -  more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. No platform fees. No delays." },
+  { mood:'excited' as const, holding:'money' as const, bg:'from-green-50 to-emerald-50', accent:'#02A95C', label:'Success', name:'₵18,500 raised', bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Fast & secure!", narration:"In 3 weeks, Ama raises ₵18,500  -  more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. Fast & secure. No delays." },
 ]
 
 function TutorialEmbed() {
@@ -182,7 +182,7 @@ const STEPS = [
   {
     n: '02',
     title: 'Set your goal',
-    description: 'Choose a fundraising target. You keep every cedi donated regardless of whether you reach your goal. There is no platform fee  -  100% of donations go directly to you.',
+    description: 'Choose a fundraising target. You keep every cedi donated regardless of whether you reach your goal. It is fast and secure  -  donations go directly to you.',
     tip: 'Set a specific, realistic goal. The most successful campaigns give donors a clear target to rally behind.',
     time: '1 minute',
   },
@@ -210,7 +210,7 @@ const STEPS = [
   {
     n: '06',
     title: 'Receive your money',
-    description: 'Donations are held securely and released to your wallet when you reach each milestone you set. Withdraw via MoMo, bank transfer, or card. Zero platform fees, always.',
+    description: 'Donations are held securely and released to your wallet when you reach each milestone you set. Withdraw via MoMo, bank transfer, or card. Fast & secure, always.',
     tip: 'You set your own milestones. Donors can see your progress before each payout  -  which builds even more trust.',
     time: 'Per milestone',
   },
@@ -379,7 +379,7 @@ export default function HowItWorksPage() {
         <section className="py-16 bg-navy text-center px-5">
           <h2 className="font-nunito font-black text-white text-2xl mb-3">Ready to start raising?</h2>
           <p className="text-white/50 text-sm mb-7 max-w-sm mx-auto">
-            Free to start. Verified in minutes. Zero platform fees.
+            Free to start. Verified in minutes. Fast & secure.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">
             <Link href="/create"

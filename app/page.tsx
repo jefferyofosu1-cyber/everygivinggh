@@ -151,7 +151,7 @@ export default function HomePage() {
             Raise money for what <span style={{ color: '#0A6B4B' }}>matters most</span>
           </h1>
           <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: '#4A4A44', lineHeight: 1.6, marginBottom: 40, maxWidth: 680, marginInline: 'auto' }}>
-            Create a fundraiser in minutes and get support from people who care across Ghana and beyond. 100% verified. No platform fees.
+            Create a fundraiser in minutes and get support from people who care across Ghana and beyond. 100% verified. Fast & secure.
           </p>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/create" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: '#0A6B4B', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(10,107,75,0.25)', transition: 'transform 0.2s', className: 'transition-hover' } as any}>
@@ -196,11 +196,6 @@ export default function HomePage() {
               <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>We use bank-level security via Paystack for instant MoMo, Telecel Cash, and Card processing.</p>
             </div>
 
-            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
-              <div style={{ width: 48, height: 48, background: '#FEF3E2', color: '#B85C00', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconEye /></div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Transparent fees</h3>
-              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>0% platform fee to start. A small, clear transaction fee ensures maximum funds reach the cause.</p>
-            </div>
 
             <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
               <div style={{ width: 48, height: 48, background: '#FCE8E8', color: '#C0392B', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconHeart /></div>

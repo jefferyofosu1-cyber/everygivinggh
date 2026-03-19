@@ -105,7 +105,8 @@ export class NotificationService {
     const formattedAmount = `GHS ${(amount / 100).toFixed(2)}`
     const today = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
     const campaignSlug = campaignTitle.toLowerCase().replace(/\s+/g, '-')
-    const campaignLink = `https://everygiving.org/campaign/${campaignSlug}`
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
+    const campaignLink = `${baseUrl}/campaign/${campaignSlug}`
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -165,7 +166,7 @@ export class NotificationService {
           </div>
 
           <div class="footer">
-            <p>&copy; 2026 EveryGiving. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} EveryGiving. All rights reserved.</p>
             <p>Building trust through transparency in Ghana's crowdfunding ecosystem.</p>
           </div>
         </div>
@@ -231,7 +232,7 @@ export class NotificationService {
           </div>
 
           <div class="footer">
-            <p>&copy; 2026 EveryGiving. Connecting givers with causes that matter.</p>
+            <p>&copy; ${new Date().getFullYear()} EveryGiving. Connecting givers with causes that matter.</p>
           </div>
         </div>
       </body>
@@ -259,7 +260,8 @@ export class NotificationService {
     const formattedCurrent = `GHS ${(currentAmount / 100).toFixed(2)}`
     const formattedGoal = `GHS ${(goalAmount / 100).toFixed(2)}`
     const isFulFilled = milestone === 100
-    const campaignLink = `https://everygiving.org/campaign/${campaignTitle.toLowerCase().replace(/\s+/g, '-')}`
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
+    const campaignLink = `${baseUrl}/campaign/${campaignTitle.toLowerCase().replace(/\s+/g, '-')}`
 
     let subject: string
     let content: string
@@ -337,7 +339,7 @@ export class NotificationService {
           </div>
 
           <div class="footer">
-            <p>&copy; 2026 EveryGiving. Empowering change in Ghana.</p>
+            <p>&copy; ${new Date().getFullYear()} EveryGiving. Empowering change in Ghana.</p>
           </div>
         </div>
       </body>
@@ -363,7 +365,8 @@ export class NotificationService {
     campaignId: string,
     totalRaised?: number
   ) {
-    const campaignLink = `https://everygiving.org/campaign/${campaignId}`
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
+    const campaignLink = `${baseUrl}/campaign/${campaignId}`
     const totalRaisedText = totalRaised ? `<p>Thanks to your contribution, the campaign has now raised <strong>GHS ${(totalRaised / 100).toFixed(2)}</strong> so far.</p>` : ''
 
     const htmlContent = `
@@ -410,7 +413,7 @@ export class NotificationService {
           </div>
 
           <div class="footer">
-            <p>&copy; 2026 EveryGiving. Building trust through transparency.</p>
+            <p>&copy; ${new Date().getFullYear()} EveryGiving. Building trust through transparency.</p>
           </div>
         </div>
       </body>
@@ -482,7 +485,7 @@ export class NotificationService {
           </div>
 
           <div class="footer">
-            <p>&copy; 2026 EveryGiving. Making giving easy and secure.</p>
+            <p>&copy; ${new Date().getFullYear()} EveryGiving. Making giving easy and secure.</p>
           </div>
         </div>
       </body>
@@ -503,21 +506,17 @@ export class NotificationService {
     try {
       const supabase = await createServerSupabaseClient()
 
-      // Get campaign with donation totals
       const { data: campaign, error: campaignError } = await supabase
         .from('campaigns')
-        .select('*, donations(amount)')
+        .select('title, total_raised, goal_amount')
         .eq('id', campaignId)
         .single()
 
       if (campaignError) throw campaignError
 
-      const totalRaised = campaign.donations.reduce(
-        (sum: number, d: any) => sum + (d.amount || 0),
-        0
-      )
-      const goalAmount = campaign.goal_amount
-      const currentPercentage = Math.round((totalRaised / goalAmount) * 100)
+      const totalRaised = Number(campaign.total_raised || 0)
+      const goalAmount = Number(campaign.goal_amount)
+      const currentPercentage = Math.floor((totalRaised / goalAmount) * 100)
 
       // Determine which milestones have been reached
       const milestonesToCheck = [25, 50, 100]
@@ -533,7 +532,7 @@ export class NotificationService {
             .single()
 
           if (!existingAlert) {
-            // Get all donors for this campaign
+            // Get all unique donors for this campaign
             const { data: donations } = await supabase
               .from('donations')
               .select('donor_email, donor_name')

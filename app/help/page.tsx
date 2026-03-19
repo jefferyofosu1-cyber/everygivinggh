@@ -21,8 +21,7 @@ const FAQS = [
   },
   {
     cat: 'fundraisers',
-    q: 'Is Every Giving really free?',
-    a: 'Yes  -  completely. EveryGiving charges 0% platform fees on all donations. Every cedi your donors give goes directly to you. Note that your mobile money operator (MTN, Vodafone, AirtelTigo) may charge standard transfer fees on withdrawals. These are set by the networks and are outside our control.',
+    a: 'Yes  -  completely. EveryGiving charges 0% platform fees on all donations. Every cedi your donors give goes directly to you. We are funded through optional verification tiers and services.',
   },
   {
     cat: 'fundraisers',
@@ -101,7 +100,7 @@ const FAQS = [
   {
     cat: 'payments',
     q: 'Are there any fees on withdrawals?',
-    a: 'EveryGiving charges 0% on withdrawals. Your mobile money operator may charge standard transfer fees  -  these are set by MTN, Vodafone, or AirtelTigo and are outside our control.',
+    a: 'EveryGiving does not take any percentage of your funds. We focus on providing a secure, verified platform for your cause.',
   },
 
   // DONORS

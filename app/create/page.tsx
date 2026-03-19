@@ -11,8 +11,8 @@ const TIERS = [
   {
     id: 'basic',
     name: 'Basic',
-    price: '₵20',
-    priceNum: 20,
+    price: 'Free',
+    priceNum: 0,
     badge: 'Basic Verified',
     badgeColor: 'bg-gray-100 text-gray-600',
     border: 'border-gray-200',
@@ -467,9 +467,15 @@ export default function CreatePage() {
                 </div>
               </div>
 
-              <div className="bg-primary-light border border-primary/15 rounded-xl p-4 mb-6 text-sm text-gray-600">
-                <strong className="text-navy">Note:</strong> After clicking "Pay & Submit", you will receive a MoMo prompt on your phone to confirm the payment of {tier.price}. Once confirmed, your campaign will be submitted for review.
-              </div>
+              {tier.priceNum > 0 ? (
+                <div className="bg-primary-light border border-primary/15 rounded-xl p-4 mb-6 text-sm text-gray-600">
+                  <strong className="text-navy">Note:</strong> After clicking "Pay & Submit", you will receive a MoMo prompt on your phone to confirm the payment of {tier.price}. Once confirmed, your campaign will be submitted for review.
+                </div>
+              ) : (
+                <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-6 text-sm text-gray-600">
+                  <strong className="text-navy">Note:</strong> Your Basic verification is free. After clicking "Submit", your campaign will be reviewed by our team.
+                </div>
+              )}
 
               <div className="flex gap-3">
                 <button onClick={() => setStep('identity')}
@@ -478,7 +484,7 @@ export default function CreatePage() {
                 </button>
                 <button onClick={handleSubmit} disabled={submitting}
                   className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 disabled:opacity-60">
-                  {submitting ? 'Submitting...' : `Pay ${tier.price} & Submit →`}
+                  {submitting ? 'Submitting...' : tier.priceNum > 0 ? `Pay ${tier.price} & Submit →` : 'Submit for review →'}
                 </button>
               </div>
 

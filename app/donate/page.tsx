@@ -86,7 +86,7 @@ export default function DonatePage() {
               Every campaign on EveryGiving is identity-verified. The person you are giving to has had their Ghana Card reviewed and confirmed by our team. Donations are held securely and released to fundraisers in milestones they set.
             </p>
             <div className="flex flex-wrap justify-center gap-2">
-              {[' Identity verified', ' MoMo direct', ' Secure', '2% + ₵0.25 transaction fee only'].map((item, i) => (
+              {[' Identity verified', ' MoMo direct', ' Secure'].map((item, i) => (
                 <span key={i} className="bg-white/10 border border-white/15 text-white/70 text-xs font-semibold px-4 py-2 rounded-full">{item}</span>
               ))}
             </div>

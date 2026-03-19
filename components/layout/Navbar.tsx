@@ -188,7 +188,7 @@ export default function Navbar() {
                   ))}
                 </div>
                 <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-gray-400 text-xs">Free to start · Ghana Card verified · 2% + ₵0.25 transaction fee only</span>
+                  <span className="text-gray-400 text-xs">Free to start · Ghana Card verified · Trusted giving</span>
                   <Link href="/create" onClick={() => setOpenDropdown(null)}
                     className="bg-primary hover:bg-primary-dark text-white font-nunito font-black text-xs px-5 py-2.5 rounded-full transition-all hover:-translate-y-px shadow-md shadow-primary/20">
                     Start a campaign →

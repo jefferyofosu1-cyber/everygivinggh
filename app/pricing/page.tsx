@@ -12,19 +12,19 @@ export default function PricingPage() {
           <div className="inline-flex items-center gap-2 bg-primary-light text-primary-dark text-xs font-bold px-4 py-1.5 rounded-full mb-5">
             Simple & transparent
           </div>
-          <h1 className="font-nunito font-black text-navy text-4xl mb-4">One small fee.<br />Nothing else.</h1>
+          <h1 className="font-nunito font-black text-navy text-4xl mb-4">Direct & Secure.<br />Nothing else.</h1>
           <p className="text-gray-400 text-lg max-w-xl mx-auto leading-relaxed">
-            Every Giving charges a small transaction fee to keep the platform running. No hidden charges. No monthly fees. No surprises.
+            Every Giving uses industry-standard processing to keep the platform running. No hidden charges. No monthly fees. No surprises.
           </p>
         </div>
 
         {/* Fee card */}
         <div className="bg-white border-2 border-primary/20 rounded-2xl p-10 text-center mb-10 shadow-sm">
-          <div className="text-6xl font-nunito font-black text-navy mb-2">2.5%</div>
+          <div className="text-6xl font-nunito font-black text-navy mb-2">2.9%</div>
           <div className="text-gray-400 text-lg mb-1">+ GHS 0.50 per donation</div>
           <div className="w-16 h-px bg-gray-100 mx-auto my-5" />
           <p className="text-gray-500 text-sm leading-relaxed max-w-lg mx-auto">
-            Every Giving charges a small transaction fee of 2.5% + GHS 0.50 per donation.
+            Every Giving charges a transaction fee of 2.9% + GHS 0.50 per donation.
             This fee is automatically deducted from each donation and helps cover payment
             processing, securely delivering donations, and supporting multiple payment methods
             such as Mobile Money, debit cards, credit cards, Apple Pay, and Google Pay.
@@ -37,10 +37,10 @@ export default function PricingPage() {
           <h2 className="font-nunito font-black text-navy text-lg mb-5">Example calculation</h2>
           <div className="space-y-3">
             {[
-              { donation: 50,   fee: (50   * 0.025 + 0.50), receives: (50   - (50   * 0.025 + 0.50)) },
-              { donation: 100,  fee: (100  * 0.025 + 0.50), receives: (100  - (100  * 0.025 + 0.50)) },
-              { donation: 500,  fee: (500  * 0.025 + 0.50), receives: (500  - (500  * 0.025 + 0.50)) },
-              { donation: 1000, fee: (1000 * 0.025 + 0.50), receives: (1000 - (1000 * 0.025 + 0.50)) },
+              { donation: 50,   fee: (50   * 0.029 + 0.50), receives: (50   - (50   * 0.029 + 0.50)) },
+              { donation: 100,  fee: (100  * 0.029 + 0.50), receives: (100  - (100  * 0.029 + 0.50)) },
+              { donation: 500,  fee: (500  * 0.029 + 0.50), receives: (500  - (500  * 0.029 + 0.50)) },
+              { donation: 1000, fee: (1000 * 0.029 + 0.50), receives: (1000 - (1000 * 0.029 + 0.50)) },
             ].map(row => (
               <div key={row.donation} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 text-sm">
                 <span className="text-gray-400">Donor gives</span>
@@ -92,7 +92,7 @@ export default function PricingPage() {
               },
               {
                 q: 'Are there any other fees?',
-                a: 'No. No monthly fees, no withdrawal fees, no setup fees. Just 2.5% + GHS 0.50 per donation.'
+                a: 'No. No monthly fees, no withdrawal fees, no setup fees. Just 2.9% + GHS 0.50 per donation.'
               },
               {
                 q: 'Is verification still free?',

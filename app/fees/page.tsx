@@ -8,7 +8,7 @@ import { usePageContent, cms } from '@/lib/content'
 export default function FeesPage() {
   const c = usePageContent('fees')
   const [amount, setAmount] = useState(100)
-  const fee = parseFloat((amount * 0.02 + 0.25).toFixed(2))
+  const fee = parseFloat((amount * 0.029 + 0.50).toFixed(2))
   const receives = parseFloat((amount - fee).toFixed(2))
   const feePct = ((fee / amount) * 100).toFixed(1)
   const receivesPct = (((amount - fee) / amount) * 100).toFixed(1)
@@ -16,7 +16,7 @@ export default function FeesPage() {
   const EXAMPLES = [20, 50, 100, 200, 500, 1000, 5000]
 
   const COMPARE = [
-    { name: 'Every Giving', fee: '2% + ₵0.25', total: fee, color: 'bg-primary', logo: '' },
+    { name: 'Every Giving', fee: '2.9% + ₵0.50', total: fee, color: 'bg-primary', logo: '' },
     { name: 'GoFundMe (US)', fee: '~5% + processing', total: parseFloat((amount * 0.05 + (amount * 0.029 + 0.30)).toFixed(2)), color: 'bg-green-500', logo: '' },
     { name: 'Jumia Pay', fee: '~3.5%', total: parseFloat((amount * 0.035).toFixed(2)), color: 'bg-orange-500', logo: '' },
     { name: 'Direct MoMo', fee: 'Unverified · No platform', total: 0, color: 'bg-gray-400', logo: '', note: 'No trust or verification' },
@@ -105,9 +105,9 @@ export default function FeesPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-white">₵{amount}</span>
                     <span className="text-gray-500">×</span>
-                    <span className="text-primary">2%</span>
+                    <span className="text-primary">2.9%</span>
                     <span className="text-gray-500">+</span>
-                    <span className="text-primary">₵0.25</span>
+                    <span className="text-primary">₵0.50</span>
                     <span className="text-gray-500">=</span>
                     <span className="text-gray-400">₵{fee.toFixed(2)} fee</span>
                   </div>
@@ -209,11 +209,10 @@ export default function FeesPage() {
             <h2 className="font-nunito font-black text-navy text-2xl text-center mb-8">Fee questions answered</h2>
             <div className="flex flex-col gap-4">
               {[
-                { q:'When is the fee deducted?', a:'At the moment a donation is made. The 2% + ₵0.25 is automatically deducted from each donation. Fundraisers receive the net amount when their milestones are reached. No invoices, no bills, no follow-ups.' },
-                { q:'Is there a platform fee on top?', a:'No. The only charge is the 2% + ₵0.25 transaction fee per donation. No monthly fee. No withdrawal fee. No setup fee. No platform fee. Ever.' },
-                { q:'What does the fee cover?', a:'The fee covers payment processing (MoMo provider fees), platform maintenance, identity verification infrastructure, and customer support. We operate with full transparency.' },
-                { q:'Do donors see the fee?', a:'Yes. As a donor types an amount, they see the breakdown in real time: how much reaches the fundraiser and how much is the transaction fee. Full transparency, always.' },
-                { q:'What if I want to cover the fee for the fundraiser?', a:'You can. Simply add the fee on top of the amount you want the fundraiser to receive. For example, donate ₵102.30 and the fundraiser receives exactly ₵100.' },
+                { q: 'When is the fee deducted?', a: 'At the moment a donation is made. The 2.9% + ₵0.50 is automatically deducted from each donation. Fundraisers receive the net amount when their milestones are reached. No invoices, no bills, no follow-ups.' },
+                { q: 'Is there a platform fee on top?', a: 'No. The only charge is the 2.9% + ₵0.50 transaction fee per donation. No monthly fee. No withdrawal fee. No setup fee. No platform fee. Ever.' },
+                { q: 'What does the fee cover?', a: 'The fee covers payment processing (MoMo provider fees), platform maintenance, identity verification infrastructure, and customer support. We operate with full transparency.' },
+                { q: 'Do donors see the fee?', a: 'No. To keep the donation process as simple as possible, donors only see the amount they are giving. EveryGiving handles all the background complexity so that 100% focus is on supporting your cause.' },
                 { q:'Is the verification tier fee refundable?', a:'No. Verification fees cover the cost of reviewing your documents and are non-refundable. If your campaign is rejected, we will work with you to understand and resolve the issue.' },
               ].map((faq, i) => (
                 <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-5">

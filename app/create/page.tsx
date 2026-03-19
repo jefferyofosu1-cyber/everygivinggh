@@ -47,7 +47,7 @@ const TIERS = [
     border: 'border-amber-200',
     activeBorder: 'border-amber-500',
     desc: 'Full verification + document review.',
-    limit: 'Unlimited campaign goal',
+    limit: 'More than GHC 50,000',
     features: ['Everything in Standard', 'Supporting documents reviewed', 'Premium badge + top placement', 'Dedicated support'],
     selfie: true,
   },

@@ -70,7 +70,7 @@ export default function TransparencyPage() {
                     { fee: 'Service Fee', amount: '2.9% + GHS 0.50', by: 'Fundraiser', purpose: 'Covers payment processing and platform operations' },
                     { fee: 'Basic Verification', amount: 'Free', by: 'Fundraiser', purpose: 'Basic identity check' },
                     { fee: 'Standard Verification', amount: 'GHS 50 (one-time)', by: 'Fundraiser', purpose: 'Full ID verification + Verified badge' },
-                    { fee: 'Premium Verification', amount: 'Coming soon', by: 'Fundraiser', purpose: 'Advanced verification features' },
+                    { fee: 'Premium Verification', amount: 'GHS 100 (one-time)', by: 'Fundraiser', purpose: 'Advanced verification for large campaigns' },
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
                       <td className="px-6 py-4 font-medium text-navy">{row.fee}</td>

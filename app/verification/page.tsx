@@ -42,12 +42,12 @@ const TIERS = [
     notIncluded: ['Supporting document review', 'Premium placement'],
   },
   {
-    id: 'premium', name: 'Premium', emoji: '⭐', price: 'Future', priceNum: -1,
+    id: 'premium', name: 'Premium', emoji: '⭐', price: '₵100', priceNum: 100,
     badge: 'Premium', badgeStyle: 'bg-amber-50 text-amber-700 border-amber-200',
     border: 'border-amber-400 opacity-60', headerBg: 'bg-amber-50',
-    limit: 'Unlimited goal', limitNum: Infinity,
+    limit: 'More than GHC 50,000', limitNum: Infinity,
     canDefer: false, recommended: false,
-    desc: 'Coming soon. Full document and situational review for large campaigns.',
+    desc: 'Full document and situational review for large campaigns.',
     checks: [
       'Everything in Standard',
       'Supporting documents reviewed',

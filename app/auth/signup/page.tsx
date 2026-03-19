@@ -1,132 +1,196 @@
 'use client'
-
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
-import { AuthLayout, Field, Input, PasswordStrength, PrimaryBtn } from '@/components/auth/shared'
 import { trackFundraiserSignup } from '@/lib/crm'
 
-interface FormState { name: string; email: string; phone: string; password: string }
-
 export default function SignupPage() {
-  const [step, setStep] = useState(1)  // 1=role 2=details 3=confirm 4=done
-  const [role, setRole] = useState<'campaigner'|'donor'|''>('')
-  const [form, setForm] = useState<FormState>({ name:'', email:'', phone:'', password:'' })
-  const [showPw, setShowPw] = useState(false)
-  const [errors, setErrors] = useState<Record<string,string>>({})
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '' })
   const [loading, setLoading] = useState(false)
-  const [serverError, setServerError] = useState('')
+  const [error, setError] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
-  function setField(k: keyof FormState, v: string) {
-    setForm(f=>({...f,[k]:v})); setErrors(e=>({...e,[k]:''})); setServerError('')
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
-  function validateDetails() {
-    const errs: Record<string,string> = {}
-    if (!form.name.trim()) errs.name = 'Enter your full name'
-    if (!form.email.includes('@')) errs.email = 'Enter a valid email address'
-    if (form.phone && !form.phone.match(/^0[0-9]{9}$/)) errs.phone = 'Enter a valid 10-digit Ghana number'
-    if (form.password.length < 8) errs.password = 'Password must be at least 8 characters'
-    setErrors(errs); return !Object.keys(errs).length
-  }
-
-  async function handleDetails() {
-    if (!validateDetails()) return
-    setLoading(true); setServerError('')
     const supabase = createClient()
-    const [firstName, ...rest] = form.name.trim().split(' ')
-    const lastName = rest.join(' ')
-    const { data, error } = await supabase.auth.signUp({
-      email: form.email, password: form.password,
+    const redirectTo = `${window.location.origin}/auth/callback?next=/create`
+
+    const { data, error: authError } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=${role==='campaigner'?'/create':'/campaigns'}`,
-        data: { full_name: form.name.trim(), phone: form.phone, role }
-      }
+        emailRedirectTo: redirectTo,
+        data: {
+          full_name: `${form.firstName} ${form.lastName}`.trim(),
+          phone: form.phone,
+        },
+      },
     })
-    if (error) { setServerError(error.message); setLoading(false); return }
-    if (data.user) {
-      await supabase.from('profiles').upsert({ id:data.user.id, full_name:form.name.trim(), phone:form.phone, email:form.email, role })
-      if (role==='campaigner') {
-        trackFundraiserSignup({ email:form.email, firstName, lastName:lastName||'', phone:form.phone }).catch(()=>{})
-      }
+
+    if (authError) {
+      setError(authError.message)
+      setLoading(false)
+      return
     }
-    setLoading(false); setStep(3)
+
+    if (data.user) {
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        full_name: `${form.firstName} ${form.lastName}`.trim(),
+        phone: form.phone,
+        email: form.email,
+      })
+      trackFundraiserSignup({
+        email: form.email,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+      })
+    }
+
+    setLoading(false)
+    setSubmitted(true)
   }
 
-  return (
-    <AuthLayout
-      title={step===1?'Create your account':step===2?'Your details':step===3?'Check your email':'Welcome!'}
-      sub={step===1?'Already have one? Sign in':step===3?'We sent a confirmation link':undefined}>
-
-      {/* STEP 1 — ROLE */}
-      {step===1 && (
-        <div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:20 }}>
-            {([
-              ['campaigner','🙋','I want to raise money','Start a campaign for medical, education, or community causes'],
-              ['donor','🤝','I want to donate','Give to verified campaigns and track your impact'],
-            ] as [string,string,string,string][]).map(([r,emoji,title,sub])=>(
-              <div key={r} style={{ border:`1.5px solid ${role===r?'#0A6B4B':'#E8E4DC'}`, background:role===r?'#E8F5EF':'#fff', borderRadius:12, padding:'20px 16px', cursor:'pointer', transition:'all .15s', textAlign:'center' as const }}
-                onClick={()=>setRole(r as 'campaigner'|'donor')}>
-                <div style={{ fontSize:32, marginBottom:10 }}>{emoji}</div>
-                <div style={{ fontSize:13, fontWeight:600, color:'#1A1A18', marginBottom:4 }}>{title}</div>
-                <div style={{ fontSize:11, color:'#8A8A82', lineHeight:1.5 }}>{sub}</div>
-                {role===r && <div style={{ marginTop:10, fontSize:11, fontWeight:700, color:'#0A6B4B' }}>✓ Selected</div>}
+  // ── CHECK EMAIL SCREEN ────────────────────────────────────────────────────
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5 py-12">
+        <div className="max-w-md w-full text-center">
+          <div className="relative inline-flex items-center justify-center w-24 h-24 mb-8">
+            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30 text-white">
+              ✓
+            </div>
+          </div>
+          <h1 className="font-nunito font-black text-navy text-3xl mb-3">Check your email</h1>
+          <p className="text-gray-500 text-sm mb-2 font-medium">
+            We sent a confirmation link to
+          </p>
+          <p className="text-primary font-black text-lg mb-8">{form.email}</p>
+          
+          <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50 text-left mb-8">
+            <div className="text-navy text-xs font-black mb-4 uppercase tracking-widest opacity-40">Next steps</div>
+            <div className="flex flex-col gap-4 text-sm text-gray-500 leading-relaxed">
+              <div className="flex gap-3">
+                <span className="text-primary font-black">1.</span>
+                <span>Click the link in the email we just sent you.</span>
               </div>
-            ))}
+              <div className="flex gap-3">
+                <span className="text-primary font-black">2.</span>
+                <span>Your account will be activated instantly.</span>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-primary font-black">3.</span>
+                <span>You'll be redirected to start your fundraiser!</span>
+              </div>
+            </div>
           </div>
-          <PrimaryBtn disabled={!role} onClick={()=>role&&setStep(2)}>Continue →</PrimaryBtn>
-          <div style={{ textAlign:'center' as const, fontSize:13, color:'#8A8A82', marginTop:16 }}>
-            Already have an account? <Link href="/auth/login" style={{ color:'#0A6B4B', fontWeight:600 }}>Sign in</Link>
+
+          <div className="text-gray-400 text-xs mb-8 italic">
+            Didn't get it? Check your spam folder or wait a few minutes.
+          </div>
+
+          <Link href="/auth/signup"
+            className="text-primary font-black text-sm hover:underline transition-colors">
+            ← Use a different email
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // ── SIGNUP FORM ───────────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5 py-12">
+      <div className="w-full max-w-md">
+
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex flex-col items-center gap-4 group">
+            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1">
+              <Image src="/logo.jpeg" alt="EveryGiving" width={64} height={64} />
+            </div>
+            <span className="font-nunito font-black text-3xl tracking-tight text-navy">
+              <span className="text-primary">Every</span>Giving
+            </span>
+          </Link>
+          <div className="text-gray-400 text-sm mt-3 font-bold uppercase tracking-widest">Create your free account</div>
+        </div>
+
+        <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50">
+          <h1 className="font-nunito font-black text-navy text-2xl mb-1">Get started</h1>
+          <p className="text-gray-400 text-sm mb-8">Free forever. 0% platform fee.</p>
+
+          {error && (
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mb-6 text-sm text-red-600 font-medium">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">First name</label>
+                <input type="text" required value={form.firstName}
+                  onChange={e => setForm(p => ({ ...p, firstName: e.target.value }))}
+                  placeholder="Ama"
+                  className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
+              </div>
+              <div>
+                <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Last name</label>
+                <input type="text" value={form.lastName}
+                  onChange={e => setForm(p => ({ ...p, lastName: e.target.value }))}
+                  placeholder="Mensah"
+                  className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Email address</label>
+              <input type="email" required value={form.email}
+                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                placeholder="ama@example.com"
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
+            </div>
+
+            <div>
+              <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Phone (MoMo number)</label>
+              <input type="tel" value={form.phone}
+                onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
+                placeholder="024 000 0000"
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
+            </div>
+
+            <div>
+              <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Password</label>
+              <input type="password" required minLength={8} value={form.password}
+                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                placeholder="At least 8 characters"
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
+            </div>
+
+            <button type="submit" disabled={loading}
+              className="w-full py-4 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-2xl transition-all hover:-translate-y-1 shadow-lg shadow-primary/20 text-sm mt-2">
+              {loading ? 'Creating account...' : 'Create free account →'}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-gray-50 text-center">
+            <span className="text-gray-400 text-sm font-medium">Already have an account? </span>
+            <Link href="/auth/login" className="text-primary font-black text-sm hover:text-primary-dark transition-colors">Sign in</Link>
           </div>
         </div>
-      )}
 
-      {/* STEP 2 — DETAILS */}
-      {step===2 && (
-        <div>
-          {serverError && <div style={{ background:'#FCEBEB', border:'1px solid #F0B0B0', borderRadius:8, padding:'10px 12px', fontSize:13, color:'#C0392B', marginBottom:16 }}>{serverError}</div>}
-          <Field label="Full name" error={errors.name}>
-            <Input type="text" placeholder="e.g. Kwame Mensah" value={form.name} onChange={e=>setField('name',e.target.value)} error={errors.name} />
-          </Field>
-          <Field label="Email address" error={errors.email}>
-            <Input type="email" placeholder="e.g. kwame@gmail.com" value={form.email} onChange={e=>setField('email',e.target.value)} error={errors.email} />
-          </Field>
-          <Field label="Phone number (optional)" error={errors.phone} hint="Your MTN, Vodafone, or AirtelTigo number — for MoMo payouts">
-            <Input type="tel" placeholder="e.g. 024 123 4567" value={form.phone} onChange={e=>setField('phone',e.target.value.replace(/\s/g,''))} prefix="+233" error={errors.phone} />
-          </Field>
-          <Field label="Password" error={errors.password}>
-            <Input type={showPw?'text':'password'} placeholder="At least 8 characters" value={form.password}
-              onChange={e=>setField('password',e.target.value)} error={errors.password}
-              suffix={<button style={{ background:'none',border:'none',fontSize:11,fontWeight:600,color:'#8A8A82',cursor:'pointer',padding:'0 2px',fontFamily:"'DM Sans',sans-serif" }} onClick={()=>setShowPw(v=>!v)}>{showPw?'Hide':'Show'}</button>} />
-            <PasswordStrength password={form.password} />
-          </Field>
-          <PrimaryBtn loading={loading} onClick={handleDetails}>{loading?'Creating account…':'Create account'}</PrimaryBtn>
-          <p style={{ fontSize:12, color:'#8A8A82', textAlign:'center' as const, marginTop:12, lineHeight:1.6 }}>
-            By continuing you agree to our{' '}
-            <Link href="/terms" style={{ color:'#0A6B4B' }}>Terms</Link> and{' '}
-            <Link href="/privacy" style={{ color:'#0A6B4B' }}>Privacy Policy</Link>
-          </p>
-        </div>
-      )}
-
-      {/* STEP 3 — CHECK EMAIL */}
-      {step===3 && (
-        <div style={{ textAlign:'center' as const }}>
-          <div style={{ width:56, height:56, borderRadius:'50%', background:'#E8F5EF', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px', fontSize:24 }}>📧</div>
-          <p style={{ fontSize:14, color:'#4A4A44', marginBottom:6, lineHeight:1.7 }}>We sent a confirmation link to</p>
-          <p style={{ fontSize:15, fontWeight:600, color:'#1A1A18', marginBottom:24 }}>{form.email}</p>
-          <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:28 }}>
-            Click the link in your email to activate your account. Check your spam folder if you don't see it.
-          </p>
-          <button style={{ width:'100%', padding:12, background:'transparent', color:'#1A1A18', borderRadius:10, fontSize:14, fontWeight:500, border:'1px solid #E8E4DC', cursor:'pointer', fontFamily:"'DM Sans',sans-serif", marginBottom:10 }}
-            onClick={async()=>{ const s=createClient(); await s.auth.resend({ type:'signup', email:form.email }) }}>
-            Resend email
-          </button>
-          <Link href="/auth/login" style={{ fontSize:13, color:'#8A8A82', display:'block' }}>← Back to sign in</Link>
-        </div>
-      )}
-
-    </AuthLayout>
+        <p className="text-center text-gray-400 text-xs mt-8 leading-relaxed px-4">
+          By creating an account you agree to our{' '}
+          <Link href="/terms" className="text-navy font-bold hover:text-primary">Terms</Link> and{' '}
+          <Link href="/privacy" className="text-navy font-bold hover:text-primary">Privacy Policy</Link>.
+        </p>
+      </div>
+    </div>
   )
 }

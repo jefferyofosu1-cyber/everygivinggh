@@ -56,8 +56,6 @@ export default function FundraisePage() {
             HERO
         ════════════════════════════════════ */}
         <section className="bg-navy relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.12) 0%, transparent 65%)', transform: 'translate(25%, -25%)' }} />
           <div className="relative max-w-5xl mx-auto px-5 py-20 md:py-28">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-full mb-8 tracking-widest uppercase">
               Fundraising
@@ -215,7 +213,6 @@ export default function FundraisePage() {
                 </div>
               </div>
               <div className="bg-navy rounded-2xl p-8 text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.15), transparent 70%)', transform: 'translate(30%,-30%)' }} />
                 <div className="relative">
                   <div className="text-5xl mb-4"></div>
                   <div className="font-nunito font-black text-white text-xl mb-3">Fundraise as a group</div>
@@ -321,7 +318,6 @@ export default function FundraisePage() {
               </div>
               <div className="flex flex-col gap-4">
                 <div className="bg-primary rounded-2xl p-7 relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '20px 20px' }} />
                   <div className="relative">
                     <div className="font-nunito font-black text-white text-xl mb-3">Who qualifies?</div>
                     <div className="flex flex-col gap-2">
@@ -358,8 +354,6 @@ export default function FundraisePage() {
             SIGN UP AS A CHARITY
         ════════════════════════════════════ */}
         <section id="signup-charity" className="py-20 bg-navy relative overflow-hidden scroll-mt-14">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.1), transparent 70%)', transform: 'translate(-30%, 30%)' }} />
           <div className="relative max-w-4xl mx-auto px-5">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
@@ -517,8 +511,6 @@ export default function FundraisePage() {
 
         {/* ── FINAL CTA ── */}
         <section className="py-20 bg-navy relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(2,169,92,.12) 0%, transparent 70%)' }} />
           <div className="relative max-w-3xl mx-auto px-5 text-center">
             <div className="font-nunito font-black text-white mb-4 leading-tight" style={{ fontSize: 'clamp(28px,5vw,48px)', letterSpacing: -1 }}>
               Your cause deserves<br /><span className="text-primary">to be funded.</span>

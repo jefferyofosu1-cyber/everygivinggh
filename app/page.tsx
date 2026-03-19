@@ -2,8 +2,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
-import VideoModal from '@/components/ui/VideoModal'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
+import { TutorialEmbed } from '@/components/home/TutorialComponents'
+import CampaignCard from '@/components/ui/CampaignCard'
+import type { Campaign } from '@/types'
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
@@ -31,16 +36,12 @@ const SORT_OPTIONS = [
 
 const PAGE_SIZE = 6
 
-// ─── SVG ICONS ────────────────────────────────────────────────────────────────
+// ─── SVG ICONS (optimized with next/image or kept as clean components) ───────
 
 const IconVerify = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
 const IconShield = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 const IconEye = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 const IconHeart = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-
-// ─── SAMPLE DATA ──────────────────────────────────────────────────────────────
-
-
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
@@ -54,95 +55,8 @@ function highlightText(text: string, query: string): React.ReactNode {
   const parts = text.split(new RegExp(`(${escaped})`, 'gi'))
   return parts.map((part, i) =>
     part.toLowerCase() === query.toLowerCase()
-      ? <mark key={i} style={{ background: '#fef08a', borderRadius: 2, padding: '0 1px' }}>{part}</mark>
+      ? <mark key={i} className="bg-yellow-100 rounded px-0.5">{part}</mark>
       : part
-  )
-}
-
-// ─── CAMPAIGN CARD ────────────────────────────────────────────────────────────
-
-interface Campaign {
-  id: string; slug: string; category: string; title: string;
-  organiserName: string; location: string; raisedGHS: number; goalGHS: number;
-  donorCount: number; daysLeft: number; isUrgent: boolean; isFunded: boolean;
-  coverAbbr: string; coverGradient: string; coverImageUrl?: string;
-}
-
-function CampaignCard({ campaign, query, featured = false }: { campaign: Campaign; query: string; featured?: boolean }) {
-  const pct = Math.min(100, Math.round(campaign.raisedGHS / campaign.goalGHS * 100))
-
-  return (
-    <Link
-      href={`/campaigns/${campaign.slug}`}
-      style={{
-        display: 'block', background: '#FFFFFF', border: '1px solid #E8E4DC', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', textDecoration: 'none',
-        gridColumn: featured ? 'span 2' : 'span 1',
-      }}
-      className="campaign-card transition-hover"
-    >
-      {/* Cover image area */}
-      <div style={{ height: featured ? 220 : 170, background: campaign.coverGradient, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-        {campaign.coverImageUrl ? (
-          <img src={campaign.coverImageUrl} alt={campaign.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
-        ) : (
-          <span style={{ fontSize: featured ? 48 : 36, fontWeight: 700, color: 'rgba(255,255,255,0.7)', position: 'relative', zIndex: 1 }}>{campaign.coverAbbr}</span>
-        )}
-
-        {/* Verification Shield Badge */}
-        <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(255,255,255,0.95)', borderRadius: 24, padding: '4px 10px', fontSize: 11, fontWeight: 700, color: '#0A6B4B', display: 'flex', alignItems: 'center', gap: 4, letterSpacing: '0.02em' }}>
-          <IconVerify /> Verified
-        </div>
-
-        {/* Urgency/Funded Badges */}
-        {campaign.isFunded && (
-          <div style={{ position: 'absolute', top: 12, left: 12, background: '#1A1A18', borderRadius: 24, padding: '4px 10px', fontSize: 11, fontWeight: 700, color: '#fff' }}>
-            Fully Funded
-          </div>
-        )}
-        {campaign.isUrgent && !campaign.isFunded && (
-          <div style={{ position: 'absolute', top: 12, left: 12, background: '#B85C00', borderRadius: 24, padding: '4px 10px', fontSize: 11, fontWeight: 700, color: '#fff' }}>
-            {campaign.daysLeft <= 3 ? (campaign.daysLeft === 0 ? "Ends today" : `Only ${campaign.daysLeft} days left`) : "Urgent needs"}
-          </div>
-        )}
-      </div>
-
-      {/* Card body */}
-      <div style={{ padding: '20px' }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 8 }}>
-          {campaign.category}
-        </div>
-
-        <div style={{ fontSize: featured ? 18 : 15, fontWeight: 600, color: '#1A1A18', lineHeight: 1.4, marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>
-          {highlightText(campaign.title, query)}
-        </div>
-
-        <div style={{ fontSize: 13, color: '#8A8A82', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 4 }}>
-          {highlightText(campaign.organiserName, query)} &middot; {campaign.location}
-        </div>
-
-        {/* Progress System */}
-        <div style={{ height: 6, background: '#F0EFEA', borderRadius: 3, overflow: 'hidden', marginBottom: 10 }}>
-          <div style={{ height: '100%', width: `${pct}%`, background: campaign.isFunded ? '#1A1A18' : '#0A6B4B', borderRadius: 3, transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }} />
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1A18' }}>{formatGHS(campaign.raisedGHS)} <span style={{ fontSize: 13, fontWeight: 500, color: '#8A8A82' }}>raised</span></span>
-          <span style={{ fontSize: 13, color: '#8A8A82', fontWeight: 500 }}>{pct}%</span>
-        </div>
-
-        {/* Action / Donors Footer */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #F0EFEA', paddingTop: 16 }}>
-          <div style={{ fontSize: 13, color: '#4A4A44', fontWeight: 500 }}>
-            <span style={{ color: '#1A1A18', fontWeight: 700 }}>{campaign.donorCount}</span> people donated
-          </div>
-          {!campaign.isFunded && (
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#0A6B4B', background: '#E8F5EF', padding: '6px 12px', borderRadius: 20 }}>
-              Donate
-            </div>
-          )}
-        </div>
-      </div>
-    </Link>
   )
 }
 
@@ -161,29 +75,11 @@ export default function HomePage() {
     const supabase = createClient()
     supabase
       .from('campaigns')
-      .select('*')
-      .eq('status', 'live')
+      .select('*, profiles(full_name, phone)')
+      .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        if (data) {
-          setCampaigns(data.map(c => ({
-            id: c.id,
-            slug: c.slug || c.id,
-            category: c.category || 'other',
-            title: c.title,
-            organiserName: c.organiser_name || 'Anonymous',
-            location: c.location || 'Ghana',
-            raisedGHS: c.raised_amount || 0,
-            goalGHS: c.goal_amount || 1000,
-            donorCount: c.donor_count || 0,
-            daysLeft: c.deadline ? Math.max(0, Math.ceil((new Date(c.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 30,
-            isUrgent: c.is_urgent || false,
-            isFunded: (c.raised_amount || 0) >= (c.goal_amount || 1000),
-            coverAbbr: c.title ? c.title.substring(0, 2).toUpperCase() : 'EG',
-            coverGradient: 'linear-gradient(135deg,#1B4332,#52B788)',
-            coverImageUrl: c.cover_image,
-          })))
-        }
+        if (data) setCampaigns(data as Campaign[])
         setLoading(false)
       })
   }, [])
@@ -192,24 +88,24 @@ export default function HomePage() {
   const filtered = useMemo(() => {
     const list = campaigns.filter(c => {
       if (activeCategory !== 'all' && c.category !== activeCategory) return false
-      if (activeFilters.has('urgent') && !c.isUrgent) return false
-      if (activeFilters.has('funded') && !c.isFunded) return false
+      if (activeFilters.has('urgent') && !c.verified) return false
+      if (activeFilters.has('funded') && (c.raised_amount < c.goal_amount)) return false
       if (query) {
         const q = query.toLowerCase()
         if (
           !c.title.toLowerCase().includes(q) &&
-          !c.organiserName.toLowerCase().includes(q) &&
-          !c.location.toLowerCase().includes(q)
+          !(c.profiles?.full_name || '').toLowerCase().includes(q) &&
+          !(c.location || '').toLowerCase().includes(q)
         ) return false
       }
       return true
     })
 
     return [...list].sort((a, b) => {
-      if (sortBy === 'urgent')  return (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0) || a.daysLeft - b.daysLeft
-      if (sortBy === 'recent')  return parseInt(b.id) - parseInt(a.id)
-      if (sortBy === 'popular') return b.donorCount - a.donorCount
-      if (sortBy === 'pct')     return (b.raisedGHS / b.goalGHS) - (a.raisedGHS / a.goalGHS)
+      if (sortBy === 'urgent')  return (b.verified ? 1 : 0) - (a.verified ? 1 : 0)
+      if (sortBy === 'recent')  return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      if (sortBy === 'popular') return (b.raised_amount || 0) - (a.raised_amount || 0)
+      if (sortBy === 'pct')     return (b.raised_amount / b.goal_amount) - (a.raised_amount / a.goal_amount)
       return 0
     })
   }, [campaigns, query, activeCategory, activeFilters, sortBy])
@@ -238,11 +134,14 @@ export default function HomePage() {
 
   return (
     <>
+      <Navbar />
       <style dangerouslySetInnerHTML={{ __html: `
         body { background: #FDFAF5; color: #1A1A18; }
         .transition-hover { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .campaign-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.06); }
         .hero-bg { background: linear-gradient(180deg, #F9F8F6 0%, #FDFAF5 100%); }
+        .play-button { transition: all 0.3s ease; }
+        a:has(.play-button):hover .play-button { transform: scale(1.1); background: rgba(255, 0, 0, 1) !important; }
       `}} />
 
       {/* ── 1. NEW TEXT HERO SECTION ── */}
@@ -258,29 +157,21 @@ export default function HomePage() {
             <Link href="/create" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: '#0A6B4B', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(10,107,75,0.25)', transition: 'transform 0.2s', className: 'transition-hover' } as any}>
               Start a fundraiser
             </Link>
-            <Link href="#campaigns" onClick={(e) => { e.preventDefault(); document.getElementById('campaigns')?.scrollIntoView({ behavior: 'smooth' }); }} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 600, color: '#1A1A18', background: '#fff', border: '1px solid #E8E4DC', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', transition: 'background 0.2s' }}>
-              Donate now
+            <Link href="/donate" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: '#02A95C', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(2,169,92,0.25)', transition: 'transform 0.2s' }}>
+              Donate now →
             </Link>
           </div>
         </div>
       </div>
 
-      {/* ── 2. VIDEO MODAL SECTION ── */}
-      <div style={{ padding: '60px 28px', background: '#1A1A18' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 60, flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 400px', textAlign: 'left', color: '#fff' }}>
-            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, marginBottom: 16 }}>See it in action</h2>
-            <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 32 }}>Watch how easy it is to set up a campaign, verify your identity using the Ghana Card, and receive funds directly to your MoMo wallet instantly.</p>
-            <Link href="/create" style={{ fontSize: 15, fontWeight: 600, color: '#000', background: '#fff', padding: '12px 24px', borderRadius: 8, textDecoration: 'none', display: 'inline-block' }}>
-              Start your fundraiser in minutes
-            </Link>
+      {/* ── 2. INTERACTIVE TUTORIAL SECTION ── */}
+      <div style={{ padding: '60px 28px', background: '#FDFAF5' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
+            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, color: '#1A1A18', marginBottom: 12 }}>See it in action</h2>
+            <p style={{ fontSize: 16, color: '#8A8A82' }}>Follow Ama's journey from problem to solution in 3 weeks</p>
           </div>
-          
-          <VideoModal 
-            videoId="yYKsEvqutvg" 
-            thumbnailUrl="/og-image.png" 
-            title="EveryGiving - How it Works" 
-          />
+          <TutorialEmbed />
         </div>
       </div>
 
@@ -360,12 +251,10 @@ export default function HomePage() {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
-              {visible.map((campaign, i) => (
+              {visible.map((campaign) => (
                 <CampaignCard
                   key={campaign.id}
                   campaign={campaign}
-                  query={query}
-                  featured={i === 0 && isFeaturedMode && typeof window !== 'undefined' && window.innerWidth > 900}
                 />
               ))}
             </div>
@@ -385,38 +274,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── FOOTER ── */}
-      <footer style={{ background: '#111110', padding: '48px 32px 28px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 24, marginBottom: 24, borderBottom: '1px solid rgba(255,255,255,0.07)', flexWrap: 'wrap', gap: 16 }}>
-            <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: 19, color: '#fff' }}>
-              Every<em style={{ color: '#B7DEC9', fontStyle: 'normal' }}>Giving</em>
-            </span>
-            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-              {[
-                ['About', '/about'], ['How it Works', '/how-it-works'], ['Trust & Safety', '/trust'],
-                ['Privacy', '/privacy'], ['Terms', '/terms'], ['Contact', '/contact'],
-              ].map(([label, href]) => (
-                <Link key={href} href={href} style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', textDecoration: 'none', transition: 'color 0.15s' }}>
-                  {label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
-              &copy; {new Date().getFullYear()} EveryGiving Ltd &middot; Accra, Ghana
-            </div>
-            <div style={{ display: 'flex', gap: 16 }}>
-              {['MoMo', 'Visa', 'Mastercard'].map(method => (
-                <span key={method} style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', padding: '4px 10px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6 }}>
-                  {method}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   )
 }

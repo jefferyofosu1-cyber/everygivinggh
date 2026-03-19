@@ -1,6 +1,9 @@
+
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 
 function Character({ mood, holding }: { mood: 'thinking'|'happy'|'excited'|'proud'|'pointing', holding?: 'phone'|'card'|'money'|null }) {
   const skin = '#C68642'
@@ -112,6 +115,7 @@ export default function TutorialPage() {
 
   return (
     <>
+      <Navbar />
       <main>
         {/* Header */}
         <div className="bg-navy py-14 px-5 text-center">
@@ -250,6 +254,7 @@ export default function TutorialPage() {
           </div>
         </section>
       </main>
+      <Footer />
     </>
   )
 }

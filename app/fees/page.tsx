@@ -1,359 +1,240 @@
 'use client'
-
 import { useState } from 'react'
 import Link from 'next/link'
-
-const BASE = `
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
-a{color:inherit;text-decoration:none}
-input:focus{outline:none;border-color:#0A6B4B!important}
-.faq-item{cursor:pointer;transition:background .12s}
-.faq-item:hover{background:#FAFAF7}
-.scenario-card{transition:all .18s}
-.scenario-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.08)}
-`
-
-// ── FEE CONSTANTS (corrected: 2.5% + ₵0.50) ──────────────────────────────────
-const RATE = 0.025
-const FLAT = 0.50
-
-function calcFee(d: number) {
-  if (d <= 0) return { fee: 0, received: 0, pct: 0 }
-  const fee = parseFloat((d * RATE + FLAT).toFixed(2))
-  return { fee, received: parseFloat((d - fee).toFixed(2)), pct: parseFloat(((fee / d) * 100).toFixed(1)) }
-}
-
-function calcCampaign(goal: number, avg: number) {
-  if (goal <= 0 || avg <= 0) return null
-  const donations = Math.round(goal / avg)
-  const totalFees = parseFloat((donations * (avg * RATE + FLAT)).toFixed(2))
-  return { goal, avg, donations, totalFees, totalReceived: parseFloat((goal - totalFees).toFixed(2)), feeRate: parseFloat(((totalFees / goal) * 100).toFixed(1)) }
-}
-
-function fmt(n: number) { return n.toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-
-const SCENARIOS = [
-  { title: 'Medical emergency',  goal: 18000, avg: 200, color: '#E1F5EE', accent: '#0A6B4B', desc: 'Kidney surgery — 90 donors at ₵200 avg' },
-  { title: 'University fees',    goal: 10500, avg: 100, color: '#E6F1FB', accent: '#185FA5', desc: 'First-year tuition — 105 donors at ₵100 avg' },
-  { title: 'Community borehole', goal: 35000, avg: 150, color: '#FAEEDA', accent: '#B85C00', desc: 'Clean water project — 233 donors at ₵150 avg' },
-]
-
-const COMPETITORS = [
-  { name: 'EveryGiving', platformFee: '₵0', txFee: '2.5% + ₵0.50', payoutFee: '₵0', momo: '✓', verified: '✓', milestones: '✓', highlight: true },
-  { name: 'GoFundMe',    platformFee: '₵0*', txFee: '2.9% + $0.30', payoutFee: 'Varies', momo: '✕', verified: '✕', milestones: '✕', highlight: false },
-  { name: 'M-Changa',   platformFee: '4–6%', txFee: 'Included',     payoutFee: 'Varies', momo: '✓', verified: 'Partial', milestones: '✕', highlight: false },
-]
-
-const FAQS = [
-  { q: 'Why is there a ₵0.50 flat fee per donation?', a: 'The ₵0.50 flat fee covers the fixed cost of processing a MoMo transaction — a cost every payment processor charges regardless of amount. It ensures very small donations are still economically viable to process.' },
-  { q: 'When exactly is the fee deducted?', a: "The fee is deducted automatically at the moment a donation is confirmed. You never receive a bill. What you see in your campaign balance is always the amount you'll receive." },
-  { q: 'Is the fee the same for diaspora donations in GBP or USD?', a: 'Zeepay (our diaspora payment partner) applies their own FX conversion and small transfer fee on the sender\'s side. The 2.5% + ₵0.50 EveryGiving fee then applies to the converted GHS amount received.' },
-  { q: "What if a donor wants to cover the fee for me?", a: "We're building a \"cover the fee\" toggle — where donors can optionally add the processing fee so you receive 100% of what they intended. Coming soon." },
-  { q: 'Are there any other hidden fees?', a: 'No. No monthly subscription. No payout fee. No campaign creation fee. No fee for posting updates or photos. The only fee is 2.5% + ₵0.50 per donation received.' },
-  { q: 'What happens to uncompleted donations?', a: 'If a MoMo prompt times out or is declined, no fee is charged — the transaction never completes so there is nothing to deduct.' },
-]
-
-function FaqItem({ q, a, isLast }: { q: string; a: string; isLast: boolean }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div className="faq-item" style={{ borderBottom: isLast ? 'none' : '1px solid #E8E4DC', padding: '18px 0', cursor: 'pointer' }} onClick={() => setOpen(o => !o)}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: 14, fontWeight: 600, color: '#1A1A18', lineHeight: 1.5 }}>{q}</span>
-        <span style={{ fontSize: 18, color: '#0A6B4B', transition: 'transform .2s', transform: open ? 'rotate(180deg)' : 'none', flexShrink: 0 }}>▾</span>
-      </div>
-      {open && <p style={{ fontSize: 13, color: '#4A4A44', lineHeight: 1.75, marginTop: 10 }}>{a}</p>}
-    </div>
-  )
-}
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
+import { usePageContent, cms } from '@/lib/content'
 
 export default function FeesPage() {
-  const [donation, setDonation] = useState('200')
-  const [campaignGoal, setCampaignGoal] = useState('18000')
-  const [avgDonation, setAvgDonation] = useState('200')
+  const c = usePageContent('fees')
+  const [amount, setAmount] = useState(100)
+  const fee = parseFloat((amount * 0.02 + 0.25).toFixed(2))
+  const receives = parseFloat((amount - fee).toFixed(2))
+  const feePct = ((fee / amount) * 100).toFixed(1)
+  const receivesPct = (((amount - fee) / amount) * 100).toFixed(1)
 
-  const donationNum = parseFloat(donation) || 0
-  const { fee, received, pct } = calcFee(donationNum)
-  const campaignResult = calcCampaign(parseFloat(campaignGoal) || 0, parseFloat(avgDonation) || 50)
-  const presets = [50, 100, 200, 500, 1000]
+  const EXAMPLES = [20, 50, 100, 200, 500, 1000, 5000]
+
+  const COMPARE = [
+    { name: 'Every Giving', fee: '2% + ₵0.25', total: fee, color: 'bg-primary', logo: '' },
+    { name: 'GoFundMe (US)', fee: '~5% + processing', total: parseFloat((amount * 0.05 + (amount * 0.029 + 0.30)).toFixed(2)), color: 'bg-green-500', logo: '' },
+    { name: 'Jumia Pay', fee: '~3.5%', total: parseFloat((amount * 0.035).toFixed(2)), color: 'bg-orange-500', logo: '' },
+    { name: 'Direct MoMo', fee: 'Unverified · No platform', total: 0, color: 'bg-gray-400', logo: '', note: 'No trust or verification' },
+  ]
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: BASE }} />
-      {/* HERO */}
-      <div style={{ background: '#1A1A18', padding: '72px 32px 64px', textAlign: 'center' }}>
-        <div style={{ maxWidth: 680, margin: '0 auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(183,222,201,0.12)', border: '1px solid rgba(183,222,201,0.2)', borderRadius: 20, padding: '5px 14px', marginBottom: 24 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#B7DEC9' }}>Transparent fees</span>
-          </div>
-          <h1 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 48, color: '#fff', lineHeight: 1.15, marginBottom: 16 }}>
-            One simple fee.<br /><em style={{ color: '#B7DEC9', fontStyle: 'italic' }}>No surprises.</em>
-          </h1>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,.5)', lineHeight: 1.75 }}>
-            We deduct <strong style={{ color: '#fff' }}>2.5% + ₵0.50</strong> from each donation automatically — so you never receive a bill. Zero platform fee. Zero payout fee. Always.
-          </p>
-        </div>
-      </div>
+      <Navbar />
+      <main>
 
-      {/* FEE SUMMARY BAND */}
-      <div style={{ background: '#0A6B4B', padding: '0 32px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 0', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 32 }}>
-          {[
-            { n: '₵0',     label: 'Platform fee',  sub: 'We never take a % of your raised amount' },
-            { n: '2.5%+₵0.50', label: 'Per donation', sub: 'The only fee — deducted when a donation is made' },
-            { n: '₵0',     label: 'Payout fee',    sub: 'Milestone payouts go straight to your MoMo' },
-          ].map((item, i) => (
-            <div key={i} style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: 36, color: '#fff', lineHeight: 1, marginBottom: 8 }}>{item.n}</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#B7DEC9', marginBottom: 5 }}>{item.label}</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,.5)', lineHeight: 1.6 }}>{item.sub}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* SINGLE DONATION CALCULATOR */}
-      <div style={{ padding: '72px 32px', maxWidth: 900, margin: '0 auto' }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 12 }}>Live calculator</div>
-        <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 32, color: '#1A1A18', marginBottom: 8 }}>Per-donation calculator</h2>
-        <p style={{ fontSize: 14, color: '#4A4A44', marginBottom: 36, lineHeight: 1.7 }}>See exactly what the campaigner receives from any donation amount.</p>
-
-        <div style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 16, padding: 32 }}>
-          {/* Input */}
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#4A4A44', letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', marginBottom: 10 }}>Donation amount (₵)</label>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #E8E4DC', borderRadius: 10, overflow: 'hidden', flex: 1, minWidth: 200 }}>
-                <span style={{ padding: '12px 14px', fontSize: 16, fontWeight: 700, color: '#0A6B4B', background: '#F5F8F6', borderRight: '1px solid #E8E4DC' }}>₵</span>
-                <input type="number" value={donation} onChange={e => setDonation(e.target.value)} min="1"
-                  style={{ flex: 1, padding: '12px 14px', fontSize: 18, fontWeight: 600, border: 'none', fontFamily: 'inherit', color: '#1A1A18', background: '#fff' }} />
-              </div>
-              {presets.map(p => (
-                <button key={p} onClick={() => setDonation(String(p))}
-                  style={{ fontSize: 13, fontWeight: 600, padding: '11px 16px', borderRadius: 8, border: parseFloat(donation) === p ? '1.5px solid #0A6B4B' : '1.5px solid #E8E4DC', background: parseFloat(donation) === p ? '#E8F5EF' : '#fff', color: parseFloat(donation) === p ? '#0A6B4B' : '#4A4A44', cursor: 'pointer', fontFamily: 'inherit' }}>
-                  ₵{p}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {donationNum > 0 && (
-            <div>
-              {/* Bar chart */}
-              <div style={{ height: 16, borderRadius: 8, background: '#E8E4DC', overflow: 'hidden', marginBottom: 20, display: 'flex' }}>
-                <div style={{ height: '100%', width: `${100 - pct}%`, background: '#0A6B4B', borderRadius: '8px 0 0 8px', transition: 'width 0.4s ease' }} />
-                <div style={{ height: '100%', flex: 1, background: '#B85C00', borderRadius: '0 8px 8px 0', transition: 'width 0.4s ease' }} />
-              </div>
-
-              {/* Numbers */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 20 }}>
-                <div style={{ background: '#E8F5EF', border: '1px solid #B7DEC9', borderRadius: 12, padding: '16px 20px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, fontWeight: 700, color: '#0A6B4B', marginBottom: 4 }}>₵{fmt(received)}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#0A6B4B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Campaigner receives</div>
-                </div>
-                <div style={{ background: '#FEF3E2', border: '1px solid #F5C882', borderRadius: 12, padding: '16px 20px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, fontWeight: 700, color: '#B85C00', marginBottom: 4 }}>₵{fmt(fee)}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#B85C00', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Transaction fee</div>
-                </div>
-                <div style={{ background: '#FDFAF5', border: '1px solid #E8E4DC', borderRadius: 12, padding: '16px 20px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, fontWeight: 700, color: '#1A1A18', marginBottom: 4 }}>{pct}%</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#8A8A82', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Fee percentage</div>
-                </div>
-              </div>
-
-              {/* Formula */}
-              <div style={{ background: '#1A1A18', borderRadius: 10, padding: '14px 20px', fontFamily: 'monospace', fontSize: 13, color: '#B7DEC9' }}>
-                ₵{fmt(donationNum)} × 2.5% + ₵0.50 = ₵{fmt(fee)} fee → ₵{fmt(received)} to campaigner
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* CAMPAIGN CALCULATOR */}
-      <div style={{ background: '#fff', borderTop: '1px solid #E8E4DC', borderBottom: '1px solid #E8E4DC', padding: '72px 32px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 12 }}>Campaign planner</div>
-          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 32, color: '#1A1A18', marginBottom: 8 }}>How much will you actually raise?</h2>
-          <p style={{ fontSize: 14, color: '#4A4A44', marginBottom: 36, lineHeight: 1.7 }}>Set your goal and average donation to see the real numbers before you launch.</p>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 32 }}>
-            {[
-              { label: 'Campaign goal (₵)', value: campaignGoal, setter: setCampaignGoal, placeholder: '18000' },
-              { label: 'Average donation (₵)', value: avgDonation, setter: setAvgDonation, placeholder: '200' },
-            ].map(({ label, value, setter, placeholder }) => (
-              <div key={label}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#4A4A44', letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>{label}</label>
-                <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #E8E4DC', borderRadius: 10, overflow: 'hidden' }}>
-                  <span style={{ padding: '12px 14px', fontSize: 16, fontWeight: 700, color: '#0A6B4B', background: '#F5F8F6', borderRight: '1px solid #E8E4DC' }}>₵</span>
-                  <input type="number" value={value} placeholder={placeholder} onChange={e => setter(e.target.value)} min="1"
-                    style={{ flex: 1, padding: '12px 14px', fontSize: 16, fontWeight: 600, border: 'none', fontFamily: 'inherit', color: '#1A1A18', background: '#fff' }} />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {campaignResult && (
-            <div style={{ background: '#FDFAF5', border: '1px solid #E8E4DC', borderRadius: 14, padding: 28 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
-                {[
-                  { label: 'You\'ll receive', value: `₵${fmt(campaignResult.totalReceived)}`, accent: '#0A6B4B', bg: '#E8F5EF' },
-                  { label: 'Total fees',     value: `₵${fmt(campaignResult.totalFees)}`,     accent: '#B85C00', bg: '#FEF3E2' },
-                  { label: 'Est. donations', value: `${campaignResult.donations}`,            accent: '#185FA5', bg: '#E6F1FB' },
-                  { label: 'Effective rate', value: `${campaignResult.feeRate}%`,             accent: '#534AB7', bg: '#EEEDFE' },
-                ].map((item, i) => (
-                  <div key={i} style={{ background: item.bg, borderRadius: 10, padding: '16px 18px', textAlign: 'center' }}>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: item.accent, marginBottom: 4 }}>{item.value}</div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: item.accent + 'AA', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* FEE BREAKDOWN TABLE */}
-      <div style={{ padding: '72px 32px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 12 }}>Complete breakdown</div>
-          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 32, color: '#1A1A18', marginBottom: 36 }}>Every fee, listed</h2>
-          <div style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 14, overflow: 'hidden' }}>
-            {[
-              { item: 'Campaign creation',       our: '₵0',          note: 'Free to start — always' },
-              { item: 'Identity verification',   our: '₵0',          note: 'Included — Ghana Card review by our team' },
-              { item: 'MoMo transaction fee',    our: '2.5% + ₵0.50', note: 'Deducted per donation — the only charge' },
-              { item: 'Platform / success fee',  our: '₵0',          note: 'We never take a % of total raised' },
-              { item: 'MoMo milestone payout',   our: '₵0',          note: 'Free — direct to your wallet' },
-              { item: 'Posting updates',         our: '₵0',          note: 'Free — post as many updates as you want' },
-              { item: 'Diaspora donations (FX)', our: 'Zeepay rate',  note: 'Zeepay converts & sends — their FX applies' },
-              { item: 'Monthly subscription',    our: '₵0',          note: 'Never — no subscription model' },
-            ].map((row, i, arr) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 140px 1fr', alignItems: 'center', padding: '16px 24px', borderBottom: i < arr.length - 1 ? '1px solid #E8E4DC' : 'none', background: i % 2 === 0 ? '#fff' : '#FDFAF5' }}>
-                <div style={{ fontSize: 14, color: '#1A1A18', fontWeight: 500 }}>{row.item}</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: row.our === '₵0' ? '#0A6B4B' : '#1A1A18', textAlign: 'center' }}>{row.our}</div>
-                <div style={{ fontSize: 12, color: '#8A8A82', textAlign: 'right' }}>{row.note}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* COMPARISON */}
-      <div style={{ background: '#1A1A18', padding: '72px 32px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B7DEC9', marginBottom: 12 }}>How we compare</div>
-          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 32, color: '#fff', marginBottom: 36 }}>EveryGiving vs alternatives</h2>
-          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 1fr 1fr', background: 'rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '12px 20px' }}>
-              {['Platform', 'Platform fee', 'Tx fee', 'Payout fee', 'MoMo', 'Verified', 'Milestones'].map(h => (
-                <div key={h} style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
-              ))}
-            </div>
-            {COMPETITORS.map((c, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 1fr 1fr', padding: '14px 20px', borderBottom: i < COMPETITORS.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none', background: c.highlight ? 'rgba(10,107,75,0.08)' : 'transparent' }}>
-                <div style={{ fontSize: 14, fontWeight: c.highlight ? 700 : 500, color: c.highlight ? '#B7DEC9' : 'rgba(255,255,255,.55)' }}>{c.name}</div>
-                {[c.platformFee, c.txFee, c.payoutFee].map((v, j) => (
-                  <div key={j} style={{ fontSize: 13, color: c.highlight ? '#fff' : 'rgba(255,255,255,.45)' }}>{v}</div>
-                ))}
-                {[c.momo, c.verified, c.milestones].map((v, j) => (
-                  <div key={j} style={{ fontSize: 13, color: v === '✓' ? '#B7DEC9' : v === '✕' ? '#C0392B' : 'rgba(255,255,255,.4)' }}>{v}</div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* SCENARIOS */}
-      <div style={{ padding: '72px 32px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 12 }}>Real examples</div>
-          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 32, color: '#1A1A18', marginBottom: 36 }}>What the numbers look like</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
-            {SCENARIOS.map((sc, i) => {
-              const res = calcCampaign(sc.goal, sc.avg)
-              if (!res) return null
-              return (
-                <div key={i} className="scenario-card" style={{ background: sc.color, border: `1px solid ${sc.accent}22`, borderRadius: 14, padding: 24 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: sc.accent, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>{sc.title}</div>
-                  <div style={{ fontSize: 12, color: sc.accent + 'AA', marginBottom: 20, lineHeight: 1.6 }}>{sc.desc}</div>
-                  <div style={{ borderTop: `1px solid ${sc.accent}22`, paddingTop: 16 }}>
-                    {[
-                      ['Goal',          `₵${res.goal.toLocaleString()}`],
-                      ['You receive',   `₵${fmt(res.totalReceived)}`],
-                      ['Total fees',    `₵${fmt(res.totalFees)}`],
-                      ['Effective rate', `${res.feeRate}%`],
-                    ].map(([l, v]) => (
-                      <div key={l} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                        <span style={{ fontSize: 12, color: sc.accent + '99' }}>{l}</span>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: sc.accent }}>{v}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div style={{ background: '#fff', borderTop: '1px solid #E8E4DC', padding: '72px 32px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0A6B4B', marginBottom: 12 }}>FAQ</div>
-            <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 32, color: '#1A1A18', marginBottom: 16 }}>Fee questions answered</h2>
-            <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.75 }}>
-              If you have a question not covered here, email us at{' '}
-              <a href="mailto:support@everygiving.org" style={{ color: '#0A6B4B', fontWeight: 600 }}>support@everygiving.org</a>
+        {/* Hero */}
+        <section className="bg-navy relative overflow-hidden py-24">
+          <div className="relative max-w-4xl mx-auto px-5 text-center text-white">
+            <div className="inline-block bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5">Honest fees</div>
+            <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-4" style={{letterSpacing:-1}}>
+              {cms(c, 'hero', 'headline', "Let's do the math together")}
+            </h1>
+            <p className="text-white/50 text-sm max-w-xl mx-auto leading-relaxed">
+              {cms(c, 'hero', 'subtext', 'No hidden charges. No surprises. We deduct a small transaction fee from each donation automatically  -  so you never receive a bill.')}
             </p>
-            <div style={{ marginTop: 32, background: '#E8F5EF', border: '1px solid #B7DEC9', borderRadius: 12, padding: '20px 22px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0A6B4B', marginBottom: 6 }}>The bottom line</div>
-              <div style={{ fontSize: 13, color: '#2D7A5B', lineHeight: 1.7 }}>
-                2.5% + ₵0.50 per donation. That's it. No platform fee. No payout fee. No surprises.
+          </div>
+        </section>
+
+        {/* Live calculator */}
+        <section className="py-14 bg-white">
+          <div className="max-w-2xl mx-auto px-5">
+            <div className="text-center mb-8">
+              <div className="text-xs font-bold uppercase tracking-widest text-primary mb-2" style={{fontFamily:'DM Mono, monospace'}}>Live calculator</div>
+              <h2 className="font-nunito font-black text-navy text-3xl">See exactly what happens to every cedi donated</h2>
+            </div>
+
+            {/* Amount slider */}
+            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 mb-6">
+              <div className="text-center mb-6">
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Donation amount</div>
+                <div className="font-nunito font-black text-primary text-5xl mb-1">₵{amount.toLocaleString()}</div>
+              </div>
+
+              {/* Slider */}
+              <input type="range" min="1" max="10000" step="1" value={amount}
+                onChange={e => setAmount(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer mb-4"
+                style={{accentColor:'#02A95C'}} />
+
+              {/* Quick amounts */}
+              <div className="flex flex-wrap gap-2 justify-center mb-6">
+                {EXAMPLES.map(a => (
+                  <button key={a} onClick={() => setAmount(a)}
+                    className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${amount === a ? 'border-primary bg-primary text-white' : 'border-gray-200 text-gray-500 hover:border-primary/40'}`}>
+                    ₵{a.toLocaleString()}
+                  </button>
+                ))}
+              </div>
+
+              {/* Animated breakdown */}
+              <div className="space-y-4">
+                {/* Visual bar */}
+                <div className="relative h-12 bg-gray-100 rounded-2xl overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 bg-primary transition-all duration-500 rounded-2xl flex items-center justify-center"
+                    style={{width:`${receivesPct}%`}}>
+                    <span className="text-white text-xs font-black px-2 truncate">₵{receives.toLocaleString()} goes to fundraiser</span>
+                  </div>
+                  <div className="absolute right-0 top-0 bottom-0 bg-gray-300 flex items-center justify-end pr-2"
+                    style={{width:`${feePct}%`}}>
+                    <span className="text-gray-600 text-xs font-black">fee</span>
+                  </div>
+                </div>
+
+                {/* Numbers */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-primary-light border border-primary/15 rounded-2xl p-5 text-center">
+                    <div className="font-nunito font-black text-primary text-3xl mb-1">₵{receives.toLocaleString()}</div>
+                    <div className="text-primary-dark/70 text-xs font-bold uppercase tracking-wide">Fundraiser receives</div>
+                    <div className="text-primary/60 text-xs mt-1">{receivesPct}% of donation</div>
+                  </div>
+                  <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 text-center">
+                    <div className="font-nunito font-black text-gray-500 text-3xl mb-1">₵{fee.toFixed(2)}</div>
+                    <div className="text-gray-400 text-xs font-bold uppercase tracking-wide">Transaction fee</div>
+                    <div className="text-gray-300 text-xs mt-1">{feePct}% of donation</div>
+                  </div>
+                </div>
+
+                {/* Formula */}
+                <div className="bg-gray-900 rounded-2xl p-5 font-mono text-sm">
+                  <div className="text-gray-500 text-xs mb-3 uppercase tracking-wider">The formula</div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-white">₵{amount}</span>
+                    <span className="text-gray-500">×</span>
+                    <span className="text-primary">2%</span>
+                    <span className="text-gray-500">+</span>
+                    <span className="text-primary">₵0.25</span>
+                    <span className="text-gray-500">=</span>
+                    <span className="text-gray-400">₵{fee.toFixed(2)} fee</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-white">₵{amount}</span>
+                    <span className="text-gray-500">−</span>
+                    <span className="text-gray-400">₵{fee.toFixed(2)}</span>
+                    <span className="text-gray-500">=</span>
+                    <span className="text-primary font-black text-lg">₵{receives.toFixed(2)} to fundraiser</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div style={{ borderTop: '1px solid #E8E4DC' }}>
-            {FAQS.map((faq, i) => (
-              <FaqItem key={i} q={faq.q} a={faq.a} isLast={i === FAQS.length - 1} />
-            ))}
-          </div>
-        </div>
-      </div>
+        </section>
 
-      {/* CTA */}
-      <div style={{ background: '#0A6B4B', padding: '72px 32px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 38, color: '#fff', lineHeight: 1.2, marginBottom: 14 }}>
-          Free to start.<br />You only contribute when donations come in.
-        </h2>
-        <p style={{ fontSize: 15, color: 'rgba(255,255,255,.6)', marginBottom: 32 }}>Create your campaign · Verify in 24hrs · Raise with confidence</p>
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-          <Link href="/create" style={{ fontSize: 14, fontWeight: 700, color: '#0A6B4B', background: '#fff', padding: '14px 28px', borderRadius: 10, textDecoration: 'none' }}>
-            Start a campaign →
-          </Link>
-          <Link href="/campaigns" style={{ fontSize: 14, fontWeight: 600, color: '#fff', padding: '14px 28px', border: '1.5px solid rgba(255,255,255,.3)', borderRadius: 10, textDecoration: 'none' }}>
-            Browse campaigns
-          </Link>
-        </div>
-      </div>
-
-      {/* FOOTER */}
-      <footer style={{ background: '#111110', padding: '40px 32px 24px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: "'DM Serif Display',serif", fontSize: 19, color: '#fff' }}>
-            Every<em style={{ color: '#B7DEC9', fontStyle: 'normal' }}>Giving</em>
-          </span>
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,.2)' }}>© {new Date().getFullYear()} EveryGiving Ltd</span>
-          <div style={{ display: 'flex', gap: 20 }}>
-            {['/privacy', '/terms', '/contact'].map(href => (
-              <Link key={href} href={href} style={{ fontSize: 12, color: 'rgba(255,255,255,.3)', textDecoration: 'none' }}>{href.slice(1).charAt(0).toUpperCase() + href.slice(2)}</Link>
-            ))}
+        {/* Verification fees */}
+        <section className="py-14 bg-white border-t border-gray-100">
+          <div className="max-w-2xl mx-auto px-5">
+            <div className="text-center mb-8">
+              <h2 className="font-nunito font-black text-navy text-2xl mb-2">Verification fees</h2>
+              <p className="text-gray-400 text-sm">One-time, per campaign. Pay upfront or defer  -  deducted from your first donations.</p>
+            </div>
+            <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+              <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-100 px-5 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                <div>Tier</div>
+                <div>Fee</div>
+                <div>Goal range</div>
+                <div>Defer?</div>
+              </div>
+              {[
+                { emoji: '*', tier: 'Basic',   fee: 'Free',     range: 'Up to GH₵5,000',          defer: ' - ' },
+                { emoji: '*', tier: 'Standard', fee: 'GH₵50',   range: 'GH₵5,000 – GH₵10,000',    defer: 'Yes' },
+                { emoji: '⭐', tier: 'Premium',  fee: 'GH₵100',  range: 'GH₵10,000 – GH₵50,000',   defer: 'Yes' },
+                { emoji: '*', tier: 'Gold',     fee: 'GH₵200',  range: 'GH₵50,000 – GH₵100,000',  defer: 'Yes' },
+                { emoji: '*', tier: 'Diamond',  fee: 'GH₵500',  range: 'GH₵100,000 and above',     defer: 'Yes' },
+              ].map((row, i) => (
+                <div key={i} className="grid grid-cols-4 px-5 py-4 border-b border-gray-50 last:border-0 items-center">
+                  <div className="flex items-center gap-2 font-bold text-navy text-sm">
+                    <span>{row.emoji}</span><span>{row.tier}</span>
+                  </div>
+                  <div className={`font-nunito font-black text-sm ${row.fee === 'Free' ? 'text-gray-500' : 'text-primary'}`}>{row.fee}</div>
+                  <div className="text-gray-500 text-xs">{row.range}</div>
+                  <div className={`text-xs font-bold ${row.defer === 'Yes' ? 'text-primary' : 'text-gray-300'}`}>{row.defer}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 text-center mt-4">
+              Defer means the fee is automatically deducted from your first donations  -  you pay nothing until money comes in.
+            </p>
           </div>
-        </div>
-      </footer>
+        </section>
+
+        {/* Comparison */}
+        <section className="py-14 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-2xl mx-auto px-5">
+            <div className="text-center mb-8">
+              <h2 className="font-nunito font-black text-navy text-2xl mb-2">How we compare on a ₵{amount.toLocaleString()} donation</h2>
+              <p className="text-gray-400 text-sm">Every Giving is always the most you can get to your cause</p>
+            </div>
+            <div className="flex flex-col gap-3">
+              {COMPARE.map((c, i) => (
+                <div key={i} className={`bg-white rounded-2xl border-2 p-5 transition-all ${i === 0 ? 'border-primary shadow-lg shadow-primary/10' : 'border-gray-100'}`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{c.logo}</span>
+                      <div>
+                        <div className="font-nunito font-black text-navy text-sm">{c.name}</div>
+                        <div className="text-gray-400 text-xs">{c.fee}</div>
+                      </div>
+                    </div>
+                    {i === 0 && <span className="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">Best</span>}
+                  </div>
+                  {c.note ? (
+                    <div className="text-xs text-gray-400 italic">{c.note}</div>
+                  ) : (
+                    <div>
+                      <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                        <span>Fundraiser receives</span>
+                        <span className={i === 0 ? 'text-primary font-black' : 'text-gray-600 font-semibold'}>
+                          ₵{(amount - c.total).toFixed(2)} ({(((amount - c.total) / amount) * 100).toFixed(1)}%)
+                        </span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-500 ${c.color}`}
+                          style={{width:`${((amount - c.total) / amount) * 100}%`}} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="py-14 bg-white border-t border-gray-100">
+          <div className="max-w-2xl mx-auto px-5">
+            <h2 className="font-nunito font-black text-navy text-2xl text-center mb-8">Fee questions answered</h2>
+            <div className="flex flex-col gap-4">
+              {[
+                { q:'When is the fee deducted?', a:'At the moment a donation is made. The 2% + ₵0.25 is automatically deducted from each donation. Fundraisers receive the net amount when their milestones are reached. No invoices, no bills, no follow-ups.' },
+                { q:'Is there a platform fee on top?', a:'No. The only charge is the 2% + ₵0.25 transaction fee per donation. No monthly fee. No withdrawal fee. No setup fee. No platform fee. Ever.' },
+                { q:'What does the fee cover?', a:'The fee covers payment processing (MoMo provider fees), platform maintenance, identity verification infrastructure, and customer support. We operate with full transparency.' },
+                { q:'Do donors see the fee?', a:'Yes. As a donor types an amount, they see the breakdown in real time: how much reaches the fundraiser and how much is the transaction fee. Full transparency, always.' },
+                { q:'What if I want to cover the fee for the fundraiser?', a:'You can. Simply add the fee on top of the amount you want the fundraiser to receive. For example, donate ₵102.30 and the fundraiser receives exactly ₵100.' },
+                { q:'Is the verification tier fee refundable?', a:'No. Verification fees cover the cost of reviewing your documents and are non-refundable. If your campaign is rejected, we will work with you to understand and resolve the issue.' },
+              ].map((faq, i) => (
+                <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+                  <div className="font-nunito font-black text-navy text-sm mb-2">{faq.q}</div>
+                  <div className="text-gray-500 text-sm leading-relaxed">{faq.a}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-14 bg-primary text-center px-5">
+          <h2 className="font-nunito font-black text-white text-3xl mb-3">No surprises. Ever.</h2>
+          <p className="text-white/70 text-sm mb-7">Free to start. You only contribute when donations come in.</p>
+          <Link href="/create" className="inline-block bg-white text-primary font-nunito font-black px-10 py-4 rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">
+            Start your campaign →
+          </Link>
+        </section>
+      </main>
+      <Footer />
     </>
   )
 }

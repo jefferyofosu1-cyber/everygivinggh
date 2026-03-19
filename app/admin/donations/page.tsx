@@ -150,10 +150,10 @@ export default function AdminDonationsPage() {
       ...filtered.map(d => [
         new Date(d.created_at).toLocaleDateString(),
         d.donor_name || 'Anonymous',
-        d.campaigns?.title || ' - ',
+        d.campaigns?.title || '—',
         d.amount,
-        d.payment_method || ' - ',
-        d.payment_reference || ' - ',
+        d.payment_method || '—',
+        d.payment_reference || '—',
         d.status,
       ])
     ]
@@ -174,7 +174,7 @@ export default function AdminDonationsPage() {
         </div>
         <button onClick={exportCSV}
           className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all">
-          <span></span> Export CSV
+          <span>📊</span> Export CSV
         </button>
       </div>
 
@@ -222,7 +222,7 @@ export default function AdminDonationsPage() {
           <div className="p-8 text-center text-white/30 text-sm">Loading donations…</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="text-4xl mb-3"></div>
+            <div className="text-4xl mb-3">💸</div>
             <div className="text-white/30 text-sm">No donations found</div>
           </div>
         ) : (
@@ -249,12 +249,12 @@ export default function AdminDonationsPage() {
                       {d.donor_email && <div className="text-white/30 text-xs">{d.donor_email}</div>}
                     </td>
                     <td className="px-5 py-4">
-                      <div className="text-white/70 max-w-[180px] truncate">{d.campaigns?.title || ' - '}</div>
-                      <div className="text-white/30 text-xs">{d.campaigns?.profiles?.full_name || ' - '}</div>
+                      <div className="text-white/70 max-w-[180px] truncate">{d.campaigns?.title || '—'}</div>
+                      <div className="text-white/30 text-xs">{d.campaigns?.profiles?.full_name || '—'}</div>
                     </td>
                     <td className="px-5 py-4 font-nunito font-black text-primary">₵{d.amount?.toLocaleString()}</td>
-                    <td className="px-5 py-4 text-white/50 text-xs">{d.payment_method || ' - '}</td>
-                    <td className="px-5 py-4 text-white/30 text-xs font-mono">{d.payment_reference || ' - '}</td>
+                    <td className="px-5 py-4 text-white/50 text-xs">{d.payment_method || '—'}</td>
+                    <td className="px-5 py-4 text-white/30 text-xs font-mono">{d.payment_reference || '—'}</td>
                     <td className="px-5 py-4">
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_BADGE[d.status] || ''}`}>{d.status}</span>
                     </td>

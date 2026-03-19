@@ -17,9 +17,11 @@ const CATEGORY_EMOJI: Record<string, string> = {
 }
 
 export default function CampaignCard({ campaign }: { campaign: Campaign }) {
-  const pct = Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100)
-  const bg = CATEGORY_COLORS[campaign.category] || 'bg-gray-50'
-  const emoji = CATEGORY_EMOJI[campaign.category] || ''
+  const goal = campaign.goal_amount || 0
+  const raised = campaign.raised_amount || 0
+  const pct = goal > 0 ? Math.min(Math.round((raised / goal) * 100), 100) : 0
+  const bg = CATEGORY_COLORS[campaign.category.toLowerCase()] || 'bg-gray-50'
+  const emoji = CATEGORY_EMOJI[campaign.category.toLowerCase()] || ''
 
   return (
     <Link href={`/campaigns/${campaign.id}`}>
@@ -60,8 +62,8 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
 
           <div className="flex justify-between items-center">
             <div>
-              <div className="font-nunito font-black text-navy text-sm">₵{campaign.raised_amount.toLocaleString()}</div>
-              <div className="text-xs text-gray-400">of ₵{campaign.goal_amount.toLocaleString()}</div>
+              <div className="font-nunito font-black text-navy text-sm">₵{raised.toLocaleString()}</div>
+              <div className="text-xs text-gray-400">of ₵{goal.toLocaleString()}</div>
             </div>
             <div className="bg-primary-light text-primary font-bold text-xs px-2 py-1 rounded-full">
               {pct}%

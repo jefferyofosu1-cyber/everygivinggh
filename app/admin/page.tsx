@@ -8,10 +8,15 @@ interface Stats {
   activeCampaigns: number
   totalUsers: number
   totalDonations: number
-  totalRaised: number
-  pendingPayouts: number
-  openDisputes: number
+  totalRaised:     number
+  pendingPayouts:  number
+  openDisputes:    number
   paymentMismatches: number
+  totalPlatformFees: number
+  totalPaystackFees: number
+  totalTips:         number
+  totalVerificationRevenue: number
+  netProfit:         number
 }
 
 interface RecentCampaign {
@@ -104,6 +109,38 @@ export default function AdminDashboard() {
               <div className="text-white/30 text-xs">{s.label}</div>
             </Link>
           ))}
+        </div>
+      )}
+
+      {!loading && stats && (
+        <div className="mb-8">
+          <h2 className="font-nunito font-black text-white text-xl mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 bg-primary rounded-full" />
+            Platform Revenue
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-gray-900 border border-white/5 rounded-2xl p-4">
+              <div className="text-white/40 text-xs uppercase tracking-wider font-bold mb-1">Platform Fees</div>
+              <div className="font-nunito font-black text-xl text-white">GH₵{stats.totalPlatformFees.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            </div>
+            <div className="bg-gray-900 border border-white/5 rounded-2xl p-4">
+              <div className="text-white/40 text-xs uppercase tracking-wider font-bold mb-1">Paystack Fees</div>
+              <div className="font-nunito font-black text-xl text-red-400">GH₵{stats.totalPaystackFees.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            </div>
+            <div className="bg-gray-900 border border-white/5 rounded-2xl p-4">
+              <div className="text-white/40 text-xs uppercase tracking-wider font-bold mb-1">Donor Tips</div>
+              <div className="font-nunito font-black text-xl text-green-400">GH₵{stats.totalTips.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            </div>
+            <div className="bg-gray-900 border border-white/5 rounded-2xl p-4">
+              <div className="text-white/40 text-xs uppercase tracking-wider font-bold mb-1">Verification Rev.</div>
+              <div className="font-nunito font-black text-xl text-blue-400">GH₵{stats.totalVerificationRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            </div>
+            <div className="bg-primary/10 border border-primary/30 rounded-2xl p-4 relative overflow-hidden">
+              <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-primary/20 rounded-full blur-xl" />
+              <div className="text-primary/70 text-xs uppercase tracking-wider font-bold mb-1 relative z-10">Net Profit</div>
+              <div className="font-nunito font-black text-2xl text-primary relative z-10">GH₵{stats.netProfit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            </div>
+          </div>
         </div>
       )}
 

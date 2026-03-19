@@ -200,9 +200,7 @@ export default function OfferPage() {
         <Reveal>
           <section className="bg-navy relative overflow-hidden mx-4 mt-4 rounded-[28px] mb-4">
             {/* dot grid */}
-            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
             {/* glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.18) 0%, transparent 60%)' }} />
 
             <div className="relative max-w-3xl mx-auto px-6 py-20 text-center">
               <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/25 text-primary text-xs font-bold px-4 py-2 rounded-full mb-8 tracking-widest uppercase">
@@ -303,8 +301,6 @@ export default function OfferPage() {
         {/* ══ 4. RISK REVERSAL ════════════════════════════════════════════ */}
         <Reveal delay={160}>
           <section className="bg-white rounded-[24px] border-2 border-primary/15 shadow-sm mx-4 mb-4 p-8 md:p-10 relative overflow-hidden">
-            {/* Subtle glow top-right */}
-            <div className="absolute top-0 right-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.07), transparent 70%)', transform: 'translate(30%, -30%)' }} />
 
             <div className="grid md:grid-cols-[auto_1fr] gap-7 items-start relative">
               {/* Shield */}
@@ -349,8 +345,6 @@ export default function OfferPage() {
         {/* ══ 5. THE CTA ══════════════════════════════════════════════════ */}
         <Reveal delay={200}>
           <section className="bg-navy rounded-[28px] mx-4 mb-4 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.15) 0%, transparent 65%)' }} />
 
             <div className="relative max-w-2xl mx-auto px-6 py-20 text-center">
               {/* Urgency badge */}

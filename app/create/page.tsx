@@ -1,489 +1,496 @@
 'use client'
-
 import { useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const CATEGORIES = ['Medical', 'Emergency', 'Education', 'Charity', 'Faith', 'Community', 'Environment', 'Business', 'Family', 'Sports', 'Events', 'Competition', 'Travel', 'Volunteer', 'Wishes', 'Memorial', 'Other']
 
-const CATEGORIES = [
-  { id:'medical',     label:'Medical',        emoji:'🫀' },
-  { id:'education',   label:'Education',      emoji:'📚' },
-  { id:'emergency',   label:'Emergency',      emoji:'🚨' },
-  { id:'faith',       label:'Faith',          emoji:'⛪' },
-  { id:'community',   label:'Community',      emoji:'🏘️' },
-  { id:'funeral',     label:'Funeral',        emoji:'🕊️' },
-  { id:'family',      label:'Family',         emoji:'👨‍👩‍👧' },
-  { id:'sports',      label:'Sports',         emoji:'⚽' },
-  { id:'volunteer',   label:'Volunteer',      emoji:'🙌' },
-  { id:'business',    label:'Business',       emoji:'🏪' },
-  { id:'arts',        label:'Arts & Culture', emoji:'🎨' },
-  { id:'other',       label:'Other',          emoji:'✨' },
-] as const
+const TIERS = [
+  {
+    id: 'basic',
+    name: 'Basic',
+    price: '₵20',
+    priceNum: 20,
+    badge: 'Basic Verified',
+    badgeColor: 'bg-gray-100 text-gray-600',
+    border: 'border-gray-200',
+    activeBorder: 'border-gray-500',
+    desc: 'ID upload + ID number. Basic badge.',
+    limit: 'Campaigns up to ₵5,000',
+    features: ['Ghana Card upload', 'ID number verification', 'Basic Verified badge'],
+    selfie: false,
+  },
+  {
+    id: 'standard',
+    name: 'Standard',
+    price: '₵50',
+    priceNum: 50,
+    badge: 'Verified ✓',
+    badgeColor: 'bg-primary-light text-primary-dark',
+    border: 'border-primary/30',
+    activeBorder: 'border-primary',
+    recommended: true,
+    desc: 'ID + selfie + NIA check. Full badge.',
+    limit: 'Campaigns up to ₵50,000',
+    features: ['Ghana Card upload', 'ID number verification', 'Selfie + facial recognition', 'NIA database check', 'Full Verified badge'],
+    selfie: true,
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    price: '₵100',
+    priceNum: 100,
+    badge: 'Premium ★',
+    badgeColor: 'bg-amber-50 text-amber-700',
+    border: 'border-amber-200',
+    activeBorder: 'border-amber-500',
+    desc: 'Full verification + document review.',
+    limit: 'Unlimited campaign goal',
+    features: ['Everything in Standard', 'Supporting documents reviewed', 'Premium badge + top placement', 'Dedicated support'],
+    selfie: true,
+  },
+]
 
-const NETWORKS = [
-  { id:'mtn',        label:'MTN MoMo',      color:'#FFD700' },
-  { id:'vodafone',   label:'Vodafone Cash', color:'#E60000' },
-  { id:'airteltigo', label:'AirtelTigo',    color:'#CC0000' },
-] as const
+type Step = 'campaign' | 'tier' | 'identity' | 'payment' | 'done'
 
-const STEPS = ['Who','Category','Story','Photo','Goal','Payout','Review']
-
-// ─── TYPES ───────────────────────────────────────────────────────────────────
-
-interface Milestone { id: number; name: string; amount: string }
-interface FormState {
-  raisingFor: string
-  beneficiaryName: string
-  category: string
-  catLabel: string
-  title: string
-  story: string
-  coverPhoto: File | null
-  coverPreview: string | null
-  goalAmount: string
-  milestones: Milestone[]
-  network: string
-  momoNumber: string
-  momoName: string
-  agreedToTerms: boolean
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type SetFn = (k: keyof FormState, v: any) => void
-
-const emptyMilestone = (): Milestone => ({ id: Date.now(), name: '', amount: '' })
-
-// ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
-
-export default function CreateCampaignPage() {
-  const [step, setStep] = useState(1)
-  const [form, setForm] = useState<FormState>({
-    raisingFor: '', beneficiaryName: '', category: '', catLabel: '',
-    title: '', story: '', coverPhoto: null, coverPreview: null,
-    goalAmount: '', milestones: [emptyMilestone()],
-    network: '', momoNumber: '', momoName: '', agreedToTerms: false,
-  })
+export default function CreatePage() {
+  const router = useRouter()
+  const [step, setStep] = useState<Step>('campaign')
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
 
-  const set = (k: keyof FormState, v: FormState[keyof FormState]) =>
-    setForm(f => ({ ...f, [k]: v }))
+  // Campaign form
+  const [campaign, setCampaign] = useState({
+    title: '', category: '', goal: '', story: '', photo: null as File | null,
+  })
+  const photoRef = useRef<HTMLInputElement>(null)
 
-  const addMilestone = () => {
-    if (form.milestones.length >= 5) return
-    set('milestones', [...form.milestones, emptyMilestone()])
+  // Tier
+  const [tierId, setTierId] = useState<string>('standard')
+  const tier = TIERS.find(t => t.id === tierId)!
+
+  // Identity
+  const [identity, setIdentity] = useState({
+    idNumber: '',
+    idFront: null as File | null,
+    idBack: null as File | null,
+    selfie: null as File | null,
+  })
+  const idFrontRef = useRef<HTMLInputElement>(null)
+  const idBackRef = useRef<HTMLInputElement>(null)
+  const selfieRef = useRef<HTMLInputElement>(null)
+
+  // Payment (simulate)
+  const [paid, setPaid] = useState(false)
+
+  const steps: { id: Step; label: string }[] = [
+    { id: 'campaign', label: 'Campaign' },
+    { id: 'tier', label: 'Verification' },
+    { id: 'identity', label: 'ID documents' },
+    { id: 'payment', label: 'Payment' },
+  ]
+  const stepIndex = steps.findIndex(s => s.id === step)
+
+  const canNextCampaign = campaign.title && campaign.category && campaign.goal && campaign.story
+
+  const canNextIdentity = identity.idNumber && identity.idFront && identity.idBack &&
+    (tier.selfie ? !!identity.selfie : true)
+
+  const handleFileSelect = (
+    ref: React.RefObject<HTMLInputElement>,
+    field: 'idFront' | 'idBack' | 'selfie' | 'photo'
+  ) => {
+    ref.current?.click()
   }
-  const updateMilestone = (id: number, k: keyof Milestone, v: string | number) =>
-    set('milestones', form.milestones.map(m => m.id === id ? { ...m, [k]: v } : m))
-  const removeMilestone = (id: number) => {
-    if (form.milestones.length <= 1) return
-    set('milestones', form.milestones.filter(m => m.id !== id))
-  }
 
-  const handlePhoto = (file: File | null) => {
-    if (!file) return
-    if (form.coverPreview) URL.revokeObjectURL(form.coverPreview)
-    set('coverPhoto', file)
-    set('coverPreview', URL.createObjectURL(file))
-  }
-
-  const canAdvance = () => {
-    if (step === 1) return !!form.raisingFor && (form.raisingFor === 'myself' || !!form.beneficiaryName)
-    if (step === 2) return !!form.category
-    if (step === 3) return form.title.length >= 10 && form.story.length >= 50
-    if (step === 4) return !!form.coverPhoto
-    if (step === 5) return !!form.goalAmount && form.milestones.every(m => m.name && m.amount)
-    if (step === 6) return !!form.network && !!form.momoNumber && !!form.momoName
-    if (step === 7) return form.agreedToTerms
-    return false
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: 'idFront' | 'idBack' | 'selfie'
+  ) => {
+    const file = e.target.files?.[0] || null
+    setIdentity(p => ({ ...p, [field]: file }))
   }
 
   const handleSubmit = async () => {
     setSubmitting(true)
-    try {
-      const fd = new FormData()
-      Object.entries(form).forEach(([k, v]) => {
-        if (k === 'coverPhoto' && v instanceof File) { fd.append('coverPhoto', v) }
-        else if (k === 'milestones') { fd.append('milestones', JSON.stringify(v)) }
-        else if (typeof v === 'boolean') { fd.append(k, String(v)) }
-        else if (typeof v === 'string') { fd.append(k, v) }
-      })
-      await fetch('/api/campaign-submit', { method: 'POST', body: fd })
-    } catch {
-      // show success regardless to not block UX; admin handles failures
-    }
+    // Simulate API call
+    await new Promise(r => setTimeout(r, 1500))
+    setStep('done')
     setSubmitting(false)
-    setSubmitted(true)
   }
 
-  if (submitted) return <SuccessScreen form={form} />
+  // ── DONE SCREEN ──────────────────────────────────────────────────────────
+  if (step === 'done') {
+    return (
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-16">
+          <div className="max-w-lg w-full text-center">
+            <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
+              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+              <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">🎉</div>
+            </div>
+            <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
+            <p className="text-gray-500 text-sm mb-2">Your campaign and identity documents are being reviewed.</p>
+            <p className="text-gray-400 text-xs mb-8">You'll receive an email once your campaign is live. This usually takes under 10 minutes.</p>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6 text-left">
+              <div className="font-nunito font-black text-navy text-sm mb-4">What happens next</div>
+              <div className="flex flex-col gap-3">
+                {[
+                  { icon: '📧', text: 'Check your email for a verification confirmation' },
+                  { icon: '✅', text: `Your ${tier.name} verification will be processed` },
+                  { icon: '🚀', text: 'Your campaign goes live with your Verified badge' },
+                  { icon: '📱', text: 'Share on WhatsApp to start receiving donations' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                    <span>{item.icon}</span><span>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-3 justify-center">
+              <Link href="/campaigns"
+                className="px-7 py-3 bg-primary text-white font-nunito font-black rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-primary/20">
+                Browse campaigns
+              </Link>
+              <Link href="/"
+                className="px-7 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-full text-sm hover:border-primary hover:text-primary transition-all">
+                Go home
+              </Link>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    )
+  }
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'DM Sans',sans-serif;background:#FDFAF5;color:#1A1A18}
-        a{text-decoration:none;color:inherit}
-        button,input,textarea,select{font-family:'DM Sans',sans-serif}
-        input:focus,textarea:focus{outline:none;border-color:#0A6B4B!important}
-        @keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .opt-card:hover{border-color:#B7DEC9!important}
-        .cat-card:hover{border-color:#B7DEC9!important;transform:translateY(-2px)}
-        .drop-zone:hover{border-color:#0A6B4B!important;background:#F3FAF7}
-      ` }} />
-      {/* PROGRESS BAR */}
-      <div style={{ height:3, background:'#E8E4DC', position:'sticky', top:56, zIndex:99 }}>
-        <div style={{ height:'100%', background:'#0A6B4B', transition:'width .4s ease', width:`${(step/STEPS.length)*100}%` }} />
-      </div>
+      <Navbar />
+      <main className="min-h-screen bg-gray-50 py-12 px-5">
+        <div className="max-w-2xl mx-auto">
 
-      {/* STEP LABELS */}
-      <div style={{ display:'flex', gap:0, padding:'10px 24px', background:'#fff', borderBottom:'1px solid #E8E4DC', overflowX:'auto' as const }}>
-        {STEPS.map((l, i) => (
-          <div key={i} style={{ fontSize:11, fontWeight:i+1===step?600:400, color:i+1===step?'#1A1A18':i+1<step?'#0A6B4B':'#C8C4BC', whiteSpace:'nowrap' as const, padding:'0 12px', borderRight:'1px solid #E8E4DC', transition:'color .2s' }}>
-            {i+1 < step ? '✓ ' : ''}{l}
+          {/* Header */}
+          <div className="text-center mb-10">
+            <Link href="/" className="inline-block font-nunito font-black text-xl tracking-tight mb-4">
+              <span className="text-primary">Every</span><span className="text-navy">Giving</span>
+            </Link>
+            <h1 className="font-nunito font-black text-navy text-2xl mb-2">Start your campaign</h1>
+            <p className="text-gray-400 text-sm">Free to create. Verified. MoMo-native.</p>
           </div>
-        ))}
-      </div>
 
-      {/* MAIN */}
-      <div style={{ maxWidth:960, margin:'0 auto', padding:'28px 24px 80px', display:'grid', gridTemplateColumns:'1fr 280px', gap:28, alignItems:'start' }}>
-        <div>
-          <div key={step} style={{ animation:'fadeup .22s ease both' }}>
-            {step===1 && <Step1 form={form} set={set} />}
-            {step===2 && <Step2 form={form} set={set} />}
-            {step===3 && <Step3 form={form} set={set} />}
-            {step===4 && <Step4 form={form} onPhoto={handlePhoto} />}
-            {step===5 && <Step5 form={form} set={set} addMilestone={addMilestone} updateMilestone={updateMilestone} removeMilestone={removeMilestone} />}
-            {step===6 && <Step6 form={form} set={set} />}
-            {step===7 && <Step7 form={form} set={set} submitting={submitting} onSubmit={handleSubmit} />}
+          {/* Progress */}
+          <div className="flex items-center gap-0 mb-10">
+            {steps.map((s, i) => (
+              <div key={s.id} className="flex items-center flex-1">
+                <div className="flex flex-col items-center flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                    i < stepIndex ? 'bg-primary text-white' :
+                    i === stepIndex ? 'bg-navy text-white ring-4 ring-navy/20' :
+                    'bg-gray-200 text-gray-400'
+                  }`}>
+                    {i < stepIndex ? '✓' : i + 1}
+                  </div>
+                  <div className={`text-xs mt-1 font-semibold ${i === stepIndex ? 'text-navy' : 'text-gray-400'}`}>{s.label}</div>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className={`h-px flex-1 mx-1 mb-5 transition-all ${i < stepIndex ? 'bg-primary' : 'bg-gray-200'}`} />
+                )}
+              </div>
+            ))}
           </div>
-          <div style={{ display:'flex', gap:10, marginTop:24 }}>
-            {step > 1 && (
-              <button style={{ fontSize:13, fontWeight:500, color:'#4A4A44', background:'transparent', border:'1px solid #E8E4DC', padding:'11px 20px', borderRadius:9, cursor:'pointer' }}
-                onClick={()=>setStep(s=>s-1)}>← Back</button>
-            )}
-            {step < 7 && (
-              <button style={{ flex:1, padding:13, background:'#0A6B4B', color:'#fff', border:'none', borderRadius:9, fontSize:14, fontWeight:700, cursor:'pointer', opacity:canAdvance()?1:.45 }}
-                disabled={!canAdvance()} onClick={()=>setStep(s=>s+1)}>
-                {step===6?'Review campaign →':'Continue →'}
+
+          {/* ── STEP 1: CAMPAIGN DETAILS ── */}
+          {step === 'campaign' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Tell your story</h2>
+              <p className="text-gray-400 text-sm mb-7">Be honest, specific, and personal. Campaigns with real stories raise more.</p>
+
+              <div className="flex flex-col gap-5">
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Campaign title *</label>
+                  <input type="text" value={campaign.title}
+                    onChange={e => setCampaign(p => ({ ...p, title: e.target.value }))}
+                    placeholder="e.g. Help Ama pay for her kidney surgery"
+                    maxLength={80}
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all" />
+                  <div className="text-xs text-gray-300 mt-1 text-right">{campaign.title.length}/80</div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Category *</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {CATEGORIES.map(cat => (
+                      <button key={cat} type="button"
+                        onClick={() => setCampaign(p => ({ ...p, category: cat }))}
+                        className={`text-xs font-semibold px-3 py-2.5 rounded-xl border-2 transition-all text-left ${campaign.category === cat ? 'border-primary bg-primary-light text-primary-dark' : 'border-gray-100 text-gray-500 hover:border-gray-200 bg-gray-50'}`}>
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Fundraising goal (GHC) *</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
+                    <input type="number" value={campaign.goal} min="100"
+                      onChange={e => setCampaign(p => ({ ...p, goal: e.target.value }))}
+                      placeholder="5000"
+                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-8 pr-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Your story *</label>
+                  <textarea value={campaign.story} rows={6}
+                    onChange={e => setCampaign(p => ({ ...p, story: e.target.value }))}
+                    placeholder="Explain your situation in detail. Who are you raising for? What happened? How will the money be used? Be specific — donors give more when they understand the full picture."
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all resize-none" />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">Campaign photo</label>
+                  <input ref={photoRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => setCampaign(p => ({ ...p, photo: e.target.files?.[0] || null }))} />
+                  <button type="button" onClick={() => photoRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-8 text-center transition-all ${campaign.photo ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-gray-300 bg-gray-50'}`}>
+                    {campaign.photo ? (
+                      <div>
+                        <div className="text-2xl mb-1">🖼️</div>
+                        <div className="text-primary font-bold text-sm">{campaign.photo.name}</div>
+                        <div className="text-gray-400 text-xs mt-1">Click to change</div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-3xl mb-2">📷</div>
+                        <div className="text-gray-500 font-semibold text-sm">Upload a photo</div>
+                        <div className="text-gray-400 text-xs mt-1">JPG or PNG. Campaigns with photos raise more.</div>
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <button disabled={!canNextCampaign} onClick={() => setStep('tier')}
+                className={`w-full mt-7 py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextCampaign ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                Continue to verification →
               </button>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* ── STEP 2: TIER SELECTION ── */}
+          {step === 'tier' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Choose your verification tier</h2>
+              <p className="text-gray-400 text-sm mb-7">All tiers require your Ghana Card. Higher tiers unlock larger campaigns and more donor trust.</p>
+
+              <div className="flex flex-col gap-4 mb-7">
+                {TIERS.map(t => (
+                  <div key={t.id}
+                    onClick={() => setTierId(t.id)}
+                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all relative ${tierId === t.id ? `${t.activeBorder} bg-gray-50 shadow-md` : `${t.border} hover:bg-gray-50`}`}>
+                    {t.recommended && (
+                      <div className="absolute -top-2.5 left-5 bg-primary text-white text-xs font-bold px-3 py-0.5 rounded-full">Recommended</div>
+                    )}
+                    <div className="flex items-start gap-4">
+                      <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-all ${tierId === t.id ? 'border-primary bg-primary' : 'border-gray-300'}`}>
+                        {tierId === t.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <span className="font-nunito font-black text-navy text-base">{t.name}</span>
+                          <span className="font-nunito font-black text-primary text-lg">{t.price}</span>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${t.badgeColor}`}>{t.badge}</span>
+                        </div>
+                        <div className="text-gray-400 text-xs mb-2">{t.limit}</div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                          {t.features.map((f, i) => (
+                            <div key={i} className="text-xs text-gray-500 flex items-center gap-1">
+                              <span className="text-primary font-bold">✓</span> {f}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => setStep('campaign')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button onClick={() => setStep('identity')}
+                  className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20">
+                  Continue to ID upload →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 3: IDENTITY DOCUMENTS ── */}
+          {step === 'identity' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <div className="flex items-center gap-3 mb-1">
+                <h2 className="font-nunito font-black text-navy text-xl">Upload your ID documents</h2>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${tier.badgeColor}`}>{tier.name}</span>
+              </div>
+              <p className="text-gray-400 text-sm mb-7">
+                All information is encrypted and used only for identity verification. Never shared with donors.
+              </p>
+
+              <div className="flex flex-col gap-6">
+
+                {/* ID Number */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card ID number <span className="text-red-500">*</span>
+                  </label>
+                  <input type="text" value={identity.idNumber}
+                    onChange={e => setIdentity(p => ({ ...p, idNumber: e.target.value }))}
+                    placeholder="GHA-XXXXXXXXX-X"
+                    className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-4 py-3 text-sm text-navy placeholder-gray-300 outline-none transition-all font-mono tracking-wider" />
+                  <div className="text-xs text-gray-400 mt-1.5">Found on the front of your Ghana Card</div>
+                </div>
+
+                {/* ID Front */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card — front <span className="text-red-500">*</span>
+                  </label>
+                  <input ref={idFrontRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => handleFileChange(e, 'idFront')} />
+                  <button type="button" onClick={() => idFrontRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idFront ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                    {identity.idFront ? (
+                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                    ) : (
+                      <div><div className="text-2xl mb-1.5">🪪</div><div className="text-gray-500 font-semibold text-sm">Upload front of Ghana Card</div><div className="text-gray-400 text-xs mt-1">JPG or PNG. Must be clear and in focus.</div></div>
+                    )}
+                  </button>
+                </div>
+
+                {/* ID Back */}
+                <div>
+                  <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                    Ghana Card — back <span className="text-red-500">*</span>
+                  </label>
+                  <input ref={idBackRef} type="file" accept="image/*" className="hidden"
+                    onChange={e => handleFileChange(e, 'idBack')} />
+                  <button type="button" onClick={() => idBackRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idBack ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                    {identity.idBack ? (
+                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idBack.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                    ) : (
+                      <div><div className="text-2xl mb-1.5">🪪</div><div className="text-gray-500 font-semibold text-sm">Upload back of Ghana Card</div><div className="text-gray-400 text-xs mt-1">JPG or PNG. Must be clear and in focus.</div></div>
+                    )}
+                  </button>
+                </div>
+
+                {/* Selfie — Standard and Premium only */}
+                {tier.selfie && (
+                  <div>
+                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-2">
+                      Selfie — facial match <span className="text-red-500">*</span>
+                    </label>
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3 text-xs text-amber-700">
+                      <strong>Important:</strong> Take your selfie in good lighting, facing forward. Make sure your face is clearly visible — no sunglasses or hats.
+                    </div>
+                    <input ref={selfieRef} type="file" accept="image/*" capture="user" className="hidden"
+                      onChange={e => handleFileChange(e, 'selfie')} />
+                    <button type="button" onClick={() => selfieRef.current?.click()}
+                      className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.selfie ? 'border-primary bg-primary-light' : 'border-gray-200 hover:border-primary/40 bg-gray-50'}`}>
+                      {identity.selfie ? (
+                        <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-gray-400 text-xs mt-0.5">Click to change</div></div>
+                      ) : (
+                        <div><div className="text-2xl mb-1.5">🤳</div><div className="text-gray-500 font-semibold text-sm">Take or upload a selfie</div><div className="text-gray-400 text-xs mt-1">Face forward, good lighting. Used only for ID matching.</div></div>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 mt-7">
+                <button onClick={() => setStep('tier')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button disabled={!canNextIdentity} onClick={() => setStep('payment')}
+                  className={`flex-[2] py-4 font-nunito font-black rounded-full text-sm transition-all ${canNextIdentity ? 'bg-primary hover:bg-primary-dark text-white hover:-translate-y-0.5 shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}>
+                  Continue to payment →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 4: PAYMENT ── */}
+          {step === 'payment' && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+              <h2 className="font-nunito font-black text-navy text-xl mb-1">Pay verification fee</h2>
+              <p className="text-gray-400 text-sm mb-7">One-time fee. Covers your identity verification and campaign badge.</p>
+
+              {/* Order summary */}
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6">
+                <div className="font-nunito font-black text-navy text-sm mb-4">Order summary</div>
+                <div className="flex flex-col gap-2.5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Campaign</span>
+                    <span className="text-navy font-semibold truncate max-w-[200px]">{campaign.title || 'My campaign'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Verification tier</span>
+                    <span className="text-navy font-semibold">{tier.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Badge</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${tier.badgeColor}`}>{tier.badge}</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-2.5 mt-1 flex justify-between font-nunito font-black">
+                    <span className="text-navy">Total</span>
+                    <span className="text-primary text-lg">{tier.price}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment method */}
+              <div className="mb-6">
+                <div className="text-xs font-bold text-navy uppercase tracking-wider mb-3">Pay with mobile money</div>
+                <div className="grid grid-cols-3 gap-3">
+                  {['MTN MoMo', 'Vodafone Cash', 'AirtelTigo'].map((method, i) => (
+                    <div key={i} className="border-2 border-gray-100 hover:border-primary rounded-xl p-3 text-center cursor-pointer transition-all text-xs font-bold text-gray-500 hover:text-primary hover:bg-primary-light">
+                      {method}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-primary-light border border-primary/15 rounded-xl p-4 mb-6 text-sm text-gray-600">
+                <strong className="text-navy">Note:</strong> After clicking "Pay & Submit", you will receive a MoMo prompt on your phone to confirm the payment of {tier.price}. Once confirmed, your campaign will be submitted for review.
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => setStep('identity')}
+                  className="flex-1 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-nunito font-black rounded-full text-sm transition-all">
+                  ← Back
+                </button>
+                <button onClick={handleSubmit} disabled={submitting}
+                  className="flex-[2] py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 disabled:opacity-60">
+                  {submitting ? 'Submitting...' : `Pay ${tier.price} & Submit →`}
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-300 text-center mt-4">
+                Secure payment · Encrypted · Ghana Data Protection Act compliant
+              </p>
+            </div>
+          )}
+
         </div>
-        <div style={{ position:'sticky', top:130 }}>
-          <StepTip step={step} />
-        </div>
-      </div>
+      </main>
+      <Footer />
     </>
-  )
-}
-
-// ─── STEP 1 ──────────────────────────────────────────────────────────────────
-
-function Step1({ form, set }: { form: FormState; set: SetFn }) {
-  const options = [
-    { id:'myself',       label:'Myself',        desc:"I am the person who needs help",                      emoji:'🙋' },
-    { id:'someone',      label:'Someone else',  desc:"I'm raising on behalf of another person",            emoji:'🤝' },
-    { id:'organisation', label:'Organisation',  desc:'A community, church, school, or group',              emoji:'🏛️' },
-  ]
-  return (
-    <div>
-      <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Who are you raising money for?</h2>
-      <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:22 }}>This determines how your campaign is presented to donors.</p>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:20 }}>
-        {options.map(o => (
-          <div key={o.id} className="opt-card"
-            style={{ border:`1.5px solid ${form.raisingFor===o.id?'#0A6B4B':'#E8E4DC'}`, background:form.raisingFor===o.id?'#E8F5EF':'#fff', borderRadius:12, cursor:'pointer', padding:'16px 12px', textAlign:'center' as const, transition:'all .15s', position:'relative' as const }}
-            onClick={()=>set('raisingFor', o.id)}>
-            {form.raisingFor===o.id && <div style={{ position:'absolute', top:7, right:7, width:20, height:20, borderRadius:'50%', background:'#0A6B4B', color:'#fff', fontSize:11, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center' }}>✓</div>}
-            <div style={{ fontSize:28, marginBottom:8 }}>{o.emoji}</div>
-            <div style={{ fontSize:13, fontWeight:600, color:'#1A1A18', marginBottom:4 }}>{o.label}</div>
-            <div style={{ fontSize:11, color:'#8A8A82', lineHeight:1.4 }}>{o.desc}</div>
-          </div>
-        ))}
-      </div>
-      {(form.raisingFor==='someone'||form.raisingFor==='organisation') && (
-        <div>
-          <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>
-            {form.raisingFor==='someone'?'Their full name':'Organisation name'}
-          </label>
-          <input style={{ width:'100%', padding:'10px 13px', border:'1.5px solid #E8E4DC', borderRadius:9, fontSize:14, color:'#1A1A18', background:'#fff', display:'block' }}
-            type="text" placeholder={form.raisingFor==='someone'?'e.g. Ama Mensah':'e.g. Bethel Assembly'}
-            value={form.beneficiaryName} onChange={e=>set('beneficiaryName', e.target.value)} />
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ─── STEP 2 ──────────────────────────────────────────────────────────────────
-
-function Step2({ form, set }: { form: FormState; set: SetFn }) {
-  return (
-    <div>
-      <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>What category best fits your campaign?</h2>
-      <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:22 }}>Choose the one that matches your cause most closely.</p>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10 }}>
-        {CATEGORIES.map(c => (
-          <div key={c.id+c.label} className="cat-card"
-            style={{ border:`1.5px solid ${form.category===c.id && form.catLabel===c.label?'#0A6B4B':'#E8E4DC'}`, borderRadius:10, cursor:'pointer', overflow:'hidden', position:'relative', transition:'all .15s', background:'#fff' }}
-            onClick={()=>{set('category',c.id);set('catLabel',c.label)}}>
-            {form.category===c.id && form.catLabel===c.label && <div style={{ position:'absolute', top:7, right:7, width:20, height:20, borderRadius:'50%', background:'#0A6B4B', color:'#fff', fontSize:11, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center' }}>✓</div>}
-            <div style={{ height:64, background:'#F5F2EB', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>{c.emoji}</div>
-            <div style={{ fontSize:12, fontWeight:500, color:'#1A1A18', padding:'7px 9px', textAlign:'center' as const }}>{c.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// ─── STEP 3 ──────────────────────────────────────────────────────────────────
-
-function Step3({ form, set }: { form: FormState; set: SetFn }) {
-  return (
-    <div>
-      <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Tell your story</h2>
-      <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:22 }}>Donors give to people, not causes. Be specific, honest, and personal.</p>
-      <div style={{ marginBottom:16 }}>
-        <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>Campaign title</label>
-        <input style={{ width:'100%', padding:'10px 13px', border:'1.5px solid #E8E4DC', borderRadius:9, fontSize:14, color:'#1A1A18', background:'#fff' }}
-          type="text" placeholder='e.g. "Help Ama get life-saving kidney surgery at Korle Bu"'
-          value={form.title} onChange={e=>set('title', e.target.value)} maxLength={100} />
-        <div style={{ fontSize:10, color:'#8A8A82', marginTop:4, textAlign:'right' as const }}>{form.title.length}/100</div>
-      </div>
-      <div>
-        <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>Your story</label>
-        <textarea style={{ width:'100%', padding:'10px 13px', border:'1.5px solid #E8E4DC', borderRadius:9, fontSize:14, color:'#1A1A18', background:'#fff', minHeight:180, resize:'vertical', display:'block' }}
-          placeholder={"Start with the person's name and one specific detail.\n\n\"My mother Ama is 54 years old. She has woken up at 4am every day for thirty years to sell at Makola Market so her children could go to school...\""}
-          value={form.story} onChange={e=>set('story', e.target.value)} maxLength={5000} />
-        <div style={{ fontSize:10, color:'#8A8A82', marginTop:4, textAlign:'right' as const }}>{form.story.length}/5000 · minimum 50 characters</div>
-      </div>
-    </div>
-  )
-}
-
-// ─── STEP 4 ──────────────────────────────────────────────────────────────────
-
-function Step4({ form, onPhoto }: { form: FormState; onPhoto: (f: File | null) => void }) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  return (
-    <div>
-      <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Add a cover photo</h2>
-      <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:22 }}>A real photo of the person raises more than any stock image. Show the face.</p>
-      {form.coverPreview ? (
-        <div style={{ height:220, borderRadius:12, overflow:'hidden', position:'relative' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={form.coverPreview} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} alt="Campaign cover" />
-          <button style={{ position:'absolute', bottom:10, right:10, fontSize:12, fontWeight:600, color:'#fff', background:'rgba(0,0,0,.55)', border:'none', padding:'6px 12px', borderRadius:7, cursor:'pointer' }}
-            onClick={()=>inputRef.current?.click()}>Change photo</button>
-        </div>
-      ) : (
-        <div className="drop-zone" style={{ border:'1.5px dashed #E8E4DC', borderRadius:12, padding:'36px 20px', textAlign:'center' as const, cursor:'pointer', transition:'all .15s' }}
-          onClick={()=>inputRef.current?.click()}>
-          <div style={{ fontSize:36, marginBottom:10 }}>📷</div>
-          <div style={{ fontSize:14, fontWeight:500, color:'#4A4A44', marginBottom:4 }}>Tap to add a photo</div>
-          <div style={{ fontSize:11, color:'#8A8A82' }}>JPEG · PNG · HEIC · Max 10MB</div>
-        </div>
-      )}
-      <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>onPhoto(e.target.files?.[0]??null)} />
-    </div>
-  )
-}
-
-// ─── STEP 5 ──────────────────────────────────────────────────────────────────
-
-function Step5({ form, set, addMilestone, updateMilestone, removeMilestone }: {
-  form: FormState
-  set: SetFn
-  addMilestone: () => void
-  updateMilestone: (id: number, k: keyof Milestone, v: string) => void
-  removeMilestone: (id: number) => void
-}) {
-  const msTotal = form.milestones.reduce((a,m)=>a+(parseFloat(m.amount)||0),0)
-  const goalNum = parseFloat(form.goalAmount)||0
-  const matched = Math.abs(msTotal-goalNum)<1
-  return (
-    <div>
-      <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Set your goal and milestones</h2>
-      <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:22 }}>Campaigns with milestones raise 3× more — donors see exactly where their money goes.</p>
-      <div style={{ marginBottom:20 }}>
-        <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>Fundraising goal (GHS)</label>
-        <div style={{ display:'flex', alignItems:'center', border:'1.5px solid #E8E4DC', borderRadius:9, background:'#fff' }}>
-          <span style={{ fontSize:16, fontWeight:600, color:'#8A8A82', padding:'10px 12px', borderRight:'1px solid #E8E4DC', flexShrink:0 }}>₵</span>
-          <input style={{ flex:1, border:'none', outline:'none', padding:'10px 12px', fontSize:16, fontWeight:600, color:'#1A1A18', background:'transparent' }}
-            type="number" placeholder="e.g. 18000" value={form.goalAmount} onChange={e=>set('goalAmount',e.target.value)} min="1" />
-        </div>
-        <div style={{ fontSize:11, color:'#8A8A82', marginTop:4, lineHeight:1.5 }}>Under ₵20,000 raises 2.5× faster. Be realistic.</div>
-      </div>
-      <div>
-        <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:8 }}>Milestones — when should funds be released?</label>
-        {form.milestones.map((m,i) => (
-          <div key={m.id} style={{ display:'flex', gap:8, alignItems:'center', marginBottom:8 }}>
-            <div style={{ width:24, height:24, borderRadius:'50%', background:'#0A6B4B', color:'#fff', fontSize:11, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{i+1}</div>
-            <input style={{ flex:2, padding:'10px 13px', border:'1.5px solid #E8E4DC', borderRadius:9, fontSize:14, color:'#1A1A18', background:'#fff' }}
-              placeholder={`e.g. ${['Pay hospital deposit','Fund surgery','Post-op care'][i]||'Milestone name'}`}
-              value={m.name} onChange={e=>updateMilestone(m.id,'name',e.target.value)} />
-            <div style={{ display:'flex', alignItems:'center', border:'1.5px solid #E8E4DC', borderRadius:9, background:'#fff', flex:1 }}>
-              <span style={{ fontSize:14, fontWeight:600, color:'#8A8A82', padding:'10px 10px', borderRight:'1px solid #E8E4DC', flexShrink:0 }}>₵</span>
-              <input style={{ flex:1, border:'none', outline:'none', padding:'10px 8px', fontSize:14, fontWeight:600, color:'#1A1A18', background:'transparent', minWidth:0 }}
-                type="number" placeholder="Amount" value={m.amount} onChange={e=>updateMilestone(m.id,'amount',e.target.value)} />
-            </div>
-            {form.milestones.length>1 && (
-              <button style={{ background:'none', border:'none', fontSize:18, color:'#C0392B', cursor:'pointer', padding:'0 4px', lineHeight:1 }} onClick={()=>removeMilestone(m.id)}>×</button>
-            )}
-          </div>
-        ))}
-        {form.milestones.length < 5 && (
-          <button style={{ fontSize:12, fontWeight:600, color:'#0A6B4B', background:'#E8F5EF', border:'none', padding:'8px 14px', borderRadius:7, cursor:'pointer', marginTop:4 }} onClick={addMilestone}>+ Add milestone</button>
-        )}
-        {msTotal>0 && goalNum>0 && (
-          <div style={{ fontSize:11, color:matched?'#0A6B4B':'#B85C00', marginTop:8, lineHeight:1.5 }}>
-            Milestone total: ₵{msTotal.toLocaleString()} {matched?'✓ matches goal':`(goal is ₵${goalNum.toLocaleString()})`}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ─── STEP 6 ──────────────────────────────────────────────────────────────────
-
-function Step6({ form, set }: { form: FormState; set: SetFn }) {
-  return (
-    <div>
-      <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Where should we send the funds?</h2>
-      <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:22 }}>Funds are paid out to your MoMo wallet when each milestone is approved.</p>
-      <div style={{ marginBottom:16 }}>
-        <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:8 }}>Select your MoMo network</label>
-        <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-          {NETWORKS.map(n => (
-            <button key={n.id}
-              style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 13px', border:`1.5px solid ${form.network===n.id?'#0A6B4B':'#E8E4DC'}`, borderRadius:9, background:'#fff', cursor:'pointer', width:'100%', boxShadow:form.network===n.id?'0 0 0 2px rgba(10,107,75,.12)':'none', transition:'all .15s' }}
-              onClick={()=>set('network',n.id)}>
-              <div style={{ width:14, height:14, borderRadius:'50%', background:n.color, flexShrink:0 }} />
-              <span style={{ flex:1, fontSize:14, fontWeight:500, textAlign:'left' as const }}>{n.label}</span>
-              {form.network===n.id && <span style={{ color:'#0A6B4B', fontWeight:700 }}>✓</span>}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div style={{ marginBottom:16 }}>
-        <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>Your MoMo number</label>
-        <div style={{ display:'flex', alignItems:'center', border:'1.5px solid #E8E4DC', borderRadius:9, background:'#fff', overflow:'hidden' }}>
-          <span style={{ fontSize:12, color:'#8A8A82', padding:'10px 12px', borderRight:'1px solid #E8E4DC', flexShrink:0 }}>+233</span>
-          <input style={{ flex:1, border:'none', outline:'none', padding:'10px 12px', fontSize:14, color:'#1A1A18', background:'transparent' }}
-            type="tel" placeholder="024 123 4567" value={form.momoNumber} onChange={e=>set('momoNumber',e.target.value)} />
-        </div>
-      </div>
-      <div>
-        <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>Name on your MoMo account</label>
-        <input style={{ width:'100%', padding:'10px 13px', border:'1.5px solid #E8E4DC', borderRadius:9, fontSize:14, color:'#1A1A18', background:'#fff' }}
-          type="text" placeholder="As registered with your network" value={form.momoName} onChange={e=>set('momoName',e.target.value)} />
-        <div style={{ fontSize:11, color:'#8A8A82', marginTop:4, lineHeight:1.5 }}>This must match your Ghana Card — payouts are verified before release.</div>
-      </div>
-    </div>
-  )
-}
-
-// ─── STEP 7 ──────────────────────────────────────────────────────────────────
-
-function Step7({ form, set, submitting, onSubmit }: { form: FormState; set: SetFn; submitting: boolean; onSubmit: () => void }) {
-  const net = NETWORKS.find(n=>n.id===form.network)
-  const rows: [string, string][] = [
-    ['Goal', `₵${parseFloat(form.goalAmount||'0').toLocaleString()}`],
-    ['Milestones', `${form.milestones.length} milestone${form.milestones.length>1?'s':''}`],
-    ['Payout', `${net?.label??''} · ${form.momoNumber}`],
-    ['Raising for', form.raisingFor==='myself'?'Myself':form.beneficiaryName],
-  ]
-  return (
-    <div>
-      <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:24, color:'#1A1A18', marginBottom:6 }}>Review your campaign</h2>
-      <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:22 }}>Check everything before submitting. Our team reviews your Ghana Card within 24 hours.</p>
-      <div style={{ background:'#fff', border:'1px solid #E8E4DC', borderRadius:12, overflow:'hidden', marginBottom:16 }}>
-        {form.coverPreview && (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={form.coverPreview} style={{ width:'100%', height:160, objectFit:'cover', display:'block' }} alt="" />
-        )}
-        <div style={{ padding:'14px 16px' }}>
-          <div style={{ fontSize:10, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:'#0A6B4B', marginBottom:4 }}>{form.catLabel||form.category}</div>
-          <div style={{ fontSize:16, fontWeight:700, color:'#1A1A18', marginBottom:8, lineHeight:1.35 }}>{form.title}</div>
-          <div style={{ fontSize:13, color:'#4A4A44', lineHeight:1.7, marginBottom:12 }}>{form.story.slice(0,200)}{form.story.length>200?'…':''}</div>
-          {rows.map(([l,v],i) => (
-            <div key={i} style={{ display:'flex', justifyContent:'space-between', paddingBottom:8, marginBottom:8, borderBottom:i<3?'1px solid #E8E4DC':'none' }}>
-              <span style={{ fontSize:12, color:'#8A8A82' }}>{l}</span>
-              <span style={{ fontSize:12, fontWeight:600, color:'#1A1A18' }}>{v}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ display:'flex', gap:10, alignItems:'flex-start', marginBottom:16 }}>
-        <input type="checkbox" id="terms" checked={form.agreedToTerms} onChange={e=>set('agreedToTerms',e.target.checked)} style={{ marginTop:2, accentColor:'#0A6B4B' }} />
-        <label htmlFor="terms" style={{ fontSize:13, color:'#4A4A44', lineHeight:1.55, cursor:'pointer' }}>
-          I confirm all information is truthful and I agree to the <Link href="/terms" style={{ color:'#0A6B4B', fontWeight:600 }}>Terms of Service</Link>. I understand my Ghana Card will be reviewed before my campaign goes live.
-        </label>
-      </div>
-      <button style={{ width:'100%', padding:13, background:'#0A6B4B', color:'#fff', border:'none', borderRadius:9, fontSize:14, fontWeight:700, cursor:'pointer', opacity:form.agreedToTerms&&!submitting?1:.45 }}
-        disabled={!form.agreedToTerms||submitting} onClick={onSubmit}>
-        {submitting ? 'Submitting…' : 'Submit campaign for review →'}
-      </button>
-    </div>
-  )
-}
-
-// ─── STEP TIP ─────────────────────────────────────────────────────────────────
-
-function StepTip({ step }: { step: number }) {
-  const tips: Record<number, { title: string; body: string; extra?: JSX.Element }> = {
-    1: { title:'Why this matters', body:"Donors respond more to campaigns where they can see a specific person. 'Help Ama' outperforms 'Help a family' every time." },
-    2: { title:'Category affects discovery', body:"Donors browsing by category will find your campaign. Choose the closest match — you can change it before going live." },
-    3: { title:'What makes a strong story', body:"Lead with the person's name and one specific detail. State the exact problem, the cost, and the deadline. Specific numbers build trust.",
-      extra: (
-        <div style={{ background:'#F5F4F0', borderRadius:8, padding:12, marginTop:12 }}>
-          <div style={{ fontSize:10, fontWeight:700, color:'#8A8A82', textTransform:'uppercase', letterSpacing:'.06em', marginBottom:6 }}>Example opening</div>
-          <div style={{ fontSize:12, color:'#4A4A44', lineHeight:1.7, fontStyle:'italic' }}>"My mother Ama is 54 years old. She has woken up at 4am every day for thirty years to sell at Makola so her children could go to school. Last month she collapsed and was diagnosed with kidney disease…"</div>
-        </div>
-      )
-    },
-    4: { title:'Photos that raise more', body:"A real photo of the person — not a stock image. Show their face. A phone photo taken today outperforms a polished image from three months ago." },
-    5: { title:'Why milestones work', body:"Campaigns with milestones raise 3× more. Donors give more when they can see exactly what their money does. Set milestones that match real expenses." },
-    6: { title:'MoMo payout is instant', body:"When our team approves your milestone proof, funds land on your MoMo wallet same day. No bank account needed. No waiting." },
-    7: { title:'What happens next', body:"Submit → our team reviews your Ghana Card (24hrs) → campaign goes live → you get an SMS. Share your link within 24 hours for best results.",
-      extra: (
-        <div style={{ textAlign:'center', marginTop:16, padding:'12px 0', borderTop:'1px solid #E8E4DC' }}>
-          <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:32, color:'#0A6B4B', lineHeight:1 }}>3×</div>
-          <div style={{ fontSize:12, color:'#4A4A44', marginTop:6, lineHeight:1.5 }}>more raised by campaigns shared within 48 hours of going live</div>
-        </div>
-      )
-    },
-  }
-  const t = tips[step]
-  return (
-    <div style={{ background:'#fff', border:'1px solid #E8E4DC', borderRadius:12, padding:'18px 16px' }}>
-      <div style={{ fontSize:12, fontWeight:700, color:'#1A1A18', marginBottom:8 }}>{t?.title}</div>
-      <div style={{ fontSize:12, color:'#4A4A44', lineHeight:1.7 }}>{t?.body}</div>
-      {t?.extra}
-    </div>
-  )
-}
-
-// ─── SUCCESS SCREEN ──────────────────────────────────────────────────────────
-
-function SuccessScreen({ form }: { form: FormState }) {
-  return (
-    <div style={{ minHeight:'100vh', background:'#FDFAF5', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'DM Sans',sans-serif" }}>
-      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap'); *{box-sizing:border-box;margin:0;padding:0} a{text-decoration:none;color:inherit}` }} />
-      <div style={{ maxWidth:480, textAlign:'center' }}>
-        <div style={{ width:64, height:64, borderRadius:'50%', background:'#E8F5EF', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#0A6B4B" strokeWidth="2.5" strokeLinecap="round"/></svg>
-        </div>
-        <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:28, color:'#1A1A18', marginBottom:10 }}>Campaign submitted</h2>
-        <p style={{ fontSize:14, color:'#4A4A44', lineHeight:1.75, marginBottom:28 }}>
-          <strong>&#34;{form.title}&#34;</strong> has been submitted for review. Our team will review your Ghana Card within 24 hours and notify you by SMS when your campaign goes live.
-        </p>
-        <Link href="/verify" style={{ display:'block', padding:13, background:'#0A6B4B', color:'#fff', borderRadius:10, fontSize:14, fontWeight:700, marginBottom:10 }}>Verify your identity →</Link>
-        <Link href="/dashboard" style={{ fontSize:13, color:'#0A6B4B', fontWeight:500 }}>Go to dashboard</Link>
-      </div>
-    </div>
   )
 }

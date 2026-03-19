@@ -62,13 +62,18 @@ EveryGiving reserves the right to remove any campaign and suspend any account th
   {
     id: 'fees',
     title: '6. Fees & Transaction Charges',
-    content: `EveryGiving charges a transaction fee of 2% + GH₵0.25 per donation received. This fee is automatically deducted from each donation before the net amount is credited to the fundraiser.
+    content: `EveryGiving does not take a cut of funds raised for causes. We charge a service fee of 2.9% + GHS 0.50 per donation to cover secure payment processing and platform operations.
 
-There is no platform fee. Creating a campaign is always free.
+Creating a campaign is always free.
 
-Verification fees (GH₵50 for Standard, GH₵100 for Premium, GH₵200 for Gold, GH₵500 for Diamond) are one-time charges per campaign. Basic verification is free. All verification fees are non-refundable.
+Optional donor tips help support EveryGiving sustainability and growth.
 
-If you choose to defer your verification fee, it will be automatically deducted from your first donations received once your campaign is live.`,
+Verification fees are:
+* Basic Verification: Free
+* Standard Verification: GHS 50 (one-time, non-refundable)
+* Premium Verification: Coming soon
+
+All verification fees are one-time charges per campaign and are non-refundable.`,
   },
   {
     id: 'payouts',

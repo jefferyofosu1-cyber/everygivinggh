@@ -142,11 +142,11 @@ export async function middleware(request: NextRequest) {
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
   const scriptSrc = isDev
-    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com"
-    : "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://js.paystack.co"
+    : "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://js.paystack.co"
   const connectSrc = isDev
-    ? "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com https://cdn.sanity.io ws://localhost:3000 wss://localhost:3000 http://localhost:3000"
-    : "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com https://cdn.sanity.io"
+    ? "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com https://cdn.sanity.io https://api.paystack.co https://checkout.paystack.com ws://localhost:3000 wss://localhost:3000 http://localhost:3000"
+    : "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.brevo.com https://api.hubtel.com https://cdn.sanity.io https://api.paystack.co https://checkout.paystack.com"
   headers.set(
     'Content-Security-Policy',
     [
@@ -156,6 +156,7 @@ export async function middleware(request: NextRequest) {
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://cdn.sanity.io",
       connectSrc,
+      "frame-src 'self' https://checkout.paystack.com",
       "frame-ancestors 'none'",
     ].join('; ')
   )

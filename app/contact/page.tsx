@@ -41,8 +41,6 @@ export default function ContactPage() {
 
         {/* ── HEADER ── */}
         <section className="bg-navy relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.1), transparent 65%)', transform: 'translate(30%, -30%)' }} />
           <div className="relative max-w-4xl mx-auto px-5 py-16 md:py-20">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-full mb-6 tracking-widest uppercase">
               Get in touch

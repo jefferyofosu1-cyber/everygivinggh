@@ -46,7 +46,11 @@ export async function POST(req: NextRequest) {
     const donorEmail = str(body.donor_email, 254)
     const message    = str(body.message,     300)
 
-    if (donorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
+    if (!donorEmail) {
+      return NextResponse.json({ error: 'Email address is required.' }, { status: 400 })
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
       return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 })
     }
 
@@ -61,21 +65,36 @@ export async function POST(req: NextRequest) {
     if (campErr || !campaign) {
       return NextResponse.json({ error: 'Campaign not found.' }, { status: 404 })
     }
-    if (campaign.status !== 'approved') {
+    if (campaign.status !== 'approved' && campaign.status !== 'live') {
       return NextResponse.json({ error: 'This campaign is not currently accepting donations.' }, { status: 403 })
     }
 
+    // Calculate financial breakdown for payment processing
+    const amountPaid = amount + tipAmount
+    const platformFee = (amount * 0.029) + 0.50
+    const paystackFee = amountPaid * 0.0195
+    const netReceived = amountPaid - paystackFee
+    const campaignAmount = amount - platformFee
+    const everygivingRevenue = platformFee - paystackFee + tipAmount
+
+    // Insert donation with all financial tracking fields
     const { data: donation, error: insertErr } = await supabase
       .from('donations')
       .insert({
-        campaign_id:    campaignId,
-        donor_name:     donorName,
-        donor_email:    donorEmail || null,
-        amount,
-        tip_amount:     tipAmount,
-        message:        message || null,
-        payment_method: method,
-        status:         'pending',
+        campaign_id:         campaignId,
+        donor_name:          donorName,
+        donor_email:         donorEmail,
+        amount:              amount,
+        tip_amount:          tipAmount,
+        amount_paid:         amountPaid,
+        platform_fee:        platformFee,
+        paystack_fee:        paystackFee,
+        net_received:        netReceived,
+        campaign_amount:     campaignAmount,
+        everygiving_revenue: everygivingRevenue,
+        message:             message || null,
+        payment_method:      method,
+        status:              'pending',
       })
       .select('id')
       .single()
@@ -85,8 +104,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not process donation. Please try again.' }, { status: 500 })
     }
 
-    // Hubtel MoMo prompt will be triggered here once integrated
-    return NextResponse.json({ success: true, donationId: donation.id })
+    // Return donation ID and payment details for Paystack integration
+    return NextResponse.json({ 
+      success: true, 
+      donationId: donation.id,
+      amount: amount,
+      tip_amount: tipAmount,
+      total: amount + tipAmount,
+      donor_email: donorEmail,
+      donor_name: donorName,
+      campaign_id: campaignId
+    })
 
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unexpected error.'

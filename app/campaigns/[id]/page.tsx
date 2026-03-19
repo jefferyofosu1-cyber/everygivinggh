@@ -1,297 +1,180 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Metadata } from 'next'
+import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { createClient } from '@/lib/supabase'
-import toast from 'react-hot-toast'
-import type { Campaign, Donation } from '@/types'
+import DonationForm from '@/components/campaigns/DonationForm'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
+import type { Campaign } from '@/types'
 
-const CAT_DATA: Record<string, {abbr:string;color:string;bg:string}> = {
-  medical:   { abbr: 'MED', color: '#0A6B4B', bg: '#E1F5EE' },
-  education: { abbr: 'EDU', color: '#B85C00', bg: '#FEF3E2' },
-  emergency: { abbr: 'EMR', color: '#A32D2D', bg: '#FCEBEB' },
-  faith:     { abbr: 'RLG', color: '#185FA5', bg: '#E6F1FB' },
-  community: { abbr: 'COM', color: '#1A5276', bg: '#EBF5FB' },
-  funeral:   { abbr: 'FNL', color: '#534AB7', bg: '#EEEDFE' },
-  family:    { abbr: 'FAM', color: '#117A65', bg: '#E8F8F5' },
-  other:     { abbr: 'OTH', color: '#424949', bg: '#F2F3F4' },
+export const dynamic = 'force-dynamic'
+
+const EMOJI: Record<string, string> = {
+  medical: '🏥', emergency: '🆘', education: '🎓', charity: '🤲', faith: '⛪',
+  community: '🏘', environment: '🌿', business: '💼', family: '👨‍👩',
+  sports: '⚽', events: '🎉', wishes: '🌟', competition: '🏆', travel: '✈️', volunteer: '🙌',
 }
 
-export default function CampaignPage() {
-  const { id } = useParams()
-  const router = useRouter()
-  const supabase = createClient()
-  const [campaign, setCampaign] = useState<Campaign | null>(null)
-  const [donations, setDonations] = useState<Donation[]>([])
-  const [loading, setLoading] = useState(true)
-  const [donating, setDonating] = useState(false)
-  const [amount, setAmount] = useState(100)
-  const [customAmount, setCustomAmount] = useState('')
-  const [donorName, setDonorName] = useState('')
-  const [message, setMessage] = useState('')
-  const [showModal, setShowModal] = useState(false)
+async function getCampaign(id: string) {
+  const supabase = await createServerSupabaseClient()
+  const { data, error } = await supabase
+    .from('campaigns')
+    .select('*, profiles(full_name, phone)')
+    .eq('id', id)
+    .single()
+    
+  if (error || !data) return null
+  return data as Campaign
+}
 
-  useEffect(() => {
-    fetchCampaign()
-  }, [id])
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const campaign = await getCampaign(params.id)
+  if (!campaign) return { title: 'Campaign Not Found | EveryGiving' }
 
-  const fetchCampaign = async () => {
-    // 1. Fetch by slug
-    const { data: c } = await supabase
-      .from('campaigns')
-      .select('*, profiles(full_name, phone)')
-      .eq('slug', id)
-      .single()
-      
-    if (!c) {
-      // 2. Fallback to ID if slug misses
-      const { data: cById } = await supabase
-        .from('campaigns')
-        .select('*, profiles(full_name, phone)')
-        .eq('id', id)
-        .single()
-        
-      if (!cById) {
-        setLoading(false)
-        return
-      }
-      
-      const { data: d } = await supabase.from('donations').select('*').eq('campaign_id', cById.id).eq('status', 'success').order('created_at', { ascending: false }).limit(10)
-      setCampaign(cById)
-      setDonations(d || [])
-      setLoading(false)
-      return
+  return {
+    title: `${campaign.title} | EveryGiving`,
+    description: campaign.story?.substring(0, 160),
+    openGraph: {
+      title: campaign.title,
+      description: campaign.story?.substring(0, 160),
+      images: campaign.image_url ? [{ url: campaign.image_url }] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: campaign.title,
+      description: campaign.story?.substring(0, 160),
+      images: campaign.image_url ? [campaign.image_url] : [],
     }
+  }
+}
 
-    const { data: d } = await supabase.from('donations').select('*').eq('campaign_id', c.id).eq('status', 'success').order('created_at', { ascending: false }).limit(10)
-    setCampaign(c)
-    setDonations(d || [])
-    setLoading(false)
+export default async function CampaignPage({ params }: { params: { id: string } }) {
+  const campaign = await getCampaign(params.id)
+
+  if (!campaign) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-5">
+          <div className="text-6xl mb-4">🔦</div>
+          <h1 className="font-nunito font-black text-navy text-2xl mb-2">Campaign not found</h1>
+          <p className="text-gray-500 mb-6 text-center">The campaign you are looking for might have been closed or moved.</p>
+          <Link href="/campaigns" className="bg-primary text-white font-bold px-6 py-3 rounded-full">Explore other campaigns</Link>
+        </div>
+        <Footer />
+      </>
+    )
   }
 
-  // Fee: 2.5% + GHS 0.50 per donation (deducted from amount before campaign receives it)
-  const calcFee = (amt: number) => parseFloat((amt * 0.025 + 0.50).toFixed(2))
-  const calcNet  = (amt: number) => parseFloat((amt - calcFee(amt)).toFixed(2))
-
-  const handleDonate = async () => {
-    const finalAmount = customAmount ? parseInt(customAmount) : amount
-    if (!donorName) { toast.error('Please enter your name'); return }
-    if (finalAmount < 1) { toast.error('Please enter a valid amount'); return }
-    setDonating(true)
-
-    const fee = calcFee(finalAmount)
-    const netAmount = calcNet(finalAmount)
-
-    // Call api to initialize donation securely
-    const res = await fetch('/api/donate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        campaign_id: id,
-        amount: finalAmount,
-        donor_name: donorName,
-        donor_email: `${donorName.replace(/\s/g, '').toLowerCase()}@everygiving.com`,
-        message,
-        payment_method: 'paystack'
-      })
-    })
-
-    if (!res.ok) {
-      const err = await res.json()
-      toast.error(err.error || 'Failed to initialize donation')
-      setDonating(false)
-      return
-    }
-
-    const { donationId } = await res.json()
-
-    const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY
-    if (!paystackKey || paystackKey.includes('REPLACE')) {
-      // Demo mode — mark as success (only for local dev without paystack key)
-      toast.success(`₵${finalAmount} donated! Thank you ${donorName} 🎉 (Demo)`)
-      setShowModal(false)
-    } else {
-      const handler = (window as any).PaystackPop.setup({
-        key: paystackKey,
-        email: `${donorName.replace(/\s/g, '').toLowerCase()}@everygiving.com`,
-        amount: finalAmount * 100,
-        currency: 'GHS',
-        ref: donationId,
-        onClose: () => { toast.error('Payment cancelled'); setDonating(false) },
-        callback: async (response: any) => {
-          toast.success(`Processing donation... Thank you ${donorName} 🎉`)
-          setShowModal(false)
-          // Webhook handles the database update, just refetch
-          setTimeout(() => fetchCampaign(), 2500)
-        }
-      })
-      handler.openIframe()
-    }
-    setDonating(false)
-  }
-
-  if (loading) return (
-    <>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4 animate-bounce">💚</div>
-          <p className="text-gray-400 text-sm">Loading campaign...</p>
-        </div>
-      </div>
-    </>
-  )
-
-  if (!campaign) return (
-    <>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">😔</div>
-          <h2 className="font-nunito font-black text-navy text-xl mb-2">Campaign not found</h2>
-          <a href="/campaigns" className="text-primary font-bold text-sm">Browse all campaigns →</a>
-        </div>
-      </div>
-    </>
-  )
-
-  const pct = Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100)
-  const catInfo = CAT_DATA[campaign.category] || CAT_DATA.other
-  const isFunded = campaign.raised_amount >= campaign.goal_amount
-  const quickAmounts = [50, 100, 200, 500, 1000]
+  const pct = campaign.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
+  const emoji = campaign.category ? EMOJI[campaign.category.toLowerCase()] || '💚' : '💚'
+  const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/campaigns/${campaign.id}`
+  const shareText = `Help support "${campaign.title}" on EveryGiving 💚`
 
   return (
     <>
-      <main className="max-w-6xl mx-auto px-5 py-10">
-        <div className="grid md:grid-cols-3 gap-8">
+      <Navbar />
+      <main className="bg-gray-50 min-h-screen">
+        <div className="max-w-6xl mx-auto px-5 py-10">
+          <Link href="/campaigns" className="text-gray-400 text-sm hover:text-primary transition-colors mb-6 inline-flex items-center gap-1.5 font-bold">
+            <span className="text-lg">←</span> Back to campaigns
+          </Link>
 
-          {/* LEFT */}
-          <div className="md:col-span-2">
-            {/* Hero image */}
-            <div style={{ background: catInfo.color }} className=" rounded-2xl h-64 flex items-center justify-center text-7xl mb-6 relative overflow-hidden">
-              {campaign.cover_image ? (
-                <img src={campaign.cover_image} alt={campaign.title} className="w-full h-full object-cover absolute inset-0" />
-              ) : <span style={{ fontSize: 64, fontWeight: 700, color: 'rgba(255,255,255,0.7)', position: 'relative', zIndex: 1 }}>{catInfo.abbr}</span>}
-              {campaign.verified && (
-                <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
-                  ✓ Verified Campaign
+          <div className="grid md:grid-cols-12 gap-8 items-start">
+            {/* ── LEFT: campaign details ── */}
+            <div className="md:col-span-8">
+              {/* Campaign image / emoji */}
+              <div className="aspect-video bg-gradient-to-br from-primary-light via-white to-blue-50 rounded-3xl flex items-center justify-center text-8xl mb-8 border border-gray-100 shadow-sm relative overflow-hidden">
+                {campaign.image_url ? (
+                  <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover" />
+                ) : (
+                  <span>{emoji}</span>
+                )}
+                {campaign.verified && (
+                  <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-1.5 shadow-lg shadow-primary/20">
+                    <span className="text-base text-white">✓</span> Verified
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xs font-black uppercase tracking-widest text-primary bg-primary-light px-4 py-1.5 rounded-full">{campaign.category}</span>
+                  {campaign.verified && <span className="text-xs font-bold text-primary flex items-center gap-1">Identity verified</span>}
                 </div>
-              )}
+                <h1 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-6 leading-tight select-none">
+                  {campaign.title}
+                </h1>
+                
+                <div className="flex items-center gap-3 mb-8 pb-8 border-b border-gray-100">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl">👤</div>
+                  <div>
+                    <div className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Campaign Organiser</div>
+                    <div className="font-nunito font-black text-navy">{campaign.profiles?.full_name || 'Anonymous'}</div>
+                  </div>
+                </div>
+
+                <div className="prose prose-slate max-w-none">
+                  <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">{campaign.story}</p>
+                </div>
+              </div>
+
+              {/* Share */}
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+                <div className="font-nunito font-black text-navy text-xl mb-6">Spread the word</div>
+                <div className="grid grid-cols-2 gap-4">
+                  <a 
+                    href={`https://wa.me/?text=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 py-4 bg-[#25D366] text-white font-black rounded-2xl text-sm hover:-translate-y-1 transition-all shadow-lg shadow-[#25D366]/20"
+                  >
+                    WhatsApp
+                  </a>
+                  <button 
+                    onClick={() => { /* This will actually need to be a small client component or inline JS if we want it in a server component */ }}
+                    className="py-4 border-2 border-gray-100 hover:border-primary hover:text-primary text-gray-600 font-black rounded-2xl text-sm transition-all"
+                  >
+                    Copy link
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <h1 className="font-nunito font-black text-navy text-2xl leading-tight mb-2">{campaign.title}</h1>
-            <p className="text-sm text-gray-400 mb-6 flex items-center gap-2">
-              <span>👤 {campaign.profiles?.full_name}</span>
-              <span>·</span>
-              <span>📍 {campaign.location || 'Ghana'}</span>
-              <span>·</span>
-              <span className="capitalize">{campaign.category}</span>
-            </p>
-
-            {/* Story */}
-            <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap mb-8">
-              {campaign.story || 'No story provided yet.'}
-            </div>
-
-            {/* Donors */}
-            {donations.length > 0 && (
-              <div>
-                <h3 className="font-nunito font-black text-navy text-lg mb-4">💚 Recent donors ({donations.length})</h3>
-                <div className="flex flex-col gap-3">
-                  {donations.map(d => (
-                    <div key={d.id} className="flex justify-between items-start p-3 bg-gray-50 rounded-xl">
-                      <div>
-                        <div className="font-bold text-sm text-navy">{d.donor_name}</div>
-                        {d.message && <div className="text-xs text-gray-400 mt-0.5 italic">"{d.message}"</div>}
-                        <div className="text-xs text-gray-300 mt-1">{new Date(d.created_at).toLocaleDateString()}</div>
-                      </div>
-                      <div className="font-nunito font-black text-primary text-sm">₵{d.amount.toLocaleString()}</div>
-                    </div>
-                  ))}
+            {/* ── RIGHT: progress + donate ── */}
+            <div className="md:col-span-4 sticky top-10">
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
+                {/* Progress */}
+                <div className="mb-8">
+                  <div className="flex items-baseline gap-1.5 mb-1">
+                    <span className="font-nunito font-black text-primary text-4xl">₵{campaign.raised_amount.toLocaleString()}</span>
+                    <span className="text-gray-400 text-sm font-bold">raised</span>
+                  </div>
+                  <div className="text-gray-400 text-sm mb-4 font-medium italic">Target goal: ₵{campaign.goal_amount.toLocaleString()}</div>
+                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2 shadow-inner">
+                    <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-1000" style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-primary font-black">{pct}% funded</span>
+                    <span className="text-gray-400 font-bold">{campaign.donations?.length || 0} donations</span>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
 
-          {/* RIGHT — sticky donation card */}
-          <div className="md:col-span-1">
-            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm sticky top-20">
-              <div className="font-nunito font-black text-2xl text-navy mb-0.5">₵{campaign.raised_amount.toLocaleString()}</div>
-              <div className="text-sm text-gray-400 mb-3">raised of ₵{campaign.goal_amount.toLocaleString()} goal</div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-3">
-                <div className="h-full bg-gradient-to-r from-primary-dark to-primary rounded-full transition-all" style={{ width: `${pct}%` }} />
-              </div>
-              <div className="flex justify-between text-xs text-gray-400 mb-5">
-                <span><strong className="text-navy">{donations.length}</strong> donors</span>
-                <span><strong className="text-primary">{pct}%</strong> funded</span>
+                <DonationForm campaign={campaign} />
               </div>
 
-              <button onClick={() => setShowModal(true)}
-                className="w-full bg-primary hover:bg-primary-dark text-white font-nunito font-black py-3.5 rounded-xl transition-all hover:-translate-y-px shadow hover:shadow-lg text-sm mb-3">
-                💚 Donate now
-              </button>
-
-              <button onClick={() => { void (navigator.share?.({ url: window.location.href, title: campaign.title }) ?? navigator.clipboard.writeText(window.location.href).then(() => toast.success('Link copied!'))) }}
-                className="w-full border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold py-3 rounded-xl transition-all text-sm">
-                🔗 Share campaign
-              </button>
-
-              {campaign.verified && (
-                <div className="mt-4 bg-primary-light border border-primary/20 rounded-xl p-3 text-xs text-primary-dark">
-                  <strong>✓ Verified campaign</strong><br />
-                  Identity and documents confirmed by Every Giving team.
-                </div>
-              )}
+              <div className="bg-navy rounded-3xl p-8 text-white">
+                <div className="text-2xl mb-4">🛡️</div>
+                <h3 className="font-nunito font-black text-lg mb-2">Our Safety Policy</h3>
+                <p className="text-white/60 text-xs leading-relaxed mb-6">
+                  EveryGiving identity-verifies fundraisers using the Ghana Card. We use industry-standard encryption to protect your data and payments.
+                </p>
+                <Link href="/trust" className="text-primary text-xs font-black hover:underline uppercase tracking-widest">Learn more →</Link>
+              </div>
             </div>
           </div>
         </div>
       </main>
-
-      {/* DONATION MODAL */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-4" onClick={e => { if (e.target === e.currentTarget) setShowModal(false) }}>
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <div className="flex justify-between items-center mb-5">
-              <h3 className="font-nunito font-black text-navy text-lg">Make a donation</h3>
-              <button onClick={() => setShowModal(false)} className="w-8 h-8 bg-gray-100 rounded-lg text-gray-500 hover:bg-gray-200 transition-colors">✕</button>
-            </div>
-
-            <div className="mb-4">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Choose amount (₵)</label>
-              <div className="grid grid-cols-3 gap-2 mb-2">
-                {quickAmounts.map(a => (
-                  <button key={a} onClick={() => { setAmount(a); setCustomAmount('') }}
-                    className={`py-2.5 rounded-xl font-bold text-sm transition-all ${amount === a && !customAmount ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
-                    ₵{a}
-                  </button>
-                ))}
-                <input type="number" placeholder="Other" value={customAmount} onChange={e => setCustomAmount(e.target.value)}
-                  className="col-span-3 bg-gray-50 border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-2.5 text-sm outline-none transition-colors text-center font-bold" />
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Your name</label>
-              <input type="text" value={donorName} onChange={e => setDonorName(e.target.value)} placeholder="Kwame Mensah"
-                className="w-full bg-gray-50 border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
-            </div>
-
-            <div className="mb-5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Message (optional)</label>
-              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Leave a word of encouragement..."
-                className="w-full bg-gray-50 border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors resize-none h-20" />
-            </div>
-
-            <button onClick={handleDonate} disabled={donating}
-              className="w-full bg-primary hover:bg-primary-dark text-white font-nunito font-black py-4 rounded-xl transition-all disabled:opacity-60 text-sm shadow hover:shadow-lg">
-              {donating ? 'Processing...' : `Donate ₵${customAmount || amount} via MoMo / Card`}
-            </button>
-
-            <p className="text-xs text-gray-400 text-center mt-3">🔒 Secured by Paystack · MTN MoMo · Vodafone · Card</p>
-          </div>
-        </div>
-      )}
-
-      {/* Paystack script */}
-      <script src="https://js.paystack.co/v1/inline.js" async />
       <Footer />
     </>
   )

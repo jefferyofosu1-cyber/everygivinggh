@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 
 const EMOJI: Record<string, string> = {
   medical: 'MD', emergency: 'EM', education: 'ED', charity: 'CH', faith: 'FA',
@@ -31,7 +32,7 @@ function CampaignCard({ c }: { c: any }) {
       </div>
       <div className="p-5">
         <div className="font-nunito font-black text-navy text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">{c.title}</div>
-        <div className="text-gray-400 text-xs mb-3">{c.profiles?.full_name || 'Anonymous'}</div>
+        <div className="text-gray-400 text-xs mb-3">Campaign</div>
         <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1.5">
           <div className="h-full bg-primary rounded-full" style={{ width: `${pct}%` }} />
         </div>
@@ -45,29 +46,40 @@ function CampaignCard({ c }: { c: any }) {
 }
 
 export default function DonatePage() {
-  const [campaigns, setCampaigns] = useState<any[]>([])
+  const [allCampaigns, setAllCampaigns] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
 
   useEffect(() => {
-    const supabase = createClient()
-    let q = supabase.from('campaigns').select('*, profiles(full_name)').eq('status', 'approved').order('created_at', { ascending: false }).limit(9)
-    if (activeCategory) {
-      q = supabase.from('campaigns').select('*, profiles(full_name)').eq('status', 'approved').ilike('category', activeCategory).limit(9)
+    async function loadCampaigns() {
+      try {
+        const res = await fetch('/api/campaigns', { cache: 'no-store' })
+        const json = await res.json()
+        setAllCampaigns(json.campaigns || [])
+      } catch (err) {
+        console.error('Failed to load campaigns:', err)
+        setAllCampaigns([])
+      } finally {
+        setLoading(false)
+      }
     }
-    q.then(({ data }) => { setCampaigns(data || []); setLoading(false) })
-  }, [activeCategory])
+    loadCampaigns()
+  }, [])
+
+  const campaigns = allCampaigns
+    .filter(c => !activeCategory || c.category?.toLowerCase() === activeCategory.toLowerCase())
+    .slice(0, 9)
 
   return (
     <>
+      <Navbar />
       <main>
         {/* Hero  -  emotional, donation-focused */}
-        <section className="bg-gradient-to-br from-navy via-navy to-[#0d2035] py-20 px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        <section className="bg-navy relative overflow-hidden py-24">
           <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative max-w-3xl mx-auto text-center">
+          <div className="relative max-w-4xl mx-auto px-5 text-center text-white">
             <div className="text-5xl mb-5"></div>
-            <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-4" style={{ letterSpacing: -1 }}>
+            <h1 className="font-nunito font-black text-4xl md:text-5xl tracking-tight mb-4" style={{ letterSpacing: -1 }}>
               Give with <span className="text-primary">confidence</span>
             </h1>
             <p className="text-white/50 text-base mb-8 max-w-xl mx-auto leading-relaxed">
@@ -136,6 +148,7 @@ export default function DonatePage() {
           </div>
         </section>
       </main>
+      <Footer />
     </>
   )
 }

@@ -1,58 +1,108 @@
 'use client'
-
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
-import { AuthLayout, Field, Input, PrimaryBtn } from '@/components/auth/shared'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
 
-  async function handleSubmit() {
-    if (!email.includes('@')) { setError('Enter a valid email address'); return }
-    setLoading(true); setError('')
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
     const supabase = createClient()
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     })
-    setLoading(false)
-    if (resetError) { setError(resetError.message); return }
+    if (resetError) {
+      setError(resetError.message)
+      setLoading(false)
+      return
+    }
     setSent(true)
+    setLoading(false)
+  }
+
+  if (sent) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5 py-12">
+        <div className="w-full max-w-md text-center">
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-block font-nunito font-black text-3xl tracking-tight text-navy">
+              <span className="text-primary">Every</span>Giving
+            </Link>
+          </div>
+          <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50">
+            <div className="text-5xl mb-6">📩</div>
+            <h1 className="font-nunito font-black text-navy text-2xl mb-2">Check your email</h1>
+            <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+              We sent a password reset link to <strong className="text-navy">{email}</strong>. Please check your inbox and click the link to set a new password.
+            </p>
+            <div className="pt-6 border-t border-gray-50">
+              <p className="text-gray-400 text-xs">
+                Did not receive it? Check your spam folder or{' '}
+                <button onClick={() => setSent(false)} className="text-primary font-bold hover:underline">try again</button>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <AuthLayout
-      title={sent?'Check your email':'Reset your password'}
-      sub={sent?undefined:"Enter your email and we'll send you a reset link"}>
-      {!sent ? (
-        <>
-          <Field label="Email address" error={error}>
-            <Input type="email" placeholder="e.g. kwame@gmail.com" value={email}
-              onChange={e=>{ setEmail(e.target.value); setError('') }} error={error} />
-          </Field>
-          <PrimaryBtn loading={loading} onClick={handleSubmit}>{loading?'Sending…':'Send reset link'}</PrimaryBtn>
-          <div style={{ textAlign:'center' as const, marginTop:16 }}>
-            <Link href="/auth/login" style={{ fontSize:13, color:'#8A8A82' }}>← Back to sign in</Link>
-          </div>
-        </>
-      ) : (
-        <div style={{ textAlign:'center' as const }}>
-          <div style={{ width:56, height:56, borderRadius:'50%', background:'#E8F5EF', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px' }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="#0A6B4B" strokeWidth="1.8" strokeLinecap="round" /></svg>
-          </div>
-          <p style={{ fontSize:14, color:'#4A4A44', marginBottom:6, lineHeight:1.7 }}>We sent a reset link to</p>
-          <p style={{ fontSize:15, fontWeight:600, color:'#1A1A18', marginBottom:24 }}>{email}</p>
-          <p style={{ fontSize:13, color:'#8A8A82', lineHeight:1.65, marginBottom:28 }}>
-            Click the link in your email within 30 minutes. Check your spam folder if you don't see it.
-          </p>
-          <button style={{ width:'100%', padding:12, background:'transparent', color:'#1A1A18', borderRadius:10, fontSize:14, fontWeight:500, border:'1px solid #E8E4DC', cursor:'pointer', fontFamily:"'DM Sans',sans-serif", marginBottom:12 }}
-            onClick={()=>setSent(false)}>Try a different email</button>
-          <Link href="/auth/login" style={{ fontSize:13, color:'#8A8A82', display:'block' }}>← Back to sign in</Link>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5 py-12">
+      <div className="w-full max-w-md">
+
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex flex-col items-center gap-4 group">
+            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1">
+              <Image src="/logo.jpeg" alt="EveryGiving" width={64} height={64} />
+            </div>
+            <span className="font-nunito font-black text-3xl tracking-tight text-navy">
+              <span className="text-primary">Every</span>Giving
+            </span>
+          </Link>
+          <div className="text-gray-400 text-sm mt-3 font-bold uppercase tracking-widest">Reset your password</div>
         </div>
-      )}
-    </AuthLayout>
+
+        <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50">
+          <h1 className="font-nunito font-black text-navy text-2xl mb-1">Forgot password?</h1>
+          <p className="text-gray-400 text-sm mb-8">Enter your email and we'll send you a link to reset it.</p>
+
+          {error && (
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mb-6 text-sm text-red-600 font-medium">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div>
+              <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-2 ml-1">Email address</label>
+              <input type="email" required value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
+            </div>
+
+            <button type="submit" disabled={loading}
+              className="w-full py-4 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-2xl transition-all hover:-translate-y-1 shadow-lg shadow-primary/20 text-sm mt-2">
+              {loading ? 'Sending link…' : 'Send reset link →'}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-gray-50 text-center">
+            <Link href="/auth/login" className="text-primary font-black text-sm hover:text-primary-dark transition-colors">
+              ← Back to sign in
+            </Link>
+          </div>
+        </div>
+
+      </div>
+    </div>
   )
 }

@@ -197,8 +197,6 @@ export default function HelpPage() {
 
         {/* ── HEADER ── */}
         <section className="bg-navy relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.12) 0%, transparent 65%)' }} />
           <div className="relative max-w-3xl mx-auto px-5 py-16 md:py-20 text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-full mb-6 tracking-widest uppercase">
               Help Centre

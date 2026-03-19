@@ -35,8 +35,6 @@ export default function TeamFundraisingPage() {
 
         {/* Hero */}
         <section className="bg-navy py-20 px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
                Team fundraising
@@ -143,9 +141,8 @@ export default function TeamFundraisingPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-navy px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="relative max-w-2xl mx-auto text-center">
+        <section className="bg-navy relative overflow-hidden py-24">
+          <div className="relative max-w-4xl mx-auto px-5 text-center text-white">
             <h2 className="font-nunito font-black text-white text-3xl md:text-4xl mb-4">Ready to raise more together?</h2>
             <p className="text-white/55 mb-8">Create your campaign in 5 minutes. Invite your team. Share widely. Watch donations arrive.</p>
             <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-10 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/30 text-sm">

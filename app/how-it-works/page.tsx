@@ -252,7 +252,6 @@ export default function HowItWorksPage() {
 
         {/* Hero */}
         <section className="bg-navy py-20 px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
           <div className="relative max-w-3xl mx-auto text-center">
             <div className="inline-block bg-primary/20 text-primary border border-primary/30 text-xs font-bold px-3 py-1.5 rounded-full mb-5">
               {cms(c, 'hero', 'badge', 'Simple. Fast. Free.')}
@@ -323,7 +322,6 @@ export default function HowItWorksPage() {
 
         {/* Zero fees callout */}
         <section className="py-16 bg-primary relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-3xl mx-auto px-5 text-center">
             <div className="font-nunito font-black text-white text-6xl md:text-8xl mb-3">0%</div>
             <h2 className="font-nunito font-black text-white text-2xl md:text-3xl mb-4 tracking-tight">

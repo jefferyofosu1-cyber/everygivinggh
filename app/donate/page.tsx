@@ -75,12 +75,11 @@ export default function DonatePage() {
       <Navbar />
       <main>
         {/* Hero  -  emotional, donation-focused */}
-        <section className="bg-gradient-to-br from-navy via-navy to-[#0d2035] py-20 px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        <section className="bg-navy relative overflow-hidden py-24">
           <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative max-w-3xl mx-auto text-center">
+          <div className="relative max-w-4xl mx-auto px-5 text-center text-white">
             <div className="text-5xl mb-5"></div>
-            <h1 className="font-nunito font-black text-white text-4xl md:text-5xl tracking-tight mb-4" style={{ letterSpacing: -1 }}>
+            <h1 className="font-nunito font-black text-4xl md:text-5xl tracking-tight mb-4" style={{ letterSpacing: -1 }}>
               Give with <span className="text-primary">confidence</span>
             </h1>
             <p className="text-white/50 text-base mb-8 max-w-xl mx-auto leading-relaxed">

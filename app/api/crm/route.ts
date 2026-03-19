@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAuth, sanitiseString, sanitiseEmail } from '@/lib/api-security'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
 const BASE_URL = 'https://api.brevo.com/v3'
@@ -270,35 +271,50 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'BREVO_API_KEY not set' }, { status: 500 })
     }
 
-    const { type, user } = await req.json()
-    // user = { email, firstName, lastName?, phone? }
+    // Require authentication to prevent bot abuse
+    const auth = await requireAuth()
+    if (auth.error) return auth.error
 
-    if (!user?.email || !user?.firstName) {
-      return NextResponse.json({ error: 'Missing email or firstName' }, { status: 400 })
+    const body = await req.json()
+    const type = sanitiseString(body.type)
+    
+    // Support both old (body.email) and new (body.user.email) formats for robustness
+    const email = sanitiseEmail(body.user?.email || body.email)
+    const firstName = sanitiseString(body.user?.firstName || body.firstName || body.name)
+    const lastName = sanitiseString(body.user?.lastName || body.lastName || '')
+    const phone = sanitiseString(body.user?.phone || body.phone || '')
+
+    // Verify the email matches the authenticated user to prevent spoofing
+    if (auth.user?.email && email !== auth.user.email) {
+      return NextResponse.json({ error: 'Unauthorised email subscription' }, { status: 403 })
+    }
+
+    if (!email || !firstName) {
+      return NextResponse.json({ error: 'Missing email or name' }, { status: 400 })
     }
 
     if (type === 'fundraiser_signup') {
       // 1. Add to Brevo contacts — tag as Fundraiser
       await upsertContact({
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phone: user.phone,
+        email,
+        firstName,
+        lastName,
+        phone,
         tag: 'Fundraiser',
         listId: LIST_IDS.fundraisers,
       })
       // Also add to master list
       await upsertContact({
-        email: user.email,
-        firstName: user.firstName,
+        email,
+        firstName,
         tag: 'Fundraiser',
         listId: LIST_IDS.all,
       })
       // 2. Send welcome email
       await sendEmail({
-        to: { email: user.email, name: user.firstName },
-        subject: `Welcome to Every Giving, ${user.firstName}`,
-        htmlContent: fundraiserWelcomeEmail(user.firstName),
+        to: { email, name: firstName },
+        subject: `Welcome to Every Giving, ${firstName}`,
+        htmlContent: fundraiserWelcomeEmail(firstName),
       })
 
       return NextResponse.json({ success: true, type: 'fundraiser_signup' })
@@ -306,23 +322,23 @@ export async function POST(req: NextRequest) {
 
     if (type === 'donor_signup') {
       await upsertContact({
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phone: user.phone,
+        email,
+        firstName,
+        lastName,
+        phone,
         tag: 'Donor',
         listId: LIST_IDS.donors,
       })
       await upsertContact({
-        email: user.email,
-        firstName: user.firstName,
+        email,
+        firstName,
         tag: 'Donor',
         listId: LIST_IDS.all,
       })
       await sendEmail({
-        to: { email: user.email, name: user.firstName },
-        subject: `Thank you for giving, ${user.firstName}`,
-        htmlContent: donorWelcomeEmail(user.firstName),
+        to: { email, name: firstName },
+        subject: `Thank you for giving, ${firstName}`,
+        htmlContent: donorWelcomeEmail(firstName),
       })
 
       return NextResponse.json({ success: true, type: 'donor_signup' })

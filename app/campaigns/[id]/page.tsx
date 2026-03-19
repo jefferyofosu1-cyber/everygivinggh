@@ -1,356 +1,180 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Metadata } from 'next'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { createClient } from '@/lib/supabase'
-import { usePaystackPayment } from 'react-paystack'
+import DonationForm from '@/components/campaigns/DonationForm'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
+import type { Campaign } from '@/types'
+
+export const dynamic = 'force-dynamic'
 
 const EMOJI: Record<string, string> = {
   medical: '🏥', emergency: '🆘', education: '🎓', charity: '🤲', faith: '⛪',
-  community: '🏘', environment: '🌿', business: '💼', family: '👨‍👩‍👧',
+  community: '🏘', environment: '🌿', business: '💼', family: '👨‍👩',
   sports: '⚽', events: '🎉', wishes: '🌟', competition: '🏆', travel: '✈️', volunteer: '🙌',
 }
 
-export default function CampaignPage() {
-  const params = useParams()
-  const router = useRouter()
-  const [campaign, setCampaign] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [donating, setDonating] = useState(false)
-  const [donated, setDonated] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', amount: '', tip: '5', message: '', method: 'MTN MoMo' })
-  const [errorMsg, setErrorMsg] = useState('')
-  const [donationId, setDonationId] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!params?.id) return
-    const supabase = createClient()
-    supabase.from('campaigns')
-      .select('*, profiles(full_name, phone)')
-      .eq('id', params.id).single()
-      .then(({ data, error }) => {
-        if (error || !data) { router.replace('/campaigns'); return }
-        setCampaign(data)
-        setLoading(false)
-      })
-  }, [params?.id])
-
-  // Calculate values with safe defaults
-  const rawAmount = parseFloat(form.amount) || 0
-  const tipAmount = parseFloat(form.tip) || 0
-  const totalAmount = rawAmount + tipAmount
-  const fee = rawAmount > 0 ? (rawAmount * 0.029 + 0.50) : 0
-  const fundraiserReceives = rawAmount > 0 ? (rawAmount - fee) : 0
-  const pct = campaign?.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
-  const emoji = campaign?.category ? EMOJI[campaign.category.toLowerCase()] : '💚'
-
-  // Setup Paystack BEFORE any early returns - hooks must be at top level
-  const paystackConfig = {
-    reference: `${campaign?.id}-${Date.now()}`,
-    email: form.email,
-    amount: (rawAmount + (parseFloat(form.tip) || 0)) * 100,
-    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
-    currency: 'GHS',
-    metadata: {
-      campaign_id: campaign?.id,
-      donation_id: donationId,
-      donor_name: form.name || 'Anonymous',
-      message: form.message,
-      payment_method: form.method,
-    }
-  }
-
-  const initializePayment = usePaystackPayment(paystackConfig as any)
-
-  const handleDonate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setErrorMsg('')
+async function getCampaign(id: string) {
+  const supabase = await createServerSupabaseClient()
+  const { data, error } = await supabase
+    .from('campaigns')
+    .select('*, profiles(full_name, phone)')
+    .eq('id', id)
+    .single()
     
-    if (!rawAmount || rawAmount <= 0 || !form.email || !campaign) {
-      setErrorMsg('Please fill in all required fields')
-      return
-    }
+  if (error || !data) return null
+  return data as Campaign
+}
 
-    if (rawAmount < 1 || rawAmount > 50000) {
-      setErrorMsg('Donation must be between ₵1 and ₵50,000')
-      return
-    }
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const campaign = await getCampaign(params.id)
+  if (!campaign) return { title: 'Campaign Not Found | EveryGiving' }
 
-    if (!form.email.includes('@')) {
-      setErrorMsg('Please enter a valid email address')
-      return
-    }
-
-    setDonating(true)
-
-    try {
-      // Step 1: Create donation record via API (validation happens here)
-      const createRes = await fetch('/api/donate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          campaign_id: campaign.id,
-          donor_name: form.name || 'Anonymous',
-          donor_email: form.email,
-          amount: rawAmount,
-          tip_amount: parseFloat(form.tip) || 0,
-          message: form.message,
-          payment_method: form.method,
-        })
-      })
-
-      const createData = await createRes.json()
-
-      if (!createRes.ok) {
-        setErrorMsg(createData.error || 'Failed to process donation')
-        setDonating(false)
-        return
-      }
-
-      // Step 2: Store donation ID and initialize Paystack payment
-      setDonationId(createData.donationId)
-
-      const onSuccess = async (reference: any) => {
-        try {
-          // Step 3: Confirm donation by updating status
-          const supabase = createClient()
-          const { error } = await supabase
-            .from('donations')
-            .update({ 
-              status: 'confirmed',
-              paystack_reference: reference.reference 
-            })
-            .eq('id', createData.donationId)
-
-          if (error) throw error
-
-          setDonating(false)
-          setDonated(true)
-        } catch (err) {
-          console.error('Error confirming donation:', err)
-          setErrorMsg('Donation received but confirmation failed. Please contact support.')
-          setDonating(false)
-        }
-      }
-
-      const onClose = () => {
-        setDonating(false)
-        setErrorMsg('Payment cancelled. Your donation was not processed.')
-      }
-
-      // Initiate Paystack payment with updated config containing the true donationId
-      const dynamicConfig = {
-        ...paystackConfig,
-        metadata: {
-          ...paystackConfig.metadata,
-          donation_id: createData.donationId
-        }
-      }
-      initializePayment({ onSuccess, onClose, config: dynamicConfig } as any)
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'An unexpected error occurred'
-      setErrorMsg(msg)
-      setDonating(false)
+  return {
+    title: `${campaign.title} | EveryGiving`,
+    description: campaign.story?.substring(0, 160),
+    openGraph: {
+      title: campaign.title,
+      description: campaign.story?.substring(0, 160),
+      images: campaign.image_url ? [{ url: campaign.image_url }] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: campaign.title,
+      description: campaign.story?.substring(0, 160),
+      images: campaign.image_url ? [campaign.image_url] : [],
     }
   }
+}
 
-  const shareUrl = `https://everygiving.org/campaigns/${campaign?.id}`
-  const shareText = `Help support "${campaign?.title}" on Every Giving 💚`
+export default async function CampaignPage({ params }: { params: { id: string } }) {
+  const campaign = await getCampaign(params.id)
 
-  // Now use conditional rendering instead of early returns
-  if (!params?.id) return null
+  if (!campaign) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-5">
+          <div className="text-6xl mb-4">🔦</div>
+          <h1 className="font-nunito font-black text-navy text-2xl mb-2">Campaign not found</h1>
+          <p className="text-gray-500 mb-6 text-center">The campaign you are looking for might have been closed or moved.</p>
+          <Link href="/campaigns" className="bg-primary text-white font-bold px-6 py-3 rounded-full">Explore other campaigns</Link>
+        </div>
+        <Footer />
+      </>
+    )
+  }
+
+  const pct = campaign.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
+  const emoji = campaign.category ? EMOJI[campaign.category.toLowerCase()] || '💚' : '💚'
+  const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/campaigns/${campaign.id}`
+  const shareText = `Help support "${campaign.title}" on EveryGiving 💚`
 
   return (
     <>
       <Navbar />
-      {loading ? (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        </div>
-      ) : !campaign ? (
-        <div />
-      ) : donated ? (
-        <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-12\">
-          <div className="max-w-md w-full text-center">
-            <div className="relative inline-flex w-24 h-24 mb-6">
-              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-              <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">💚</div>
-            </div>
-            <h1 className="font-nunito font-black text-navy text-3xl mb-2">Thank you{form.name ? `, ${form.name}` : ''}!</h1>
-            <p className="text-gray-500 text-sm mb-6">Your donation of <strong className="text-primary">₵{form.amount}</strong> is being processed.</p>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
-              <div className="font-nunito font-black text-navy text-sm mb-4">Share this campaign</div>
-              <div className="flex flex-col gap-2.5">
-                <a href={`https://wa.me/?text=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 bg-[#25D366] text-white font-bold rounded-xl text-sm">
-                  Share on WhatsApp
-                </a>
-                <button onClick={() => { navigator.clipboard.writeText(shareUrl) }}
-                  className="py-3 border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold rounded-xl text-sm transition-all">
-                  🔗 Copy link
-                </button>
-              </div>
-            </div>
-            <Link href="/campaigns" className="text-primary text-sm font-bold hover:underline">← Back to campaigns</Link>
-          </div>
-        </div>
-      ) : (
       <main className="bg-gray-50 min-h-screen">
-        <div className="max-w-5xl mx-auto px-5 py-10">
-          <Link href="/campaigns" className="text-gray-400 text-sm hover:text-primary transition-colors mb-6 inline-block">← Back to campaigns</Link>
+        <div className="max-w-6xl mx-auto px-5 py-10">
+          <Link href="/campaigns" className="text-gray-400 text-sm hover:text-primary transition-colors mb-6 inline-flex items-center gap-1.5 font-bold">
+            <span className="text-lg">←</span> Back to campaigns
+          </Link>
 
-          <div className="grid md:grid-cols-3 gap-8">
-
+          <div className="grid md:grid-cols-12 gap-8 items-start">
             {/* ── LEFT: campaign details ── */}
-            <div className="md:col-span-2">
+            <div className="md:col-span-8">
               {/* Campaign image / emoji */}
-              <div className="h-64 bg-gradient-to-br from-primary-light via-white to-blue-50 rounded-2xl flex items-center justify-center text-8xl mb-6 border border-gray-100 shadow-sm relative overflow-hidden">
-                {emoji}
+              <div className="aspect-video bg-gradient-to-br from-primary-light via-white to-blue-50 rounded-3xl flex items-center justify-center text-8xl mb-8 border border-gray-100 shadow-sm relative overflow-hidden">
+                {campaign.image_url ? (
+                  <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover" />
+                ) : (
+                  <span>{emoji}</span>
+                )}
                 {campaign.verified && (
-                  <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                    <span>✓</span> Verified
+                  <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-1.5 shadow-lg shadow-primary/20">
+                    <span className="text-base text-white">✓</span> Verified
                   </div>
                 )}
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 mb-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary-light px-3 py-1 rounded-full">{campaign.category}</span>
-                  {campaign.verified && <span className="text-xs font-bold text-primary">✓ Identity verified</span>}
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xs font-black uppercase tracking-widest text-primary bg-primary-light px-4 py-1.5 rounded-full">{campaign.category}</span>
+                  {campaign.verified && <span className="text-xs font-bold text-primary flex items-center gap-1">Identity verified</span>}
                 </div>
-                <h1 className="font-nunito font-black text-navy text-2xl md:text-3xl mb-4 leading-tight">{campaign.title}</h1>
-                <div className="flex items-center gap-3 mb-6 text-sm text-gray-500">
-                  <span>By <strong className="text-navy">{campaign.profiles?.full_name || 'Anonymous'}</strong></span>
+                <h1 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-6 leading-tight select-none">
+                  {campaign.title}
+                </h1>
+                
+                <div className="flex items-center gap-3 mb-8 pb-8 border-b border-gray-100">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl">👤</div>
+                  <div>
+                    <div className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Campaign Organiser</div>
+                    <div className="font-nunito font-black text-navy">{campaign.profiles?.full_name || 'Anonymous'}</div>
+                  </div>
                 </div>
-                <p className="text-gray-600 leading-relaxed whitespace-pre-line">{campaign.story}</p>
+
+                <div className="prose prose-slate max-w-none">
+                  <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">{campaign.story}</p>
+                </div>
               </div>
 
               {/* Share */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <div className="font-nunito font-black text-navy text-base mb-4">Share this campaign</div>
-                <div className="flex gap-3">
-                  <a href={`https://wa.me/?text=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`} target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#25D366] text-white font-bold rounded-xl text-sm hover:-translate-y-0.5 transition-all">
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+                <div className="font-nunito font-black text-navy text-xl mb-6">Spread the word</div>
+                <div className="grid grid-cols-2 gap-4">
+                  <a 
+                    href={`https://wa.me/?text=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 py-4 bg-[#25D366] text-white font-black rounded-2xl text-sm hover:-translate-y-1 transition-all shadow-lg shadow-[#25D366]/20"
+                  >
                     WhatsApp
                   </a>
-                  <button onClick={() => { navigator.clipboard.writeText(shareUrl) }}
-                    className="flex-1 py-3 border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold rounded-xl text-sm transition-all">
-                    🔗 Copy link
+                  <button 
+                    onClick={() => { /* This will actually need to be a small client component or inline JS if we want it in a server component */ }}
+                    className="py-4 border-2 border-gray-100 hover:border-primary hover:text-primary text-gray-600 font-black rounded-2xl text-sm transition-all"
+                  >
+                    Copy link
                   </button>
                 </div>
               </div>
             </div>
 
             {/* ── RIGHT: progress + donate ── */}
-            <div className="md:col-span-1">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-20">
-
+            <div className="md:col-span-4 sticky top-10">
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
                 {/* Progress */}
-                <div className="mb-5">
-                  <div className="font-nunito font-black text-primary text-3xl mb-0.5">₵{(campaign.raised_amount || 0).toLocaleString()}</div>
-                  <div className="text-gray-400 text-sm mb-3">raised of ₵{campaign.goal_amount?.toLocaleString()} goal</div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-1">
-                    <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${pct}%` }} />
+                <div className="mb-8">
+                  <div className="flex items-baseline gap-1.5 mb-1">
+                    <span className="font-nunito font-black text-primary text-4xl">₵{campaign.raised_amount.toLocaleString()}</span>
+                    <span className="text-gray-400 text-sm font-bold">raised</span>
                   </div>
-                  <div className="text-xs text-gray-400">{pct}% funded</div>
+                  <div className="text-gray-400 text-sm mb-4 font-medium italic">Target goal: ₵{campaign.goal_amount.toLocaleString()}</div>
+                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2 shadow-inner">
+                    <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-1000" style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-primary font-black">{pct}% funded</span>
+                    <span className="text-gray-400 font-bold">{campaign.donations?.length || 0} donations</span>
+                  </div>
                 </div>
 
-                {/* Donate form */}
-                <form onSubmit={handleDonate} className="flex flex-col gap-3">
-                  {errorMsg && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
-                      {errorMsg}
-                    </div>
-                  )}
-                  <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Your name</label>
-                    <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                      placeholder="Ama Mensah"
-                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-3.5 py-3 text-sm outline-none transition-all" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Email address *</label>
-                    <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                      placeholder="ama@example.com"
-                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-3.5 py-3 text-sm outline-none transition-all" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Donation amount (GHC) *</label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
-                      <input type="number" required min="1" max="50000" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
-                        placeholder="50"
-                        className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-8 pr-3.5 py-3 text-sm outline-none transition-all" />
-                    </div>
-                  </div>
+                <DonationForm campaign={campaign} />
+              </div>
 
-                  <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Platform tip (optional)</label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
-                      <input type="number" min="0" max="500" value={form.tip} onChange={e => setForm(p => ({ ...p, tip: e.target.value }))}
-                        placeholder="5"
-                        className="w-full border-2 border-gray-100 focus:border-primary rounded-xl pl-8 pr-3.5 py-3 text-sm outline-none transition-all" />
-                    </div>
-                    <div className="text-xs text-gray-400 mt-1">Helps us keep EveryGiving free</div>
-                  </div>
-
-                  {rawAmount > 0 && (
-                    <div className="mt-1.5 bg-gray-50 rounded-lg px-3 py-2.5 text-xs text-gray-600 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Donation:</span>
-                        <strong className="text-navy">₵{rawAmount.toFixed(2)}</strong>
-                      </div>
-                      {tipAmount > 0 && (
-                        <div className="flex justify-between">
-                          <span>Tip:</span>
-                          <strong className="text-navy">₵{tipAmount.toFixed(2)}</strong>
-                        </div>
-                      )}
-                      <div className="border-t border-gray-200 pt-1 mt-1 flex justify-between">
-                        <span>Platform fee (2.9% + ₵0.50):</span>
-                        <strong className="text-orange-600">-₵{fee.toFixed(2)}</strong>
-                      </div>
-                      <div className="flex justify-between font-semibold text-navy pt-1">
-                        <span>Fundraiser receives:</span>
-                        <strong className="text-primary">₵{fundraiserReceives.toFixed(2)}</strong>
-                      </div>
-                    </div>
-                  )}
-                  <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Pay with</label>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {['MTN MoMo', 'Vodafone', 'AirtelTigo'].map(m => (
-                        <button key={m} type="button" onClick={() => setForm(p => ({ ...p, method: m }))}
-                          className={`text-xs font-bold py-2.5 rounded-xl border-2 transition-all ${form.method === m ? 'border-primary bg-primary-light text-primary-dark' : 'border-gray-100 text-gray-500 bg-gray-50'}`}>
-                          {m}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-navy uppercase tracking-wider block mb-1.5">Message (optional)</label>
-                    <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
-                      rows={2} placeholder="A word of encouragement…"
-                      className="w-full border-2 border-gray-100 focus:border-primary rounded-xl px-3.5 py-3 text-sm outline-none transition-all resize-none" />
-                  </div>
-                  <button type="submit" disabled={donating}
-                    className="w-full py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm disabled:opacity-60">
-                    {donating ? 'Processing…' : `Donate ₵${form.amount || '—'} →`}
-                  </button>
-                  <p className="text-xs text-gray-400 text-center">
-                    Secure payments powered by Paystack<br />
-                    <span className="opacity-75">MoMo prompt will appear on your phone</span>
-                  </p>
-                </form>
+              <div className="bg-navy rounded-3xl p-8 text-white">
+                <div className="text-2xl mb-4">🛡️</div>
+                <h3 className="font-nunito font-black text-lg mb-2">Our Safety Policy</h3>
+                <p className="text-white/60 text-xs leading-relaxed mb-6">
+                  EveryGiving identity-verifies fundraisers using the Ghana Card. We use industry-standard encryption to protect your data and payments.
+                </p>
+                <Link href="/trust" className="text-primary text-xs font-black hover:underline uppercase tracking-widest">Learn more →</Link>
               </div>
             </div>
           </div>
         </div>
       </main>
-      )}
       <Footer />
     </>
   )

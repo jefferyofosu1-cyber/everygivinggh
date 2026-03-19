@@ -137,10 +137,8 @@ export default function BrandGuidePage() {
       <Navbar />
       <main>
         {/* ── COVER ── */}
-        <div className="bg-navy relative overflow-hidden">
-          <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.15) 0%, transparent 65%)', transform: 'translate(-50%, -50%)' }} />
-          <div className="relative max-w-4xl mx-auto px-6 py-24">
+        <section className="bg-navy relative overflow-hidden py-24">
+          <div className="relative max-w-4xl mx-auto px-5 text-center text-white">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-full mb-8 tracking-widest uppercase" style={{ fontFamily: 'DM Mono, monospace' }}>
               <span className="w-1.5 h-1.5 bg-primary rounded-full" />
               Brand Style Guide · v1.0
@@ -148,8 +146,8 @@ export default function BrandGuidePage() {
             <div className="font-nunito font-black text-white mb-5 leading-none tracking-tight" style={{ fontSize: 'clamp(52px, 10vw, 96px)', letterSpacing: -3 }}>
               <span className="text-primary">Every</span>Giving
             </div>
-            <p className="text-white/40 text-base mb-10 max-w-md leading-relaxed">Ghana's verified crowdfunding platform — visual identity, design tokens, and usage guidelines.</p>
-            <div className="flex flex-wrap gap-6">
+            <p className="text-white/40 text-base mb-10 max-w-md mx-auto leading-relaxed">Ghana's verified crowdfunding platform — visual identity, design tokens, and usage guidelines.</p>
+            <div className="flex flex-wrap gap-6 justify-center">
               {[
                 ['Fonts', 'Nunito + Nunito Sans'],
                 ['Primary', '#02A95C'],
@@ -163,7 +161,7 @@ export default function BrandGuidePage() {
               ))}
             </div>
           </div>
-        </div>
+        </section>
 
         <div className="max-w-4xl mx-auto px-6 py-20">
 

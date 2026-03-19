@@ -35,9 +35,8 @@ export default function FundraisingCategoriesPage() {
       <main>
 
         {/* Hero */}
-        <section className="bg-navy py-16 px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="relative max-w-3xl mx-auto text-center">
+        <section className="bg-navy relative overflow-hidden py-24">
+          <div className="relative max-w-4xl mx-auto px-5 text-center text-white">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6">
                17 categories
             </div>

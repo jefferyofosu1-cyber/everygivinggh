@@ -4,6 +4,9 @@ import { requirePermission, logAdminAudit } from '@/lib/api-security'
 
 // GET — list all uploaded images from Sanity
 export async function GET(request: NextRequest) {
+  const auth = await requirePermission('media.review')
+  if (auth.error) return auth.error
+
   const { searchParams } = new URL(request.url)
   const tag = searchParams.get('tag') || ''
   const offset = parseInt(searchParams.get('offset') || '0', 10)

@@ -59,32 +59,44 @@ export default function SignupPage() {
   // ── CHECK EMAIL SCREEN ────────────────────────────────────────────────────
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-5 py-12">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5 py-12">
         <div className="max-w-md w-full text-center">
-          <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
+          <div className="relative inline-flex items-center justify-center w-24 h-24 mb-8">
             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">
-              
+            <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30 text-white">
+              ✓
             </div>
           </div>
-          <h1 className="font-nunito font-black text-white text-3xl mb-3">Check your email</h1>
-          <p className="text-white/50 text-sm mb-2">
+          <h1 className="font-nunito font-black text-navy text-3xl mb-3">Check your email</h1>
+          <p className="text-gray-500 text-sm mb-2 font-medium">
             We sent a confirmation link to
           </p>
-          <p className="text-primary font-bold text-base mb-6">{form.email}</p>
-          <p className="text-white/30 text-xs leading-relaxed mb-8 max-w-xs mx-auto">
-            Click the link in the email to confirm your account. After confirming, you'll be taken straight to start your campaign.
-          </p>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-left mb-6">
-            <div className="text-white/60 text-xs font-bold mb-3 uppercase tracking-widest">Didn't get the email?</div>
-            <div className="flex flex-col gap-2 text-xs text-white/40 leading-relaxed">
-              <div>— Check your spam or junk folder</div>
-              <div>— Make sure you typed your email correctly</div>
-              <div>— Contact us at <a href="mailto:business@everygiving.org" className="text-primary">business@everygiving.org</a></div>
+          <p className="text-primary font-black text-lg mb-8">{form.email}</p>
+          
+          <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50 text-left mb-8">
+            <div className="text-navy text-xs font-black mb-4 uppercase tracking-widest opacity-40">Next steps</div>
+            <div className="flex flex-col gap-4 text-sm text-gray-500 leading-relaxed">
+              <div className="flex gap-3">
+                <span className="text-primary font-black">1.</span>
+                <span>Click the link in the email we just sent you.</span>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-primary font-black">2.</span>
+                <span>Your account will be activated instantly.</span>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-primary font-black">3.</span>
+                <span>You'll be redirected to start your fundraiser!</span>
+              </div>
             </div>
           </div>
+
+          <div className="text-gray-400 text-xs mb-8 italic">
+            Didn't get it? Check your spam folder or wait a few minutes.
+          </div>
+
           <Link href="/auth/signup"
-            className="text-white/30 text-sm hover:text-white transition-colors">
+            className="text-primary font-black text-sm hover:underline transition-colors">
             ← Use a different email
           </Link>
         </div>
@@ -94,85 +106,89 @@ export default function SignupPage() {
 
   // ── SIGNUP FORM ───────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-5 py-12">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5 py-12">
       <div className="w-full max-w-md">
 
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex flex-col items-center gap-3">
-            <Image src="/logo.jpeg" alt="EveryGiving" width={48} height={48} className="rounded-xl" />
-            <span className="font-nunito font-black text-2xl tracking-tight"><span className="text-primary">Every</span><span className="text-white">Giving</span></span>
+          <Link href="/" className="inline-flex flex-col items-center gap-4 group">
+            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1">
+              <Image src="/logo.jpeg" alt="EveryGiving" width={64} height={64} />
+            </div>
+            <span className="font-nunito font-black text-3xl tracking-tight text-navy">
+              <span className="text-primary">Every</span>Giving
+            </span>
           </Link>
-          <div className="text-white/40 text-sm mt-2">Create your free account</div>
+          <div className="text-gray-400 text-sm mt-3 font-bold uppercase tracking-widest">Create your free account</div>
         </div>
 
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-          <h1 className="font-nunito font-black text-white text-xl mb-1">Get started</h1>
-          <p className="text-white/40 text-sm mb-6">Free forever. No platform fee.</p>
+        <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50">
+          <h1 className="font-nunito font-black text-navy text-2xl mb-1">Get started</h1>
+          <p className="text-gray-400 text-sm mb-8">Free forever. 0% platform fee.</p>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-5 text-sm text-red-400">
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mb-6 text-sm text-red-600 font-medium">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-3">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-bold text-white/50 block mb-1.5">First name</label>
+                <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">First name</label>
                 <input type="text" required value={form.firstName}
                   onChange={e => setForm(p => ({ ...p, firstName: e.target.value }))}
                   placeholder="Ama"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
+                  className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
               </div>
               <div>
-                <label className="text-xs font-bold text-white/50 block mb-1.5">Last name</label>
+                <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Last name</label>
                 <input type="text" value={form.lastName}
                   onChange={e => setForm(p => ({ ...p, lastName: e.target.value }))}
                   placeholder="Mensah"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
+                  className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Email address</label>
+              <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Email address</label>
               <input type="email" required value={form.email}
                 onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                 placeholder="ama@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Phone (MoMo number)</label>
+              <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Phone (MoMo number)</label>
               <input type="tel" value={form.phone}
                 onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
                 placeholder="024 000 0000"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-white/50 block mb-1.5">Password</label>
+              <label className="text-xs font-black text-navy/40 uppercase tracking-widest block mb-1.5 ml-1">Password</label>
               <input type="password" required minLength={8} value={form.password}
                 onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                 placeholder="At least 8 characters"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-primary transition-colors" />
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-navy text-sm placeholder-gray-300 focus:outline-none transition-all" />
             </div>
 
             <button type="submit" disabled={loading}
-              className="w-full py-3.5 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm mt-2">
+              className="w-full py-4 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-nunito font-black rounded-2xl transition-all hover:-translate-y-1 shadow-lg shadow-primary/20 text-sm mt-2">
               {loading ? 'Creating account...' : 'Create free account →'}
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-white/10 text-center">
-            <span className="text-white/40 text-sm">Already have an account? </span>
-            <Link href="/auth/login" className="text-primary font-bold text-sm hover:text-primary-dark transition-colors">Sign in</Link>
+          <div className="mt-8 pt-6 border-t border-gray-50 text-center">
+            <span className="text-gray-400 text-sm font-medium">Already have an account? </span>
+            <Link href="/auth/login" className="text-primary font-black text-sm hover:text-primary-dark transition-colors">Sign in</Link>
           </div>
         </div>
 
-        <p className="text-center text-white/20 text-xs mt-5 leading-relaxed">
+        <p className="text-center text-gray-400 text-xs mt-8 leading-relaxed px-4">
           By creating an account you agree to our{' '}
-          <Link href="/terms" className="text-white/40 hover:text-primary">Terms</Link> and{' '}
-          <Link href="/privacy" className="text-white/40 hover:text-primary">Privacy Policy</Link>.
+          <Link href="/terms" className="text-navy font-bold hover:text-primary">Terms</Link> and{' '}
+          <Link href="/privacy" className="text-navy font-bold hover:text-primary">Privacy Policy</Link>.
         </p>
       </div>
     </div>

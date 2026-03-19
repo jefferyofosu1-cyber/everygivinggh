@@ -77,7 +77,14 @@ export default function CharitySignupPage() {
       await fetch('/api/crm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'fundraiser_signup', email: form.email, name: form.contactName }),
+        body: JSON.stringify({
+          type: 'fundraiser_signup',
+          user: {
+            email: form.email,
+            firstName: form.contactName,
+            phone: form.phone
+          }
+        }),
       })
     }
 
@@ -117,7 +124,6 @@ export default function CharitySignupPage() {
 
         {/* Hero */}
         <section className="bg-navy py-14 px-5 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-2xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5">
                For organisations

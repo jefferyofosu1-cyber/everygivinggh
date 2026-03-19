@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Nunito, Nunito_Sans } from 'next/font/google'
 import { validateEnv } from '@/lib/env'
 import { ThemeProvider } from '@/components/ThemeProvider'
-import { AnimatedBackground } from '@/components/AnimatedBackground'
 import './globals.css'
 
 validateEnv()
@@ -92,7 +91,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}} />
       </head>
       <body className="min-h-screen flex flex-col bg-white dark:bg-slate-950 text-gray-900 dark:text-slate-50 transition-colors" style={{ fontFamily: "'DM Sans', sans-serif", margin: 0 }}>
-        <AnimatedBackground />
         <ThemeProvider>
           {children}
         </ThemeProvider>

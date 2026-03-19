@@ -13,7 +13,6 @@ export default function TransparencyPage() {
 
         {/* Hero */}
         <section className="bg-navy relative overflow-hidden py-20">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-3xl mx-auto px-5 text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-full mb-6 tracking-widest uppercase">
               Transparency
@@ -116,7 +115,6 @@ export default function TransparencyPage() {
 
         {/* Contact strip */}
         <section className="py-12 bg-primary relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-3xl mx-auto px-5 text-center">
             <div className="font-nunito font-black text-white text-2xl mb-2">Questions?</div>
             <p className="text-white/60 text-sm mb-6">We believe in full transparency. If you have any questions about how EveryGiving works, we're happy to explain.</p>

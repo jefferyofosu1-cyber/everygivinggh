@@ -63,8 +63,6 @@ export default function AboutPage() {
 
         {/* ── HERO ── */}
         <section className="bg-navy relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.15) 0%, transparent 60%)' }} />
           <div className="relative max-w-5xl mx-auto px-5 py-20 md:py-28">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-full mb-8 tracking-widest uppercase">
               About EveryGiving
@@ -190,7 +188,6 @@ export default function AboutPage() {
 
         {/* ── PRICING ── */}
         <section id="pricing" className="py-20 bg-primary relative overflow-hidden scroll-mt-14">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
           <div className="relative max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-white/60 mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Pricing</div>
             <h2 className="font-nunito font-black text-white text-3xl md:text-4xl tracking-tight mb-10 leading-tight">One number: 0% platform fee.</h2>
@@ -369,10 +366,8 @@ export default function AboutPage() {
         </section>
 
         {/* ── FINAL CTA ── */}
-        <section className="py-20 bg-navy relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(2,169,92,.15) 0%, transparent 65%)' }} />
-          <div className="relative max-w-3xl mx-auto px-5 text-center">
+        <section className="bg-navy relative overflow-hidden">
+          <div className="relative max-w-5xl mx-auto px-5 py-20 md:py-28">
             <div className="font-nunito font-black text-white mb-4 leading-tight" style={{ fontSize: 'clamp(28px,5vw,48px)', letterSpacing: -1 }}>
               Ready to raise money<br /><span className="text-primary">the right way?</span>
             </div>

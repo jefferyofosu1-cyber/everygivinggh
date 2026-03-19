@@ -101,11 +101,9 @@ export default async function CampaignPage({
                     💚
                   </div>
                 )}
-                {campaign.verificationLevel && (
                   <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                    {campaign.verificationLevel.toUpperCase()} VERIFIED
+                    {campaign.verificationLevel?.toUpperCase()} VERIFIED
                   </div>
-                )}
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">

@@ -54,12 +54,12 @@ function SuccessContent() {
             <div className="font-nunito font-bold text-navy text-sm line-clamp-1">{campaign.title}</div>
             <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-primary-dark to-primary rounded-full"
-                style={{ width: `${Math.min((campaign.raised_amount / campaign.goal_amount) * 100, 100)}%` }} />
+                style={{ width: `${campaign.goal_amount > 0 ? Math.min((campaign.raised_amount / campaign.goal_amount) * 100, 100) : 0}%` }} />
             </div>
             <div className="flex justify-between text-xs mt-1.5">
               <span className="font-bold text-navy">₵{campaign.raised_amount?.toLocaleString()} raised</span>
               <span className="text-primary font-bold">
-                {Math.round((campaign.raised_amount / campaign.goal_amount) * 100)}%
+                {campaign.goal_amount > 0 ? Math.round((campaign.raised_amount / campaign.goal_amount) * 100) : 0}%
               </span>
             </div>
           </div>

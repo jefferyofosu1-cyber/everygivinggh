@@ -46,8 +46,14 @@ const MOCK_NOTIFS: Notif[] = [
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
-function pct(r: number, g: number) { return Math.min(100, Math.round((r/g)*100)) }
-function fmt(n: number) { return n >= 1000 ? `₵${(n/1000).toFixed(n%1000===0?0:1)}k` : `₵${n.toLocaleString()}` }
+function pct(r: number, g: number) { 
+  if (!g || g <= 0) return 0
+  return Math.min(100, Math.round(((r || 0) / g) * 100)) 
+}
+function fmt(n: number) { 
+  const val = n || 0
+  return val >= 1000 ? `₵${(val/1000).toFixed(val%1000===0?0:1)}k` : `₵${val.toLocaleString()}` 
+}
 
 const STATUS_CFG: Record<string, {label:string;color:string;bg:string}> = {
   draft:               { label:'Draft',        color:'#8A8A82', bg:'#F2F3F4' },

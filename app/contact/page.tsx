@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 
 const TOPICS = [
   'My campaign is not showing up',
@@ -37,6 +39,7 @@ export default function ContactPage() {
 
   return (
     <>
+      <Navbar />
       <main>
 
         {/* ── HEADER ── */}
@@ -233,6 +236,7 @@ export default function ContactPage() {
         </section>
 
       </main>
+      <Footer />
     </>
   )
 }

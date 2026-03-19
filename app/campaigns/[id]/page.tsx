@@ -147,10 +147,10 @@ export default async function CampaignPage({ params }: { params: { id: string } 
                 {/* Progress */}
                 <div className="mb-8">
                   <div className="flex items-baseline gap-1.5 mb-1">
-                    <span className="font-nunito font-black text-primary text-4xl">₵{campaign.raised_amount.toLocaleString()}</span>
+                    <span className="font-nunito font-black text-primary text-4xl">₵{(campaign.raised_amount || 0).toLocaleString()}</span>
                     <span className="text-gray-400 text-sm font-bold">raised</span>
                   </div>
-                  <div className="text-gray-400 text-sm mb-4 font-medium italic">Target goal: ₵{campaign.goal_amount.toLocaleString()}</div>
+                  <div className="text-gray-400 text-sm mb-4 font-medium italic">Target goal: ₵{(campaign.goal_amount || 0).toLocaleString()}</div>
                   <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2 shadow-inner">
                     <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-1000" style={{ width: `${pct}%` }} />
                   </div>

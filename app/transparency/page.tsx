@@ -1,11 +1,14 @@
 'use client'
 import Link from 'next/link'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 import { usePageContent, cms } from '@/lib/content'
 
 export default function TransparencyPage() {
   const c = usePageContent('transparency')
   return (
     <>
+      <Navbar />
       <main>
 
         {/* Hero */}
@@ -48,7 +51,7 @@ export default function TransparencyPage() {
         </section>
 
         {/* Fee breakdown */}
-        <section className="py-16 bg-gray-50 border-t border-gray-100">
+        <section className="py-16 bg-gray-50 border-t border-gray-100 scroll-mt-14">
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Fee breakdown</div>
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Fee Breakdown</h2>
@@ -128,6 +131,7 @@ export default function TransparencyPage() {
         </section>
 
       </main>
+      <Footer />
     </>
   )
 }

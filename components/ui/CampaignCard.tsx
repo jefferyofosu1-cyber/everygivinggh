@@ -20,8 +20,8 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
   const goal = campaign.goal_amount || 0
   const raised = campaign.raised_amount || 0
   const pct = goal > 0 ? Math.min(Math.round((raised / goal) * 100), 100) : 0
-  const bg = CATEGORY_COLORS[campaign.category.toLowerCase()] || 'bg-gray-50'
-  const emoji = CATEGORY_EMOJI[campaign.category.toLowerCase()] || ''
+  const bg = CATEGORY_COLORS[campaign.category?.toLowerCase() || ''] || 'bg-gray-50'
+  const emoji = CATEGORY_EMOJI[campaign.category?.toLowerCase() || ''] || ''
 
   return (
     <Link href={`/campaigns/${campaign.id}`}>

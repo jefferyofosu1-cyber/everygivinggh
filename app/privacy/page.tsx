@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 
 const LAST_UPDATED = 'March 2026'
 
@@ -173,6 +175,7 @@ We aim to respond to all privacy requests within 30 days.`,
 export default function PrivacyPage() {
   return (
     <>
+      <Navbar />
       <main>
         {/* Header */}
         <section className="bg-navy py-16 px-5">
@@ -245,6 +248,7 @@ export default function PrivacyPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   )
 }

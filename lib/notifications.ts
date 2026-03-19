@@ -3,6 +3,10 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 const BREVO_API_KEY = process.env.BREVO_API_KEY
 const BREVO_BASE_URL = 'https://api.brevo.com/v3'
 
+if (!BREVO_API_KEY) {
+  console.warn('BREVO_API_KEY is not set. Email notifications will not be sent.')
+}
+
 interface EmailParams {
   to: string
   subject: string
@@ -27,11 +31,15 @@ export class NotificationService {
     fromEmail = 'noreply@everygiving.org',
     fromName = 'EveryGiving',
   }: EmailParams) {
+    if (!BREVO_API_KEY) {
+      throw new Error('BREVO_API_KEY is not configured. Email notifications cannot be sent.')
+    }
+
     try {
       const response = await fetch(`${BREVO_BASE_URL}/smtp/email`, {
         method: 'POST',
         headers: {
-          'api-key': BREVO_API_KEY!,
+          'api-key': BREVO_API_KEY,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

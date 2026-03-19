@@ -31,12 +31,15 @@ export async function POST(req: NextRequest) {
 
     const { data } = event
     const reference = data.reference || data.metadata?.reference
-    const donationId = data.metadata?.donationId
+    // Handle both camelCase and snake_case from metadata
+    const donationId = data.metadata?.donation_id || data.metadata?.donationId
 
     if (!donationId) {
-      console.warn('No donation ID in Paystack metadata')
-      return NextResponse.json({ error: 'No donation ID' }, { status: 400 })
+      console.warn('No donation ID in Paystack metadata. Metadata:', data.metadata)
+      return NextResponse.json({ success: true }, { status: 200 })
     }
+
+    console.log(`Processing payment for donation ${donationId} with reference ${reference}`)
 
     const supabase = await createServerSupabaseClient()
 
@@ -45,27 +48,31 @@ export async function POST(req: NextRequest) {
       .from('donations')
       .update({
         status: 'completed',
-        transaction_id: reference,
+        paystack_reference: reference,
         paid_at: new Date().toISOString(),
       })
       .eq('id', donationId)
-      .select('*, campaigns(title, id)')
+      .select('*, campaigns(title, id, user_id)')
       .single()
 
-    if (updateErr) {
+    if (updateErr || !donation) {
       console.error('Donation update error:', updateErr)
       return NextResponse.json({ error: 'Update failed' }, { status: 500 })
     }
 
+    console.log(`Donation ${donationId} updated to completed status`)
+
     // Send donation confirmation email
     try {
+      console.log(`Sending confirmation email to ${donation.donor_email}`)
       await NotificationService.sendDonationConfirmation(
         donation.donor_email,
-        donation.donor_name,
+        donation.donor_name || 'Donor',
         donation.campaigns.title,
-        donation.amount_paid,
+        donation.amount_paid || donation.amount,
         reference
       )
+      console.log(`Confirmation email sent to ${donation.donor_email}`)
     } catch (emailError) {
       console.error('Confirmation email failed:', emailError)
       // Don't fail the webhook for email issues
@@ -73,6 +80,7 @@ export async function POST(req: NextRequest) {
 
     // Check for campaign milestones
     try {
+      console.log(`Checking milestones for campaign ${donation.campaign_id}`)
       await NotificationService.checkAndSendMilestoneAlerts(
         donation.campaign_id
       )

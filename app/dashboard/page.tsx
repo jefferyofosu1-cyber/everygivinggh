@@ -135,7 +135,7 @@ type PayMode = 'momo' | 'bank'
 type WStep = 'form' | 'sent'
 
 // Provide a stub of WithdrawModal so the stashed payout logic is preserved
-export function WithdrawModal({ available, profile, onClose }: {
+function WithdrawModal({ available, profile, onClose }: {
   available: number
   profile:   any | null
   onClose:   () => void

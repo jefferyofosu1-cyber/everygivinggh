@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { getAdminClient } from '@/lib/supabase-admin'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export const dynamic = 'force-dynamic'
 
 // GET /api/admin/support/disputes
 export async function GET() {
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('disputes')
     .select('*')
@@ -26,6 +24,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Reason is required' }, { status: 400 })
   }
 
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('disputes')
     .insert({ reason: reason.trim(), campaign_id: campaign_id || null, user_id: user_id || null, status: 'open' })
@@ -43,6 +42,7 @@ export async function PATCH(req: NextRequest) {
 
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('disputes')
     .update({ resolution, status: status || 'resolved', resolved_at: new Date().toISOString() })

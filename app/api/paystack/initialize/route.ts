@@ -22,7 +22,8 @@ import {
 // ============================================================================
 
 interface PaymentInitRequest {
-  amount: number // Amount in GHS (e.g., 100 for GHS 100)
+  amount: number // Donation amount in GHS
+  tip?: number // Optional tip in GHS
   email: string
   campaignId: string
   donorId?: string
@@ -97,13 +98,23 @@ export async function POST(request: NextRequest) {
     // ========================================================================
 
     const amountPesewas = ghsToPesewas(body.amount)
-    const transactionFee = calculateTransactionFeePesewas(amountPesewas)
-    const netAmount = amountPesewas - transactionFee
+    const tipPesewas = body.tip ? ghsToPesewas(body.tip) : 0
+    const standardFee = calculateTransactionFeePesewas(amountPesewas)
+    
+    // Paystack total amount = donation + tip
+    const paystackTotalPesewas = amountPesewas + tipPesewas
+    
+    // Total charge to subaccount = standard fee + tip
+    // This ensures fundraiser gets: (total) - (standard fee + tip) = donation - standard fee
+    const totalTransactionCharge = standardFee + tipPesewas
+    
+    // Net amount for fundraiser record
+    const netAmount = amountPesewas - standardFee
 
-    console.log(`[Payment Init] Campaign: ${campaign.id}`)
-    console.log(`[Payment Init] Amount: GHS ${body.amount} (${amountPesewas} pesewas)`)
-    console.log(`[Payment Init] Fee: ${transactionFee} pesewas`)
-    console.log(`[Payment Init] Net: ${netAmount} pesewas`)
+    console.log(`[Payment Init] Tip: ${tipPesewas} pesewas`)
+    console.log(`[Payment Init] Paystack Total: ${paystackTotalPesewas} pesewas`)
+    console.log(`[Payment Init] Total Charge: ${totalTransactionCharge} pesewas`)
+    console.log(`[Payment Init] Net to Fundraiser: ${netAmount} pesewas`)
 
     // ========================================================================
     // 4. GENERATE TRANSACTION REFERENCE
@@ -123,7 +134,8 @@ export async function POST(request: NextRequest) {
         donor_name: body.donorName || 'Anonymous',
         donor_email: body.email,
         amount_paid: amountPesewas,
-        transaction_fee: transactionFee,
+        donor_tip: tipPesewas,
+        transaction_fee: standardFee,
         net_amount: netAmount,
         message: body.message || null,
         reference,
@@ -146,17 +158,19 @@ export async function POST(request: NextRequest) {
     // ========================================================================
 
     const paystackResponse = await initializePaystackPayment({
-      amount: amountPesewas,
+      amount: paystackTotalPesewas, // Total collected from donor
       email: body.email,
       subaccountCode: campaign.subaccount_code,
       reference,
       metadata: {
-        donation_id: donation.id, // Using snake_case to match webhook expectations
+        donation_id: donation.id,
         campaign_id: campaign.id,
         campaign_title: campaign.title,
         donor_name: body.donorName || 'Anonymous',
         message: body.message,
-        transaction_fee: transactionFee,
+        donation_amount: amountPesewas,
+        donor_tip: tipPesewas,
+        transaction_fee: standardFee,
         net_amount: netAmount,
       },
     })
@@ -184,7 +198,9 @@ export async function POST(request: NextRequest) {
         id: donation.id,
         reference,
         amount: body.amount,
-        transactionFee: (transactionFee / 100).toFixed(2),
+        tip: body.tip || 0,
+        total: body.amount + (body.tip || 0),
+        transactionFee: (standardFee / 100).toFixed(2),
         netAmount: (netAmount / 100).toFixed(2),
       },
       payment: {

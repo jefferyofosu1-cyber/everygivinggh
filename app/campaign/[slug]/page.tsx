@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Footer from '@/components/layout/Footer'
-import { sanityClient } from '@/lib/sanity.client'
+import { 
+  sanityClient, 
+  safeSanityFetch 
+} from '@/lib/sanity.client'
 import {
   campaignBySlugQuery,
   campaignDonationsBySlugQuery,
@@ -23,37 +26,42 @@ export async function generateMetadata({
 }: {
   params: PageParams
 }): Promise<Metadata> {
-  const campaign = await sanityClient.fetch(campaignBySlugQuery, {
-    slug: params.slug,
-  })
+  try {
+    const campaign = await safeSanityFetch<any>(campaignBySlugQuery, {
+      slug: params.slug,
+    })
 
-  if (!campaign) {
-    return {
-      title: 'Campaign not found · Every Giving',
+    if (!campaign) {
+      return {
+        title: 'Campaign not found · Every Giving',
+      }
     }
-  }
 
-  const title = `${campaign.title} · Every Giving`
-  const description = `Support ${campaign.beneficiaryName} - ${campaign.category} campaign on Every Giving.`
-  const image = campaign.coverImage
-    ? urlFor(campaign.coverImage).width(1200).height(630).fit('crop').url()
-    : undefined
+    const title = `${campaign.title} · Every Giving`
+    const description = `Support ${campaign.beneficiaryName} - ${campaign.category} campaign on Every Giving.`
+    const image = campaign.coverImage
+      ? urlFor(campaign.coverImage).width(1200).height(630).fit('crop').url()
+      : undefined
 
-  return {
-    title,
-    description,
-    openGraph: {
+    return {
       title,
       description,
-      images: image ? [{ url: image, width: 1200, height: 630 }] : undefined,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: image ? [image] : undefined,
-    },
+      openGraph: {
+        title,
+        description,
+        images: image ? [{ url: image, width: 1200, height: 630 }] : undefined,
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: image ? [image] : undefined,
+      },
+    }
+  } catch (err) {
+    console.error('[Sanity] Metadata generation failed:', err)
+    return { title: 'Campaign · Every Giving' }
   }
 }
 
@@ -62,7 +70,7 @@ export default async function CampaignPage({
 }: {
   params: PageParams
 }) {
-  const campaign = await sanityClient.fetch(campaignBySlugQuery, {
+  const campaign = await safeSanityFetch<any>(campaignBySlugQuery, {
     slug: params.slug,
   })
 
@@ -71,8 +79,8 @@ export default async function CampaignPage({
   }
 
   const [donations, updates] = await Promise.all([
-    sanityClient.fetch(campaignDonationsBySlugQuery, { slug: params.slug }),
-    sanityClient.fetch(campaignUpdatesBySlugQuery, { slug: params.slug }),
+    safeSanityFetch<any[]>(campaignDonationsBySlugQuery, { slug: params.slug }),
+    safeSanityFetch<any[]>(campaignUpdatesBySlugQuery, { slug: params.slug }),
   ])
 
   const goalAmount: number = campaign.goalAmount || 0
@@ -152,7 +160,7 @@ export default async function CampaignPage({
                 </div>
               </div>
 
-              {updates.length > 0 && (
+              {updates && updates.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
                   <h2 className="font-nunito font-black text-navy text-lg mb-4">
                     Updates
@@ -190,7 +198,7 @@ export default async function CampaignPage({
                 </button>
               </div>
 
-              {donations.length > 0 && (
+              {donations && donations.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                   <h3 className="font-nunito font-black text-navy text-lg mb-4">
                     Recent donations

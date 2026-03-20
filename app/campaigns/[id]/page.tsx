@@ -3,6 +3,7 @@ import { Metadata } from 'next'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import DonationForm from '@/components/campaigns/DonationForm'
+import CampaignShare from '@/components/campaigns/CampaignShare'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import type { Campaign } from '@/types'
 
@@ -124,22 +125,7 @@ export default async function CampaignPage({ params }: { params: { id: string } 
               {/* Share */}
               <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
                 <div className="font-nunito font-black text-navy text-xl mb-6">Spread the word</div>
-                <div className="grid grid-cols-2 gap-4">
-                  <a 
-                    href={`https://wa.me/?text=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 py-4 bg-[#25D366] text-white font-black rounded-2xl text-sm hover:-translate-y-1 transition-all shadow-lg shadow-[#25D366]/20"
-                  >
-                    WhatsApp
-                  </a>
-                  <button 
-                    onClick={() => { /* This will actually need to be a small client component or inline JS if we want it in a server component */ }}
-                    className="py-4 border-2 border-gray-100 hover:border-primary hover:text-primary text-gray-600 font-black rounded-2xl text-sm transition-all"
-                  >
-                    Copy link
-                  </button>
-                </div>
+                <CampaignShare shareUrl={shareUrl} shareText={shareText} />
               </div>
             </div>
 

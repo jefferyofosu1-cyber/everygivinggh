@@ -3,11 +3,14 @@ import { useState } from 'react'
 
 export default function DonationForm({ campaign }: { campaign: any }) {
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', amount: '', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', amount: '', message: '', tip: '15' })
   const [errorMsg, setErrorMsg] = useState('')
 
   const amount = parseFloat(form.amount) || 0
+  const tipPercent = parseFloat(form.tip) || 0
+  const tipAmount = amount * (tipPercent / 100)
   const fee = amount > 0 ? (amount * 0.029 + 0.5).toFixed(2) : '0.00'
+  const total = amount + tipAmount
 
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,6 +37,7 @@ export default function DonationForm({ campaign }: { campaign: any }) {
           donorName: form.name || 'Anonymous',
           email: form.email,
           amount: amount,
+          tip: tipAmount,
           message: form.message,
         })
       })
@@ -102,12 +106,33 @@ export default function DonationForm({ campaign }: { campaign: any }) {
                 className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl pl-10 pr-5 py-4 text-lg font-black text-navy outline-none transition-all" 
               />
             </div>
-            {amount > 0 && (
-              <div className="mt-2 ml-1 flex items-center justify-between text-[11px] font-bold">
-                <span className="text-gray-400">Transaction fee (2.9% + ₵0.50):</span>
-                <span className="text-navy">₵{fee}</span>
-              </div>
-            )}
+          </div>
+
+          {/* Tip Section */}
+          <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
+            <div className="flex justify-between items-center mb-3">
+              <label className="text-[10px] font-black uppercase tracking-widest text-primary block ml-1">EveryGiving Tip</label>
+              <span className="text-primary font-bold text-xs">₵{tipAmount.toFixed(2)}</span>
+            </div>
+            <p className="text-[10px] text-gray-500 mb-3 leading-tight font-medium">
+              EveryGiving has a 0% platform fee for fundraisers. We rely on tips from generous donors like you to keep the platform running.
+            </p>
+            <div className="flex gap-2">
+              {['0', '10', '15', '20', '25'].map(t => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setForm(p => ({ ...p, tip: t }))}
+                  className={`flex-1 py-1.5 rounded-xl text-[10px] font-black transition-all ${
+                    form.tip === t 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                      : 'bg-white text-gray-400 hover:text-navy border border-gray-100'
+                  }`}
+                >
+                  {t === '0' ? 'None' : `${t}%`}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -122,12 +147,27 @@ export default function DonationForm({ campaign }: { campaign: any }) {
           </div>
         </div>
 
+        <div className="space-y-3 font-bold">
+          <div className="flex justify-between text-xs py-2 border-t border-dashed border-gray-100">
+             <span className="text-gray-400">Campaign Donation:</span>
+             <span className="text-navy">₵{amount.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-xs pb-2">
+             <span className="text-gray-400">Platform Tip:</span>
+             <span className="text-navy">₵{tipAmount.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-sm pt-2 border-t border-gray-100">
+             <span className="font-black text-navy uppercase tracking-wider">Total:</span>
+             <span className="font-black text-primary text-lg">₵{total.toFixed(2)}</span>
+          </div>
+        </div>
+
         <button 
           type="submit" 
           disabled={loading}
           className="w-full py-5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-2xl transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/20 text-base disabled:opacity-60 disabled:translate-y-0"
         >
-          {loading ? 'Initializing…' : `Donate ₵${amount || '0.00'}`}
+          {loading ? 'Initializing…' : `Donate ₵${total.toFixed(2)}`}
         </button>
         
         <div className="space-y-3 pt-2">

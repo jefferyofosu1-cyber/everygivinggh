@@ -20,9 +20,10 @@ const optional = [
 export function validateEnv() {
   const missing = required.filter((key) => !process.env[key])
   if (missing.length > 0) {
-    throw new Error(
-      `Missing required environment variables:\n  ${missing.join('\n  ')}\n\nSee .env.example for reference.`
+    console.error(
+      `[env] CRITICAL: Missing required environment variables:\n  ${missing.join('\n  ')}\n\nSee .env.example for reference.`
     )
+    return
   }
 
   const unset = optional.filter((key) => !process.env[key])

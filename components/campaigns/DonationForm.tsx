@@ -1,151 +1,148 @@
 'use client'
-
 import { useState } from 'react'
-import Link from 'next/link'
-import { usePaystackPayment } from 'react-paystack'
-import { createClient } from '@/lib/supabase'
 
 export default function DonationForm({ campaign }: { campaign: any }) {
-  const [donating, setDonating] = useState(false)
-  const [donated, setDonated] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', amount: '', message: '', method: 'MTN MoMo' })
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({ name: '', email: '', amount: '', message: '' })
   const [errorMsg, setErrorMsg] = useState('')
-  const [donationId, setDonationId] = useState<string | null>(null)
 
-  const totalAmount = parseFloat(form.amount) || 0
-
-  const paystackConfig = {
-    reference: `${campaign?.id}-${Date.now()}`,
-    email: form.email,
-    amount: Math.round(totalAmount * 100),
-    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
-    currency: 'GHS',
-    metadata: {
-      campaign_id: campaign?.id,
-      donation_id: donationId,
-      donor_name: form.name || 'Anonymous',
-      message: form.message,
-      payment_method: form.method,
-    }
-  }
-
-  const initializePayment = usePaystackPayment(paystackConfig as any)
+  const amount = parseFloat(form.amount) || 0
+  const fee = amount > 0 ? (amount * 0.029 + 0.5).toFixed(2) : '0.00'
 
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMsg('')
     
-    if (!totalAmount || totalAmount <= 0 || !form.email || !campaign) {
-      setErrorMsg('Please enter an amount and your email')
+    if (!amount || amount < 1) {
+      setErrorMsg('Minimum donation is GHS 1.00')
       return
     }
 
-    setDonating(true)
+    if (!form.email) {
+      setErrorMsg('Please enter your email address')
+      return
+    }
+
+    setLoading(true)
 
     try {
-      const res = await fetch('/api/donate', {
+      const res = await fetch('/api/paystack/initialize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          campaign_id: campaign.id,
-          donor_name: form.name || 'Anonymous',
-          donor_email: form.email,
-          amount: totalAmount,
-          tip_amount: 0,
+          campaignId: campaign.id,
+          donorName: form.name || 'Anonymous',
+          email: form.email,
+          amount: amount,
           message: form.message,
-          payment_method: form.method,
         })
       })
 
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to initialize donation')
 
-      setDonationId(data.donationId)
-
-      const onSuccess = async (reference: any) => {
-        try {
-          const supabase = createClient()
-          await supabase
-            .from('donations')
-            .update({ status: 'success', payment_reference: reference.reference })
-            .eq('id', data.donationId)
-          
-          setDonated(true)
-          setDonating(false)
-        } catch (err) {
-          console.error('Update error:', err)
-          setDonated(true) // Still show success message to user
-          setDonating(false)
-        }
+      if (data.payment?.authorizationUrl) {
+        // Redirect to Paystack checkout
+        window.location.href = data.payment.authorizationUrl
+      } else {
+        throw new Error('Payment initialization failed: No checkout URL returned')
       }
-
-      const onClose = () => {
-        setDonating(false)
-      }
-
-      const dynamicConfig = {
-        ...paystackConfig,
-        metadata: { ...paystackConfig.metadata, donation_id: data.donationId }
-      }
-      
-      initializePayment({ onSuccess, onClose, config: dynamicConfig } as any)
-
     } catch (err: any) {
       setErrorMsg(err.message)
-      setDonating(false)
+      setLoading(false)
     }
   }
 
-  if (donated) {
-    return (
-      <div className="text-center py-8">
-        <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4">💚</div>
-        <h2 className="font-nunito font-black text-navy text-2xl mb-2">Thank you!</h2>
-        <p className="text-gray-500 text-sm mb-6">Your donation of <strong>₵{totalAmount}</strong> helps make a difference.</p>
-        <button onClick={() => setDonated(false)} className="text-primary text-sm font-bold hover:underline">Make another donation</button>
-      </div>
-    )
-  }
-
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-20">
-      <form onSubmit={handleDonate} className="flex flex-col gap-4">
-        {errorMsg && <div className="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-bold border border-red-100">{errorMsg}</div>}
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
+      <h3 className="font-nunito font-black text-navy text-xl mb-6">Make a donation</h3>
+      
+      <form onSubmit={handleDonate} className="flex flex-col gap-5">
+        {errorMsg && (
+          <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-xs font-bold border border-red-100 animate-shake">
+            {errorMsg}
+          </div>
+        )}
         
-        <div>
-          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 ml-1">Your Name</label>
-          <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-            placeholder="Ama Mensah"
-            className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-xl px-4 py-3 text-sm outline-none transition-all" />
-        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2 ml-1">Your Name</label>
+            <input 
+              type="text" 
+              value={form.name} 
+              onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+              placeholder="e.g. Kwame Mensah"
+              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium" 
+            />
+          </div>
 
-        <div>
-          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 ml-1">Email Address *</label>
-          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-            placeholder="ama@example.com"
-            className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-xl px-4 py-3 text-sm outline-none transition-all" />
-        </div>
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2 ml-1">Email Address *</label>
+            <input 
+              type="email" 
+              required 
+              value={form.email} 
+              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+              placeholder="kwame@example.com"
+              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium" 
+            />
+          </div>
 
-        <div>
-          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-1.5 ml-1">Amount (GHC) *</label>
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">₵</span>
-            <input type="number" required min="1" max="50000" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
-              placeholder="50"
-              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-xl pl-8 pr-4 py-3 text-sm outline-none transition-all" />
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2 ml-1">Donation Amount (GHS) *</label>
+            <div className="relative">
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-navy font-bold text-lg">₵</span>
+              <input 
+                type="number" 
+                required 
+                min="1" 
+                value={form.amount} 
+                onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
+                placeholder="0.00"
+                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl pl-10 pr-5 py-4 text-lg font-black text-navy outline-none transition-all" 
+              />
+            </div>
+            {amount > 0 && (
+              <div className="mt-2 ml-1 flex items-center justify-between text-[11px] font-bold">
+                <span className="text-gray-400">Transaction fee (2.9% + ₵0.50):</span>
+                <span className="text-navy">₵{fee}</span>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2 ml-1">Words of support (Optional)</label>
+            <textarea 
+              value={form.message} 
+              onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
+              placeholder="Leave a kind message..."
+              rows={3}
+              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium resize-none" 
+            />
           </div>
         </div>
 
-
-        <button type="submit" disabled={donating}
-          className="w-full py-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm disabled:opacity-60">
-          {donating ? 'Processing…' : `Donate ₵${form.amount || '—'} →`}
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full py-5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-2xl transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/20 text-base disabled:opacity-60 disabled:translate-y-0"
+        >
+          {loading ? 'Initializing…' : `Donate ₵${amount || '0.00'}`}
         </button>
         
-        <p className="text-[10px] text-gray-400 text-center leading-relaxed">
-          Secure payment via Paystack<br />
-          MoMo, Card, and Bank Transfer
-        </p>
+        <div className="space-y-3 pt-2">
+          <p className="text-[10px] text-gray-400 text-center leading-relaxed font-bold uppercase tracking-wider">
+            Secure payment processed by Paystack
+          </p>
+          <div className="flex items-center justify-center gap-4 opacity-40 grayscale hover:grayscale-0 transition-all">
+            <div className="text-[10px] font-black border border-current px-2 py-0.5 rounded">VISA</div>
+            <div className="text-[10px] font-black border border-current px-2 py-0.5 rounded">MASTERCARD</div>
+            <div className="text-[10px] font-black border border-current px-2 py-0.5 rounded">MoMo</div>
+          </div>
+          <p className="text-[9px] text-primary/60 text-center font-bold">
+            🛡️ Funds go directly to the verified fundraiser
+          </p>
+        </div>
       </form>
     </div>
   )

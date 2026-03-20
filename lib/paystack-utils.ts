@@ -14,15 +14,12 @@ const EVERYGIVING_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://everyg
 // FEE CALCULATION UTILITIES
 // ============================================================================
 
-/**
- * Calculate transaction fee (2.9% + GHS 0.50)
- * @param amountGHS - Amount in GHS (e.g., 100 for GHS 100)
- * @returns Fee in GHS
- */
 export function calculateTransactionFeeGHS(amountGHS: number): number {
+  if (amountGHS <= 0) return 0
   const percentage = amountGHS * 0.029
   const flatFee = 0.5
-  return Math.round((percentage + flatFee) * 100) / 100
+  // Always round to 2 decimal places to match GHS currency
+  return Number((percentage + flatFee).toFixed(2))
 }
 
 /**

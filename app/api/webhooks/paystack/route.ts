@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
       .select('id')
       .eq('reference', reference)
       .eq('status', 'success')
-      .single()
+      .maybeSingle()
 
     if (existingLog) {
       console.log(`[Webhook] Duplicate detected for ${reference} - already processed`)

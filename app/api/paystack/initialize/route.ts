@@ -27,6 +27,7 @@ interface PaymentInitRequest {
   campaignId: string
   donorId?: string
   donorName?: string
+  message?: string
 }
 
 // ============================================================================
@@ -119,11 +120,12 @@ export async function POST(request: NextRequest) {
       .insert({
         campaign_id: campaign.id,
         donor_id: body.donorId || null,
-        donor_name: body.donorName || null,
+        donor_name: body.donorName || 'Anonymous',
         donor_email: body.email,
         amount_paid: amountPesewas,
         transaction_fee: transactionFee,
         net_amount: netAmount,
+        message: body.message || null,
         reference,
         status: 'pending',
         paystack_reference: null,
@@ -149,12 +151,13 @@ export async function POST(request: NextRequest) {
       subaccountCode: campaign.subaccount_code,
       reference,
       metadata: {
-        donationId: donation.id,
-        campaignId: campaign.id,
-        campaignTitle: campaign.title,
-        donorName: body.donorName,
-        transactionFee,
-        netAmount,
+        donation_id: donation.id, // Using snake_case to match webhook expectations
+        campaign_id: campaign.id,
+        campaign_title: campaign.title,
+        donor_name: body.donorName || 'Anonymous',
+        message: body.message,
+        transaction_fee: transactionFee,
+        net_amount: netAmount,
       },
     })
 

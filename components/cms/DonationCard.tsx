@@ -6,9 +6,11 @@ type DonationCardProps = {
 }
 
 function daysAgo(dateStr: string): string {
-  const diffDays = Math.floor(
-    (Date.now() - new Date(dateStr).getTime()) / 86400000,
-  )
+  if (!dateStr) return 'Recently'
+  const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return 'Recently'
+  
+  const diffDays = Math.floor((Date.now() - date.getTime()) / 86400000)
   if (diffDays <= 0) return 'Today'
   if (diffDays === 1) return 'Yesterday'
   return `${diffDays} days ago`
@@ -33,7 +35,7 @@ export function DonationCard({
             {name}
           </span>
           <span className="font-nunito font-black text-primary text-sm whitespace-nowrap">
-            ₵{amount.toLocaleString()}
+            ₵{(amount || 0).toLocaleString()}
           </span>
         </div>
         {message && (

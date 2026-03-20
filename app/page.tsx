@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -45,20 +44,7 @@ const IconHeart = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="no
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
-function formatGHS(amount: number) {
-  return `₵${amount.toLocaleString()}`
-}
 
-function highlightText(text: string, query: string): React.ReactNode {
-  if (!query.trim()) return text
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const parts = text.split(new RegExp(`(${escaped})`, 'gi'))
-  return parts.map((part, i) =>
-    part.toLowerCase() === query.toLowerCase()
-      ? <mark key={i} className="bg-yellow-100 rounded px-0.5">{part}</mark>
-      : part
-  )
-}
 
 // ─── MAIN PAGE COMPONENT ──────────────────────────────────────────────────────
 
@@ -130,7 +116,6 @@ export default function HomePage() {
     setVisibleCount(PAGE_SIZE)
   }, [])
 
-  const isFeaturedMode = !query && activeCategory === 'all' && activeFilters.size === 0
 
   return (
     <>

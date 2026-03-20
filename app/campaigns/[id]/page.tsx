@@ -18,7 +18,7 @@ async function getCampaign(id: string) {
   const supabase = await createServerSupabaseClient()
   const { data, error } = await supabase
     .from('campaigns')
-    .select('*, profiles(full_name, phone)')
+    .select('*, profiles(full_name, phone), donations(id)')
     .eq('id', id)
     .single()
     
@@ -66,9 +66,11 @@ export default async function CampaignPage({ params }: { params: { id: string } 
     )
   }
 
-  const pct = campaign.goal_amount ? Math.min(Math.round((campaign.raised_amount / campaign.goal_amount) * 100), 100) : 0
+  const raised = campaign.raised_amount || 0
+  const goal = campaign.goal_amount || 0
+  const pct = goal > 0 ? Math.min(Math.round((raised / goal) * 100), 100) : 0
   const emoji = campaign.category ? EMOJI[campaign.category.toLowerCase()] || '💚' : '💚'
-  const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/campaigns/${campaign.id}`
+  const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL || ''}/campaigns/${campaign.id}`
   const shareText = `Help support "${campaign.title}" on EveryGiving 💚`
 
   return (

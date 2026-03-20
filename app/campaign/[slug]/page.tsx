@@ -102,7 +102,7 @@ export default async function CampaignPage({
                   </div>
                 )}
                   <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                    {campaign.verificationLevel?.toUpperCase()} VERIFIED
+                    {(campaign.verificationLevel || 'basic').toUpperCase()} VERIFIED
                   </div>
               </div>
 
@@ -148,7 +148,7 @@ export default async function CampaignPage({
                   Story
                 </h2>
                 <div className="prose prose-sm max-w-none text-gray-700">
-                  <PortableText value={campaign.story} />
+                  {campaign.story && <PortableText value={campaign.story} />}
                 </div>
               </div>
 
@@ -164,7 +164,7 @@ export default async function CampaignPage({
                           {u.updateTitle}
                         </h3>
                         <div className="text-xs text-gray-400 mb-2">
-                          {new Date(u.createdAt).toLocaleDateString()}
+                          {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Recently'}
                         </div>
                         <div className="prose prose-sm max-w-none text-gray-700">
                           <PortableText value={u.updateBody} />

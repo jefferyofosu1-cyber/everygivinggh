@@ -28,7 +28,7 @@ export class NotificationService {
     to,
     subject,
     htmlContent,
-    fromEmail = 'noreply@everygiving.org',
+    fromEmail = 'business@everygiving.org', // Use verified sender
     fromName = 'EveryGiving',
   }: EmailParams) {
     if (!BREVO_API_KEY) {
@@ -99,10 +99,11 @@ export class NotificationService {
     donorEmail: string,
     donorName: string,
     campaignTitle: string,
-    amount: number,
+    amount: number | string | bigint,
     transactionId: string
   ) {
-    const formattedAmount = `GHS ${(amount / 100).toFixed(2)}`
+    const amountNum = Number(amount)
+    const formattedAmount = `GHS ${(amountNum / 100).toFixed(2)}`
     const today = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
     const campaignSlug = campaignTitle.toLowerCase().replace(/\s+/g, '-')
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
@@ -190,9 +191,10 @@ export class NotificationService {
     fundraiserName: string,
     campaignTitle: string,
     customMessage: string,
-    amount?: number
+    amount?: number | string | bigint
   ) {
-    const amountText = amount ? ` of GHS ${(amount / 100).toFixed(2)}` : ''
+    const amountNum = amount ? Number(amount) : null
+    const amountText = amountNum ? ` of GHS ${(amountNum / 100).toFixed(2)}` : ''
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -254,11 +256,13 @@ export class NotificationService {
     donorName: string,
     campaignTitle: string,
     milestone: number, // 25, 50, 100
-    currentAmount: number,
-    goalAmount: number
+    currentAmount: number | string | bigint,
+    goalAmount: number | string | bigint
   ) {
-    const formattedCurrent = `GHS ${(currentAmount / 100).toFixed(2)}`
-    const formattedGoal = `GHS ${(goalAmount / 100).toFixed(2)}`
+    const currentNum = Number(currentAmount)
+    const goalNum = Number(goalAmount)
+    const formattedCurrent = `GHS ${(currentNum / 100).toFixed(2)}`
+    const formattedGoal = `GHS ${(goalNum / 100).toFixed(2)}`
     const isFulFilled = milestone === 100
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
     const campaignLink = `${baseUrl}/campaign/${campaignTitle.toLowerCase().replace(/\s+/g, '-')}`
@@ -363,11 +367,12 @@ export class NotificationService {
     updateTitle: string,
     updateContent: string,
     campaignId: string,
-    totalRaised?: number
+    totalRaised?: number | string | bigint
   ) {
+    const totalRaisedNum = totalRaised ? Number(totalRaised) : null
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
     const campaignLink = `${baseUrl}/campaign/${campaignId}`
-    const totalRaisedText = totalRaised ? `<p>Thanks to your contribution, the campaign has now raised <strong>GHS ${(totalRaised / 100).toFixed(2)}</strong> so far.</p>` : ''
+    const totalRaisedText = totalRaisedNum ? `<p>Thanks to your contribution, the campaign has now raised <strong>GHS ${(totalRaisedNum / 100).toFixed(2)}</strong> so far.</p>` : ''
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -434,10 +439,11 @@ export class NotificationService {
     donorEmail: string,
     donorName: string,
     campaignTitle: string,
-    amount: number,
+    amount: number | string | bigint,
     retryUrl: string
   ) {
-    const formattedAmount = `GHS ${(amount / 100).toFixed(2)}`
+    const amountNum = Number(amount)
+    const formattedAmount = `GHS ${(amountNum / 100).toFixed(2)}`
 
     const htmlContent = `
       <!DOCTYPE html>

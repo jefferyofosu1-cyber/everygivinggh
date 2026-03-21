@@ -362,7 +362,15 @@ export default function DonatePage({ params }: { params: { id: string } }) {
       .select('title, category, image_url, raised_amount, goal_amount, donor_count, verified, profiles(full_name)')
       .or(`id.eq.${params.id},slug.eq.${params.id}`)
       .single()
-      .then(({ data }) => { if (data) setCampaign(data as any); });
+      .then(({ data }) => {
+        if (data) {
+          const d = data as any;
+          setCampaign({
+            ...d,
+            profiles: Array.isArray(d.profiles) ? d.profiles[0] : d.profiles
+          });
+        }
+      });
   }, [params.id]);
 
   const handlePaymentNext = useCallback((data: Record<string,string>) => {

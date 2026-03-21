@@ -43,7 +43,11 @@ export default function SearchPage() {
     if (q.trim()) sb = sb.or(`title.ilike.%${q}%,story.ilike.%${q}%,location.ilike.%${q}%`) // Removed organiser_name search for now as it's harder in .or() with relations
 
     const { data, count } = await sb
-    setResults(data || [])
+    const formatted = (data as any[])?.map(item => ({
+      ...item,
+      profiles: Array.isArray(item.profiles) ? item.profiles[0] : item.profiles
+    }))
+    setResults(formatted || [])
     setTotal(count || 0)
     setLoading(false)
   }, [])

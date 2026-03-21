@@ -65,7 +65,13 @@ export default function HomePage() {
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        if (data) setCampaigns(data as Campaign[])
+        if (data) {
+          const formatted = (data as any[]).map(item => ({
+            ...item,
+            profiles: Array.isArray(item.profiles) ? item.profiles[0] : item.profiles
+          }))
+          setCampaigns(formatted as Campaign[])
+        }
         setLoading(false)
       })
   }, [])

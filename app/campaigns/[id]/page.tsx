@@ -23,17 +23,16 @@ async function getCampaign(id: string) {
     .eq('id', id)
     .single()
     
-  if (error) {
+  if (error || !data) {
     console.error(`[getCampaign] Error fetching campaign ${id}:`, error)
     return null
   }
   
-  if (!data) {
-    console.warn(`[getCampaign] No data found for campaign ${id}`)
-    return null
-  }
-
-  return data as Campaign
+  const campaign = data as any
+  return {
+    ...campaign,
+    profiles: Array.isArray(campaign.profiles) ? campaign.profiles[0] : campaign.profiles
+  } as Campaign
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {

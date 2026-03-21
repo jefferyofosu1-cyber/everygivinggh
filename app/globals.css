@@ -11,6 +11,11 @@
   --primary-light:  #e6f9f0;
   --navy:           #1A2B3C;
   --navy-light:     #243648;
+  --surface:        #ffffff;
+  --surface-alt:    #f5f4f0;
+  --border:         #e8e4dc;
+  --text-main:      #1a1a18;
+  --text-muted:     #8a8a82;
 }
 
 html.dark {
@@ -19,6 +24,11 @@ html.dark {
   --primary-light:  #1F3A2F;
   --navy:           #F1F5F9;
   --navy-light:     #E2E8F0;
+  --surface:        #0f172a;
+  --surface-alt:    #1e293b;
+  --border:         #334155;
+  --text-main:      #f1f5f9;
+  --text-muted:     #94a3b8;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -26,15 +36,15 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   font-family: 'Nunito Sans', sans-serif;
-  color: #1A2B3C;
-  background: #ffffff;
+  color: var(--text-main);
+  background: var(--surface);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 html.dark body {
-  color: #F1F5F9;
-  background: #0F172A;
+  color: var(--text-main);
+  background: var(--surface);
 }
 
 .font-nunito  { font-family: 'Nunito', sans-serif; }

@@ -84,13 +84,13 @@ export async function POST(req: NextRequest) {
         donor_name,
         donor_email,
         amount_paid,
-        transaction_fee,
-        net_amount,
+        paystack_fee,
+        net_received,
         campaigns (
           id,
           title,
           user_id,
-          subaccount_code
+          user_id
         )
       `
       )
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     const fundraiserId = campaign.user_id
 
     console.log(`[Webhook] Campaign: ${campaign.id} | Fundraiser: ${fundraiserId}`)
-    console.log(`[Webhook] Amount: ${donation.amount_paid}p | Fee: ${donation.transaction_fee}p | Net: ${donation.net_amount}p`)
+    console.log(`[Webhook] Amount: ${donation.amount_paid}p | Fee: ${donation.paystack_fee}p | Net: ${donation.net_received}p`)
 
     // ========================================================================
     // 4. UPDATE DONATION STATUS
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
     const { error: updateError } = await supabase
       .from('donations')
       .update({
-        status: 'completed',
+        status: 'success',
         paystack_reference: reference,
         updated_at: new Date().toISOString(),
       })
@@ -143,8 +143,8 @@ export async function POST(req: NextRequest) {
           fundraiser_id: fundraiserId,
           campaign_id: campaign.id,
           type: 'fee',
-          amount: donation.transaction_fee,
-          description: `Transaction fee for donation (${(donation.transaction_fee / 100).toFixed(2)})`,
+          amount: donation.paystack_fee,
+          description: `Transaction fee for donation (${(donation.paystack_fee / 100).toFixed(2)})`,
           status: 'processed',
         })
 
@@ -158,8 +158,8 @@ export async function POST(req: NextRequest) {
           fundraiser_id: fundraiserId,
           campaign_id: campaign.id,
           type: 'net_amount',
-          amount: donation.net_amount,
-          description: `Net donation amount to be distributed (${(donation.net_amount / 100).toFixed(2)})`,
+          amount: donation.net_received,
+          description: `Net donation amount distributed (${(donation.net_received / 100).toFixed(2)})`,
           status: 'processed',
         })
 
@@ -175,7 +175,7 @@ export async function POST(req: NextRequest) {
     // 6. UPDATE CAMPAIGN TOTALS (via trigger)
     // ========================================================================
     // The database trigger will automatically update campaign.total_raised
-    // when donation status changes to 'completed'
+    // when donation status changes to 'success'
 
     console.log(`[Webhook] Campaign totals will be auto-updated by database trigger`)
 
@@ -189,6 +189,7 @@ export async function POST(req: NextRequest) {
       await NotificationService.sendDonationConfirmation(
         donation.donor_email,
         donation.donor_name || 'Valued Supporter',
+        campaign.id,
         campaign.title,
         donation.amount_paid,
         reference

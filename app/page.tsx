@@ -121,21 +121,21 @@ export default function HomePage() {
     <>
       <Navbar />
       <style dangerouslySetInnerHTML={{ __html: `
-        body { background: #FDFAF5; color: #1A1A18; }
+        body { background: var(--surface); color: var(--text-main); }
         .transition-hover { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .campaign-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.06); }
-        .hero-bg { background: linear-gradient(180deg, #F9F8F6 0%, #FDFAF5 100%); }
+        .hero-bg { background: var(--surface-alt); }
         .play-button { transition: all 0.3s ease; }
         a:has(.play-button):hover .play-button { transform: scale(1.1); background: rgba(255, 0, 0, 1) !important; }
       `}} />
 
       {/* ── 1. NEW TEXT HERO SECTION ── */}
-      <div className="hero-bg" style={{ padding: '80px 28px 60px', textAlign: 'center', borderBottom: '1px solid #E8E4DC' }}>
+      <div className="hero-bg" style={{ padding: '80px 28px 60px', textAlign: 'center', borderBottom: '1px solid var(--border)' }}>
         <div style={{ maxWidth: 840, margin: '0 auto' }}>
-          <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(40px, 7vw, 72px)', color: '#1A1A18', marginBottom: 24, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
-            Raise money for what <span style={{ color: '#0A6B4B' }}>matters most</span>
+          <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 'clamp(40px, 7vw, 72px)', color: 'var(--text-main)', marginBottom: 24, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
+            Raise money for what <span style={{ color: 'var(--primary)' }}>matters most</span>
           </h1>
-          <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: '#4A4A44', lineHeight: 1.6, marginBottom: 40, maxWidth: 680, marginInline: 'auto' }}>
+          <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: 'var(--text-main)', opacity: 0.8, lineHeight: 1.6, marginBottom: 40, maxWidth: 680, marginInline: 'auto' }}>
             Create a fundraiser in minutes and get support from people who care across Ghana and beyond. 100% verified. Fast & secure.
           </p>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -150,54 +150,53 @@ export default function HomePage() {
       </div>
 
       {/* ── 2. INTERACTIVE TUTORIAL SECTION ── */}
-      <div style={{ padding: '60px 28px', background: '#FDFAF5' }}>
+      <div style={{ padding: '60px 28px', background: 'var(--surface)' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, color: '#1A1A18', marginBottom: 12 }}>See it in action</h2>
-            <p style={{ fontSize: 16, color: '#8A8A82' }}>Follow Ama's journey from problem to solution in 3 weeks</p>
+            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, color: 'var(--text-main)', marginBottom: 12 }}>See it in action</h2>
+            <p style={{ fontSize: 16, color: 'var(--text-muted)' }}>Follow Ama's journey from problem to solution in 3 weeks</p>
           </div>
           <TutorialEmbed />
         </div>
       </div>
 
       {/* ── 3. TRUST LAYER ── */}
-      <div style={{ padding: '80px 28px', background: '#F9F8F6', borderBottom: '1px solid #E8E4DC' }}>
+      <div style={{ padding: '80px 28px', background: 'var(--surface-alt)', borderBottom: '1px solid var(--border)' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 36, color: '#1A1A18', marginBottom: 12 }}>Why people trust EveryGiving</h2>
-            <p style={{ fontSize: 16, color: '#8A8A82' }}>Built to protect both the people giving and the people receiving.</p>
+            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 36, color: 'var(--text-main)', marginBottom: 12 }}>Why people trust EveryGiving</h2>
+            <p style={{ fontSize: 16, color: 'var(--text-muted)' }}>Built to protect both the people giving and the people receiving.</p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 32 }}>
-            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
-              <div style={{ width: 48, height: 48, background: '#E8F5EF', color: '#0A6B4B', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconVerify /></div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Verified fundraisers</h3>
-              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>Every single campaign organizer is identity-checked using the national Ghana Card database.</p>
+            <div style={{ background: 'var(--surface)', padding: '32px 24px', borderRadius: 16, border: '1px solid var(--border)' }}>
+              <div style={{ width: 48, height: 48, background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconVerify /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-main)', marginBottom: 8 }}>Verified fundraisers</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-main)', opacity: 0.8, lineHeight: 1.6 }}>Every single campaign organizer is identity-checked using the national Ghana Card database.</p>
             </div>
             
-            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
-              <div style={{ width: 48, height: 48, background: '#F0F4F8', color: '#185FA5', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconShield /></div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Secure payments</h3>
-              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>We use bank-level security via Paystack for instant MoMo, Telecel Cash, and Card processing.</p>
+            <div style={{ background: 'var(--surface)', padding: '32px 24px', borderRadius: 16, border: '1px solid var(--border)' }}>
+              <div style={{ width: 48, height: 48, background: 'var(--primary-light)', color: '#185FA5', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconShield /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-main)', marginBottom: 8 }}>Secure payments</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-main)', opacity: 0.8, lineHeight: 1.6 }}>We use bank-level security via Paystack for instant MoMo, Telecel Cash, and Card processing.</p>
             </div>
 
-
-            <div style={{ background: '#fff', padding: '32px 24px', borderRadius: 16, border: '1px solid #E8E4DC' }}>
-              <div style={{ width: 48, height: 48, background: '#FCE8E8', color: '#C0392B', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconHeart /></div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A18', marginBottom: 8 }}>Real impact stories</h3>
-              <p style={{ fontSize: 14, color: '#4A4A44', lineHeight: 1.6 }}>Track milestones and see exactly how your donation changes lives within the community.</p>
+            <div style={{ background: 'var(--surface)', padding: '32px 24px', borderRadius: 16, border: '1px solid var(--border)' }}>
+              <div style={{ width: 48, height: 48, background: 'rgba(192,57,43,0.1)', color: '#C0392B', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}><IconHeart /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-main)', marginBottom: 8 }}>Real impact stories</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-main)', opacity: 0.8, lineHeight: 1.6 }}>Track milestones and see exactly how your donation changes lives within the community.</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── 4. CAMPAIGNS DIRECTORY ── */}
-      <div id="campaigns" style={{ padding: '80px 28px', background: '#FDFAF5' }}>
+      <div id="campaigns" style={{ padding: '80px 28px', background: 'var(--surface)' }}>
         {/* Category tabs */}
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 24 }}>
           {CATEGORIES.map(cat => (
             <button key={cat.id} onClick={() => { setCategory(cat.id); setVisibleCount(PAGE_SIZE) }}
-              style={{ fontSize: 13, fontWeight: 600, color: activeCategory === cat.id ? '#0A6B4B' : '#4A4A44', padding: '10px 16px', borderRadius: 24, background: activeCategory === cat.id ? '#E8F5EF' : '#fff', border: activeCategory === cat.id ? '1px solid #B7DEC9' : '1px solid #E8E4DC', cursor: 'pointer', whiteSpace: 'nowrap' as const, fontFamily: 'inherit', transition: 'all 0.15s' }}>
+              style={{ fontSize: 13, fontWeight: 600, color: activeCategory === cat.id ? 'var(--primary)' : 'var(--text-main)', padding: '10px 16px', borderRadius: 24, background: activeCategory === cat.id ? 'var(--primary-light)' : 'var(--surface)', border: activeCategory === cat.id ? '1px solid var(--primary)' : '1px solid var(--border)', cursor: 'pointer', whiteSpace: 'nowrap' as const, fontFamily: 'inherit', transition: 'all 0.15s' }}>
               {cat.label}
             </button>
           ))}
@@ -208,13 +207,13 @@ export default function HomePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             {FILTER_CHIPS.map(f => (
               <button key={f.id} onClick={() => toggleFilter(f.id)}
-                style={{ fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 20, border: activeFilters.has(f.id) ? '1px solid #1A1A18' : '1px dashed #A0A09A', background: activeFilters.has(f.id) ? '#1A1A18' : 'transparent', color: activeFilters.has(f.id) ? '#fff' : '#4A4A44', cursor: 'pointer', transition: 'all 0.15s', fontFamily: 'inherit' }}>
+                style={{ fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 20, border: activeFilters.has(f.id) ? '1px solid var(--text-main)' : '1px dashed var(--text-muted)', background: activeFilters.has(f.id) ? 'var(--text-main)' : 'transparent', color: activeFilters.has(f.id) ? 'var(--surface)' : 'var(--text-main)', cursor: 'pointer', transition: 'all 0.15s', fontFamily: 'inherit' }}>
                 {activeFilters.has(f.id) ? '✓ ' : '+ '}{f.label}
               </button>
             ))}
           </div>
           <select value={sortBy} onChange={e => { setSortBy(e.target.value); setVisibleCount(PAGE_SIZE) }}
-            style={{ fontSize: 13, fontWeight: 500, color: '#4A4A44', padding: '10px 14px', border: '1px solid #E8E4DC', borderRadius: 8, background: '#fff', cursor: 'pointer', fontFamily: 'inherit', outline: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+            style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-main)', padding: '10px 14px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)', cursor: 'pointer', fontFamily: 'inherit', outline: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
             {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>Sort by: {o.label}</option>)}
           </select>
         </div>
@@ -222,10 +221,10 @@ export default function HomePage() {
         {/* Campaign Grid */}
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           {filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '80px 20px', background: '#fff', border: '1px dashed #D4D4D0', borderRadius: 16 }}>
-              <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 24, color: '#1A1A18', marginBottom: 8 }}>No campaigns found</h3>
-              <p style={{ fontSize: 15, color: '#8A8A82', marginBottom: 24 }}>Expand your search to find causes that need your help right now.</p>
-              <button onClick={clearAll} style={{ fontSize: 14, fontWeight: 600, color: '#1A1A18', background: '#F9F8F6', padding: '12px 24px', borderRadius: 8, border: '1px solid #E8E4DC', cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ textAlign: 'center', padding: '80px 20px', background: 'var(--surface)', border: '1px dashed var(--border)', borderRadius: 16 }}>
+              <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 24, color: 'var(--text-main)', marginBottom: 8 }}>No campaigns found</h3>
+              <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 24 }}>Expand your search to find causes that need your help right now.</p>
+              <button onClick={clearAll} style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-main)', background: 'var(--surface-alt)', padding: '12px 24px', borderRadius: 8, border: '1px solid var(--border)', cursor: 'pointer', fontFamily: 'inherit' }}>
                 Clear all filters
               </button>
             </div>
@@ -245,7 +244,7 @@ export default function HomePage() {
             <div style={{ textAlign: 'center', marginTop: 40 }}>
               <button
                 onClick={() => setVisibleCount(v => v + PAGE_SIZE)}
-                style={{ fontSize: 15, fontWeight: 600, color: '#1A1A18', background: '#fff', border: '1px solid #E8E4DC', padding: '14px 32px', borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.15s', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}
+                style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-main)', background: 'var(--surface)', border: '1px solid var(--border)', padding: '14px 32px', borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.15s', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}
               >
                 Show more campaigns
               </button>

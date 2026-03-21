@@ -19,11 +19,20 @@ async function getCampaign(id: string) {
   const supabase = await createServerSupabaseClient()
   const { data, error } = await supabase
     .from('campaigns')
-    .select('*, profiles(full_name, phone), donations(id)')
+    .select('*, profiles(full_name, phone)')
     .eq('id', id)
     .single()
     
-  if (error || !data) return null
+  if (error) {
+    console.error(`[getCampaign] Error fetching campaign ${id}:`, error)
+    return null
+  }
+  
+  if (!data) {
+    console.warn(`[getCampaign] No data found for campaign ${id}`)
+    return null
+  }
+
   return data as Campaign
 }
 
@@ -56,10 +65,11 @@ export default async function CampaignPage({ params }: { params: { id: string } 
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-5">
+        <div className="min-h-screen bg-surface-alt flex flex-col items-center justify-center p-5" style={{ background: 'var(--surface-alt)' }}>
           <div className="text-6xl mb-4">🔦</div>
-          <h1 className="font-nunito font-black text-navy text-2xl mb-2">Campaign not found</h1>
-          <p className="text-gray-500 mb-6 text-center">The campaign you are looking for might have been closed or moved.</p>
+          <h1 className="font-nunito font-black text-navy text-2xl mb-2" style={{ color: 'var(--navy)' }}>Campaign not found</h1>
+          <p className="text-muted mb-2 text-center text-xs font-mono bg-border p-2 rounded" style={{ color: 'var(--text-muted)', background: 'var(--border)' }}>Looking for ID: {params.id}</p>
+          <p className="text-muted mb-6 text-center" style={{ color: 'var(--text-muted)' }}>The campaign you are looking for might have been closed or moved.</p>
           <Link href="/campaigns" className="bg-primary text-white font-bold px-6 py-3 rounded-full">Explore other campaigns</Link>
         </div>
         <Footer />
@@ -77,9 +87,9 @@ export default async function CampaignPage({ params }: { params: { id: string } 
   return (
     <>
       <Navbar />
-      <main className="bg-gray-50 min-h-screen">
+      <main className="bg-surface-alt min-h-screen" style={{ background: 'var(--surface-alt)' }}>
         <div className="max-w-6xl mx-auto px-5 py-10">
-          <Link href="/campaigns" className="text-gray-400 text-sm hover:text-primary transition-colors mb-6 inline-flex items-center gap-1.5 font-bold">
+          <Link href="/campaigns" className="text-muted text-sm hover:text-primary transition-colors mb-6 inline-flex items-center gap-1.5 font-bold" style={{ color: 'var(--text-muted)' }}>
             <span className="text-lg">←</span> Back to campaigns
           </Link>
 
@@ -87,7 +97,7 @@ export default async function CampaignPage({ params }: { params: { id: string } 
             {/* ── LEFT: campaign details ── */}
             <div className="md:col-span-8">
               {/* Campaign image / emoji */}
-              <div className="aspect-video bg-gradient-to-br from-primary-light via-white to-blue-50 rounded-3xl flex items-center justify-center text-8xl mb-8 border border-gray-100 shadow-sm relative overflow-hidden">
+              <div className="aspect-video bg-surface rounded-3xl flex items-center justify-center text-8xl mb-8 border border-border shadow-sm relative overflow-hidden" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 {campaign.image_url ? (
                   <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover" />
                 ) : (
@@ -100,51 +110,51 @@ export default async function CampaignPage({ params }: { params: { id: string } 
                 )}
               </div>
 
-              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
+              <div className="bg-surface rounded-3xl border border-border shadow-sm p-8 mb-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-xs font-black uppercase tracking-widest text-primary bg-primary-light px-4 py-1.5 rounded-full">{campaign.category}</span>
                   {campaign.verified && <span className="text-xs font-bold text-primary flex items-center gap-1">Identity verified</span>}
                 </div>
-                <h1 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-6 leading-tight select-none">
+                <h1 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-6 leading-tight select-none" style={{ color: 'var(--navy)' }}>
                   {campaign.title}
                 </h1>
                 
-                <div className="flex items-center gap-3 mb-8 pb-8 border-b border-gray-100">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl">👤</div>
+                <div className="flex items-center gap-3 mb-8 pb-8 border-b border-border" style={{ borderBottomColor: 'var(--border)' }}>
+                  <div className="w-12 h-12 bg-surface-alt rounded-full flex items-center justify-center text-xl" style={{ background: 'var(--surface-alt)' }}>👤</div>
                   <div>
-                    <div className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Campaign Organiser</div>
-                    <div className="font-nunito font-black text-navy">{campaign.profiles?.full_name || 'Anonymous'}</div>
+                    <div className="text-xs text-muted font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--text-muted)' }}>Campaign Organiser</div>
+                    <div className="font-nunito font-black text-navy" style={{ color: 'var(--navy)' }}>{campaign.profiles?.full_name || 'Anonymous'}</div>
                   </div>
                 </div>
 
-                <div className="prose prose-slate max-w-none">
-                  <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">{campaign.story}</p>
+                <div className="prose prose-slate max-w-none dark:prose-invert">
+                  <p className="text-main leading-relaxed text-lg whitespace-pre-line" style={{ color: 'var(--text-main)' }}>{campaign.story}</p>
                 </div>
               </div>
 
               {/* Share */}
-              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
-                <div className="font-nunito font-black text-navy text-xl mb-6">Spread the word</div>
+              <div className="bg-surface rounded-3xl border border-border shadow-sm p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+                <div className="font-nunito font-black text-navy text-xl mb-6" style={{ color: 'var(--navy)' }}>Spread the word</div>
                 <CampaignShare shareUrl={shareUrl} shareText={shareText} />
               </div>
             </div>
 
             {/* ── RIGHT: progress + donate ── */}
             <div className="md:col-span-4 sticky top-10">
-              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 mb-6">
+              <div className="bg-surface rounded-3xl border border-border shadow-sm p-8 mb-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 {/* Progress */}
                 <div className="mb-8">
                   <div className="flex items-baseline gap-1.5 mb-1">
-                    <span className="font-nunito font-black text-primary text-4xl">₵{(campaign.raised_amount || 0).toLocaleString()}</span>
-                    <span className="text-gray-400 text-sm font-bold">raised</span>
+                    <span className="font-nunito font-black text-primary text-4xl" style={{ color: 'var(--primary)' }}>₵{(campaign.raised_amount || 0).toLocaleString()}</span>
+                    <span className="text-muted text-sm font-bold" style={{ color: 'var(--text-muted)' }}>raised</span>
                   </div>
-                  <div className="text-gray-400 text-sm mb-4 font-medium italic">Target goal: ₵{(campaign.goal_amount || 0).toLocaleString()}</div>
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2 shadow-inner">
-                    <div className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-1000" style={{ width: `${pct}%` }} />
+                  <div className="text-muted text-sm mb-4 font-medium italic" style={{ color: 'var(--text-muted)' }}>Target goal: ₵{(campaign.goal_amount || 0).toLocaleString()}</div>
+                  <div className="h-3 bg-border rounded-full overflow-hidden mb-2 shadow-inner" style={{ background: 'var(--border)' }}>
+                    <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${pct}%`, background: 'var(--primary)' }} />
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-primary font-black">{pct}% funded</span>
-                    <span className="text-gray-400 font-bold">{campaign.donations?.length || 0} donations</span>
+                    <span className="text-primary font-black" style={{ color: 'var(--primary)' }}>{pct}% funded</span>
+                    <span className="text-muted font-bold" style={{ color: 'var(--text-muted)' }}>{campaign.donations?.length || 0} donations</span>
                   </div>
                 </div>
 

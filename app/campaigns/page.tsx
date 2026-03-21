@@ -33,6 +33,10 @@ async function getCampaigns(searchParams: { category?: string; q?: string }) {
     return { campaigns: [], error: error.message }
   }
 
+  if (data) {
+    console.log(`[getCampaigns] Loaded ${data.length} campaigns. IDs:`, data.map(c => c.id))
+  }
+
   return { campaigns: data as Campaign[] || [], error: null }
 }
 
@@ -54,7 +58,7 @@ export default async function CampaignsPage({
           />
         </Suspense>
 
-        <section className="py-12 bg-gray-50 min-h-[400px]">
+        <section className="py-12 bg-surface-alt min-h-[400px]" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-5xl mx-auto px-5">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 text-center text-sm text-red-700">
@@ -71,8 +75,8 @@ export default async function CampaignsPage({
             ) : (
               <div className="text-center py-16">
                 <div className="text-4xl mb-3">🔍</div>
-                <div className="font-nunito font-black text-navy text-xl mb-2">No campaigns found</div>
-                <p className="text-gray-400 text-sm mb-5">Try a different search or category.</p>
+                <div className="font-nunito font-black text-navy text-xl mb-2" style={{ color: 'var(--navy)' }}>No campaigns found</div>
+                <p className="text-muted text-sm mb-5" style={{ color: 'var(--text-muted)' }}>Try a different search or category.</p>
                 <Link 
                   href="/campaigns"
                   className="inline-block bg-primary text-white font-nunito font-black text-sm px-6 py-3 rounded-full shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all"
@@ -84,10 +88,10 @@ export default async function CampaignsPage({
           </div>
         </section>
 
-        <section className="py-12 bg-white border-t border-gray-100">
+        <section className="py-12 bg-surface border-t border-border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-3xl mx-auto px-5 text-center">
-            <div className="font-nunito font-black text-navy text-2xl mb-2">Need to raise money?</div>
-            <p className="text-gray-400 text-sm mb-6">Start a verified campaign in under 15 minutes. 0% platform fee.</p>
+            <div className="font-nunito font-black text-navy text-2xl mb-2" style={{ color: 'var(--navy)' }}>Need to raise money?</div>
+            <p className="text-muted text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Start a verified campaign in under 15 minutes. 0% platform fee.</p>
             <Link href="/create"
               className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-9 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl shadow-primary/25 text-sm">
               Start your campaign →

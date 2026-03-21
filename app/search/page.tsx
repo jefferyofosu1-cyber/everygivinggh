@@ -11,11 +11,11 @@ interface Campaign {
   location: string
   goal_amount: number
   raised_amount: number
-  organiser_name: string
-  is_verified: boolean
-  cover_image: string | null
+  verified: boolean
+  image_url: string | null
   slug: string | null
   donor_count: number
+  profiles?: { full_name: string }
 }
 
 const CATEGORIES = ['all','Medical','Education','Emergency','Community','Faith','Business','Environment','Disaster']
@@ -34,13 +34,13 @@ export default function SearchPage() {
     const supabase = createClient()
     let sb = supabase
       .from('campaigns')
-      .select('id,title,story,category,location,goal_amount,raised_amount,organiser_name,is_verified,cover_image,slug,donor_count', { count: 'exact' })
+      .select('id,title,story,category,location,goal_amount,raised_amount,verified,image_url,slug,donor_count,profiles(full_name)', { count: 'exact' })
       .in('status', ['live', 'active', 'approved'])
       .order('raised_amount', { ascending: false })
       .limit(24)
 
     if (cat !== 'all') sb = sb.eq('category', cat)
-    if (q.trim()) sb = sb.or(`title.ilike.%${q}%,story.ilike.%${q}%,organiser_name.ilike.%${q}%,location.ilike.%${q}%`)
+    if (q.trim()) sb = sb.or(`title.ilike.%${q}%,story.ilike.%${q}%,location.ilike.%${q}%`) // Removed organiser_name search for now as it's harder in .or() with relations
 
     const { data, count } = await sb
     setResults(data || [])
@@ -135,15 +135,15 @@ export default function SearchPage() {
               const progress = pct(c.raised_amount || 0, c.goal_amount || 1)
               return (
                 <Link key={c.id} href={`/campaigns/${c.slug || c.id}`} className="card">
-                  <div style={{ height: 160, background: c.cover_image ? `url(${c.cover_image}) center/cover` : 'linear-gradient(135deg,#D1FAE5,#A7F3D0)', position: 'relative' }}>
-                    {c.is_verified && (
+                  <div style={{ height: 160, background: c.image_url ? `url(${c.image_url}) center/cover` : 'linear-gradient(135deg,#D1FAE5,#A7F3D0)', position: 'relative' }}>
+                    {c.verified && (
                       <div style={{ position: 'absolute', top: 10, left: 10, background: '#0A6B4B', color: '#fff', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 100 }}>✓ Verified</div>
                     )}
                     <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,.5)', color: '#fff', fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 100 }}>{c.category}</div>
                   </div>
                   <div style={{ padding: '14px 16px' }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: '#111827', marginBottom: 4, lineHeight: 1.35 }}>{c.title}</div>
-                    <div style={{ fontSize: 11, color: '#6B7280', marginBottom: 10 }}>{c.organiser_name}{c.location ? ` · ${c.location}` : ''}</div>
+                    <div style={{ fontSize: 11, color: '#6B7280', marginBottom: 10 }}>{c.profiles?.full_name || 'Anonymous'}{c.location ? ` · ${c.location}` : ''}</div>
                     <div style={{ height: 4, background: '#E5E7EB', borderRadius: 99, marginBottom: 6, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${progress}%`, background: '#0A6B4B', borderRadius: 99 }} />
                     </div>

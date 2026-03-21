@@ -58,8 +58,8 @@ export default function DonationForm({ campaign }: { campaign: any }) {
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
-      <h3 className="font-nunito font-black text-navy text-xl mb-6">Make a donation</h3>
+    <div className="bg-surface rounded-3xl border border-border shadow-sm p-6 md:p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+      <h3 className="font-nunito font-black text-navy text-xl mb-6" style={{ color: 'var(--navy)' }}>Make a donation</h3>
       
       <form onSubmit={handleDonate} className="flex flex-col gap-5">
         {errorMsg && (
@@ -76,7 +76,8 @@ export default function DonationForm({ campaign }: { campaign: any }) {
               value={form.name} 
               onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
               placeholder="e.g. Kwame Mensah"
-              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium" 
+              className="w-full bg-surface-alt border-2 border-transparent focus:border-primary/20 focus:bg-surface rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium" 
+              style={{ background: 'var(--surface-alt)', color: 'var(--text-main)' }}
             />
           </div>
 
@@ -88,14 +89,15 @@ export default function DonationForm({ campaign }: { campaign: any }) {
               value={form.email} 
               onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
               placeholder="kwame@example.com"
-              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium" 
+              className="w-full bg-surface-alt border-2 border-transparent focus:border-primary/20 focus:bg-surface rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium" 
+              style={{ background: 'var(--surface-alt)', color: 'var(--text-main)' }}
             />
           </div>
 
           <div>
             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2 ml-1">Donation Amount (GHS) *</label>
             <div className="relative">
-              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-navy font-bold text-lg">₵</span>
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-navy font-bold text-lg" style={{ color: 'var(--navy)' }}>₵</span>
               <input 
                 type="number" 
                 required 
@@ -103,7 +105,8 @@ export default function DonationForm({ campaign }: { campaign: any }) {
                 value={form.amount} 
                 onChange={e => setForm(p => ({ ...p, amount: e.target.value }))}
                 placeholder="0.00"
-                className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl pl-10 pr-5 py-4 text-lg font-black text-navy outline-none transition-all" 
+                className="w-full bg-surface-alt border-2 border-transparent focus:border-primary/20 focus:bg-surface rounded-2xl pl-10 pr-5 py-4 text-lg font-black text-navy outline-none transition-all" 
+                style={{ background: 'var(--surface-alt)', color: 'var(--text-main)' }}
               />
             </div>
           </div>
@@ -126,8 +129,9 @@ export default function DonationForm({ campaign }: { campaign: any }) {
                   className={`flex-1 py-1.5 rounded-xl text-[10px] font-black transition-all ${
                     form.tip === t 
                       ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                      : 'bg-white text-gray-400 hover:text-navy border border-gray-100'
+                      : 'bg-surface text-muted hover:text-navy border border-border'
                   }`}
+                  style={form.tip !== t ? { background: 'var(--surface)', color: 'var(--text-muted)', borderColor: 'var(--border)' } : {}}
                 >
                   {t === '0' ? 'None' : `${t}%`}
                 </button>
@@ -142,23 +146,24 @@ export default function DonationForm({ campaign }: { campaign: any }) {
               onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
               placeholder="Leave a kind message..."
               rows={3}
-              className="w-full bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium resize-none" 
+              className="w-full bg-surface-alt border-2 border-transparent focus:border-primary/20 focus:bg-surface rounded-2xl px-5 py-4 text-sm outline-none transition-all font-medium resize-none" 
+              style={{ background: 'var(--surface-alt)', color: 'var(--text-main)' }}
             />
           </div>
         </div>
 
         <div className="space-y-3 font-bold">
-          <div className="flex justify-between text-xs py-2 border-t border-dashed border-gray-100">
-             <span className="text-gray-400">Campaign Donation:</span>
-             <span className="text-navy">₵{amount.toFixed(2)}</span>
+          <div className="flex justify-between text-xs py-2 border-t border-dashed border-border" style={{ borderTopColor: 'var(--border)' }}>
+             <span className="text-muted" style={{ color: 'var(--text-muted)' }}>Campaign Donation:</span>
+             <span className="text-navy" style={{ color: 'var(--navy)' }}>₵{amount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-xs pb-2">
-             <span className="text-gray-400">Platform Tip:</span>
-             <span className="text-navy">₵{tipAmount.toFixed(2)}</span>
+             <span className="text-muted" style={{ color: 'var(--text-muted)' }}>Platform Tip:</span>
+             <span className="text-navy" style={{ color: 'var(--navy)' }}>₵{tipAmount.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-sm pt-2 border-t border-gray-100">
-             <span className="font-black text-navy uppercase tracking-wider">Total:</span>
-             <span className="font-black text-primary text-lg">₵{total.toFixed(2)}</span>
+          <div className="flex justify-between text-sm pt-2 border-t border-border" style={{ borderTopColor: 'var(--border)' }}>
+             <span className="font-black text-navy uppercase tracking-wider" style={{ color: 'var(--navy)' }}>Total:</span>
+             <span className="font-black text-primary text-lg" style={{ color: 'var(--primary)' }}>₵{total.toFixed(2)}</span>
           </div>
         </div>
 

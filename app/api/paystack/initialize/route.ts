@@ -1,25 +1,16 @@
 /**
  * Payment Initialization Endpoint
  * POST /api/paystack/initialize
- *
- * Initializes a Paystack payment with:
- * - Automatic fee calculation
- * - Subaccount-based fund splitting
- * - Transaction tracking
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { getAdminClient } from '@/lib/supabase-admin'
 import {
   initializePaystackPayment,
   calculateTransactionFeePesewas,
   generateTransactionReference,
   ghsToPesewas,
 } from '@/lib/paystack-utils'
-
-// ============================================================================
-// TYPES
-// ============================================================================
 
 interface PaymentInitRequest {
   amount: number // Donation amount in GHS
@@ -30,10 +21,6 @@ interface PaymentInitRequest {
   donorName?: string
   message?: string
 }
-
-// ============================================================================
-// HANDLER
-// ============================================================================
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,77 +42,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Campaign ID is required.' }, { status: 400 })
     }
 
-    // Validate amount (minimum 1 GHS, maximum 10,000 GHS)
-    if (body.amount < 1 || body.amount > 10000) {
-      return NextResponse.json(
-        { error: 'Amount must be between GHS 1.00 and GHS 10,000.00' },
-        { status: 400 }
-      )
-    }
+    const supabase = await getAdminClient()
 
-    const supabase = await createServerSupabaseClient()
+    console.log('[Payment Init] Searching for campaign:', body.campaignId)
 
-    // ========================================================================
-    // 1. FETCH CAMPAIGN DETAILS
-    // ========================================================================
-
+    // 1. Fetch Campaign
     const { data: campaign, error: campaignError } = await supabase
       .from('campaigns')
-      .select('id, title, user_id, subaccount_code, goal_amount')
+      .select('*')
       .eq('id', body.campaignId)
       .single()
 
     if (campaignError || !campaign) {
-      console.error('Campaign fetch error:', campaignError)
+      console.error('[Payment Init] Campaign fetch error:', {
+        id: body.campaignId,
+        error: campaignError?.message,
+        details: campaignError?.details,
+        hint: campaignError?.hint
+      })
       return NextResponse.json({ error: 'Campaign not found.' }, { status: 404 })
     }
 
-    // ========================================================================
-    // 2. VERIFY FUNDRAISER HAS SUBACCOUNT
-    // ========================================================================
-
     if (!campaign.subaccount_code) {
       return NextResponse.json(
-        {
-          error: 'Fundraiser has not set up payout details. Please contact the fundraiser.',
-        },
+        { error: 'Fundraiser has not set up payout details.' },
         { status: 400 }
       )
     }
 
-    // ========================================================================
-    // 3. CONVERT AMOUNT TO PESEWAS
-    // ========================================================================
-
+    // 2. Calculation logic
     const amountPesewas = ghsToPesewas(body.amount)
     const tipPesewas = body.tip ? ghsToPesewas(body.tip) : 0
     const standardFee = calculateTransactionFeePesewas(amountPesewas)
-    
-    // Paystack total amount = donation + tip
     const paystackTotalPesewas = amountPesewas + tipPesewas
     
-    // Total charge to subaccount = standard fee + tip
-    // This ensures fundraiser gets: (total) - (standard fee + tip) = donation - standard fee
-    const totalTransactionCharge = standardFee + tipPesewas
-    
-    // Net amount for fundraiser record
-    const netAmount = amountPesewas - standardFee
-
-    console.log(`[Payment Init] Tip: ${tipPesewas} pesewas`)
-    console.log(`[Payment Init] Paystack Total: ${paystackTotalPesewas} pesewas`)
-    console.log(`[Payment Init] Total Charge: ${totalTransactionCharge} pesewas`)
-    console.log(`[Payment Init] Net to Fundraiser: ${netAmount} pesewas`)
-
-    // ========================================================================
-    // 4. GENERATE TRANSACTION REFERENCE
-    // ========================================================================
-
     const reference = generateTransactionReference()
 
-    // ========================================================================
-    // 5. CREATE DONATION RECORD (PENDING)
-    // ========================================================================
-
+    // 3. Create donation
     const { data: donation, error: donationError } = await supabase
       .from('donations')
       .insert({
@@ -134,31 +87,25 @@ export async function POST(request: NextRequest) {
         donor_name: body.donorName || 'Anonymous',
         donor_email: body.email,
         amount_paid: amountPesewas,
-        donor_tip: tipPesewas,
-        transaction_fee: standardFee,
-        net_amount: netAmount,
+        tip_amount: tipPesewas,
+        paystack_fee: standardFee,
+        net_received: amountPesewas - standardFee,
         message: body.message || null,
         reference,
         status: 'pending',
-        paystack_reference: null,
       })
       .select('id')
       .single()
 
     if (donationError) {
-      console.error('Donation creation error:', donationError)
-      return NextResponse.json(
-        { error: 'Failed to initialize donation. Please try again.' },
-        { status: 500 }
-      )
+      console.error('Donation error:', donationError)
+      return NextResponse.json({ error: 'Failed to create donation.' }, { status: 500 })
     }
 
-    // ========================================================================
-    // 6. INITIALIZE PAYSTACK PAYMENT WITH SUBACCOUNT
-    // ========================================================================
-
+    // 4. Initialize Paystack
     const paystackResponse = await initializePaystackPayment({
-      amount: paystackTotalPesewas, // Total collected from donor
+      amount: amountPesewas,
+      tip: tipPesewas,
       email: body.email,
       subaccountCode: campaign.subaccount_code,
       reference,
@@ -167,55 +114,25 @@ export async function POST(request: NextRequest) {
         campaign_id: campaign.id,
         campaign_title: campaign.title,
         donor_name: body.donorName || 'Anonymous',
-        message: body.message,
-        donation_amount: amountPesewas,
-        donor_tip: tipPesewas,
-        transaction_fee: standardFee,
-        net_amount: netAmount,
       },
     })
 
-    // ========================================================================
-    // 7. UPDATE DONATION WITH PAYSTACK REFERENCE
-    // ========================================================================
-
+    // 5. Update reference
     await supabase
       .from('donations')
-      .update({
-        paystack_reference: paystackResponse.reference,
-      })
+      .update({ paystack_reference: paystackResponse.reference })
       .eq('id', donation.id)
-
-    // ========================================================================
-    // 8. RETURN RESPONSE
-    // ========================================================================
-
-    console.log(`[Payment Init] Success: ${reference}`)
 
     return NextResponse.json({
       success: true,
-      donation: {
-        id: donation.id,
-        reference,
-        amount: body.amount,
-        tip: body.tip || 0,
-        total: body.amount + (body.tip || 0),
-        transactionFee: (standardFee / 100).toFixed(2),
-        netAmount: (netAmount / 100).toFixed(2),
-      },
+      donation: { id: donation.id, reference },
       payment: {
         accessCode: paystackResponse.accessCode,
         authorizationUrl: paystackResponse.authorizationUrl,
       },
-      campaign: {
-        title: campaign.title,
-      },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('[Payment Init] Error:', error)
-    return NextResponse.json(
-      { error: 'Failed to initialize payment. Please try again.' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: error.message || 'Initialization failed' }, { status: 500 })
   }
 }

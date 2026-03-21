@@ -98,6 +98,7 @@ export class NotificationService {
   static async sendDonationConfirmation(
     donorEmail: string,
     donorName: string,
+    campaignId: string,
     campaignTitle: string,
     amount: number | string | bigint,
     transactionId: string
@@ -105,9 +106,8 @@ export class NotificationService {
     const amountNum = Number(amount)
     const formattedAmount = `GHS ${(amountNum / 100).toFixed(2)}`
     const today = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
-    const campaignSlug = campaignTitle.toLowerCase().replace(/\s+/g, '-')
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
-    const campaignLink = `${baseUrl}/campaign/${campaignSlug}`
+    const campaignLink = `${baseUrl}/campaigns/${campaignId}`
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -265,7 +265,7 @@ export class NotificationService {
     const formattedGoal = `GHS ${(goalNum / 100).toFixed(2)}`
     const isFulFilled = milestone === 100
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
-    const campaignLink = `${baseUrl}/campaign/${campaignTitle.toLowerCase().replace(/\s+/g, '-')}`
+    const campaignLink = `${baseUrl}/campaigns/${campaignTitle.toLowerCase().replace(/\s+/g, '-')}` // Still using slug but fixed prefix
 
     let subject: string
     let content: string
@@ -371,7 +371,7 @@ export class NotificationService {
   ) {
     const totalRaisedNum = totalRaised ? Number(totalRaised) : null
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
-    const campaignLink = `${baseUrl}/campaign/${campaignId}`
+    const campaignLink = `${baseUrl}/campaigns/${campaignId}`
     const totalRaisedText = totalRaisedNum ? `<p>Thanks to your contribution, the campaign has now raised <strong>GHS ${(totalRaisedNum / 100).toFixed(2)}</strong> so far.</p>` : ''
 
     const htmlContent = `
@@ -514,13 +514,13 @@ export class NotificationService {
 
       const { data: campaign, error: campaignError } = await supabase
         .from('campaigns')
-        .select('title, total_raised, goal_amount')
+        .select('title, raised_amount, goal_amount')
         .eq('id', campaignId)
         .single()
 
       if (campaignError) throw campaignError
 
-      const totalRaised = Number(campaign.total_raised || 0)
+      const totalRaised = Number(campaign.raised_amount || 0)
       const goalAmount = Number(campaign.goal_amount)
       const currentPercentage = Math.floor((totalRaised / goalAmount) * 100)
 

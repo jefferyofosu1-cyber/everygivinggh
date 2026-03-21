@@ -91,12 +91,14 @@ export function verifyPaystackSignature(body: string, signature: string): boolea
  */
 export async function initializePaystackPayment({
   amount,
+  tip,
   email,
   subaccountCode,
   reference,
   metadata = {},
 }: {
-  amount: number // Amount in pesewas
+  amount: number // Donation amount in pesewas
+  tip?: number // Tip amount in pesewas
   email: string
   subaccountCode?: string
   reference: string
@@ -106,25 +108,31 @@ export async function initializePaystackPayment({
     throw new Error('PAYSTACK_SECRET_KEY is not configured')
   }
 
-  const transactionFee = calculateTransactionFeePesewas(amount)
+  const donationAmount = amount
+  const tipAmount = tip || 0
+  const totalAmount = donationAmount + tipAmount
+  const processingFee = calculateTransactionFeePesewas(donationAmount)
+  const totalChargeToSubaccount = processingFee + tipAmount
 
   const payload: Record<string, any> = {
-    amount,
+    amount: totalAmount,
     email,
     reference,
     metadata: {
       ...metadata,
       platform: 'everygiving',
-      fee: transactionFee,
-      net_amount: amount - transactionFee,
+      amount_paid: donationAmount,
+      donor_tip: tipAmount,
+      paystack_fee: processingFee,
+      net_received: donationAmount - processingFee,
     },
   }
 
   // Add subaccount and fee bearer if subaccount is provided
-  if (subaccountCode) {
+    if (subaccountCode) {
     payload.subaccount = subaccountCode
-    payload.transaction_charge = transactionFee
-    payload.bearer = 'account' // EveryGiving covers the fee
+    payload.transaction_charge = totalChargeToSubaccount
+    payload.bearer = 'account' // Fundraiser bears the processing fee
   }
 
   try {

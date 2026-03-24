@@ -76,15 +76,14 @@ export async function POST(request: NextRequest) {
       .from('donations')
       .insert({
         campaign_id: campaign.id,
-        donor_id: body.donorId || null,
         donor_name: body.donorName || 'Anonymous',
         donor_email: body.email,
+        amount: body.amount,
         amount_paid: amountPesewas,
-        tip_amount: tipPesewas,
+        donor_tip: tipPesewas,
         paystack_fee: standardFee,
         net_received: amountPesewas - standardFee,
-        message: body.message || null,
-        reference,
+        paystack_reference: reference,
         status: 'pending',
       })
       .select('id')

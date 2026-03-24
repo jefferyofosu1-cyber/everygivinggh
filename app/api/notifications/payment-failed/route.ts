@@ -44,6 +44,17 @@ export async function POST(req: NextRequest) {
 
     // Build retry URL
     const retryUrl = `${process.env.NEXT_PUBLIC_APP_URL}/donate?retry=${donation_id}&campaign=${donation.campaign_id}`
+    let donorPhone: string | undefined
+
+    if (donation.donor_id) {
+      const { data: donorProfile } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('id', donation.donor_id)
+        .maybeSingle()
+
+      donorPhone = donorProfile?.phone || undefined
+    }
 
     // Send payment failure alert
     await NotificationService.sendPaymentFailureAlert(
@@ -51,7 +62,8 @@ export async function POST(req: NextRequest) {
       donation.donor_name,
       donation.campaigns.title,
       donation.amount_paid,
-      retryUrl
+      retryUrl,
+      donorPhone
     )
 
     // Update donation status to failed

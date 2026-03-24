@@ -9,6 +9,9 @@ const required = [
 const optional = [
   'NEXT_PUBLIC_APP_URL',
   'BREVO_API_KEY',
+  'BMS_API_KEY',
+  'BMS_BASE_URL',
+  'BMS_SENDER_ID',
   'NEXT_PUBLIC_SANITY_PROJECT_ID',
   'NEXT_PUBLIC_SANITY_DATASET',
   'SANITY_API_TOKEN',

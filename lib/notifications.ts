@@ -2,6 +2,9 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY
 const BREVO_BASE_URL = 'https://api.brevo.com/v3'
+const BMS_API_KEY = process.env.BMS_API_KEY
+const BMS_BASE_URL = process.env.BMS_BASE_URL || 'https://bms.codeslaw.dev/api/v1'
+const BMS_SENDER_ID = process.env.BMS_SENDER_ID
 
 if (!BREVO_API_KEY) {
   console.warn('BREVO_API_KEY is not set. Email notifications will not be sent.')
@@ -21,6 +24,24 @@ interface SMSParams {
 }
 
 export class NotificationService {
+  private static normalizeGhanaPhone(phoneNumber: string) {
+    const cleaned = phoneNumber.replace(/[^\d+]/g, '').trim()
+
+    if (cleaned.startsWith('+233') && cleaned.length === 13) {
+      return cleaned.slice(1)
+    }
+
+    if (cleaned.startsWith('233') && cleaned.length === 12) {
+      return cleaned
+    }
+
+    if (cleaned.startsWith('0') && cleaned.length === 10) {
+      return `233${cleaned.slice(1)}`
+    }
+
+    return cleaned
+  }
+
   /**
    * Send email via Brevo
    */
@@ -63,19 +84,62 @@ export class NotificationService {
   }
 
   /**
-   * Send SMS via Brevo
+   * Send SMS via CodeslawBMS (with Brevo fallback)
    */
   static async sendSMS({ phoneNumber, content }: SMSParams) {
+    const recipient = this.normalizeGhanaPhone(phoneNumber)
+
+    if (!BMS_API_KEY && !BREVO_API_KEY) {
+      throw new Error('No SMS provider configured. Set BMS_API_KEY or BREVO_API_KEY.')
+    }
+
+    if (BMS_API_KEY) {
+      try {
+        const response = await fetch(`${BMS_BASE_URL}/sms/send`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${BMS_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            recipients: [recipient],
+            message: content,
+            ...(BMS_SENDER_ID ? { senderId: BMS_SENDER_ID } : {}),
+          }),
+        })
+
+        const payload = await response.json()
+
+        if (!response.ok || payload?.success === false) {
+          throw new Error(payload?.error || payload?.message || `HTTP ${response.status}`)
+        }
+
+        return { success: true, messageId: payload?.data?.messageId || null }
+      } catch (error) {
+        console.error('CodeslawBMS SMS send failed:', error)
+
+        if (!BREVO_API_KEY) {
+          throw error
+        }
+
+        console.warn('Falling back to Brevo SMS provider')
+      }
+    }
+
+    if (!BREVO_API_KEY) {
+      throw new Error('BREVO_API_KEY is not configured for SMS fallback.')
+    }
+
     try {
       const response = await fetch(`${BREVO_BASE_URL}/transactionalSMS/sms`, {
         method: 'POST',
         headers: {
-          'api-key': BREVO_API_KEY!,
+          'api-key': BREVO_API_KEY,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           sender: 'EveryGiving',
-          recipient: phoneNumber,
+          recipient,
           content,
         }),
       })
@@ -101,7 +165,8 @@ export class NotificationService {
     campaignId: string,
     campaignTitle: string,
     amount: number | string | bigint,
-    transactionId: string
+    transactionId: string,
+    donorPhone?: string
   ) {
     const amountNum = Number(amount)
     const formattedAmount = `GHS ${(amountNum / 100).toFixed(2)}`
@@ -175,11 +240,24 @@ export class NotificationService {
       </html>
     `
 
-    return this.sendEmail({
+    const emailResult = await this.sendEmail({
       to: donorEmail,
       subject: `Your donation was successful — thank you for your support`,
       htmlContent,
     })
+
+    if (donorPhone) {
+      try {
+        await this.sendSMS({
+          phoneNumber: donorPhone,
+          content: `EveryGiving: Hi ${donorName}, your donation of ${formattedAmount} to "${campaignTitle}" was successful. Ref: ${transactionId}. Thank you.`,
+        })
+      } catch (smsError) {
+        console.error('Donation confirmation SMS failed:', smsError)
+      }
+    }
+
+    return emailResult
   }
 
   /**
@@ -440,7 +518,8 @@ export class NotificationService {
     donorName: string,
     campaignTitle: string,
     amount: number | string | bigint,
-    retryUrl: string
+    retryUrl: string,
+    donorPhone?: string
   ) {
     const amountNum = Number(amount)
     const formattedAmount = `GHS ${(amountNum / 100).toFixed(2)}`
@@ -498,11 +577,24 @@ export class NotificationService {
       </html>
     `
 
-    return this.sendEmail({
+    const emailResult = await this.sendEmail({
       to: donorEmail,
       subject: `Your donation could not be completed`,
       htmlContent,
     })
+
+    if (donorPhone) {
+      try {
+        await this.sendSMS({
+          phoneNumber: donorPhone,
+          content: `EveryGiving: Hi ${donorName}, your donation attempt of ${formattedAmount} to "${campaignTitle}" could not be completed. Retry here: ${retryUrl}`,
+        })
+      } catch (smsError) {
+        console.error('Payment failure SMS failed:', smsError)
+      }
+    }
+
+    return emailResult
   }
 
   /**
@@ -512,7 +604,8 @@ export class NotificationService {
     fundraiserEmail: string,
     fundraiserName: string,
     campaignTitle: string,
-    currentAmount: number
+    currentAmount: number,
+    fundraiserPhone?: string
   ) {
     const formattedAmount = `GHS ${(currentAmount / 100).toFixed(2)}`
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
@@ -556,11 +649,24 @@ export class NotificationService {
       </html>
     `
 
-    return this.sendEmail({
+    const emailResult = await this.sendEmail({
       to: fundraiserEmail,
       subject: `Milestone Reached: Set up your payout for ${campaignTitle}`,
       htmlContent,
     })
+
+    if (fundraiserPhone) {
+      try {
+        await this.sendSMS({
+          phoneNumber: fundraiserPhone,
+          content: `EveryGiving: Hi ${fundraiserName}, your campaign "${campaignTitle}" has reached ${formattedAmount}. Set up payout here: ${payoutLink}`,
+        })
+      } catch (smsError) {
+        console.error('Payout setup SMS failed:', smsError)
+      }
+    }
+
+    return emailResult
   }
 
   /**
@@ -580,7 +686,7 @@ export class NotificationService {
           payout_method_set,
           milestone_percentage,
           available_payout_balance,
-          profiles:user_id (full_name, email)
+          profiles:user_id (full_name, email, phone)
         `)
         .eq('id', campaignId)
         .single()
@@ -621,7 +727,8 @@ export class NotificationService {
             fundraiser.email,
             fundraiser.full_name || 'Fundraiser',
             campaign.title,
-            newAvailableBalance
+            newAvailableBalance,
+            fundraiser.phone || undefined
           )
         }
       }

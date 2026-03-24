@@ -105,6 +105,17 @@ export async function POST(req: NextRequest) {
 
     const campaign = donation.campaigns as any
     const fundraiserId = campaign.user_id
+    let donorPhone: string | undefined
+
+    if (donation.donor_id) {
+      const { data: donorProfile } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('id', donation.donor_id)
+        .maybeSingle()
+
+      donorPhone = donorProfile?.phone || undefined
+    }
 
     console.log(`[Webhook] Campaign: ${campaign.id} | Fundraiser: ${fundraiserId}`)
     console.log(`[Webhook] Amount: ${donation.amount_paid}p | Fee: ${donation.paystack_fee}p | Net: ${donation.net_received}p`)
@@ -192,7 +203,8 @@ export async function POST(req: NextRequest) {
         campaign.id,
         campaign.title,
         donation.amount_paid,
-        reference
+        reference,
+        donorPhone
       )
       console.log(`[Webhook] Confirmation email sent ✓`)
     } catch (emailError) {

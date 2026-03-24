@@ -33,7 +33,7 @@ const nextConfig = {
     // Fix for React 18/Sanity 3 compiler-runtime mismatch bono.
     config.resolve.alias = {
       ...config.resolve.alias,
-      'react/compiler-runtime': 'react',
+      'react/compiler-runtime': 'react-compiler-runtime',
     }
     
     return config

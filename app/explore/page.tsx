@@ -47,7 +47,7 @@ export default async function ExplorePage({
 
   return (
     <>
-      <main className="bg-gray-50 min-h-screen">
+      <main className="min-h-screen" style={{ background: 'var(--surface-alt)' }}>
         <section className="bg-navy text-white py-14">
           <div className="max-w-5xl mx-auto px-6 text-center">
             <h1
@@ -63,7 +63,7 @@ export default async function ExplorePage({
           </div>
         </section>
 
-        <section className="py-6 bg-white border-b border-gray-100 sticky top-0 z-10">
+        <section className="py-6 border-b sticky top-0 z-10" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-5xl mx-auto px-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <CategoryFilter
               categories={categories.map((c: any) => ({
@@ -79,12 +79,12 @@ export default async function ExplorePage({
         <section className="py-10">
           <div className="max-w-5xl mx-auto px-6">
             {pageItems.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+              <div className="text-center py-16 rounded-2xl border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <div className="text-4xl mb-3">🔍</div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">
                   No campaigns found
                 </div>
-                <p className="text-gray-400 text-sm">
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Try a different category or search term.
                 </p>
               </div>
@@ -106,7 +106,7 @@ export default async function ExplorePage({
                   ))}
                 </div>
 
-                <div className="flex justify-between items-center mt-8 text-sm text-gray-500">
+                <div className="flex justify-between items-center mt-8 text-sm" style={{ color: 'var(--text-muted)' }}>
                   <span>
                     Showing{' '}
                     <strong>
@@ -120,7 +120,7 @@ export default async function ExplorePage({
                         href={`/explore?page=${page - 1}${
                           category ? `&category=${category}` : ''
                         }${q ? `&q=${encodeURIComponent(q)}` : ''}`}
-                        className="px-4 py-2 rounded-full border border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
+                        className="px-4 py-2 rounded-full border border-[var(--border)] text-[var(--text-muted)] hover:border-primary hover:text-primary"
                       >
                         Previous
                       </a>
@@ -130,7 +130,7 @@ export default async function ExplorePage({
                         href={`/explore?page=${page + 1}${
                           category ? `&category=${category}` : ''
                         }${q ? `&q=${encodeURIComponent(q)}` : ''}`}
-                        className="px-4 py-2 rounded-full border border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
+                        className="px-4 py-2 rounded-full border border-[var(--border)] text-[var(--text-muted)] hover:border-primary hover:text-primary"
                       >
                         Next
                       </a>
@@ -145,4 +145,3 @@ export default async function ExplorePage({
     </>
   )
 }
-

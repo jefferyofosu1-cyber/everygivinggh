@@ -129,36 +129,36 @@ export default function BlogPage() {
         </section>
 
         {/* Category pills */}
-        <div className="bg-white border-b border-gray-100 overflow-x-auto">
+        <div className="border-b overflow-x-auto" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-5xl mx-auto px-5 py-3 flex gap-2 min-w-max">
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${selectedCategory === cat ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${selectedCategory === cat ? 'bg-primary text-white' : 'bg-[var(--surface-alt)] text-[var(--text-muted)] hover:bg-[var(--border)]'}`}>
                 {cat}
               </button>
             ))}
           </div>
         </div>
 
-        <section className="py-12 bg-gray-50">
+        <section className="py-12" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-5xl mx-auto px-5">
 
             {/* Featured post */}
             {featured && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-8 hover:shadow-md transition-all group">
+              <div className="rounded-2xl border shadow-sm overflow-hidden mb-8 hover:shadow-md transition-all group" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <div className="grid md:grid-cols-2">
-                  <div className="h-64 md:h-auto bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center text-7xl">
+                  <div className="h-64 md:h-auto bg-gradient-to-br from-primary-light via-[var(--surface)] to-[var(--surface-alt)] flex items-center justify-center text-7xl">
                     ⭐
                   </div>
                   <div className="p-8 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">Featured</span>
-                      <span className="bg-gray-100 text-gray-500 text-xs font-bold px-2.5 py-1 rounded-full">{featured.category}</span>
+                      <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'var(--surface-alt)', color: 'var(--text-muted)' }}>{featured.category}</span>
                     </div>
                     <h2 className="font-nunito font-black text-navy text-2xl mb-3 leading-snug group-hover:text-primary transition-colors">{featured.title}</h2>
-                    <p className="text-gray-500 text-sm leading-relaxed mb-5">{featured.excerpt}</p>
+                    <p className="text-sm leading-relaxed mb-5" style={{ color: 'var(--text-muted)' }}>{featured.excerpt}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">{featured.read_time} · {new Date(featured.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{featured.read_time} · {new Date(featured.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
                       <Link href={`/blog/${featured.slug}`} className="text-primary text-sm font-bold hover:underline">Read →</Link>
                     </div>
                   </div>
@@ -170,34 +170,34 @@ export default function BlogPage() {
             {loading ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-gray-100 h-64 animate-pulse" />
+                  <div key={i} className="rounded-2xl border h-64 animate-pulse" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }} />
                 ))}
               </div>
             ) : rest.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {rest.map((post, i) => (
                   <Link key={i} href={`/blog/${post.slug}`}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden group">
-                    <div className="h-40 bg-gradient-to-br from-primary-light to-blue-50 flex items-center justify-center text-5xl">
+                    className="rounded-2xl border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden group" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+                    <div className="h-40 bg-gradient-to-br from-primary-light to-[var(--surface-alt)] flex items-center justify-center text-5xl">
                       📝
                     </div>
                     <div className="p-5">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-0.5 rounded-full">{post.category}</span>
-                        <span className="text-gray-300 text-xs">{post.read_time}</span>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--surface-alt)', color: 'var(--text-muted)' }}>{post.category}</span>
+                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{post.read_time}</span>
                       </div>
                       <h3 className="font-nunito font-black text-navy text-sm mb-2 line-clamp-2 group-hover:text-primary transition-colors leading-snug">{post.title}</h3>
-                      <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed">{post.excerpt}</p>
-                      <div className="text-xs text-gray-300 mt-3">{new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</div>
+                      <p className="text-xs line-clamp-2 leading-relaxed" style={{ color: 'var(--text-muted)' }}>{post.excerpt}</p>
+                      <div className="text-xs mt-3" style={{ color: 'var(--text-muted)' }}>{new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</div>
                     </div>
                   </Link>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+              <div className="text-center py-16 rounded-2xl border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <div className="text-4xl mb-3">📚</div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No blog posts yet</div>
-                <p className="text-gray-400 text-sm">Check back soon for tips and guides.</p>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Check back soon for tips and guides.</p>
               </div>
             )}
           </div>
@@ -207,7 +207,7 @@ export default function BlogPage() {
         <section className="py-12 bg-primary text-center px-5">
           <h2 className="font-nunito font-black text-white text-2xl mb-2">Ready to put these tips to work?</h2>
           <p className="text-white/70 text-sm mb-6">Start your verified campaign in under 15 minutes.</p>
-          <Link href="/create" className="inline-block bg-white text-primary font-nunito font-black px-9 py-4 rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm">
+          <Link href="/create" className="inline-block text-primary font-nunito font-black px-9 py-4 rounded-full hover:-translate-y-0.5 transition-all shadow-xl text-sm" style={{ background: 'var(--surface)' }}>
             Start your campaign →
           </Link>
         </section>

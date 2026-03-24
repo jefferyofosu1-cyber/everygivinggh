@@ -24,7 +24,7 @@ const CATEGORIES = [
   { name: 'Travel', emoji: '*', slug: 'travel', colour: 'bg-indigo-50 border-indigo-100 text-indigo-600', desc: 'Travel costs for medical treatment, education, work, or humanitarian missions.', examples: ['Medical trip abroad', 'Study abroad fees', 'Mission trip travel', 'Repatriation'] },
   { name: 'Volunteer', emoji: '*', slug: 'volunteer', colour: 'bg-lime-50 border-lime-100 text-lime-600', desc: 'Funding volunteer programmes, community service, and social impact projects.', examples: ['Teaching volunteering', 'Medical outreach', 'Youth programme', 'Sanitation project'] },
   { name: 'Wishes', emoji: '*', slug: 'wishes', colour: 'bg-violet-50 border-violet-100 text-violet-600', desc: 'Life-changing wishes, personal dreams, and meaningful milestones.', examples: ['Dream birthday', 'First home', 'Life bucket list', 'Special anniversary'] },
-  { name: 'Memorial', emoji: '*', slug: 'memorial', colour: 'bg-gray-50 border-gray-200 text-gray-500', desc: 'Funeral expenses, burial costs, and memorial tributes.', examples: ['Funeral costs', 'Burial support', 'Memorial tribute', 'Obituary funding'] },
+  { name: 'Memorial', emoji: '*', slug: 'memorial', colour: 'bg-[var(--surface-alt)] border-[var(--border)] text-[var(--text-muted)]', desc: 'Funeral expenses, burial costs, and memorial tributes.', examples: ['Funeral costs', 'Burial support', 'Memorial tribute', 'Obituary funding'] },
   { name: 'Other', emoji: '*', slug: 'other', colour: 'bg-primary-light border-primary/20 text-primary', desc: "Does not fit a category? Start your campaign and describe your cause.", examples: ['Unique causes', 'Personal projects', 'Creative endeavours', 'Custom campaigns'] },
 ]
 
@@ -53,20 +53,20 @@ export default function FundraisingCategoriesPage() {
         </section>
 
         {/* Categories grid */}
-        <section className="py-16 bg-white px-5">
+        <section className="py-16 px-5" style={{ background: 'var(--surface)' }}>
           <div className="max-w-6xl mx-auto">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {CATEGORIES.map((cat) => (
                 <Link key={cat.slug} href={`/campaigns?category=${cat.slug}`}
-                  className="group bg-white rounded-2xl border border-gray-100 hover:border-primary/25 hover:shadow-lg transition-all p-6">
+                  className="group rounded-2xl border hover:border-primary/25 hover:shadow-lg transition-all p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold border mb-4 ${cat.colour}`}>
                     <span>{cat.emoji}</span>
                     <span>{cat.name}</span>
                   </div>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-4">{cat.desc}</p>
+                  <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>{cat.desc}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {cat.examples.map((ex) => (
-                      <span key={ex} className="text-xs bg-gray-50 text-gray-500 border border-gray-100 px-2.5 py-1 rounded-full">{ex}</span>
+                      <span key={ex} className="text-xs border px-2.5 py-1 rounded-full" style={{ background: 'var(--surface-alt)', color: 'var(--text-muted)', borderColor: 'var(--border)' }}>{ex}</span>
                     ))}
                   </div>
                   <div className="mt-4 text-primary text-xs font-bold group-hover:underline">Browse campaigns</div>
@@ -77,10 +77,10 @@ export default function FundraisingCategoriesPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="py-16 bg-gray-50 px-5 border-t border-gray-100">
+        <section className="py-16 px-5 border-t" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="font-nunito font-black text-navy text-3xl mb-3">Ready to start fundraising?</h2>
-            <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">Pick your category, create your campaign in minutes, and start raising money from your community.</p>
+            <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>Pick your category, create your campaign in minutes, and start raising money from your community.</p>
             <Link href="/create" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-10 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20 text-sm">
               Create a free campaign
             </Link>

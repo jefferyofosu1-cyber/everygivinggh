@@ -41,7 +41,7 @@ export default function FeesPage() {
         </section>
 
         {/* Live calculator */}
-        <section className="py-14 bg-white">
+        <section className="py-14" style={{ background: 'var(--surface)' }}>
           <div className="max-w-2xl mx-auto px-5">
             <div className="text-center mb-8">
               <div className="text-xs font-bold uppercase tracking-widest text-primary mb-2" style={{fontFamily:'DM Mono, monospace'}}>Live calculator</div>
@@ -49,23 +49,23 @@ export default function FeesPage() {
             </div>
 
             {/* Amount slider */}
-            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 mb-6">
+            <div className="rounded-2xl p-8 mb-6 border" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
               <div className="text-center mb-6">
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Donation amount</div>
+                <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Donation amount</div>
                 <div className="font-nunito font-black text-primary text-5xl mb-1">₵{amount.toLocaleString()}</div>
               </div>
 
               {/* Slider */}
               <input type="range" min="1" max="10000" step="1" value={amount}
                 onChange={e => setAmount(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer mb-4"
-                style={{accentColor:'#02A95C'}} />
+                className="w-full h-2 rounded-full appearance-none cursor-pointer mb-4"
+                style={{accentColor:'#02A95C', background: 'var(--surface-alt)'}} />
 
               {/* Quick amounts */}
               <div className="flex flex-wrap gap-2 justify-center mb-6">
                 {EXAMPLES.map(a => (
                   <button key={a} onClick={() => setAmount(a)}
-                    className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${amount === a ? 'border-primary bg-primary text-white' : 'border-gray-200 text-gray-500 hover:border-primary/40'}`}>
+                    className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${amount === a ? 'border-primary bg-primary text-white' : 'border-[var(--border)] text-[var(--text-muted)] hover:border-primary/40'}`}>
                     ₵{a.toLocaleString()}
                   </button>
                 ))}
@@ -74,14 +74,14 @@ export default function FeesPage() {
               {/* Animated breakdown */}
               <div className="space-y-4">
                 {/* Visual bar */}
-                <div className="relative h-12 bg-gray-100 rounded-2xl overflow-hidden">
+                <div className="relative h-12 rounded-2xl overflow-hidden" style={{ background: 'var(--surface-alt)' }}>
                   <div className="absolute left-0 top-0 bottom-0 bg-primary transition-all duration-500 rounded-2xl flex items-center justify-center"
                     style={{width:`${receivesPct}%`}}>
                     <span className="text-white text-xs font-black px-2 truncate">₵{receives.toLocaleString()} goes to fundraiser</span>
                   </div>
-                  <div className="absolute right-0 top-0 bottom-0 bg-gray-300 flex items-center justify-end pr-2"
-                    style={{width:`${feePct}%`}}>
-                    <span className="text-gray-600 text-xs font-black">fee</span>
+                  <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pr-2"
+                    style={{width:`${feePct}%`, background: 'var(--border)'}}>
+                    <span className="text-xs font-black" style={{ color: 'var(--text-main)' }}>fee</span>
                   </div>
                 </div>
 
@@ -92,30 +92,30 @@ export default function FeesPage() {
                     <div className="text-primary-dark/70 text-xs font-bold uppercase tracking-wide">Fundraiser receives</div>
                     <div className="text-primary/60 text-xs mt-1">{receivesPct}% of donation</div>
                   </div>
-                  <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 text-center">
-                    <div className="font-nunito font-black text-gray-500 text-3xl mb-1">₵{fee.toFixed(2)}</div>
-                    <div className="text-gray-400 text-xs font-bold uppercase tracking-wide">Transaction fee</div>
-                    <div className="text-gray-300 text-xs mt-1">{feePct}% of donation</div>
+                  <div className="rounded-2xl p-5 text-center border" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
+                    <div className="font-nunito font-black text-3xl mb-1" style={{ color: 'var(--text-muted)' }}>₵{fee.toFixed(2)}</div>
+                    <div className="text-xs font-bold uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>Transaction fee</div>
+                    <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{feePct}% of donation</div>
                   </div>
                 </div>
 
                 {/* Formula */}
-                <div className="bg-gray-900 rounded-2xl p-5 font-mono text-sm">
-                  <div className="text-gray-500 text-xs mb-3 uppercase tracking-wider">The formula</div>
+                <div className="rounded-2xl p-5 font-mono text-sm" style={{ background: 'var(--navy)' }}>
+                  <div className="text-xs mb-3 uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>The formula</div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-white">₵{amount}</span>
-                    <span className="text-gray-500">×</span>
+                    <span style={{ color: 'var(--surface)' }}>₵{amount}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>×</span>
                     <span className="text-primary">2.9%</span>
-                    <span className="text-gray-500">+</span>
+                    <span style={{ color: 'var(--text-muted)' }}>+</span>
                     <span className="text-primary">₵0.50</span>
-                    <span className="text-gray-500">=</span>
-                    <span className="text-gray-400">₵{fee.toFixed(2)} fee</span>
+                    <span style={{ color: 'var(--text-muted)' }}>=</span>
+                    <span style={{ color: 'var(--text-muted)' }}>₵{fee.toFixed(2)} fee</span>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-white">₵{amount}</span>
-                    <span className="text-gray-500">−</span>
-                    <span className="text-gray-400">₵{fee.toFixed(2)}</span>
-                    <span className="text-gray-500">=</span>
+                    <span style={{ color: 'var(--surface)' }}>₵{amount}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>−</span>
+                    <span style={{ color: 'var(--text-muted)' }}>₵{fee.toFixed(2)}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>=</span>
                     <span className="text-primary font-black text-lg">₵{receives.toFixed(2)} to fundraiser</span>
                   </div>
                 </div>
@@ -125,14 +125,14 @@ export default function FeesPage() {
         </section>
 
         {/* Verification fees */}
-        <section className="py-14 bg-white border-t border-gray-100">
+        <section className="py-14 border-t" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-2xl mx-auto px-5">
             <div className="text-center mb-8">
               <h2 className="font-nunito font-black text-navy text-2xl mb-2">Verification fees</h2>
-              <p className="text-gray-400 text-sm">One-time, per campaign. Pay upfront or defer  -  deducted from your first donations.</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>One-time, per campaign. Pay upfront or defer  -  deducted from your first donations.</p>
             </div>
-            <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-              <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-100 px-5 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
+            <div className="rounded-2xl overflow-hidden shadow-sm border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <div className="grid grid-cols-4 border-b px-5 py-3 text-xs font-bold uppercase tracking-wider" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)', color: 'var(--text-muted)' }}>
                 <div>Tier</div>
                 <div>Fee</div>
                 <div>Goal range</div>
@@ -145,53 +145,54 @@ export default function FeesPage() {
                 { emoji: '*', tier: 'Gold',     fee: 'GH₵200',  range: 'GH₵50,000 – GH₵100,000',  defer: 'Yes' },
                 { emoji: '*', tier: 'Diamond',  fee: 'GH₵500',  range: 'GH₵100,000 and above',     defer: 'Yes' },
               ].map((row, i) => (
-                <div key={i} className="grid grid-cols-4 px-5 py-4 border-b border-gray-50 last:border-0 items-center">
+                <div key={i} className="grid grid-cols-4 px-5 py-4 border-b last:border-0 items-center" style={{ borderColor: 'var(--border)' }}>
                   <div className="flex items-center gap-2 font-bold text-navy text-sm">
                     <span>{row.emoji}</span><span>{row.tier}</span>
                   </div>
-                  <div className={`font-nunito font-black text-sm ${row.fee === 'Free' ? 'text-gray-500' : 'text-primary'}`}>{row.fee}</div>
-                  <div className="text-gray-500 text-xs">{row.range}</div>
-                  <div className={`text-xs font-bold ${row.defer === 'Yes' ? 'text-primary' : 'text-gray-300'}`}>{row.defer}</div>
+                  <div className={`font-nunito font-black text-sm ${row.fee !== 'Free' ? 'text-primary' : ''}`} style={row.fee === 'Free' ? { color: 'var(--text-muted)' } : {}}>{row.fee}</div>
+                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{row.range}</div>
+                  <div className={`text-xs font-bold ${row.defer === 'Yes' ? 'text-primary' : ''}`} style={row.defer !== 'Yes' ? { color: 'var(--text-muted)' } : {}}>{row.defer}</div>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-gray-400 text-center mt-4">
+            <p className="text-xs text-center mt-4" style={{ color: 'var(--text-muted)' }}>
               Defer means the fee is automatically deducted from your first donations  -  you pay nothing until money comes in.
             </p>
           </div>
         </section>
 
         {/* Comparison */}
-        <section className="py-14 bg-gray-50 border-t border-gray-100">
+        <section className="py-14 border-t" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-2xl mx-auto px-5">
             <div className="text-center mb-8">
               <h2 className="font-nunito font-black text-navy text-2xl mb-2">How we compare on a ₵{amount.toLocaleString()} donation</h2>
-              <p className="text-gray-400 text-sm">Every Giving is always the most you can get to your cause</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Every Giving is always the most you can get to your cause</p>
             </div>
             <div className="flex flex-col gap-3">
               {COMPARE.map((c, i) => (
-                <div key={i} className={`bg-white rounded-2xl border-2 p-5 transition-all ${i === 0 ? 'border-primary shadow-lg shadow-primary/10' : 'border-gray-100'}`}>
+                <div key={i} className={`rounded-2xl border-2 p-5 transition-all ${i === 0 ? 'border-primary shadow-lg shadow-primary/10' : ''}`}
+                  style={i === 0 ? { background: 'var(--surface)' } : { background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{c.logo}</span>
                       <div>
                         <div className="font-nunito font-black text-navy text-sm">{c.name}</div>
-                        <div className="text-gray-400 text-xs">{c.fee}</div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{c.fee}</div>
                       </div>
                     </div>
                     {i === 0 && <span className="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">Best</span>}
                   </div>
                   {c.note ? (
-                    <div className="text-xs text-gray-400 italic">{c.note}</div>
+                    <div className="text-xs italic" style={{ color: 'var(--text-muted)' }}>{c.note}</div>
                   ) : (
                     <div>
-                      <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                      <div className="flex justify-between text-xs mb-1.5" style={{ color: 'var(--text-muted)' }}>
                         <span>Fundraiser receives</span>
-                        <span className={i === 0 ? 'text-primary font-black' : 'text-gray-600 font-semibold'}>
+                        <span className={i === 0 ? 'text-primary font-black' : 'font-semibold'} style={i !== 0 ? { color: 'var(--text-main)' } : {}}>
                           ₵{(amount - c.total).toFixed(2)} ({(((amount - c.total) / amount) * 100).toFixed(1)}%)
                         </span>
                       </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--surface-alt)' }}>
                         <div className={`h-full rounded-full transition-all duration-500 ${c.color}`}
                           style={{width:`${((amount - c.total) / amount) * 100}%`}} />
                       </div>
@@ -204,7 +205,7 @@ export default function FeesPage() {
         </section>
 
         {/* FAQ */}
-        <section className="py-14 bg-white border-t border-gray-100">
+        <section className="py-14 border-t" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-2xl mx-auto px-5">
             <h2 className="font-nunito font-black text-navy text-2xl text-center mb-8">Fee questions answered</h2>
             <div className="flex flex-col gap-4">
@@ -215,9 +216,9 @@ export default function FeesPage() {
                 { q: 'Do donors see the fee?', a: 'No. To keep the donation process as simple as possible, donors only see the amount they are giving. EveryGiving handles all the background complexity so that 100% focus is on supporting your cause.' },
                 { q:'Is the verification tier fee refundable?', a:'No. Verification fees cover the cost of reviewing your documents and are non-refundable. If your campaign is rejected, we will work with you to understand and resolve the issue.' },
               ].map((faq, i) => (
-                <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+                <div key={i} className="rounded-2xl border p-5" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="font-nunito font-black text-navy text-sm mb-2">{faq.q}</div>
-                  <div className="text-gray-500 text-sm leading-relaxed">{faq.a}</div>
+                  <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{faq.a}</div>
                 </div>
               ))}
             </div>

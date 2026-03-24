@@ -31,7 +31,7 @@ function SuccessContent() {
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-12">
+    <div className="min-h-screen flex items-center justify-center px-5 py-12" style={{ background: 'var(--surface)' }}>
       <div className="max-w-lg w-full text-center">
 
         {/* Success animation */}
@@ -45,14 +45,14 @@ function SuccessContent() {
         <h1 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-2">
           Thank you{name ? `, ${name}` : ''}!
         </h1>
-        <p className="text-gray-500 mb-6">
+        <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
           Your donation of <strong className="text-primary font-black">₵{amount || '...'}</strong> is on its way
         </p>
 
         {campaign && (
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-6 mx-auto max-w-sm">
+          <div className="rounded-xl border shadow-sm p-4 mb-6 mx-auto max-w-sm" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
             <div className="font-nunito font-bold text-navy text-sm line-clamp-1">{campaign.title}</div>
-            <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
               <div className="h-full bg-gradient-to-r from-primary-dark to-primary rounded-full"
                 style={{ width: `${campaign.goal_amount > 0 ? Math.min((campaign.raised_amount / campaign.goal_amount) * 100, 100) : 0}%` }} />
             </div>
@@ -66,9 +66,9 @@ function SuccessContent() {
         )}
 
         {/* Share section */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+        <div className="rounded-2xl border shadow-sm p-6 mb-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="font-nunito font-black text-navy text-lg mb-2">Help them reach their goal</div>
-          <p className="text-sm text-gray-400 mb-5">
+          <p className="text-sm mb-5" style={{ color: 'var(--text-muted)' }}>
             Campaigns that are shared raise <strong className="text-navy">4× more money</strong>. Share it now.
           </p>
           <div className="flex flex-col gap-3">
@@ -88,7 +88,7 @@ function SuccessContent() {
             </a>
             <button
               onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Link copied!') }}
-              className="flex items-center justify-center gap-2 py-3 border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold rounded-xl transition-all text-sm">
+              className="flex items-center justify-center gap-2 py-3 border-2 font-bold rounded-xl transition-all text-sm text-[var(--text-muted)] border-[var(--border)] hover:border-primary hover:text-primary">
                Copy campaign link
             </button>
           </div>
@@ -97,7 +97,7 @@ function SuccessContent() {
         <div className="flex gap-3 justify-center">
           {campaign && (
             <Link href={`/campaigns/${campaignId}`}
-              className="px-5 py-2.5 border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold rounded-xl transition-all text-sm">
+              className="px-5 py-2.5 border-2 font-bold rounded-xl transition-all text-sm text-[var(--text-muted)] border-[var(--border)] hover:border-primary hover:text-primary">
               View campaign
             </Link>
           )}
@@ -107,7 +107,7 @@ function SuccessContent() {
           </Link>
         </div>
 
-        <p className="text-xs text-gray-400 mt-6">
+        <p className="text-xs mt-6" style={{ color: 'var(--text-muted)' }}>
           A receipt has been sent to your email.{' '}
           <Link href="#" className="text-primary underline">Contact us</Link> if you have questions.
         </p>

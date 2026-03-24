@@ -41,11 +41,11 @@ function Character({ mood, holding }: { mood: 'thinking'|'happy'|'excited'|'prou
 }
 
 const SCENES = [
-  { mood:'thinking' as const, holding:null, bg:'from-slate-50 to-white', accent:'#64748B', label:'The challenge', name:'Ama has a problem', bubble:"My mother needs surgery at Korle Bu... I need ₵15,000. Where do I start?", narration:"Meet Ama from Accra. She needs to raise money urgently for her mother's surgery. Sending MoMo requests to friends isn't working  -  she needs something more." },
-  { mood:'happy' as const, holding:'phone' as const, bg:'from-green-50 to-white', accent:'#02A95C', label:'The discovery', name:'She finds Every Giving', bubble:"Every Giving lets me create a verified page  -  people can donate even if they don't know me!", narration:"A friend shares a link to Every Giving. In 5 minutes, Ama fills in her campaign  -  her story, goal, and a photo. Simple guided form, no tech skills needed." },
-  { mood:'proud' as const, holding:'card' as const, bg:'from-amber-50 to-white', accent:'#D97706', label:'Verification', name:'Verified in minutes', bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!", narration:"Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the EveryGiving team review. Within 24 hours  -  no waiting." },
-  { mood:'pointing' as const, holding:null, bg:'from-blue-50 to-white', accent:'#0066CC', label:'Going live', name:'Campaign goes live', bubble:"My campaign is live with a Verified badge! I'm sharing it everywhere right now.", narration:"The moment verification passes, her campaign goes live with a Verified badge. She shares on WhatsApp and Facebook. Donations come in from people she has never met." },
-  { mood:'excited' as const, holding:'money' as const, bg:'from-green-50 to-emerald-50', accent:'#02A95C', label:'Success', name:'₵18,500 raised', bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Fast & secure!", narration:"In 3 weeks, Ama raises ₵18,500  -  more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. Fast & secure. No delays." },
+  { mood:'thinking' as const, holding:null, gradient:'linear-gradient(135deg, rgba(100,116,139,0.08), var(--surface))', accent:'#64748B', label:'The challenge', name:'Ama has a problem', bubble:"My mother needs surgery at Korle Bu... I need ₵15,000. Where do I start?", narration:"Meet Ama from Accra. She needs to raise money urgently for her mother's surgery. Sending MoMo requests to friends isn't working  -  she needs something more." },
+  { mood:'happy' as const, holding:'phone' as const, gradient:'linear-gradient(135deg, rgba(2,169,92,0.08), var(--surface))', accent:'#02A95C', label:'The discovery', name:'She finds Every Giving', bubble:"Every Giving lets me create a verified page  -  people can donate even if they don't know me!", narration:"A friend shares a link to Every Giving. In 5 minutes, Ama fills in her campaign  -  her story, goal, and a photo. Simple guided form, no tech skills needed." },
+  { mood:'proud' as const, holding:'card' as const, gradient:'linear-gradient(135deg, rgba(217,119,6,0.08), var(--surface))', accent:'#D97706', label:'Verification', name:'Verified in minutes', bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!", narration:"Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the EveryGiving team review. Within 24 hours  -  no waiting." },
+  { mood:'pointing' as const, holding:null, gradient:'linear-gradient(135deg, rgba(0,102,204,0.08), var(--surface))', accent:'#0066CC', label:'Going live', name:'Campaign goes live', bubble:"My campaign is live with a Verified badge! I'm sharing it everywhere right now.", narration:"The moment verification passes, her campaign goes live with a Verified badge. She shares on WhatsApp and Facebook. Donations come in from people she has never met." },
+  { mood:'excited' as const, holding:'money' as const, gradient:'linear-gradient(135deg, rgba(2,169,92,0.1), rgba(16,185,129,0.06), var(--surface))', accent:'#02A95C', label:'Success', name:'₵18,500 raised', bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Fast & secure!", narration:"In 3 weeks, Ama raises ₵18,500  -  more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. Fast & secure. No delays." },
 ]
 
 function TutorialEmbed() {
@@ -88,17 +88,17 @@ function TutorialEmbed() {
   const total = ((scene * 100) + progress) / SCENES.length
 
   return (
-    <div className={`bg-gradient-to-br ${cur.bg} transition-colors duration-700 rounded-2xl border border-gray-100 shadow-sm overflow-hidden`}>
+    <div className="transition-colors duration-700 rounded-2xl border shadow-sm overflow-hidden" style={{ background: cur.gradient, borderColor: 'var(--border)' }}>
       <div className="p-6 md:p-8">
         {/* Overall progress */}
-        <div className="h-1 bg-gray-200 rounded-full mb-6 overflow-hidden">
+        <div className="h-1 rounded-full mb-6 overflow-hidden" style={{ background: 'var(--surface-alt)' }}>
           <div className="h-full bg-primary rounded-full transition-all duration-100" style={{ width: `${total}%` }} />
         </div>
         {/* Scene tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
           {SCENES.map((s, i) => (
             <button key={i} onClick={() => jump(i)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${i === scene ? 'text-white border-transparent' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'}`}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${i === scene ? 'text-white border-transparent' : 'bg-[var(--surface)] border-[var(--border)] text-[var(--text-muted)]'}`}
               style={i === scene ? { backgroundColor: cur.accent, borderColor: cur.accent } : {}}>
               {s.label}
             </button>
@@ -114,7 +114,7 @@ function TutorialEmbed() {
             </div>
             {/* Bubble below character  -  mobile only */}
             <div className={`md:hidden w-full transition-all duration-500 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-              <div className="bg-white rounded-2xl p-3 shadow-lg border border-gray-100 text-center">
+              <div className="rounded-2xl p-3 shadow-lg border text-center" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
               </div>
             </div>
@@ -124,14 +124,14 @@ function TutorialEmbed() {
           <div className={`md:col-span-3 transition-all duration-700 ${show.narration ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             {/* Bubble beside character  -  desktop only */}
             <div className={`hidden md:block mb-3 transition-all duration-500 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-              <div className="bg-white rounded-2xl rounded-tl-sm p-3 shadow-lg border border-gray-100 inline-block max-w-xs">
+              <div className="rounded-2xl rounded-tl-sm p-3 shadow-lg border inline-block max-w-xs" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
               </div>
             </div>
             <div className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: cur.accent }}>Scene {scene + 1} of {SCENES.length}</div>
             <h3 className="font-nunito font-black text-navy text-lg md:text-2xl tracking-tight mb-2 leading-tight">{cur.name}</h3>
-            <p className="text-gray-500 text-sm leading-relaxed mb-4">{cur.narration}</p>
-            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mb-4">
+            <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>{cur.narration}</p>
+            <div className="h-1.5 rounded-full overflow-hidden mb-4" style={{ background: 'var(--surface-alt)' }}>
               <div className="h-full rounded-full transition-all duration-100" style={{ width: `${progress}%`, backgroundColor: cur.accent }} />
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -146,7 +146,7 @@ function TutorialEmbed() {
               {playing && (
                 <>
                   <button onClick={() => { clearInterval(timerRef.current); setPlaying(false) }}
-                    className="px-3.5 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Pause</button>
+                    className="px-3.5 py-2.5 border-2 font-bold rounded-xl text-sm" style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-main)' }}>Pause</button>
                   {scene < SCENES.length - 1 && (
                     <button onClick={() => jump(scene + 1)}
                       className="px-4 py-2.5 text-white font-bold rounded-xl text-sm" style={{ backgroundColor: cur.accent }}>Next</button>
@@ -155,11 +155,11 @@ function TutorialEmbed() {
               )}
               {!playing && !completed && scene > 0 && (
                 <button onClick={() => jump(scene - 1)}
-                  className="px-3.5 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Back</button>
+                  className="px-3.5 py-2.5 border-2 font-bold rounded-xl text-sm" style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-main)' }}>Back</button>
               )}
               {completed && (
                 <>
-                  <button onClick={play} className="px-3.5 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">Watch again</button>
+                  <button onClick={play} className="px-3.5 py-2.5 border-2 font-bold rounded-xl text-sm" style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-main)' }}>Watch again</button>
                   <Link href="/create" className="px-4 py-2.5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-xl text-sm transition-all">Start like Ama</Link>
                 </>
               )}
@@ -278,22 +278,22 @@ export default function HowItWorksPage() {
         </section>
 
         {/* Embedded tutorial */}
-        <section className="py-16 bg-white border-b border-gray-100">
+        <section className="py-16 border-b" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-center mb-8">
               <h2 className="font-nunito font-black text-navy text-2xl md:text-3xl tracking-tight mb-2">See it in action</h2>
-              <p className="text-gray-400 text-sm">Follow Ama's journey from idea to funded  -  in 60 seconds</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Follow Ama's journey from idea to funded  -  in 60 seconds</p>
             </div>
             <TutorialEmbed />
           </div>
         </section>
 
         {/* Steps */}
-        <section className="py-20 bg-white">
+        <section className="py-20" style={{ background: 'var(--surface)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <div className="flex flex-col gap-6">
               {STEPS.map((step, i) => (
-                <div key={i} className="grid md:grid-cols-5 gap-6 items-start p-7 rounded-2xl bg-gray-50 border border-gray-100">
+                <div key={i} className="grid md:grid-cols-5 gap-6 items-start p-7 rounded-2xl border" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="md:col-span-1 flex md:flex-col items-center md:items-start gap-4">
                     <div className="font-nunito font-black text-primary/20 text-5xl leading-none">{step.n}</div>
                     <div className="bg-primary-light text-primary text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap">
@@ -302,10 +302,10 @@ export default function HowItWorksPage() {
                   </div>
                   <div className="md:col-span-4">
                     <h3 className="font-nunito font-black text-navy text-xl mb-2">{step.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed mb-3">{step.description}</p>
-                    <div className="bg-white border border-primary/20 rounded-xl px-4 py-3">
+                    <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--text-muted)' }}>{step.description}</p>
+                    <div className="border border-primary/20 rounded-xl px-4 py-3" style={{ background: 'var(--surface)' }}>
                       <span className="text-xs font-bold text-primary">Tip  -  </span>
-                      <span className="text-xs text-gray-500">{step.tip}</span>
+                      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{step.tip}</span>
                     </div>
                   </div>
                 </div>
@@ -338,17 +338,17 @@ export default function HowItWorksPage() {
         </section>
 
         {/* FAQ */}
-        <section className="py-20 bg-gray-50 border-t border-gray-100">
+        <section className="py-20 border-t" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-3xl mx-auto px-5">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-3">Common questions</h2>
-              <p className="text-gray-400 text-sm">Everything you need to know before you start</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Everything you need to know before you start</p>
             </div>
             <div className="flex flex-col gap-4">
               {FAQS.map((faq, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <div key={i} className="rounded-2xl border p-6 shadow-sm" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <h3 className="font-nunito font-extrabold text-navy mb-2">{faq.q}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{faq.a}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{faq.a}</p>
                 </div>
               ))}
             </div>
@@ -356,7 +356,7 @@ export default function HowItWorksPage() {
         </section>
 
         {/* Navigation to other pages */}
-        <section className="py-16 bg-white border-t border-gray-100">
+        <section className="py-16 border-t" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <h2 className="font-nunito font-black text-navy text-xl mb-6 text-center">Explore more</h2>
             <div className="grid md:grid-cols-3 gap-4">
@@ -366,9 +366,9 @@ export default function HowItWorksPage() {
                 { href: '/campaigns', title: 'Browse campaigns', desc: 'Explore verified campaigns raising money across Ghana right now.' },
               ].map((link, i) => (
                 <Link key={i} href={link.href}
-                  className="bg-gray-50 hover:bg-primary-light border-2 border-gray-100 hover:border-primary rounded-2xl p-5 transition-all group">
+                  className="bg-[var(--surface-alt)] hover:bg-primary-light border-2 border-[var(--border)] hover:border-primary rounded-2xl p-5 transition-all group">
                   <div className="font-nunito font-extrabold text-navy group-hover:text-primary transition-colors mb-1 text-sm">{link.title}</div>
-                  <div className="text-xs text-gray-400 leading-relaxed">{link.desc}</div>
+                  <div className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{link.desc}</div>
                 </Link>
               ))}
             </div>

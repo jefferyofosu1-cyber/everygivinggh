@@ -95,17 +95,17 @@ export default function CharitySignupPage() {
   if (step === 'done') return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-primary-light via-white to-blue-50 flex items-center justify-center px-5 py-16">
+      <div className="min-h-screen flex items-center justify-center px-5 py-16" style={{ background: 'linear-gradient(to bottom right, var(--primary-light), var(--surface), var(--surface-alt))' }}>
         <div className="max-w-md w-full text-center">
           <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
             <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30"></div>
           </div>
           <h1 className="font-nunito font-black text-navy text-3xl mb-3">Application received!</h1>
-          <p className="text-gray-500 text-sm mb-2 max-w-sm mx-auto leading-relaxed">
+          <p className="text-sm mb-2 max-w-sm mx-auto leading-relaxed" style={{ color: 'var(--text-muted)' }}>
             Thank you for registering <strong className="text-navy">{form.orgName}</strong> on EveryGiving.
           </p>
-          <p className="text-gray-400 text-xs mb-8 max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs mb-8 max-w-sm mx-auto leading-relaxed" style={{ color: 'var(--text-muted)' }}>
             Check your email to confirm your account. Our team will review your organisation and be in touch within 2 business days.
           </p>
           <Link href="/" className="inline-block bg-primary hover:bg-primary-dark text-white font-nunito font-black px-8 py-3.5 rounded-full text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-primary/20">
@@ -138,7 +138,7 @@ export default function CharitySignupPage() {
           </div>
         </section>
 
-        <section className="py-14 bg-gray-50 px-5 min-h-screen">
+        <section className="py-14 px-5 min-h-screen" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-2xl mx-auto">
 
             {/* Step 1: Organisation type */}
@@ -146,17 +146,17 @@ export default function CharitySignupPage() {
               <div>
                 <div className="text-center mb-8">
                   <h2 className="font-nunito font-black text-navy text-2xl mb-2">What type of organisation are you?</h2>
-                  <p className="text-gray-400 text-sm">This helps us set up the right account type for you.</p>
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>This helps us set up the right account type for you.</p>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-3 mb-8">
                   {ORG_TYPES.map(org => (
                     <button key={org.id} onClick={() => setOrgType(org.id)}
-                      className={`text-left p-4 rounded-2xl border-2 transition-all ${orgType === org.id ? 'border-primary bg-primary-light' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                      className={`text-left p-4 rounded-2xl border-2 transition-all ${orgType === org.id ? 'border-primary bg-primary-light' : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--text-muted)]'}`}>
                       <div className="flex items-start gap-3">
                         <span className="text-2xl mt-0.5">{org.icon}</span>
                         <div>
                           <div className={`font-nunito font-black text-sm ${orgType === org.id ? 'text-primary-dark' : 'text-navy'}`}>{org.label}</div>
-                          <div className="text-xs text-gray-400 mt-0.5 leading-snug">{org.desc}</div>
+                          <div className="text-xs mt-0.5 leading-snug" style={{ color: 'var(--text-muted)' }}>{org.desc}</div>
                         </div>
                       </div>
                     </button>
@@ -174,22 +174,22 @@ export default function CharitySignupPage() {
             {/* Step 2: Registration form */}
             {step === 'form' && selectedOrg && (
               <div>
-                <button onClick={() => setStep('type')} className="flex items-center gap-2 text-gray-400 hover:text-navy text-sm font-semibold mb-6 transition-colors">
+                <button onClick={() => setStep('type')} className="flex items-center gap-2 text-[var(--text-muted)] hover:text-navy text-sm font-semibold mb-6 transition-colors">
                   <span>←</span> Back
                 </button>
                 <div className="bg-primary-light border border-primary/20 rounded-2xl px-5 py-4 mb-6 flex items-center gap-3">
                   <span className="text-2xl">{selectedOrg.icon}</span>
                   <div>
                     <div className="font-nunito font-black text-primary-dark text-sm">{selectedOrg.label}</div>
-                    <div className="text-xs text-gray-500">{selectedOrg.desc}</div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{selectedOrg.desc}</div>
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 flex flex-col gap-5">
+                <form onSubmit={handleSubmit} className="rounded-2xl border p-6 md:p-8 flex flex-col gap-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
 
                   <div>
                     <div className="font-nunito font-black text-navy text-base mb-1">Organisation details</div>
-                    <div className="text-xs text-gray-400">Your registered organisation information.</div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Your registered organisation information.</div>
                   </div>
 
                   {[
@@ -197,16 +197,17 @@ export default function CharitySignupPage() {
                     { label: 'Registration number', key: 'regNumber', placeholder: 'e.g. DSW/REG/001234' },
                   ].map(({ label, key, placeholder, required }) => (
                     <div key={key}>
-                      <label className="block text-xs font-bold text-gray-600 mb-1.5">{label}{required && ' *'}</label>
+                      <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--text-main)' }}>{label}{required && ' *'}</label>
                       <input value={(form as any)[key]} onChange={e => f(key)(e.target.value)} required={required}
                         placeholder={placeholder}
-                        className="w-full border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-gray-50 focus:bg-white" />
+                        className="w-full border-2 border-[var(--border)] focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-[var(--surface-alt)] focus:bg-[var(--surface)] placeholder-[var(--text-muted)]"
+                        style={{ color: 'var(--text-main)' }} />
                     </div>
                   ))}
 
-                  <div className="border-t border-gray-100 pt-4">
+                  <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
                     <div className="font-nunito font-black text-navy text-base mb-1">Contact person</div>
-                    <div className="text-xs text-gray-400 mb-4">The primary contact for this organisation account.</div>
+                    <div className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>The primary contact for this organisation account.</div>
                     <div className="flex flex-col gap-4">
                       {[
                         { label: 'Full name', key: 'contactName', placeholder: 'Your full name', type: 'text', required: true },
@@ -215,36 +216,40 @@ export default function CharitySignupPage() {
                         { label: 'Website (optional)', key: 'website', placeholder: 'https://yourorg.org', type: 'url' },
                       ].map(({ label, key, placeholder, type, required }) => (
                         <div key={key}>
-                          <label className="block text-xs font-bold text-gray-600 mb-1.5">{label}{required && ' *'}</label>
+                          <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--text-main)' }}>{label}{required && ' *'}</label>
                           <input value={(form as any)[key]} onChange={e => f(key)(e.target.value)} type={type} required={required}
                             placeholder={placeholder}
-                            className="w-full border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-gray-50 focus:bg-white" />
+                            className="w-full border-2 border-[var(--border)] focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-[var(--surface-alt)] focus:bg-[var(--surface)] placeholder-[var(--text-muted)]"
+                            style={{ color: 'var(--text-main)' }} />
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-100 pt-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">About your organisation *</label>
+                  <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+                    <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--text-main)' }}>About your organisation *</label>
                     <textarea value={form.description} onChange={e => f('description')(e.target.value)} required rows={4}
                       placeholder="Describe your organisation, its mission, and why you are raising money on EveryGiving..."
-                      className="w-full border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-gray-50 focus:bg-white resize-none" />
+                      className="w-full border-2 border-[var(--border)] focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-[var(--surface-alt)] focus:bg-[var(--surface)] resize-none placeholder-[var(--text-muted)]"
+                      style={{ color: 'var(--text-main)' }} />
                   </div>
 
-                  <div className="border-t border-gray-100 pt-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Organisation address *</label>
+                  <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+                    <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--text-main)' }}>Organisation address *</label>
                     <input value={form.address} onChange={e => f('address')(e.target.value)} required
                       placeholder="Physical address of your organisation"
-                      className="w-full border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-gray-50 focus:bg-white" />
+                      className="w-full border-2 border-[var(--border)] focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-[var(--surface-alt)] focus:bg-[var(--surface)] placeholder-[var(--text-muted)]"
+                      style={{ color: 'var(--text-main)' }} />
                   </div>
 
-                  <div className="border-t border-gray-100 pt-4">
+                  <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
                     <div className="font-nunito font-black text-navy text-base mb-1">Create your password</div>
-                    <div className="text-xs text-gray-400 mb-3">You will use this to log in to your organisation dashboard.</div>
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Password *</label>
+                    <div className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>You will use this to log in to your organisation dashboard.</div>
+                    <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--text-main)' }}>Password *</label>
                     <input value={form.password} onChange={e => f('password')(e.target.value)} type="password" required minLength={8}
                       placeholder="At least 8 characters"
-                      className="w-full border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-gray-50 focus:bg-white" />
+                      className="w-full border-2 border-[var(--border)] focus:border-primary rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-[var(--surface-alt)] focus:bg-[var(--surface)] placeholder-[var(--text-muted)]"
+                      style={{ color: 'var(--text-main)' }} />
                   </div>
 
                   {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">{error}</div>}
@@ -254,7 +259,7 @@ export default function CharitySignupPage() {
                     {loading ? 'Submitting application...' : 'Submit organisation application'}
                   </button>
 
-                  <p className="text-xs text-gray-400 text-center leading-relaxed">
+                  <p className="text-xs text-center leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                     By submitting, you agree to our{' '}
                     <Link href="/terms" className="text-primary underline">Terms</Link> and{' '}
                     <Link href="/privacy" className="text-primary underline">Privacy Policy</Link>.

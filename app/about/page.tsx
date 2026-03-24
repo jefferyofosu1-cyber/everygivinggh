@@ -85,7 +85,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── STICKY NAV ── */}
-        <nav className="bg-white border-b border-gray-100 sticky top-0 z-10 overflow-x-auto">
+        <nav className="border-b sticky top-0 z-10 overflow-x-auto" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-5xl mx-auto px-5">
             <div className="flex gap-0 min-w-max">
               {[
@@ -100,7 +100,8 @@ export default function AboutPage() {
                 ['#resources', 'More resources'],
               ].map(([href, label]) => (
                 <a key={href} href={href}
-                  className="text-xs font-semibold text-gray-400 hover:text-primary transition-colors px-4 py-4 whitespace-nowrap border-b-2 border-transparent hover:border-primary">
+                  className="text-xs font-semibold hover:text-primary transition-colors px-4 py-4 whitespace-nowrap border-b-2 border-transparent hover:border-primary"
+                  style={{ color: 'var(--text-muted)' }}>
                   {label}
                 </a>
               ))}
@@ -109,18 +110,18 @@ export default function AboutPage() {
         </nav>
 
         {/* ── HOW EVERYGIVING WORKS ── */}
-        <section id="how-it-works" className="py-20 bg-white scroll-mt-14">
+        <section id="how-it-works" className="py-20 scroll-mt-14" style={{ background: 'var(--surface)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>How EveryGiving works</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">From idea to funded in 4 steps</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">No forms to print, no queues to join, no bank account required. Just your story, your Ghana Card, and your MoMo number.</p>
+            <p className="text-sm leading-relaxed max-w-xl mb-12" style={{ color: 'var(--text-muted)' }}>No forms to print, no queues to join, no bank account required. Just your story, your Ghana Card, and your MoMo number.</p>
             <div className="grid md:grid-cols-2 gap-5">
               {HOW_STEPS.map((step, i) => (
-                <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-7 relative overflow-hidden">
-                  <div className="absolute top-5 right-6 font-nunito font-black text-gray-100 text-5xl leading-none select-none">{step.n}</div>
+                <div key={i} className="border rounded-2xl p-7 relative overflow-hidden" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
+                  <div className="absolute top-5 right-6 font-nunito font-black text-5xl leading-none select-none" style={{ color: 'var(--border)' }}>{step.n}</div>
                   <div className={`inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4 ${step.color}`}>{step.time}</div>
                   <div className="font-nunito font-black text-navy text-lg mb-2 relative">{step.title}</div>
-                  <div className="text-gray-500 text-sm leading-relaxed relative">{step.desc}</div>
+                  <div className="text-sm leading-relaxed relative" style={{ color: 'var(--text-muted)' }}>{step.desc}</div>
                 </div>
               ))}
             </div>
@@ -133,17 +134,17 @@ export default function AboutPage() {
         </section>
 
         {/* ── GIVING GUARANTEE ── */}
-        <section id="guarantee" className="py-20 bg-gray-50 border-t border-gray-100 scroll-mt-14">
+        <section id="guarantee" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>EveryGiving Giving Guarantee</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">Our promise to every user</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">The EveryGiving Guarantee is our commitment to every fundraiser and donor. These are not aspirations  -  they are the minimum standard we hold ourselves to.</p>
+            <p className="text-sm leading-relaxed max-w-xl mb-12" style={{ color: 'var(--text-muted)' }}>The EveryGiving Guarantee is our commitment to every fundraiser and donor. These are not aspirations  -  they are the minimum standard we hold ourselves to.</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               {GUARANTEE_POINTS.map((g, i) => (
-                <div key={i} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform">
+                <div key={i} className="border rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="text-2xl mb-3">{g.icon}</div>
                   <div className="font-nunito font-black text-navy text-sm mb-2">{g.title}</div>
-                  <div className="text-gray-500 text-xs leading-relaxed">{g.desc}</div>
+                  <div className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{g.desc}</div>
                 </div>
               ))}
             </div>
@@ -160,26 +161,28 @@ export default function AboutPage() {
         </section>
 
         {/* ── SUPPORTED COUNTRIES ── */}
-        <section id="countries" className="py-20 bg-white border-t border-gray-100 scroll-mt-14">
+        <section id="countries" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Supported countries</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">Where Every Giving works</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">EveryGiving is fully live in Ghana. West African expansion is underway.</p>
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>EveryGiving is fully live in Ghana. West African expansion is underway.</p>
             <div className="grid md:grid-cols-2 gap-4 mb-6">
               {COUNTRIES.map((c, i) => (
-                <div key={i} className={`rounded-2xl p-6 border-2 flex items-start gap-4 ${c.active ? 'bg-primary-light border-primary/20' : 'bg-gray-50 border-gray-100'}`}>
+                <div key={i} className={`rounded-2xl p-6 border-2 flex items-start gap-4 ${c.active ? 'bg-primary-light border-primary/20' : ''}`}
+                  style={!c.active ? { background: 'var(--surface-alt)', borderColor: 'var(--border)' } : undefined}>
                   <div className="text-3xl flex-shrink-0">{c.flag}</div>
                   <div>
                     <div className="flex items-center gap-3 mb-1">
                       <span className="font-nunito font-black text-navy text-base">{c.name}</span>
-                      <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${c.active ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>{c.status}</span>
+                      <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${c.active ? 'bg-primary text-white' : ''}`}
+                        style={!c.active ? { background: 'var(--border)', color: 'var(--text-muted)' } : undefined}>{c.status}</span>
                     </div>
-                    <div className="text-gray-500 text-sm">{c.detail}</div>
+                    <div className="text-sm" style={{ color: 'var(--text-muted)' }}>{c.detail}</div>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-gray-400 text-xs text-center">
+            <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
               Interested in bringing Every Giving to your country?{' '}
               <a href="mailto:business@everygiving.org?subject=Country Expansion" className="text-primary font-semibold hover:underline">Email us</a>
             </p>
@@ -212,11 +215,11 @@ export default function AboutPage() {
         </section>
 
         {/* ── HELP CENTRE ── */}
-        <section id="help" className="py-20 bg-white border-t border-gray-100 scroll-mt-14">
+        <section id="help" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Help Centre</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">Common questions, answered</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">Our Help Centre covers every common question about campaigns, verification, payments, and accounts.</p>
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>Our Help Centre covers every common question about campaigns, verification, payments, and accounts.</p>
             <div className="grid md:grid-cols-2 gap-3 mb-8">
               {[
                 { q: 'How do I start a campaign?', href: '/help' },
@@ -227,9 +230,10 @@ export default function AboutPage() {
                 { q: "What happens if I don't reach my goal?", href: '/help' },
               ].map((item, i) => (
                 <Link key={i} href={item.href}
-                  className="flex items-center justify-between gap-3 bg-gray-50 hover:bg-primary-light border border-gray-100 hover:border-primary/20 rounded-xl px-5 py-4 transition-all group">
-                  <span className="text-sm text-gray-600 group-hover:text-navy font-medium">{item.q}</span>
-                  <svg className="w-4 h-4 text-gray-300 group-hover:text-primary flex-shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
+                  className="flex items-center justify-between gap-3 hover:bg-primary-light border hover:border-primary/20 rounded-xl px-5 py-4 transition-all group"
+                  style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
+                  <span className="text-sm group-hover:text-navy font-medium" style={{ color: 'var(--text-main)' }}>{item.q}</span>
+                  <svg className="w-4 h-4 group-hover:text-primary flex-shrink-0 transition-colors" style={{ color: 'var(--text-muted)' }} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
                 </Link>
               ))}
             </div>
@@ -242,26 +246,26 @@ export default function AboutPage() {
         </section>
 
         {/* ── ABOUT EVERYGIVING ── */}
-        <section id="about" className="py-20 bg-gray-50 border-t border-gray-100 scroll-mt-14">
+        <section id="about" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>About EveryGiving</SectionLabel>
             <div className="grid md:grid-cols-2 gap-12 items-start">
               <div>
                 <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-6 leading-tight">Built in Ghana.<br />For Ghana.</h2>
-                <div className="flex flex-col gap-5 text-sm text-gray-500 leading-relaxed">
+                <div className="flex flex-col gap-5 text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                   <p>{cms(c, 'founder', 'originStory', 'EveryGiving was founded in 2026 by Jeffery Ofosu after seeing people he knew struggle to raise money for medical emergencies  -  sending MoMo requests to strangers who had no way to verify if the cause was real.')}</p>
                   <p>The idea was straightforward: verify identity, build trust, and make every cedi count. If donations went straight to MoMo, fundraisers would get their money fast. And if the platform charged 0%, every cedi would reach the person who needs it.</p>
                   <p>Ghana has always had a culture of communal giving  -  from susu groups to church fundraisers to emergency appeals. Every Giving is a modern infrastructure for that ancient generosity.</p>
                 </div>
               </div>
               <div className="flex flex-col gap-4">
-                <div className="bg-white border border-gray-100 rounded-2xl p-6 text-center shadow-sm">
+                <div className="border rounded-2xl p-6 text-center shadow-sm" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="w-16 h-16 bg-navy rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="font-nunito font-black text-primary text-2xl">{(cms(c, 'founder', 'name', 'Jeffery Ofosu') as string).charAt(0)}</span>
                   </div>
                   <div className="font-nunito font-black text-navy text-lg mb-0.5">{cms(c, 'founder', 'name', 'Jeffery Ofosu')}</div>
                   <div className="text-primary text-xs font-bold uppercase tracking-widest mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>{cms(c, 'founder', 'title', 'Founder & CEO')}</div>
-                  <div className="text-gray-500 text-sm leading-relaxed">{cms(c, 'founder', 'bio', 'Building Every Giving to make verified crowdfunding accessible to every Ghanaian.')}</div>
+                  <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{cms(c, 'founder', 'bio', 'Building Every Giving to make verified crowdfunding accessible to every Ghanaian.')}</div>
                 </div>
                 <div className="bg-navy rounded-2xl p-6 text-center">
                   <div className="font-nunito font-black text-white text-lg mb-1">{cms(c, 'founder', 'missionQuote', '"Ghana has always given."')}</div>
@@ -273,18 +277,18 @@ export default function AboutPage() {
         </section>
 
         {/* ── PRESS CENTRE ── */}
-        <section id="press" className="py-20 bg-white border-t border-gray-100 scroll-mt-14">
+        <section id="press" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Press Centre</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">Media &amp; press enquiries</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">Journalists, bloggers, and media organisations are welcome to cover Every Giving. We respond to press enquiries within 3 business days.</p>
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>Journalists, bloggers, and media organisations are welcome to cover Every Giving. We respond to press enquiries within 3 business days.</p>
             <div className="grid md:grid-cols-2 gap-5 mb-8">
-              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
+              <div className="border rounded-2xl p-6" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                 <div className="font-nunito font-black text-navy text-base mb-3">Brand assets</div>
-                <p className="text-gray-500 text-sm leading-relaxed mb-4">Our logo, wordmark, colour palette, and brand guidelines are available for press use. Please do not alter the logo or use colours outside our brand guide.</p>
+                <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>Our logo, wordmark, colour palette, and brand guidelines are available for press use. Please do not alter the logo or use colours outside our brand guide.</p>
                 <Link href="/brand-guide" className="inline-block text-primary font-bold text-sm hover:underline">View brand guide →</Link>
               </div>
-              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
+              <div className="border rounded-2xl p-6" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                 <div className="font-nunito font-black text-navy text-base mb-3">Key facts for press</div>
                 <div className="flex flex-col gap-2 text-sm">
                   {(cms(c, 'pressFacts', 'items', null) as unknown as any[] || [
@@ -296,7 +300,7 @@ export default function AboutPage() {
                     { key: 'Contact', value: 'business@everygiving.org' },
                   ]).map((item: any) => (
                     <div key={item.key} className="flex justify-between">
-                      <span className="text-gray-400">{item.key}</span>
+                      <span style={{ color: 'var(--text-muted)' }}>{item.key}</span>
                       <span className="text-navy font-medium">{item.value}</span>
                     </div>
                   ))}
@@ -317,15 +321,15 @@ export default function AboutPage() {
         </section>
 
         {/* ── CAREERS ── */}
-        <section id="careers" className="py-20 bg-gray-50 border-t border-gray-100 scroll-mt-14">
+        <section id="careers" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Careers</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">Build something that matters</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">Every Giving is an early-stage platform building the infrastructure for verified giving in Ghana and across West Africa. We are looking for people who care about trust, transparency, and financial access.</p>
-            <div className="bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-sm mb-6">
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>Every Giving is an early-stage platform building the infrastructure for verified giving in Ghana and across West Africa. We are looking for people who care about trust, transparency, and financial access.</p>
+            <div className="border rounded-2xl p-8 text-center shadow-sm mb-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
               <div className="text-4xl mb-4">🇬🇭</div>
               <div className="font-nunito font-black text-navy text-xl mb-3">No open roles right now</div>
-              <p className="text-gray-400 text-sm leading-relaxed max-w-md mx-auto mb-6">We don't have any open positions at the moment, but we are always interested in hearing from talented people who are passionate about our mission.</p>
+              <p className="text-sm leading-relaxed max-w-md mx-auto mb-6" style={{ color: 'var(--text-muted)' }}>We don't have any open positions at the moment, but we are always interested in hearing from talented people who are passionate about our mission.</p>
               <a href="mailto:business@everygiving.org?subject=Careers  -  Speculative Application"
                 className="inline-block bg-navy hover:bg-navy/90 text-white font-nunito font-black px-7 py-3.5 rounded-full transition-all hover:-translate-y-0.5 text-sm">
                 Send a speculative application
@@ -337,10 +341,10 @@ export default function AboutPage() {
                 { icon: '*', label: 'Early stage', desc: 'Real ownership and impact from day one' },
                 { icon: '*', label: 'Mission-driven', desc: 'Building something that genuinely helps people' },
               ].map((item, i) => (
-                <div key={i} className="bg-white border border-gray-100 rounded-xl p-5 text-center">
+                <div key={i} className="border rounded-xl p-5 text-center" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="text-2xl mb-2">{item.icon}</div>
                   <div className="font-nunito font-black text-navy text-sm mb-1">{item.label}</div>
-                  <div className="text-gray-400 text-xs">{item.desc}</div>
+                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                 </div>
               ))}
             </div>
@@ -348,15 +352,16 @@ export default function AboutPage() {
         </section>
 
         {/* ── MORE RESOURCES ── */}
-        <section id="resources" className="py-20 bg-white border-t border-gray-100 scroll-mt-14">
+        <section id="resources" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>More resources</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">Everything else you need</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">Guides, policies, and tools to help you get the most out of Every Giving.</p>
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>Guides, policies, and tools to help you get the most out of Every Giving.</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
               {RESOURCES.map((r, i) => (
                 <Link key={i} href={r.href}
-                  className="bg-gray-50 hover:bg-primary-light border border-gray-100 hover:border-primary/20 rounded-2xl p-5 transition-all hover:-translate-y-0.5 group">
+                  className="hover:bg-primary-light border hover:border-primary/20 rounded-2xl p-5 transition-all hover:-translate-y-0.5 group"
+                  style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="text-2xl mb-3">{r.icon}</div>
                   <div className="font-nunito font-extrabold text-navy text-sm group-hover:text-primary transition-colors leading-snug">{r.label}</div>
                 </Link>

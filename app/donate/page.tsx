@@ -25,15 +25,16 @@ function CampaignCard({ c }: { c: any }) {
   const pct = c.goal_amount ? Math.min(Math.round((c.raised_amount / c.goal_amount) * 100), 100) : 0
   return (
     <Link href={`/campaigns/${c.id}`}
-      className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden group">
-      <div className="h-44 bg-gradient-to-br from-primary-light to-blue-50 flex items-center justify-center text-5xl relative">
+      className="rounded-2xl border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden group"
+      style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+      <div className="h-44 flex items-center justify-center text-5xl relative" style={{ background: 'linear-gradient(to bottom right, var(--primary-light), var(--surface-alt))' }}>
         {EMOJI[c.category?.toLowerCase()] || ''}
         {c.verified && <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full"> Verified</div>}
       </div>
       <div className="p-5">
         <div className="font-nunito font-black text-navy text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">{c.title}</div>
-        <div className="text-gray-400 text-xs mb-3">Campaign</div>
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1.5">
+        <div className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>Campaign</div>
+        <div className="h-1.5 rounded-full overflow-hidden mb-1.5" style={{ background: 'var(--surface-alt)' }}>
           <div className="h-full bg-primary rounded-full" style={{ width: `${pct}%` }} />
         </div>
         <div className="flex justify-between text-xs">
@@ -96,11 +97,12 @@ export default function DonatePage() {
 
 
         {/* Category filter */}
-        <div className="bg-white border-b border-gray-100 px-5 py-4 overflow-x-auto">
+        <div className="border-b px-5 py-4 overflow-x-auto" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-5xl mx-auto flex gap-2 min-w-max">
             {CAT_PILLS.map((cat, i) => (
               <button key={i} onClick={() => setActiveCategory(cat.slug)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap ${activeCategory === cat.slug ? 'bg-primary text-white border-primary shadow-md shadow-primary/20' : 'border-gray-200 text-gray-600 hover:border-primary/40'}`}>
+                className={`px-5 py-2.5 rounded-full text-sm font-bold border-2 transition-all whitespace-nowrap ${activeCategory === cat.slug ? 'bg-primary text-white border-primary shadow-md shadow-primary/20' : 'hover:border-primary/40'}`}
+                style={activeCategory === cat.slug ? undefined : { borderColor: 'var(--border)', color: 'var(--text-main)' }}>
                 {cat.name}
               </button>
             ))}
@@ -108,28 +110,28 @@ export default function DonatePage() {
         </div>
 
         {/* Campaign grid */}
-        <section className="py-12 bg-gray-50">
+        <section className="py-12" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-5xl mx-auto px-5">
             {loading ? (
               <div className="grid md:grid-cols-3 gap-5">
-                {[...Array(6)].map((_, i) => <div key={i} className="bg-white rounded-2xl h-64 animate-pulse border border-gray-100" />)}
+                {[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl h-64 animate-pulse border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }} />)}
               </div>
             ) : campaigns.length > 0 ? (
               <div className="grid md:grid-cols-3 gap-5">
                 {campaigns.map(c => <CampaignCard key={c.id} c={c} />)}
               </div>
             ) : (
-              <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+              <div className="text-center py-16 rounded-2xl border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <div className="text-4xl mb-3"></div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No campaigns yet</div>
-                <p className="text-gray-400 text-sm">Check back soon  -  or start your own campaign.</p>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Check back soon  -  or start your own campaign.</p>
               </div>
             )}
           </div>
         </section>
 
         {/* How donating works */}
-        <section className="py-12 bg-white border-t border-gray-100">
+        <section className="py-12 border-t" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-3xl mx-auto px-5 text-center">
             <h2 className="font-nunito font-black text-navy text-2xl mb-8">How donating works</h2>
             <div className="grid md:grid-cols-3 gap-5">
@@ -141,7 +143,7 @@ export default function DonatePage() {
                 <div key={i}>
                   <div className="w-12 h-12 bg-primary-light rounded-2xl flex items-center justify-center text-xl mx-auto mb-3">{step.icon}</div>
                   <div className="font-nunito font-black text-navy text-sm mb-1.5">{step.title}</div>
-                  <div className="text-gray-400 text-xs leading-relaxed">{step.desc}</div>
+                  <div className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{step.desc}</div>
                 </div>
               ))}
             </div>

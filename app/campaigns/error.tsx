@@ -18,7 +18,7 @@ export default function CampaignsError({
     <div className="max-w-7xl mx-auto px-5 py-24 text-center">
       <div className="text-6xl mb-6">🏜️</div>
       <h2 className="font-nunito font-black text-navy text-3xl mb-4">Could not load campaigns</h2>
-      <p className="text-gray-500 mb-8 max-w-md mx-auto">
+      <p className="mb-8 max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>
         We encountered an error while trying to fetch the latest campaigns. Please try again or explore other parts of the platform.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -30,7 +30,8 @@ export default function CampaignsError({
         </button>
         <Link
           href="/"
-          className="border-2 border-gray-100 hover:border-primary text-gray-500 hover:text-primary font-nunito font-black px-8 py-4 rounded-xl transition-all"
+          className="border-2 hover:border-primary hover:text-primary font-nunito font-black px-8 py-4 rounded-xl transition-all"
+          style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
         >
           Return home
         </Link>

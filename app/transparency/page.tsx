@@ -27,7 +27,7 @@ export default function TransparencyPage() {
         </section>
 
         {/* Core commitments */}
-        <section className="py-16 bg-white">
+        <section className="py-16" style={{ background: 'var(--surface)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Our commitments</div>
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-10">Our Commitments</h2>
@@ -40,10 +40,10 @@ export default function TransparencyPage() {
                 { icon: '🚨', title: 'Fraud is Reported', body: 'We take fraud seriously: Fraudulent campaigns are removed immediately. Cases are reported to the authorities. Fraudsters are not just banned — they are held accountable.' },
                 { icon: '🔒', title: 'No Ads. No Data Selling. Ever.', body: 'EveryGiving is completely ad-free. We do not sell or share user data with third parties. Our platform is supported through service fees and verification fees.' },
               ].map((item, i) => (
-                <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
+                <div key={i} className="rounded-2xl p-6 border" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="text-2xl mb-3">{item.icon}</div>
                   <div className="font-nunito font-black text-navy text-base mb-2">{item.title}</div>
-                  <div className="text-gray-500 text-sm leading-relaxed">{item.body}</div>
+                  <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.body}</div>
                 </div>
               ))}
             </div>
@@ -51,14 +51,14 @@ export default function TransparencyPage() {
         </section>
 
         {/* Fee breakdown */}
-        <section className="py-16 bg-gray-50 border-t border-gray-100 scroll-mt-14">
+        <section className="py-16 border-t scroll-mt-14" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Fee breakdown</div>
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Fee Breakdown</h2>
-            <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm mb-8">
+            <div className="rounded-2xl overflow-hidden shadow-sm mb-8 border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
+                  <tr className="border-b" style={{ borderColor: 'var(--border)', background: 'var(--surface-alt)' }}>
                     <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Fee Type</th>
                     <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Amount</th>
                     <th className="text-left px-6 py-4 font-nunito font-black text-navy text-xs uppercase tracking-wider">Paid By</th>
@@ -72,11 +72,11 @@ export default function TransparencyPage() {
                     { fee: 'Standard Verification', amount: 'GHS 50 (one-time)', by: 'Fundraiser', purpose: 'Full ID verification + Verified badge' },
                     { fee: 'Premium Verification', amount: 'GHS 100 (one-time)', by: 'Fundraiser', purpose: 'Advanced verification for large campaigns' },
                   ].map((row, i) => (
-                    <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
+                    <tr key={i} className="border-b" style={{ borderColor: 'var(--border)' }}>
                       <td className="px-6 py-4 font-medium text-navy">{row.fee}</td>
                       <td className="px-6 py-4 font-nunito font-black text-primary">{row.amount}</td>
-                      <td className="px-6 py-4 text-gray-500">{row.by}</td>
-                      <td className="px-6 py-4 text-gray-500">{row.purpose}</td>
+                      <td className="px-6 py-4" style={{ color: 'var(--text-muted)' }}>{row.by}</td>
+                      <td className="px-6 py-4" style={{ color: 'var(--text-muted)' }}>{row.purpose}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -86,7 +86,7 @@ export default function TransparencyPage() {
         </section>
 
         {/* How verification works */}
-        <section className="py-16 bg-white border-t border-gray-100">
+        <section className="py-16 border-t" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>Verification</div>
             <h2 className="font-nunito font-black text-navy text-3xl tracking-tight mb-6">Verification Process</h2>
@@ -102,9 +102,9 @@ export default function TransparencyPage() {
                   <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="font-nunito font-black text-primary text-xs">{item.step}</span>
                   </div>
-                  <div className="bg-white border border-gray-100 rounded-xl p-4 flex-1">
+                  <div className="border rounded-xl p-4 flex-1" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                     <div className="font-nunito font-extrabold text-navy text-sm mb-1">{item.title}</div>
-                    <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
+                    <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                   </div>
                 </div>
               ))}
@@ -119,7 +119,7 @@ export default function TransparencyPage() {
             <p className="text-white/60 text-sm mb-6">We believe in full transparency. If you have any questions about how EveryGiving works, we're happy to explain.</p>
             <div className="flex flex-wrap gap-3 justify-center">
               <a href="mailto:business@everygiving.org"
-                className="inline-block bg-white text-primary font-nunito font-black px-7 py-3 rounded-full text-sm hover:-translate-y-0.5 transition-all">
+                className="inline-block text-primary font-nunito font-black px-7 py-3 rounded-full text-sm hover:-translate-y-0.5 transition-all" style={{ background: 'var(--surface)' }}>
                 Email us
               </a>
               <Link href="/terms"

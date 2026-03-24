@@ -125,7 +125,7 @@ export default async function CampaignPage({ params }: { params: { id: string } 
                 ) : (
                   <span>{emoji}</span>
                 )}
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest text-primary shadow-sm">
+                <div className="absolute top-4 left-4 backdrop-blur px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest text-primary shadow-sm" style={{ background: 'color-mix(in srgb, var(--surface) 90%, transparent)' }}>
                   {campaign.category}
                 </div>
               </div>

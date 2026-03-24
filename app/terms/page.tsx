@@ -162,16 +162,16 @@ export default function TermsPage() {
           </div>
         </section>
 
-        <div className="max-w-5xl mx-auto px-5 py-12 grid md:grid-cols-4 gap-10">
+        <div className="max-w-5xl mx-auto px-5 py-12 grid md:grid-cols-4 gap-10" style={{ background: 'var(--surface)' }}>
 
           {/* Sidebar nav */}
           <aside className="hidden md:block md:col-span-1">
             <div className="sticky top-24">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Sections</p>
+              <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>Sections</p>
               <nav className="flex flex-col gap-1">
                 {sections.map(s => (
                   <a key={s.id} href={`#${s.id}`}
-                    className="text-xs text-gray-500 hover:text-primary transition-colors py-1 leading-snug">
+                    className="text-xs text-[var(--text-muted)] hover:text-primary transition-colors py-1 leading-snug">
                     {s.title}
                   </a>
                 ))}
@@ -188,10 +188,10 @@ export default function TermsPage() {
             <div className="flex flex-col gap-10">
               {sections.map(section => (
                 <div key={section.id} id={section.id} className="scroll-mt-24">
-                  <h2 className="font-nunito font-black text-navy text-xl mb-4 pb-3 border-b border-gray-100">
+                  <h2 className="font-nunito font-black text-navy text-xl mb-4 pb-3 border-b" style={{ borderColor: 'var(--border)' }}>
                     {section.title}
                   </h2>
-                  <div className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
+                  <div className="text-sm leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-muted)' }}>
                     {section.content}
                   </div>
                 </div>

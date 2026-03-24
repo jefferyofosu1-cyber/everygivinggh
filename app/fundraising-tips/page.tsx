@@ -95,22 +95,22 @@ export default function FundraisingTipsPage() {
         </section>
 
         {/* Tips list */}
-        <section className="py-16 bg-white px-5">
+        <section className="py-16 px-5" style={{ background: 'var(--surface)' }}>
           <div className="max-w-3xl mx-auto flex flex-col gap-6">
             {TIPS.map((tip) => (
-              <div key={tip.n} className="bg-white rounded-2xl border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all p-6 md:p-8">
+              <div key={tip.n} className="rounded-2xl border hover:border-primary/20 hover:shadow-md transition-all p-6 md:p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <div className="flex items-start gap-5">
                   <div className="flex-shrink-0 text-3xl mt-0.5">{tip.icon}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className="font-mono-dm text-xs text-gray-300 font-medium">{tip.n}</span>
+                      <span className="font-mono-dm text-xs font-medium" style={{ color: 'var(--text-muted)' }}>{tip.n}</span>
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${tip.tagColor}`}>{tip.tag}</span>
                     </div>
                     <h2 className="font-nunito font-black text-navy text-lg md:text-xl mb-3">{tip.title}</h2>
-                    <p className="text-gray-500 text-sm leading-relaxed mb-4">{tip.body}</p>
-                    <div className="inline-flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
+                    <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>{tip.body}</p>
+                    <div className="inline-flex items-center gap-3 border rounded-xl px-4 py-2.5" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                       <span className="font-nunito font-black text-primary text-xl">{tip.stat}</span>
-                      <span className="text-gray-500 text-xs leading-tight">{tip.statLabel}</span>
+                      <span className="text-xs leading-tight" style={{ color: 'var(--text-muted)' }}>{tip.statLabel}</span>
                     </div>
                   </div>
                 </div>
@@ -124,7 +124,7 @@ export default function FundraisingTipsPage() {
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="font-nunito font-black text-white text-3xl md:text-4xl mb-3">Ready to put these into practice?</h2>
             <p className="text-white/70 text-sm mb-8 max-w-md mx-auto">Create your verified campaign in minutes and apply every tip from day one.</p>
-            <Link href="/create" className="inline-block bg-white hover:bg-gray-50 text-primary font-nunito font-black px-10 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl text-sm">
+            <Link href="/create" className="inline-block text-primary font-nunito font-black px-10 py-4 rounded-full transition-all hover:-translate-y-0.5 shadow-xl text-sm" style={{ background: 'var(--surface)' }}>
               Start your campaign now
             </Link>
           </div>

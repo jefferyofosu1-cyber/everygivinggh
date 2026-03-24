@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 const TIERS = [
   {
     id: 'basic', name: 'Basic', emoji: '*', price: 'Free', priceNum: 0,
-    badge: 'Basic', badgeStyle: 'bg-gray-100 text-gray-600 border-gray-200',
-    border: 'border-gray-200', headerBg: 'bg-gray-50',
+    badge: 'Basic', badgeStyle: 'bg-[var(--surface-alt)] text-[var(--text-muted)] border-[var(--border)]',
+    border: 'border-[var(--border)]', headerBg: 'bg-[var(--surface-alt)]',
     limit: 'Up to GH₵5,000', limitNum: 5000,
     canDefer: false, recommended: false,
     desc: 'For small, personal campaigns. ID upload only. No fee ever.',
@@ -94,11 +94,11 @@ export default function VerificationPage() {
         </section>
 
         {/* Why verification matters */}
-        <section className="py-14 bg-white px-5 border-b border-gray-100">
+        <section className="py-14 px-5 border-b" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="font-nunito font-black text-navy text-3xl mb-3">Why verification matters</h2>
-              <p className="text-gray-400 text-sm max-w-md mx-auto">In Ghana, trust is everything. Donors need to know the person asking for money is who they say they are.</p>
+              <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>In Ghana, trust is everything. Donors need to know the person asking for money is who they say they are.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-5">
               {[
@@ -106,10 +106,10 @@ export default function VerificationPage() {
                 { icon: '*', title: 'Boosts fundraising', desc: 'Campaigns with the Verified badge raise 3 times more on average. Trust converts to donations.' },
                 { icon: '*', title: 'Builds Ghana\'s giving culture', desc: 'Every verified campaign makes online giving safer. We are building the infrastructure of trust for Ghana\'s digital economy.' },
               ].map((item) => (
-                <div key={item.title} className="bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center">
+                <div key={item.title} className="rounded-2xl p-6 border text-center" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="text-3xl mb-3">{item.icon}</div>
                   <h3 className="font-nunito font-black text-navy text-base mb-2">{item.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -117,55 +117,55 @@ export default function VerificationPage() {
         </section>
 
         {/* Tier cards */}
-        <section className="py-16 bg-gray-50 px-5">
+        <section className="py-16 px-5" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl mb-3">Choose your verification tier</h2>
-              <p className="text-gray-400 text-sm max-w-md mx-auto">Higher tiers include deeper review, stronger badges, and higher fundraising limits. Most fundraisers start at Standard.</p>
+              <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>Higher tiers include deeper review, stronger badges, and higher fundraising limits. Most fundraisers start at Standard.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               {TIERS.map((tier) => (
-                <div key={tier.id} className={`relative bg-white rounded-2xl border-2 ${tier.border} overflow-hidden flex flex-col`}>
+                <div key={tier.id} className={`relative rounded-2xl border-2 ${tier.border} overflow-hidden flex flex-col`} style={{ background: 'var(--surface)' }}>
                   {tier.recommended && (
                     <div className="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">Most popular</div>
                   )}
-                  <div className={`${tier.headerBg} px-5 pt-5 pb-4 border-b border-gray-100`}>
+                  <div className={`${tier.headerBg} px-5 pt-5 pb-4 border-b`} style={{ borderColor: 'var(--border)' }}>
                     <div className="text-2xl mb-1.5">{tier.emoji}</div>
                     <div className="font-nunito font-black text-navy text-lg">{tier.name}</div>
                     <div className="font-nunito font-black text-2xl mt-1">{tier.price}</div>
-                    {tier.canDefer && <div className="text-xs text-gray-400 mt-0.5">or defer from donations</div>}
+                    {tier.canDefer && <div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>or defer from donations</div>}
                     <div className={`inline-flex items-center gap-1 border text-xs font-bold px-2.5 py-1 rounded-full mt-3 ${tier.badgeStyle}`}>
                       {tier.emoji} {tier.badge}
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col gap-3">
-                    <div className="text-xs text-gray-500 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 font-semibold">
+                    <div className="text-xs border rounded-xl px-3 py-2 font-semibold" style={{ color: 'var(--text-muted)', background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                       {tier.limit}
                     </div>
-                    <p className="text-xs text-gray-500 leading-relaxed">{tier.desc}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{tier.desc}</p>
                     <div className="flex flex-col gap-2 mt-1">
                       {tier.checks.map((c) => (
                         <div key={c} className="flex items-start gap-2">
                           <span className="text-primary text-xs mt-0.5 flex-shrink-0"></span>
-                          <span className="text-xs text-gray-600 leading-snug">{c}</span>
+                          <span className="text-xs leading-snug" style={{ color: 'var(--text-muted)' }}>{c}</span>
                         </div>
                       ))}
                       {tier.notIncluded.map((c) => (
                         <div key={c} className="flex items-start gap-2 opacity-40">
-                          <span className="text-gray-400 text-xs mt-0.5 flex-shrink-0">-</span>
-                          <span className="text-xs text-gray-400 leading-snug line-through">{c}</span>
+                          <span className="text-[var(--text-muted)] text-xs mt-0.5 flex-shrink-0">-</span>
+                          <span className="text-xs text-[var(--text-muted)] leading-snug line-through">{c}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div className="px-5 pb-5">
                     {tier.priceNum === -1 ? (
-                      <span className="block text-center py-2.5 rounded-full text-xs font-nunito font-black border-2 border-gray-200 text-gray-400 cursor-not-allowed">
+                      <span className="block text-center py-2.5 rounded-full text-xs font-nunito font-black border-2 cursor-not-allowed border-[var(--border)] text-[var(--text-muted)]">
                         Coming soon
                       </span>
                     ) : (
                       <Link href="/create"
-                        className={`block text-center py-2.5 rounded-full text-xs font-nunito font-black transition-all ${tier.recommended ? 'bg-primary hover:bg-primary-dark text-white shadow-md shadow-primary/20' : 'border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600'}`}>
+                        className={`block text-center py-2.5 rounded-full text-xs font-nunito font-black transition-all ${tier.recommended ? 'bg-primary hover:bg-primary-dark text-white shadow-md shadow-primary/20' : 'border-2 border-[var(--border)] hover:border-primary hover:text-primary text-[var(--text-muted)]'}`}>
                         {tier.priceNum === 0 ? 'Start free' : `Start - ${tier.price}`}
                       </Link>
                     )}
@@ -177,7 +177,7 @@ export default function VerificationPage() {
         </section>
 
         {/* How it works */}
-        <section className="py-16 bg-white px-5">
+        <section className="py-16 px-5" style={{ background: 'var(--surface)' }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl mb-3">How the verification process works</h2>
@@ -189,11 +189,11 @@ export default function VerificationPage() {
                 { n: '03', icon: '*', title: 'Our team reviews', desc: 'We manually review your ID and campaign. This usually takes less than 24 hours.' },
                 { n: '04', icon: '*', title: 'Go live and fundraise', desc: 'Once approved, your campaign goes live with a Verified badge and you can start sharing.' },
               ].map((s, i) => (
-                <div key={s.n} className="relative bg-gray-50 rounded-2xl border border-gray-100 p-6">
+                <div key={s.n} className="relative rounded-2xl border p-6" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="font-mono-dm text-xs text-primary font-bold mb-3 bg-primary/10 inline-block px-2 py-1 rounded-md">{s.n}</div>
                   <div className="text-2xl mb-3">{s.icon}</div>
                   <h3 className="font-nunito font-black text-navy text-sm mb-2">{s.title}</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">{s.desc}</p>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{s.desc}</p>
                 </div>
               ))}
             </div>
@@ -201,16 +201,16 @@ export default function VerificationPage() {
         </section>
 
         {/* FAQs */}
-        <section className="py-16 bg-gray-50 px-5">
+        <section className="py-16 px-5" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl mb-3">Frequently asked questions</h2>
             </div>
             <div className="flex flex-col gap-3">
               {FAQS.map((faq) => (
-                <div key={faq.q} className="bg-white rounded-2xl border border-gray-100 p-6">
+                <div key={faq.q} className="rounded-2xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <h3 className="font-nunito font-black text-navy text-base mb-2">{faq.q}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{faq.a}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{faq.a}</p>
                 </div>
               ))}
             </div>

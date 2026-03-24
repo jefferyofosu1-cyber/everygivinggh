@@ -153,20 +153,20 @@ const FAQS = [
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className={`border rounded-2xl overflow-hidden transition-all ${open ? 'border-primary/20 shadow-sm' : 'border-gray-100'}`}>
+    <div className={`border rounded-2xl overflow-hidden transition-all ${open ? 'border-primary/20 shadow-sm' : 'border-[var(--border)]'}`}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left hover:bg-gray-50 transition-colors">
+        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left hover:bg-[var(--surface-alt)] transition-colors">
         <span className="font-nunito font-extrabold text-navy text-sm leading-snug">{q}</span>
-        <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-all ${open ? 'bg-primary rotate-45' : 'bg-gray-100'}`}>
-          <svg className={`w-3.5 h-3.5 transition-colors ${open ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+        <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-all ${open ? 'bg-primary rotate-45' : 'bg-[var(--surface-alt)]'}`}>
+          <svg className={`w-3.5 h-3.5 transition-colors ${open ? 'text-white' : 'text-[var(--text-muted)]'}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
         </div>
       </button>
       {open && (
-        <div className="px-6 pb-5 border-t border-gray-50">
-          <p className="text-sm text-gray-500 leading-relaxed pt-4">{a}</p>
+        <div className="px-6 pb-5 border-t" style={{ borderColor: 'var(--border)' }}>
+          <p className="text-sm leading-relaxed pt-4" style={{ color: 'var(--text-muted)' }}>{a}</p>
         </div>
       )}
     </div>
@@ -210,7 +210,7 @@ export default function HelpPage() {
 
             {/* Search */}
             <div className="relative max-w-lg mx-auto">
-              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               <input
                 type="text"
                 placeholder="Search questions…"
@@ -223,14 +223,14 @@ export default function HelpPage() {
         </section>
 
         {/* ── QUICK LINKS ── */}
-        <section className="bg-white border-b border-gray-100 py-6">
+        <section className="border-b py-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-3xl mx-auto px-5">
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${activeCategory === cat.id ? 'bg-primary text-white shadow-md shadow-primary/20' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${activeCategory === cat.id ? 'bg-primary text-white shadow-md shadow-primary/20' : 'bg-[var(--surface-alt)] text-[var(--text-muted)] hover:brightness-95'}`}>
                   {cat.label}
                 </button>
               ))}
@@ -239,13 +239,13 @@ export default function HelpPage() {
         </section>
 
         {/* ── FAQ LIST ── */}
-        <section className="py-14 bg-gray-50">
+        <section className="py-14" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-3xl mx-auto px-5">
             {filtered.length === 0 ? (
               <div className="text-center py-16">
                 <div className="text-4xl mb-4"></div>
                 <div className="font-nunito font-black text-navy text-xl mb-2">No results found</div>
-                <p className="text-gray-400 text-sm mb-6">Try a different search term or browse all questions.</p>
+                <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Try a different search term or browse all questions.</p>
                 <button onClick={() => { setSearch(''); setActiveCategory('all') }}
                   className="bg-primary text-white font-nunito font-black text-sm px-6 py-3 rounded-full hover:-translate-y-0.5 transition-all">
                   Show all questions
@@ -262,11 +262,11 @@ export default function HelpPage() {
         </section>
 
         {/* ── STILL NEED HELP ── */}
-        <section className="py-16 bg-white border-t border-gray-100">
+        <section className="py-16 border-t" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-3xl mx-auto px-5">
             <div className="text-center mb-10">
               <h2 className="font-nunito font-black text-navy text-2xl tracking-tight mb-2">Still need help?</h2>
-              <p className="text-gray-400 text-sm">We respond to all enquiries within 2 business days.</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>We respond to all enquiries within 2 business days.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               {[
@@ -295,10 +295,10 @@ export default function HelpPage() {
                   btn: 'Read privacy',
                 },
               ].map((item, i) => (
-                <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6 text-center">
+                <div key={i} className="rounded-2xl border p-6 text-center" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="text-3xl mb-3">{item.icon}</div>
                   <div className="font-nunito font-black text-navy text-base mb-2">{item.title}</div>
-                  <div className="text-gray-400 text-xs leading-relaxed mb-4">{item.desc}</div>
+                  <div className="text-xs leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                   <Link href={item.href}
                     className="inline-block bg-navy hover:bg-navy/90 text-white font-nunito font-black text-xs px-5 py-2.5 rounded-full transition-all hover:-translate-y-0.5">
                     {item.btn}

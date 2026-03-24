@@ -15,11 +15,11 @@ export default function GlobalError({
   }, [error])
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-5">
+    <div className="min-h-screen flex items-center justify-center px-5" style={{ background: 'var(--surface-alt)' }}>
       <div className="max-w-md w-full text-center">
         <div className="text-6xl mb-4"></div>
         <h1 className="font-nunito font-black text-navy text-2xl mb-2">Something went wrong</h1>
-        <p className="text-gray-400 text-sm mb-6">
+        <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
           An unexpected error occurred. Please try again.
         </p>
         <button

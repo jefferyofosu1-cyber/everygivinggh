@@ -74,11 +74,11 @@ export default function TeamFundraisingPage() {
         </section>
 
         {/* How it works */}
-        <section className="py-20 bg-white px-5">
+        <section className="py-20 px-5" style={{ background: 'var(--surface)' }}>
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-14">
               <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-3">How team fundraising works</h2>
-              <p className="text-gray-400 text-sm max-w-md mx-auto">One campaign. Multiple fundraisers. Far bigger results. Here is exactly how it happens.</p>
+              <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>One campaign. Multiple fundraisers. Far bigger results. Here is exactly how it happens.</p>
             </div>
             <div className="grid md:grid-cols-4 gap-6">
               {STEPS.map((step, i) => (
@@ -86,11 +86,11 @@ export default function TeamFundraisingPage() {
                   {i < STEPS.length - 1 && (
                     <div className="hidden md:block absolute top-8 left-[calc(100%-12px)] w-full h-0.5 bg-gradient-to-r from-primary/30 to-transparent z-0" />
                   )}
-                  <div className="relative bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all">
+                  <div className="relative rounded-2xl p-6 border hover:border-primary/20 hover:shadow-md transition-all" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                     <div className="font-mono-dm text-xs text-primary font-bold mb-3 bg-primary/10 inline-block px-2 py-1 rounded-md">{step.n}</div>
                     <div className="text-3xl mb-3">{step.icon}</div>
                     <h3 className="font-nunito font-black text-navy text-base mb-2">{step.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -99,18 +99,18 @@ export default function TeamFundraisingPage() {
         </section>
 
         {/* Use cases */}
-        <section className="py-20 bg-gray-50 px-5">
+        <section className="py-20 px-5" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-14">
               <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl mb-3">Who uses team fundraising?</h2>
-              <p className="text-gray-400 text-sm max-w-md mx-auto">From families to faith communities - team fundraising works for any group with a shared goal.</p>
+              <p className="text-sm max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>From families to faith communities - team fundraising works for any group with a shared goal.</p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {USE_CASES.map((uc) => (
-                <div key={uc.title} className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all">
+                <div key={uc.title} className="rounded-2xl p-6 border hover:border-primary/20 hover:shadow-md transition-all" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="text-3xl mb-4">{uc.icon}</div>
                   <h3 className="font-nunito font-black text-navy text-base mb-2">{uc.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{uc.desc}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{uc.desc}</p>
                 </div>
               ))}
             </div>
@@ -118,7 +118,7 @@ export default function TeamFundraisingPage() {
         </section>
 
         {/* Tips */}
-        <section className="py-20 bg-white px-5">
+        <section className="py-20 px-5" style={{ background: 'var(--surface)' }}>
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="font-nunito font-black text-navy text-3xl mb-3">Tips for a successful team campaign</h2>
@@ -131,11 +131,11 @@ export default function TeamFundraisingPage() {
                 { tip: 'Post updates every few days', detail: 'Update the campaign with progress. Tag your team in updates. Donors who see active campaigns give again and share more.' },
                 { tip: 'Get verified before sharing', detail: 'A Verified badge makes your campaign 3x more trusted. Complete ID verification before you start sharing widely.' },
               ].map((item, i) => (
-                <div key={i} className="flex gap-4 bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                <div key={i} className="flex gap-4 rounded-2xl p-5 border" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="flex-shrink-0 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white font-nunito font-black text-xs mt-0.5">{i + 1}</div>
                   <div>
                     <div className="font-nunito font-black text-navy text-sm mb-1">{item.tip}</div>
-                    <p className="text-gray-500 text-sm leading-relaxed">{item.detail}</p>
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.detail}</p>
                   </div>
                 </div>
               ))}

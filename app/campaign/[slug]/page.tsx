@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Footer from '@/components/layout/Footer'
-import { 
-  sanityClient, 
-  safeSanityFetch 
+import {
+  sanityClient,
+  safeSanityFetch
 } from '@/lib/sanity.client'
 import {
   campaignBySlugQuery,
@@ -88,11 +88,11 @@ export default async function CampaignPage({
 
   return (
     <>
-      <main className="bg-gray-50 min-h-screen">
+      <main className="min-h-screen" style={{ background: 'var(--surface-alt)' }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
           <div className="grid lg:grid-cols-5 gap-8">
             <div className="lg:col-span-3 flex flex-col gap-6">
-              <div className="h-72 sm:h-80 rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 shadow-sm relative">
+              <div className="h-72 sm:h-80 rounded-2xl overflow-hidden border shadow-sm relative" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                 {campaign.coverImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -114,7 +114,7 @@ export default async function CampaignPage({
                   </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+              <div className="rounded-2xl border shadow-sm p-6 sm:p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                   {campaign.category && (
                     <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary-light px-3 py-1 rounded-full">
@@ -122,7 +122,7 @@ export default async function CampaignPage({
                     </span>
                   )}
                   {campaign.status && (
-                    <span className="text-xs font-semibold text-gray-500">
+                    <span className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>
                       Status: {campaign.status}
                     </span>
                   )}
@@ -131,7 +131,7 @@ export default async function CampaignPage({
                   {campaign.title}
                 </h1>
                 {campaign.beneficiaryName && (
-                  <p className="text-sm text-gray-500 mb-5">
+                  <p className="text-sm mb-5" style={{ color: 'var(--text-muted)' }}>
                     Beneficiary:{' '}
                     <span className="font-semibold text-navy">
                       {campaign.beneficiaryName}
@@ -151,30 +151,30 @@ export default async function CampaignPage({
                 />
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+              <div className="rounded-2xl border shadow-sm p-6 sm:p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <h2 className="font-nunito font-black text-navy text-lg mb-4">
                   Story
                 </h2>
-                <div className="prose prose-sm max-w-none text-gray-700">
+                <div className="prose prose-sm max-w-none" style={{ color: 'var(--text-main)' }}>
                   {campaign.story && <PortableText value={campaign.story} />}
                 </div>
               </div>
 
               {updates && updates.length > 0 && (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                <div className="rounded-2xl border shadow-sm p-6 sm:p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <h2 className="font-nunito font-black text-navy text-lg mb-4">
                     Updates
                   </h2>
                   <div className="space-y-5">
                     {updates.map((u: any) => (
-                      <article key={u._id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+                      <article key={u._id} className="border-b pb-4 last:border-b-0 last:pb-0" style={{ borderColor: 'var(--border)' }}>
                         <h3 className="font-semibold text-sm text-navy mb-1">
                           {u.updateTitle}
                         </h3>
-                        <div className="text-xs text-gray-400 mb-2">
+                        <div className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>
                           {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Recently'}
                         </div>
-                        <div className="prose prose-sm max-w-none text-gray-700">
+                        <div className="prose prose-sm max-w-none" style={{ color: 'var(--text-main)' }}>
                           <PortableText value={u.updateBody} />
                         </div>
                       </article>
@@ -185,11 +185,11 @@ export default async function CampaignPage({
             </div>
 
             <div className="lg:col-span-2 flex flex-col gap-6">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-20">
+              <div className="rounded-2xl border shadow-sm p-6 sticky top-20" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                 <h3 className="font-nunito font-black text-navy text-lg mb-3">
                   Donate
                 </h3>
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
                   This is a read-only demo integration. Wire this form to your
                   payment provider and Sanity mutations for production.
                 </p>
@@ -199,7 +199,7 @@ export default async function CampaignPage({
               </div>
 
               {donations && donations.length > 0 && (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div className="rounded-2xl border shadow-sm p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <h3 className="font-nunito font-black text-navy text-lg mb-4">
                     Recent donations
                   </h3>
@@ -224,4 +224,3 @@ export default async function CampaignPage({
     </>
   )
 }
-

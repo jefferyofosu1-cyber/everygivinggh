@@ -48,23 +48,23 @@ function Character({ mood, holding }: { mood: 'thinking'|'happy'|'excited'|'prou
 }
 
 const SCENES = [
-  { id:1, mood:'thinking' as const, holding:null, bg:'from-slate-50 to-white', accent:'#64748B',
+  { id:1, mood:'thinking' as const, holding:null, accent:'#64748B',
     label:'The challenge', name:'Ama has a problem',
     bubble:"My mother needs surgery at Korle Bu... I need ₵15,000. Where do I start?",
     narration:'Meet Ama from Accra. She needs to raise money urgently for her mother\'s surgery. Sending MoMo requests to friends isn\'t working — she needs something more.' },
-  { id:2, mood:'happy' as const, holding:'phone' as const, bg:'from-green-50 to-white', accent:'#02A95C',
+  { id:2, mood:'happy' as const, holding:'phone' as const, accent:'#02A95C',
     label:'The discovery', name:'She finds Every Giving',
     bubble:"Every Giving lets me create a verified page — people can donate even if they don't know me!",
     narration:'A friend shares a link to Every Giving. In 5 minutes, Ama fills in her campaign — her story, her goal, and a photo. Simple guided form, no tech skills needed.' },
-  { id:3, mood:'proud' as const, holding:'card' as const, bg:'from-amber-50 to-white', accent:'#D97706',
+  { id:3, mood:'proud' as const, holding:'card' as const, accent:'#D97706',
     label:'Verification', name:'Verified in minutes',
     bubble:"I just uploaded my Ghana Card and took a selfie. The system verified me automatically!",
     narration:'Ama uploads her Ghana Card and takes a selfie. The system automatically matches her face to her ID and cross-checks the NIA database. Under 10 minutes — no waiting.' },
-  { id:4, mood:'pointing' as const, holding:null, bg:'from-blue-50 to-white', accent:'#0066CC',
+  { id:4, mood:'pointing' as const, holding:null, accent:'#0066CC',
     label:'Going live', name:'Campaign goes live',
     bubble:"My campaign is live with a Verified badge! I\'m sharing it everywhere right now.",
     narration:'The moment verification passes, her campaign goes live with a Verified badge. She shares the link on WhatsApp and Facebook. Donations start coming in from people she has never met.' },
-  { id:5, mood:'excited' as const, holding:'money' as const, bg:'from-green-50 to-emerald-50', accent:'#02A95C',
+  { id:5, mood:'excited' as const, holding:'money' as const, accent:'#02A95C',
     label:'Success', name:'₵18,500 raised',
     bubble:"I raised ₵18,500 in 3 weeks! Every cedi went straight to my MTN MoMo. Zero fees!",
     narration:'In 3 weeks, Ama raises ₵18,500 — more than her goal. 100% of every donation arrives in her MTN MoMo wallet the same day. No platform fees. No delays.' },
@@ -125,11 +125,11 @@ export default function TutorialPage() {
         </div>
 
         {/* Stage */}
-        <div className={`bg-gradient-to-br ${cur.bg} transition-colors duration-700 py-12 px-5`}>
+        <div className="transition-colors duration-700 py-12 px-5" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-4xl mx-auto">
 
             {/* Overall progress */}
-            <div className="h-1 bg-gray-200 rounded-full mb-8 overflow-hidden">
+            <div className="h-1 rounded-full mb-8 overflow-hidden" style={{ background: 'var(--border)' }}>
               <div className="h-full bg-primary rounded-full transition-all duration-100" style={{ width: `${total}%` }} />
             </div>
 
@@ -137,8 +137,8 @@ export default function TutorialPage() {
             <div className="flex gap-2 mb-8 overflow-x-auto pb-1">
               {SCENES.map((s, i) => (
                 <button key={i} onClick={() => jump(i)}
-                  className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${i === scene ? 'text-white border-transparent' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'}`}
-                  style={i === scene ? { backgroundColor: cur.accent, borderColor: cur.accent } : {}}>
+                  className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${i === scene ? 'text-white border-transparent' : 'border-[var(--border)] text-[var(--text-muted)]'}`}
+                  style={i === scene ? { backgroundColor: cur.accent, borderColor: cur.accent } : { background: 'var(--surface)' }}>
                   {s.label}
                 </button>
               ))}
@@ -154,8 +154,8 @@ export default function TutorialPage() {
 
                   {/* Speech bubble */}
                   <div className={`absolute -top-2 left-full ml-4 w-52 transition-all duration-500 z-10 ${show.bubble && playing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-                    <div className="bg-white rounded-2xl rounded-bl-sm p-4 shadow-xl border border-gray-100 relative">
-                      <div className="absolute -left-2 top-4 w-0 h-0 border-t-[6px] border-t-transparent border-r-[10px] border-r-white border-b-[6px] border-b-transparent" />
+                    <div className="rounded-2xl rounded-bl-sm p-4 shadow-xl border relative" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+                      <div className="absolute -left-2 top-4 w-0 h-0 border-t-[6px] border-t-transparent border-r-[10px] border-r-[var(--surface)] border-b-[6px] border-b-transparent" />
                       <p className="text-navy text-xs leading-relaxed font-medium">{cur.bubble}</p>
                     </div>
                   </div>
@@ -168,10 +168,10 @@ export default function TutorialPage() {
                   Scene {scene + 1} of {SCENES.length}
                 </div>
                 <h2 className="font-nunito font-black text-navy text-2xl md:text-3xl tracking-tight mb-3 leading-tight">{cur.name}</h2>
-                <p className="text-gray-500 text-sm leading-relaxed mb-6">{cur.narration}</p>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--text-muted)' }}>{cur.narration}</p>
 
                 {/* Scene progress */}
-                <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mb-6">
+                <div className="h-1.5 rounded-full overflow-hidden mb-6" style={{ background: 'var(--border)' }}>
                   <div className="h-full rounded-full transition-all duration-100" style={{ width: `${progress}%`, backgroundColor: cur.accent }} />
                 </div>
 
@@ -188,7 +188,7 @@ export default function TutorialPage() {
                   {playing && (
                     <>
                       <button onClick={() => { clearInterval(timerRef.current); setPlaying(false) }}
-                        className="px-4 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">
+                        className="px-4 py-3 border-2 font-bold rounded-xl text-sm text-[var(--text-muted)] border-[var(--border)]" style={{ background: 'var(--surface)' }}>
                         Pause
                       </button>
                       {scene < SCENES.length - 1 && (
@@ -201,14 +201,14 @@ export default function TutorialPage() {
                   )}
                   {!playing && !completed && scene > 0 && (
                     <button onClick={() => jump(scene - 1)}
-                      className="px-4 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">
+                      className="px-4 py-3 border-2 font-bold rounded-xl text-sm text-[var(--text-muted)] border-[var(--border)]" style={{ background: 'var(--surface)' }}>
                       Back
                     </button>
                   )}
                   {completed && (
                     <>
                       <button onClick={play}
-                        className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-xl text-sm">
+                        className="px-5 py-3 border-2 font-bold rounded-xl text-sm text-[var(--text-muted)] border-[var(--border)]" style={{ background: 'var(--surface)' }}>
                         Watch again
                       </button>
                       <Link href="/create"
@@ -241,14 +241,14 @@ export default function TutorialPage() {
         </div>
 
         {/* CTA */}
-        <section className="py-16 bg-white text-center px-5">
+        <section className="py-16 text-center px-5" style={{ background: 'var(--surface)' }}>
           <h2 className="font-nunito font-black text-navy text-2xl md:text-3xl mb-3 tracking-tight">Ready to start your campaign?</h2>
-          <p className="text-gray-400 text-sm mb-7 max-w-sm mx-auto">Free to create. Verified in minutes. Money straight to your MoMo wallet.</p>
+          <p className="text-sm mb-7 max-w-sm mx-auto" style={{ color: 'var(--text-muted)' }}>Free to create. Verified in minutes. Money straight to your MoMo wallet.</p>
           <div className="flex gap-3 justify-center flex-wrap">
             <Link href="/create" className="px-8 py-3.5 bg-primary hover:bg-primary-dark text-white font-nunito font-black rounded-full transition-all hover:-translate-y-0.5 shadow-lg text-sm">
               Start a campaign
             </Link>
-            <Link href="/campaigns" className="px-7 py-3.5 border-2 border-gray-200 hover:border-primary hover:text-primary text-gray-600 font-bold rounded-full transition-all text-sm">
+            <Link href="/campaigns" className="px-7 py-3.5 border-2 border-[var(--border)] hover:border-primary hover:text-primary text-[var(--text-muted)] font-bold rounded-full transition-all text-sm">
               Browse campaigns
             </Link>
           </div>

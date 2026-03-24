@@ -194,7 +194,7 @@ function ProofTicker() {
 export default function OfferPage() {
   return (
     <>
-      <main className="bg-gray-50">
+      <main style={{ background: 'var(--surface-alt)' }}>
 
         {/* ══ 1. THE PROMISE ═══════════════════════════════════════════════ */}
         <Reveal>
@@ -240,8 +240,8 @@ export default function OfferPage() {
 
         {/* ══ 2. WHAT'S INCLUDED ══════════════════════════════════════════ */}
         <Reveal delay={80}>
-          <section className="bg-white rounded-[24px] border border-gray-100 shadow-sm mx-4 mb-4 overflow-hidden">
-            <div className="px-8 py-7 border-b border-gray-100 flex items-end justify-between gap-4 flex-wrap">
+          <section className="rounded-[24px] border shadow-sm mx-4 mb-4 overflow-hidden" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+            <div className="px-8 py-7 border-b flex items-end justify-between gap-4 flex-wrap" style={{ borderColor: 'var(--border)' }}>
               <div>
                 <div className="text-xs font-bold uppercase tracking-widest text-primary mb-1" style={{ fontFamily: 'DM Mono, monospace' }}>What you get</div>
                 <h2 className="font-nunito font-black text-navy text-2xl tracking-tight">
@@ -253,9 +253,9 @@ export default function OfferPage() {
               </div>
             </div>
 
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-[var(--border)]">
               {INCLUDED_ITEMS.map((item, i) => (
-                <div key={i} className="flex items-start gap-4 px-8 py-5 hover:bg-gray-50 transition-colors group">
+                <div key={i} className="flex items-start gap-4 px-8 py-5 transition-colors group" style={{ background: 'var(--surface)' }}>
                   <div className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 group-hover:scale-105 transition-transform" style={{ backgroundColor: item.bg, color: item.iconColor }}>
                     {item.icon}
                   </div>
@@ -264,7 +264,7 @@ export default function OfferPage() {
                       {item.title}
                       <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-full ml-2 ${item.tagStyle}`}>{item.tag}</span>
                     </div>
-                    <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
+                    <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                   </div>
                 </div>
               ))}
@@ -278,7 +278,7 @@ export default function OfferPage() {
             <div className="mb-4 px-1">
               <div className="text-xs font-bold uppercase tracking-widest text-primary mb-1" style={{ fontFamily: 'DM Mono, monospace' }}>Bonuses</div>
               <h2 className="font-nunito font-black text-navy text-2xl tracking-tight">And you also get these.</h2>
-              <p className="text-gray-500 text-sm mt-1">Added automatically when you create your first campaign. No extra steps.</p>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Added automatically when you create your first campaign. No extra steps.</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-3">
@@ -300,7 +300,7 @@ export default function OfferPage() {
 
         {/* ══ 4. RISK REVERSAL ════════════════════════════════════════════ */}
         <Reveal delay={160}>
-          <section className="bg-white rounded-[24px] border-2 border-primary/15 shadow-sm mx-4 mb-4 p-8 md:p-10 relative overflow-hidden">
+          <section className="rounded-[24px] border-2 border-primary/15 shadow-sm mx-4 mb-4 p-8 md:p-10 relative overflow-hidden" style={{ background: 'var(--surface)' }}>
 
             <div className="grid md:grid-cols-[auto_1fr] gap-7 items-start relative">
               {/* Shield */}
@@ -316,7 +316,7 @@ export default function OfferPage() {
                 <h2 className="font-nunito font-black text-navy text-2xl md:text-3xl tracking-tight mb-3">
                   There is nothing to lose. Literally.
                 </h2>
-                <p className="text-gray-500 text-sm leading-relaxed mb-6 max-w-xl">
+                <p className="text-sm leading-relaxed mb-6 max-w-xl" style={{ color: 'var(--text-muted)' }}>
                   Every Giving is <strong className="text-navy font-semibold">completely free to use.</strong> We never charge a platform fee. We never take a percentage of your donations. There is no credit card required to sign up, no hidden cost when you withdraw, and no penalty if your campaign does not reach its goal.
                   <br /><br />
                   <strong className="text-navy font-semibold">You keep every cedi donated to you.</strong> Whether you raise ₵500 or ₵500,000 — it all goes directly to your mobile money wallet.

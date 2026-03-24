@@ -80,7 +80,7 @@ export default function FundraisePage() {
         </section>
 
         {/* ── PAGE NAV ── */}
-        <nav className="bg-white border-b border-gray-100 sticky top-0 z-10 overflow-x-auto">
+        <nav className="border-b sticky top-0 z-10 overflow-x-auto" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-5xl mx-auto px-5">
             <div className="flex gap-0 min-w-max">
               {[
@@ -94,7 +94,7 @@ export default function FundraisePage() {
                 ['#events', 'Event fundraising'],
               ].map(([href, label]) => (
                 <a key={href} href={href}
-                  className="text-xs font-semibold text-gray-400 hover:text-primary transition-colors px-4 py-4 whitespace-nowrap border-b-2 border-transparent hover:border-primary">
+                  className="text-xs font-semibold text-[var(--text-muted)] hover:text-primary transition-colors px-4 py-4 whitespace-nowrap border-b-2 border-transparent hover:border-primary">
                   {label}
                 </a>
               ))}
@@ -105,20 +105,20 @@ export default function FundraisePage() {
         {/* ════════════════════════════════════
             HOW TO START A FUNDRAISER
         ════════════════════════════════════ */}
-        <section id="how-to-start" className="py-20 bg-white scroll-mt-14">
+        <section id="how-to-start" className="py-20 scroll-mt-14" style={{ background: 'var(--surface)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>How to start a fundraiser</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">
               Live in under 15 minutes
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">
+            <p className="text-sm leading-relaxed max-w-xl mb-12" style={{ color: 'var(--text-muted)' }}>
               Starting a campaign on EveryGiving is the fastest way to raise money in Ghana. No bank account. No complicated forms. Just your story, your ID, and your MoMo number.
             </p>
 
             {/* Steps */}
             <div className="relative">
               {/* Connector line */}
-              <div className="absolute left-6 top-8 bottom-8 w-px bg-gray-100 hidden md:block" />
+              <div className="absolute left-6 top-8 bottom-8 w-px bg-[var(--border)] hidden md:block" />
               <div className="flex flex-col gap-6">
                 {[
                   { n: 1, title: 'Create your account', body: 'Sign up with your email and mobile number  -  takes 60 seconds. Start building your campaign immediately.', time: '1 minute', cta: null },
@@ -131,12 +131,12 @@ export default function FundraisePage() {
                     <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center flex-shrink-0 relative z-10 shadow-md">
                       <span className="font-nunito font-black text-primary text-lg">{step.n}</span>
                     </div>
-                    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 flex-1">
+                    <div className="border rounded-2xl p-6 flex-1" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                       <div className="flex items-center justify-between gap-4 mb-2 flex-wrap">
                         <div className="font-nunito font-black text-navy text-base">{step.title}</div>
                         <div className="text-xs font-bold text-primary bg-primary-light border border-primary/20 px-3 py-1 rounded-full">{step.time}</div>
                       </div>
-                      <div className="text-gray-500 text-sm leading-relaxed">{step.body}</div>
+                      <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{step.body}</div>
                       {step.cta && (
                         <Link href={step.cta.href} className="inline-block mt-4 bg-primary hover:bg-primary-dark text-white font-nunito font-black text-xs px-5 py-2.5 rounded-full transition-all hover:-translate-y-0.5">
                           {step.cta.label}
@@ -153,22 +153,22 @@ export default function FundraisePage() {
         {/* ════════════════════════════════════
             FUNDRAISING CATEGORIES
         ════════════════════════════════════ */}
-        <section id="categories" className="py-20 bg-gray-50 border-t border-gray-100 scroll-mt-14">
+        <section id="categories" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Fundraising categories</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">
               What are you raising for?
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>
               EveryGiving supports 17 fundraising categories. Whatever your cause, there is a place for it here  -  and donors who care.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {CATEGORIES.map((cat, i) => (
                 <Link key={i} href={cat.href}
-                  className="bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary/20 hover:bg-primary-light hover:-translate-y-0.5 transition-all group shadow-sm">
+                  className="border rounded-2xl p-5 hover:border-primary/20 hover:bg-primary-light hover:-translate-y-0.5 transition-all group shadow-sm" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="text-3xl mb-3">{cat.icon}</div>
                   <div className="font-nunito font-black text-navy text-sm mb-1.5 group-hover:text-primary transition-colors">{cat.label}</div>
-                  <div className="text-gray-400 text-xs leading-relaxed">{cat.desc}</div>
+                  <div className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{cat.desc}</div>
                 </Link>
               ))}
             </div>
@@ -184,13 +184,13 @@ export default function FundraisePage() {
         {/* ════════════════════════════════════
             TEAM FUNDRAISING
         ════════════════════════════════════ */}
-        <section id="team" className="py-20 bg-white border-t border-gray-100 scroll-mt-14">
+        <section id="team" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Team fundraising</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">
               Stronger together
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">
+            <p className="text-sm leading-relaxed max-w-xl mb-12" style={{ color: 'var(--text-muted)' }}>
               When a group rallies behind a single campaign, they raise more  -  and faster. Team fundraising on EveryGiving lets multiple people promote the same verified page.
             </p>
             <div className="grid md:grid-cols-2 gap-8 items-center mb-10">
@@ -206,7 +206,7 @@ export default function FundraisePage() {
                       <div className="text-xl flex-shrink-0 mt-0.5">{item.icon}</div>
                       <div>
                         <div className="font-nunito font-extrabold text-navy text-sm mb-1">{item.title}</div>
-                        <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
+                        <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                       </div>
                     </div>
                   ))}
@@ -228,7 +228,7 @@ export default function FundraisePage() {
             </div>
 
             {/* Use cases */}
-            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6">
+            <div className="border rounded-2xl p-6" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
               <div className="font-nunito font-black text-navy text-base mb-4">Popular team fundraising uses</div>
               <div className="grid md:grid-cols-3 gap-3">
                 {[
@@ -239,7 +239,7 @@ export default function FundraisePage() {
                   'Football club equipment funds',
                   'Old Students Association projects',
                 ].map((use, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm text-gray-500">
+                  <div key={i} className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
                     <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                     {use}
                   </div>
@@ -252,28 +252,28 @@ export default function FundraisePage() {
         {/* ════════════════════════════════════
             FUNDRAISING BLOG
         ════════════════════════════════════ */}
-        <section id="blog" className="py-20 bg-gray-50 border-t border-gray-100 scroll-mt-14">
+        <section id="blog" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Fundraising blog</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">
               Tips to raise more
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>
               Practical guides written for Ghanaian fundraisers  -  covering how to write your story, share effectively, and keep your donors engaged.
             </p>
             <div className="grid md:grid-cols-2 gap-5 mb-8">
               {BLOG_POSTS.map((post, i) => (
-                <div key={i} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-transform group cursor-pointer">
-                  <div className="bg-gray-50 h-28 flex items-center justify-center text-5xl border-b border-gray-100">
+                <div key={i} className="border rounded-2xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-transform group cursor-pointer" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+                  <div className="h-28 flex items-center justify-center text-5xl border-b" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                     {post.emoji}
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="bg-primary-light text-primary text-xs font-bold px-2.5 py-1 rounded-full border border-primary/20">{post.tag}</span>
-                      <span className="text-gray-300 text-xs">{post.time}</span>
+                      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{post.time}</span>
                     </div>
                     <div className="font-nunito font-black text-navy text-base mb-2 leading-snug group-hover:text-primary transition-colors">{post.title}</div>
-                    <div className="text-gray-500 text-sm leading-relaxed">{post.desc}</div>
+                    <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{post.desc}</div>
                   </div>
                 </div>
               ))}
@@ -290,13 +290,13 @@ export default function FundraisePage() {
         {/* ════════════════════════════════════
             CHARITY FUNDRAISING
         ════════════════════════════════════ */}
-        <section id="charity" className="py-20 bg-white border-t border-gray-100 scroll-mt-14">
+        <section id="charity" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Charity fundraising</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">
               Raise funds for your NGO or charity
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">
+            <p className="text-sm leading-relaxed max-w-xl mb-12" style={{ color: 'var(--text-muted)' }}>
               Every Giving supports registered NGOs, charities, and faith-based organisations in Ghana. If you serve your community, we help you fund it.
             </p>
             <div className="grid md:grid-cols-2 gap-8 items-start">
@@ -311,7 +311,7 @@ export default function FundraisePage() {
                     <div className="text-xl flex-shrink-0">{item.icon}</div>
                     <div>
                       <div className="font-nunito font-extrabold text-navy text-sm mb-1">{item.title}</div>
-                      <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
+                      <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -337,9 +337,9 @@ export default function FundraisePage() {
                     </div>
                   </div>
                 </div>
-                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 text-center">
+                <div className="border rounded-2xl p-6 text-center" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="font-nunito font-black text-navy text-base mb-2">Not sure if you qualify?</div>
-                  <div className="text-gray-400 text-sm mb-4">Email us and we will review your organisation within 48 hours.</div>
+                  <div className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>Email us and we will review your organisation within 48 hours.</div>
                   <a href="mailto:business@everygiving.org?subject=Charity Registration"
                     className="inline-block text-primary font-bold text-sm hover:underline">
                     business@everygiving.org
@@ -407,29 +407,29 @@ export default function FundraisePage() {
         {/* ════════════════════════════════════
             CORPORATE FUNDRAISING
         ════════════════════════════════════ */}
-        <section id="corporate" className="py-20 bg-white border-t border-gray-100 scroll-mt-14">
+        <section id="corporate" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Corporate fundraising</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">
               Give back with your company
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12">
+            <p className="text-sm leading-relaxed max-w-xl mb-12" style={{ color: 'var(--text-muted)' }}>
               Businesses across Ghana use Every Giving for CSR initiatives, staff giving programmes, and community investment. Zero platform fees mean your budget goes further.
             </p>
             <div className="grid md:grid-cols-2 gap-4 mb-10">
               {CORPORATE_BENEFITS.map((item, i) => (
-                <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-6 flex gap-4">
+                <div key={i} className="border rounded-2xl p-6 flex gap-4" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
                   <div className="text-2xl flex-shrink-0">{item.icon}</div>
                   <div>
                     <div className="font-nunito font-black text-navy text-sm mb-2">{item.title}</div>
-                    <div className="text-gray-500 text-sm leading-relaxed">{item.desc}</div>
+                    <div className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Corporate examples */}
-            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 mb-8">
+            <div className="border rounded-2xl p-6 mb-8" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
               <div className="font-nunito font-black text-navy text-base mb-4">How companies use Every Giving</div>
               <div className="grid md:grid-cols-3 gap-4">
                 {[
@@ -437,9 +437,9 @@ export default function FundraisePage() {
                   { title: 'End-of-year giving', desc: 'Launch a campaign at year-end and invite staff, clients, and partners to contribute to a cause that matters.' },
                   { title: 'Supplier giving days', desc: 'Invite your supply chain to give alongside your business  -  build a culture of generosity around your brand.' },
                 ].map((item, i) => (
-                  <div key={i} className="bg-white border border-gray-100 rounded-xl p-5">
+                  <div key={i} className="border rounded-xl p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                     <div className="font-nunito font-black text-navy text-sm mb-2">{item.title}</div>
-                    <div className="text-gray-500 text-xs leading-relaxed">{item.desc}</div>
+                    <div className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
                   </div>
                 ))}
               </div>
@@ -461,27 +461,27 @@ export default function FundraisePage() {
         {/* ════════════════════════════════════
             EVENT FUNDRAISING
         ════════════════════════════════════ */}
-        <section id="events" className="py-20 bg-gray-50 border-t border-gray-100 scroll-mt-14">
+        <section id="events" className="py-20 border-t scroll-mt-14" style={{ background: 'var(--surface-alt)', borderColor: 'var(--border)' }}>
           <div className="max-w-4xl mx-auto px-5">
             <SectionLabel>Event fundraising</SectionLabel>
             <h2 className="font-nunito font-black text-navy text-3xl md:text-4xl tracking-tight mb-4 leading-tight">
               Fundraise around an event
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-10">
+            <p className="text-sm leading-relaxed max-w-xl mb-10" style={{ color: 'var(--text-muted)' }}>
               Every milestone is an opportunity to give back. Link your celebration, challenge, or competition to a cause on Every Giving and let the people who show up make a difference.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
               {EVENT_TYPES.map((event, i) => (
-                <div key={i} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform">
+                <div key={i} className="border rounded-2xl p-6 shadow-sm hover:-translate-y-0.5 transition-transform" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="text-3xl mb-3">{event.icon}</div>
                   <div className="font-nunito font-black text-navy text-sm mb-2">{event.label}</div>
-                  <div className="text-gray-500 text-xs leading-relaxed">{event.desc}</div>
+                  <div className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{event.desc}</div>
                 </div>
               ))}
             </div>
 
             {/* How event fundraising works */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-7 mb-6">
+            <div className="border rounded-2xl p-7 mb-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
               <div className="font-nunito font-black text-navy text-base mb-4">How to run an event fundraiser</div>
               <div className="grid md:grid-cols-4 gap-4">
                 {[
@@ -494,7 +494,7 @@ export default function FundraisePage() {
                     <div className="w-10 h-10 bg-navy rounded-full flex items-center justify-center mx-auto mb-3">
                       <span className="font-nunito font-black text-primary text-base">{step.n}</span>
                     </div>
-                    <div className="text-gray-500 text-xs leading-relaxed">{step.text}</div>
+                    <div className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{step.text}</div>
                   </div>
                 ))}
               </div>

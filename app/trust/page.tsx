@@ -31,7 +31,7 @@ export default function TrustPage() {
 
   return (
     <>
-      <main className="bg-gray-50 min-h-screen">
+      <main className="min-h-screen" style={{ background: 'var(--surface-alt)' }}>
         <section className="bg-navy text-white py-16">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h1 className="font-nunito font-black text-3xl md:text-4xl mb-3">
@@ -48,13 +48,14 @@ export default function TrustPage() {
             {pillars.map((p) => (
               <div
                 key={p.title}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+                className="rounded-2xl border shadow-sm p-6"
+                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
               >
                 <div className="text-2xl mb-2">{p.emoji}</div>
                 <h2 className="font-nunito font-black text-navy text-base mb-1">
                   {p.title}
                 </h2>
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                   {p.body}
                 </p>
               </div>

@@ -95,6 +95,7 @@ export async function initializePaystackPayment({
   email,
   subaccountCode,
   reference,
+  callbackUrl,
   metadata = {},
 }: {
   amount: number // Donation amount in pesewas
@@ -102,6 +103,7 @@ export async function initializePaystackPayment({
   email: string
   subaccountCode?: string
   reference: string
+  callbackUrl?: string
   metadata?: Record<string, any>
 }) {
   if (!PAYSTACK_SECRET_KEY) {
@@ -118,6 +120,7 @@ export async function initializePaystackPayment({
     amount: totalAmount,
     email,
     reference,
+    callback_url: callbackUrl || `${EVERYGIVING_BASE_URL}/api/paystack/callback`,
     metadata: {
       ...metadata,
       platform: 'everygiving',

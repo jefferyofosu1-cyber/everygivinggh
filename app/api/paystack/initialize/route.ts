@@ -94,13 +94,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create donation.' }, { status: 500 })
     }
 
-    // 4. Initialize Paystack
+    // 4. Build callback URL with donation context
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://everygiving.org'
+    const callbackParams = new URLSearchParams({
+      reference,
+      campaign: campaign.id,
+      amount: String(body.amount),
+      name: body.donorName || 'Anonymous',
+    })
+    const callbackUrl = `${baseUrl}/api/paystack/callback?${callbackParams.toString()}`
+
+    // 5. Initialize Paystack
     const paystackResponse = await initializePaystackPayment({
       amount: amountPesewas,
       tip: tipPesewas,
       email: body.email,
       subaccountCode: campaign.subaccount_code,
       reference,
+      callbackUrl,
       metadata: {
         donation_id: donation.id,
         campaign_id: campaign.id,
@@ -109,7 +120,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // 5. Update reference
+    // 6. Update reference
     await supabase
       .from('donations')
       .update({ paystack_reference: paystackResponse.reference })

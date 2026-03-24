@@ -58,7 +58,7 @@ export default function DonationForm({ campaign }: { campaign: any }) {
   }
 
   return (
-    <div className="bg-surface rounded-3xl border border-border shadow-sm p-6 md:p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+    <div id="donation-form" className="bg-surface rounded-3xl border border-border shadow-sm p-6 md:p-8" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
       <h3 className="font-nunito font-black text-navy text-xl mb-6" style={{ color: 'var(--navy)' }}>Make a donation</h3>
       
       <form onSubmit={handleDonate} className="flex flex-col gap-5">

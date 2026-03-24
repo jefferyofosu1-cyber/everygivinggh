@@ -29,6 +29,13 @@ const nextConfig = {
   // ── Silence noisy webpack warning ─────────────────────────────────────────
   webpack(config) {
     config.infrastructureLogging = { level: 'error' }
+    
+    // Fix for React 18/Sanity 3 compiler-runtime mismatch bono.
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'react/compiler-runtime': 'react',
+    }
+    
     return config
   },
 }

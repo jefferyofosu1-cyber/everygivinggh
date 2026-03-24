@@ -17,6 +17,14 @@ export type Campaign = {
   id_front_url: string | null
   selfie_url: string | null
   created_at: string
+  last_update_at?: string | null
+  slug?: string
+  videoUrl?: string | null
+  gallery?: any[]
+  payout_ready?: boolean
+  payout_method_set?: boolean
+  milestone_reached?: boolean
+  donor_count?: number
   profiles?: { full_name: string; phone: string; email?: string }
   donations?: Donation[]
 }
@@ -27,6 +35,7 @@ export type Donation = {
   donor_name: string
   donor_email: string
   amount: number
+  amount_paid: number
   message: string | null
   payment_method: string
   payment_reference: string | null

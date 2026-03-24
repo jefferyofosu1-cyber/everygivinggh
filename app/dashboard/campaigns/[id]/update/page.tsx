@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase';
 
 const SAVE_MS = 30000;
 const DRAFT_KEY = (id: string) => `update-draft-${id}`;
@@ -23,16 +25,9 @@ function parseVideoUrl(url: string): { provider: 'youtube'|'tiktok'; videoId: st
   return null;
 }
 
-// ─── mock campaign ─────────────────────────────────────────────────────────────
-const MOCK_CAMPAIGN = {
-  id: 'ama-kidney-surgery',
-  title: 'Help Ama get life-saving kidney surgery at Korle Bu',
-  organiser: 'Kwame Mensah',
-  donorCount: 87,
-  daysActive: 14,
-};
-
 export default function PostUpdatePage({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  const supabase = createClient();
   const editorRef = useRef<HTMLDivElement>(null);
   const [photos, setPhotos] = useState<PhotoState[]>([]);
   const [video, setVideo] = useState<VideoState | null>(null);
@@ -46,7 +41,25 @@ export default function PostUpdatePage({ params }: { params: { id: string } }) {
   const [hasDraft, setHasDraft] = useState(false);
   const draftRestored = useRef(false);
 
-  const campaign = MOCK_CAMPAIGN;
+  const [campaign, setCampaign] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchCampaign() {
+      const { data: c } = await supabase.from('campaigns').select('*, profiles(full_name)').eq('id', params.id).single();
+      if (c) {
+        setCampaign({
+          id: c.id,
+          title: c.title,
+          organiser: c.profiles?.full_name || 'Organiser',
+          donorCount: c.donor_count || 0,
+          daysActive: Math.floor((Date.now() - new Date(c.created_at).getTime())/(1000*3600*24)) || 0
+        });
+      } else {
+        router.push('/dashboard');
+      }
+    }
+    fetchCampaign();
+  }, [params.id, supabase, router]);
 
   // ─── draft restore ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -126,8 +139,13 @@ export default function PostUpdatePage({ params }: { params: { id: string } }) {
     const html = editorRef.current?.innerHTML || '';
     if (!html || html === '<br>') return;
     setPublishing(true);
-    // TODO: POST /api/campaigns/:id/updates { html, photos, video }
-    await new Promise(r => setTimeout(r, 900));
+    
+    // Update the campaign's last_update_at timestamp to reset automation nudges
+    await supabase.from('campaigns').update({ last_update_at: new Date().toISOString() }).eq('id', params.id);
+    await supabase.from('notifications').insert([
+      { user_id: (await supabase.auth.getUser()).data.user?.id, type: 'system', text: `Update posted for ${campaign.title}` }
+    ]);
+    
     localStorage.removeItem(DRAFT_KEY(params.id));
     setPublishing(false);
     setPublished(true);
@@ -141,7 +159,7 @@ export default function PostUpdatePage({ params }: { params: { id: string } }) {
   if (published) {
     return (
       <>
-        <style dangerouslySetInnerHTML={{__html:`@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}a{text-decoration:none;color:inherit}@keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}`}}/>
+        <style dangerouslySetInnerHTML={{__html:`@keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}`}}/>
         <div style={{maxWidth:480,margin:'0 auto',padding:'80px 24px',textAlign:'center'}}>
           <div style={{width:72,height:72,borderRadius:'50%',background:'#E8F5EF',display:'flex',alignItems:'center',justifyContent:'center',fontSize:32,margin:'0 auto 24px',animation:'pop .5s ease both'}}>✓</div>
           <div style={{fontFamily:"'DM Serif Display',serif",fontSize:28,color:'#1A1A18',marginBottom:8}}>Update posted</div>
@@ -157,10 +175,12 @@ export default function PostUpdatePage({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{__html:`@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}a{text-decoration:none;color:inherit}button,input,textarea{font-family:'DM Sans',sans-serif}[contenteditable]:empty::before{content:attr(data-placeholder);color:#C8C4BC;pointer-events:none}[contenteditable]:focus{outline:none}input:focus{outline:none;border-color:#0A6B4B}`}}/>
+      <style dangerouslySetInnerHTML={{__html:`button,input,textarea{font-family:inherit}[contenteditable]:empty::before{content:attr(data-placeholder);color:#C8C4BC;pointer-events:none}[contenteditable]:focus{outline:none}input:focus{outline:none;border-color:#0A6B4B}`}}/>
 
 
       {/* Draft restore banner */}
+      {!campaign ? <div style={{padding:24,textAlign:'center'}}>Loading...</div> : (
+        <>
       {hasDraft && (
         <div style={{background:'#E6F1FB',borderBottom:'1px solid #C0D8F0',padding:'10px 24px',display:'flex',gap:10,alignItems:'center',justifyContent:'space-between'}}>
           <span style={{fontSize:12,color:'#185FA5'}}>Draft restored from your last session</span>
@@ -318,6 +338,8 @@ export default function PostUpdatePage({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
+      )}
+      </>
       )}
     </>
   );

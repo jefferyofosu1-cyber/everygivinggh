@@ -1,55 +1,71 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase';
 
 type Milestone = { id: string; name: string; amount: number; status: 'released'|'collecting'|'pending' };
 type Campaign = {
   title: string; story: string; goalAmount: number; raisedAmount: number;
   firstDonationReceived: boolean; milestones: Milestone[];
-  category: string; coverImg: string;
-};
-
-const MOCK: Campaign = {
-  title: 'Help Ama get life-saving kidney surgery at Korle Bu',
-  story: 'My mother Ama is 54 years old. She has woken up at 4am every day for thirty years to sell at Makola Market so her children could go to school. Last month she collapsed and was diagnosed with kidney disease and needs surgery within 90 days to survive.',
-  goalAmount: 20000, raisedAmount: 14400, firstDonationReceived: true,
-  milestones: [
-    {id:'m1',name:'Hospital deposit',amount:5000,status:'released'},
-    {id:'m2',name:'Surgery fees',amount:12000,status:'collecting'},
-    {id:'m3',name:'Post-op care',amount:3000,status:'pending'},
-  ],
-  category: 'Medical',
-  coverImg: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=480&q=80',
+  category: string; coverImg: string; milestonePercentage: number;
 };
 
 export default function CampaignEditorPage({ params }: { params: { id: string } }) {
-  const [form, setForm] = useState<Campaign>({...MOCK, milestones:[...MOCK.milestones]});
+  const router = useRouter();
+  const supabase = createClient();
+  const [form, setForm] = useState<Campaign | null>(null);
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [tab, setTab] = useState<'story'|'photo'|'milestones'>('story');
 
-  function update(k: keyof Campaign, v: any) { setForm(f=>({...f,[k]:v})); setDirty(true); setSaved(false); }
+  useEffect(() => {
+    async function load() {
+      const { data: c } = await supabase.from('campaigns').select('*').eq('id', params.id).single();
+      if (c) {
+        setForm({
+          title: c.title || '',
+          story: c.story || '',
+          goalAmount: c.goal_amount || 0,
+          raisedAmount: c.raised_amount || 0,
+          firstDonationReceived: (c.raised_amount || 0) > 0,
+          milestones: [],
+          category: c.category || '',
+          coverImg: c.image_url || '',
+          milestonePercentage: c.milestone_percentage || 100
+        });
+      } else {
+        router.push('/dashboard');
+      }
+    }
+    load();
+  }, [params.id, supabase, router]);
+
+  function update(k: keyof Campaign, v: any) { setForm(f=>f ? {...f,[k]:v} : f); setDirty(true); setSaved(false); }
   function updateMs(id: string, k: keyof Milestone, v: any) {
-    setForm(f=>({...f,milestones:f.milestones.map(m=>m.id===id?{...m,[k]:v}:m)}));
+    setForm(f=>f ? {...f,milestones:f.milestones.map(m=>m.id===id?{...m,[k]:v}:m)} : f);
     setDirty(true);
   }
 
   async function handleSave() {
+    if (!form) return;
     setSaving(true);
-    // TODO: PATCH /api/campaigns/:id
-    await new Promise(r=>setTimeout(r,700));
+    await supabase.from('campaigns').update({
+      title: form.title,
+      story: form.story,
+      category: form.category,
+      milestone_percentage: form.milestonePercentage
+    }).eq('id', params.id);
     setSaving(false); setSaved(true); setDirty(false);
   }
+
+  if (!form) return <div style={{padding:24, textAlign:'center'}}>Loading...</div>;
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'DM Sans',sans-serif;background:#F5F4F0;color:#1A1A18}
-        a{text-decoration:none;color:inherit}
-        button,input,textarea{font-family:'DM Sans',sans-serif}
+        button,input,textarea{font-family:inherit}
         input:focus,textarea:focus{outline:none;border-color:#0A6B4B!important}
       ` }} />
 
@@ -94,27 +110,33 @@ export default function CampaignEditorPage({ params }: { params: { id: string } 
 
         {tab==='milestones' && (
           <div style={{background:'#fff',border:'1px solid #E8E4DC',borderRadius:12,padding:22}}>
-            <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:'#1A1A18',marginBottom:6}}>Milestones</h3>
-            <p style={{fontSize:12,color:'#8A8A82',marginBottom:16,lineHeight:1.6}}>You can edit milestones that haven't been triggered yet. Released and collecting milestones are locked.</p>
-            {form.milestones.map((ms,i)=>{
-              const locked = ms.status==='released'||ms.status==='collecting';
-              const dotBg = ms.status==='released'?'#0A6B4B':ms.status==='collecting'?'#B85C00':'#E8E4DC';
-              const dotColor = ms.status!=='pending'?'#fff':'#8A8A82';
-              const pillColor = ms.status==='released'?'#0A6B4B':ms.status==='collecting'?'#B85C00':'#8A8A82';
-              const pillBg = ms.status==='released'?'#E8F5EF':ms.status==='collecting'?'#FEF3E2':'#F2F3F4';
-              return (
-                <div key={ms.id} style={{display:'flex',gap:10,alignItems:'center',marginBottom:10,padding:12,background:locked?'#F5F4F0':'#fff',border:'1px solid #E8E4DC',borderRadius:9}}>
-                  <div style={{width:22,height:22,borderRadius:'50%',background:dotBg,color:dotColor,fontSize:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{i+1}</div>
-                  <input style={{flex:2,padding:'8px 10px',border:'1.5px solid #E8E4DC',borderRadius:7,fontSize:13,color:'#1A1A18',background:locked?'#F5F4F0':'#fff'}} value={ms.name} onChange={e=>updateMs(ms.id,'name',e.target.value as any)} disabled={locked}/>
-                  <div style={{display:'flex',alignItems:'center',border:'1.5px solid #E8E4DC',borderRadius:7,background:locked?'#F5F4F0':'#fff',overflow:'hidden',flex:1}}>
-                    <span style={{fontSize:13,fontWeight:600,color:'#8A8A82',padding:'8px',borderRight:'1px solid #E8E4DC'}}>₵</span>
-                    <input style={{flex:1,border:'none',padding:8,fontSize:13,background:'transparent',color:'#1A1A18'}} type="number" value={ms.amount} onChange={e=>updateMs(ms.id,'amount',Number(e.target.value))} disabled={locked}/>
+            <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:'#1A1A18',marginBottom:6}}>Payout Milestones</h3>
+            <p style={{fontSize:12,color:'#8A8A82',marginBottom:16,lineHeight:1.6}}>Choose what percentage of your goal needs to be raised to unlock each payout. A smaller percentage means more frequent, smaller payouts.</p>
+            
+            <div style={{marginBottom: 20}}>
+              <select 
+                style={{width:'100%',padding:'10px 13px',border:'1.5px solid #E8E4DC',borderRadius:9,fontSize:14,color:'#1A1A18',background:'#fff'}}
+                value={form.milestonePercentage}
+                onChange={e => update('milestonePercentage', Number(e.target.value))}
+              >
+                <option value={20}>20% (5 Payouts)</option>
+                <option value={25}>25% (4 Payouts)</option>
+                <option value={50}>50% (2 Payouts)</option>
+                <option value={100}>100% (1 Payout at the end)</option>
+              </select>
+            </div>
+
+            <div style={{background:'#F5F4F0',padding:16,borderRadius:9}}>
+              <div style={{fontSize:13,fontWeight:600,color:'#1A1A18',marginBottom:8}}>Your Payout Schedule</div>
+              <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+                {Array.from({length: Math.floor(100/form.milestonePercentage)}).map((_, i) => (
+                  <div key={i} style={{flex:1,minWidth:120,background:'#fff',border:'1px solid #E8E4DC',padding:12,borderRadius:8,textAlign:'center'}}>
+                    <div style={{fontSize:11,color:'#8A8A82',fontWeight:600,textTransform:'uppercase',marginBottom:4}}>Milestone {i+1}</div>
+                    <div style={{fontSize:16,color:'#0A6B4B',fontWeight:700}}>₵{((form.goalAmount * form.milestonePercentage) / 100).toLocaleString(undefined, {minimumFractionDigits:0,maximumFractionDigits:0})}</div>
                   </div>
-                  <div style={{fontSize:10,fontWeight:700,color:pillColor,background:pillBg,padding:'3px 8px',borderRadius:20,flexShrink:0}}>{ms.status}</div>
-                </div>
-              );
-            })}
-            <div style={{fontSize:12,color:'#8A8A82',marginTop:8,lineHeight:1.6}}>Locked milestones (released or collecting) cannot be edited. Contact support if you need to make changes.</div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

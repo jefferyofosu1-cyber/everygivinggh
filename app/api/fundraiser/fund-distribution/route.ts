@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     const { data: campaigns, error: campaignError } = await supabase
       .from('campaigns')
-      .select('id, title, goal_amount, raised_amount, donor_count')
+      .select('id, title, goal_amount, raised_amount, donor_count, milestone_reached, payout_method_set, payout_ready')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -137,6 +137,9 @@ export async function GET(request: NextRequest) {
         totalDonors: campaign.donor_count,
         subaccountCode: (campaign as any).subaccount_code || null,
         progressPercent: Math.min((campaign.raised_amount / campaign.goal_amount) * 100, 100),
+        milestoneReached: campaign.milestone_reached,
+        payoutMethodSet: campaign.payout_method_set,
+        payoutReady: campaign.payout_ready
       }
     })
 

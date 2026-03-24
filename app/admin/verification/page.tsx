@@ -10,12 +10,7 @@ type VerifyItem = {
   submitted: string; status: string; rejectReason?: string; front: string; back: string;
 }
 
-const MOCK_QUEUE: VerifyItem[] = [
-  { id:'v1', name:'Kwame Mensah', phone:'024 123 4567', campaign:'Help Ama get kidney surgery', category:'Medical', submitted:'2 hrs ago', status:'pending', front:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=300&q=70', back:'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=300&q=70' },
-  { id:'v2', name:'Ama Boateng', phone:'020 987 6543', campaign:'School supplies for Volta children', category:'Education', submitted:'5 hrs ago', status:'pending', front:'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=300&q=70', back:'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=300&q=70' },
-  { id:'v3', name:'Pastor Isaac Asare', phone:'027 555 4444', campaign:'New roof for Bethel Assembly', category:'Faith', submitted:'1 day ago', status:'pending', front:'https://images.unsplash.com/photo-1519491050282-cf00c82424c4?w=300&q=70', back:'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=300&q=70' },
-  { id:'v4', name:'Efua Owusu', phone:'026 111 2222', campaign:'Community borehole project', category:'Community', submitted:'2 days ago', status:'approved', front:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=300&q=70', back:'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=300&q=70' },
-]
+
 
 const statusStyle = (s: string): React.CSSProperties => ({
   color: s==='approved'?'#0A6B4B':s==='rejected'?'#C0392B':s==='more_info'?'#185FA5':'#B85C00',
@@ -32,11 +27,32 @@ export default function AdminVerificationPage() {
   const [tab, setTab] = useState<'individuals'|'organisations'>('individuals')
 
   // INDIVIDUAL state
-  const [queue, setQueue] = useState<VerifyItem[]>(MOCK_QUEUE)
+  const [queue, setQueue] = useState<VerifyItem[]>([])
+  const [indivLoading, setIndivLoading] = useState(false)
   const [selected, setSelected] = useState<string|null>(null)
   const [rejectReason, setRejectReason] = useState('')
   const [showReject, setShowReject] = useState(false)
   const [filter, setFilter] = useState('pending')
+
+  const fetchIndividuals = useCallback(async () => {
+    setIndivLoading(true)
+    const supabase = createClient()
+    const { data } = await supabase.from('campaigns').select('id, title, category, created_at, id_front_url, selfie_url, verified, status, profiles(full_name, phone)').not('id_front_url', 'is', null).order('created_at', { ascending: false })
+    if (data) {
+      setQueue(data.map((c: any) => ({
+        id: c.id,
+        name: c.profiles?.full_name || 'Unknown',
+        phone: c.profiles?.phone || 'No phone',
+        campaign: c.title,
+        category: c.category || 'General',
+        submitted: new Date(c.created_at).toLocaleDateString(),
+        status: c.verified ? 'approved' : c.status === 'rejected' ? 'rejected' : 'pending',
+        front: c.id_front_url || '',
+        back: c.selfie_url || c.id_front_url || ''
+      })))
+    }
+    setIndivLoading(false)
+  }, [])
 
   // ORGANISATION state
   const [orgs, setOrgs] = useState<any[]>([])
@@ -58,17 +74,24 @@ export default function AdminVerificationPage() {
     setOrgsLoading(false)
   }, [orgFilter])
 
-  useEffect(() => { if (tab === 'organisations') fetchOrgs() }, [tab, fetchOrgs])
+  useEffect(() => { 
+    if (tab === 'organisations') fetchOrgs() 
+    if (tab === 'individuals') fetchIndividuals()
+  }, [tab, fetchOrgs, fetchIndividuals])
 
   const filteredIndivid = queue.filter(q => filter==='all' || q.status===filter)
   const item = queue.find(q => q.id===selected) || null
 
-  function approveIndividual(id: string) {
+  async function approveIndividual(id: string) {
+    const supabase = createClient()
+    await supabase.from('campaigns').update({ verified: true, status: 'approved' }).eq('id', id)
     setQueue(prev => prev.map(q => q.id===id ? {...q,status:'approved'} : q))
     setSelected(null)
   }
-  function rejectIndividual(id: string) {
+  async function rejectIndividual(id: string) {
     if (!rejectReason.trim()) return
+    const supabase = createClient()
+    await supabase.from('campaigns').update({ verified: false, status: 'rejected' }).eq('id', id)
     setQueue(prev => prev.map(q => q.id===id ? {...q,status:'rejected',rejectReason} : q))
     setSelected(null); setRejectReason(''); setShowReject(false)
   }
@@ -138,7 +161,7 @@ export default function AdminVerificationPage() {
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                {filteredIndivid.map(q => (
+                {indivLoading ? <div style={{ padding: 32, textAlign: 'center', color: '#9CA3AF', fontSize: 13 }}>Loading…</div> : filteredIndivid.length === 0 ? <div style={{ padding: 32, textAlign: 'center', color: '#9CA3AF', fontSize: 13 }}>No {filter === 'all' ? '' : filter} individuals yet.</div> : filteredIndivid.map(q => (
                   <div key={q.id}
                     style={{ display:'flex', alignItems:'center', gap:10, background:selected===q.id?'#E8F5EF':'#fff', border:`1.5px solid ${selected===q.id?'#0A6B4B':'#E8E4DC'}`, borderRadius:11, padding:'11px 12px', cursor:'pointer', transition:'all .15s' }}
                     onClick={() => setSelected(q.id)}>

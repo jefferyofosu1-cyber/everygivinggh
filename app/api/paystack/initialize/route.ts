@@ -63,13 +63,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Campaign not found.' }, { status: 404 })
     }
 
-    if (!campaign.subaccount_code) {
-      return NextResponse.json(
-        { error: 'Fundraiser has not set up payout details.' },
-        { status: 400 }
-      )
-    }
-
     // 2. Calculation logic
     const amountPesewas = ghsToPesewas(body.amount)
     const tipPesewas = body.tip ? ghsToPesewas(body.tip) : 0

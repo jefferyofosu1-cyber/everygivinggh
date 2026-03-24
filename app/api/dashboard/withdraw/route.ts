@@ -18,14 +18,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid amount. Minimum withdrawal is GH₵10.' }, { status: 400 })
     }
 
-    // Optionally check if they have enough balance by summing raised_amount of their approved campaigns
+    // Check if they have enough balance by summing available_payout_balance of their approved campaigns
     const { data: campaigns } = await supabase
       .from('campaigns')
-      .select('raised_amount')
+      .select('available_payout_balance')
       .eq('user_id', user.id)
       .eq('status', 'approved')
 
-    const totalRaised = (campaigns || []).reduce((acc, c) => acc + (c.raised_amount || 0), 0)
+    const totalAvailable = (campaigns || []).reduce((acc, c) => acc + (Number(c.available_payout_balance) || 0), 0)
 
     // Check pending payouts
     const { data: pendingPayouts } = await supabase
@@ -35,10 +35,10 @@ export async function POST(req: NextRequest) {
       .in('status', ['requested', 'approved', 'processing'])
 
     const pendingTotal = (pendingPayouts || []).reduce((acc, p) => acc + parseFloat(p.amount), 0)
-    const available = totalRaised - pendingTotal
+    const available = totalAvailable - pendingTotal
 
     if (amount > available) {
-      return NextResponse.json({ error: `Insufficient available balance. You only have GH₵${available.toFixed(2)} available.` }, { status: 400 })
+      return NextResponse.json({ error: `Insufficient unlocked funds. You have GH₵${available.toFixed(2)} available for payout based on your passed milestones.` }, { status: 400 })
     }
 
     // Fetch profile to get destination info

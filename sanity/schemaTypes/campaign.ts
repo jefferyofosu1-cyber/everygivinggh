@@ -111,6 +111,34 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'videoUrl',
+      title: 'YouTube/Vimeo URL',
+      type: 'url',
+      description: 'Enter the full link to the campaign video (e.g., https://www.youtube.com/watch?v=...) bono.',
+      validation: (Rule) => Rule.uri({
+        scheme: ['http', 'https']
+      })
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Image Gallery',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            {
+              name: 'caption',
+              type: 'string',
+              title: 'Caption',
+            }
+          ]
+        }
+      ],
+      description: 'Add more photos to show the campaign progress. bono.'
+    }),
+    defineField({
       name: 'createdAt',
       title: 'Created At',
       type: 'datetime',

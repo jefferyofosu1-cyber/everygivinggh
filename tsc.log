@@ -1,0 +1,9 @@
+app/dashboard/page.tsx(62,62): error TS2367: This comparison appears to be unintentional because the types '"pending" | "approved" | "rejected"' and '"live"' have no overlap.
+app/dashboard/page.tsx(78,82): error TS2367: This comparison appears to be unintentional because the types '"pending" | "approved" | "rejected"' and '"funded"' have no overlap.
+app/dashboard/page.tsx(81,27): error TS2339: Property 'donor_count' does not exist on type 'DashboardCampaign'.
+app/dashboard/page.tsx(82,18): error TS2367: This comparison appears to be unintentional because the types '"pending" | "approved" | "rejected"' and '"live"' have no overlap.
+app/dashboard/page.tsx(208,52): error TS2339: Property 'donor_count' does not exist on type 'DashboardCampaign'.
+app/dashboard/page.tsx(209,43): error TS2367: This comparison appears to be unintentional because the types '"pending" | "approved" | "rejected"' and '"live"' have no overlap.
+app/dashboard/page.tsx(271,37): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'SetStateAction<string>'.
+  Type 'number' is not assignable to type 'SetStateAction<string>'.
+app/dashboard/page.tsx(272,26): error TS2365: Operator '>' cannot be applied to types 'string | number' and 'number'.

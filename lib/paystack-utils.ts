@@ -339,9 +339,122 @@ export async function getSupportedBanks() {
   }
 }
 
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
+/**
+ * Create a Transfer Recipient on Paystack
+ * @param options - Recipient options
+ * @returns Recipient code
+ */
+export async function createTransferRecipient({
+  name,
+  accountNumber,
+  bankCode,
+  currency = 'GHS',
+  type = 'ghipss', // Standard for Ghana banks/MoMo
+}: {
+  name: string
+  accountNumber: string
+  bankCode: string
+  currency?: string
+  type?: string
+}) {
+  if (!PAYSTACK_SECRET_KEY) {
+    throw new Error('PAYSTACK_SECRET_KEY is not configured')
+  }
+
+  const payload = {
+    type,
+    name,
+    account_number: accountNumber,
+    bank_code: bankCode,
+    currency,
+  }
+
+  try {
+    const response = await fetch(`${PAYSTACK_BASE_URL}/transferrecipient`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+      },
+      body: JSON.stringify(payload),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.error('Transfer recipient creation error:', data)
+      throw new Error(`Recipient creation failed: ${data.message}`)
+    }
+
+    return {
+      success: true,
+      recipientCode: data.data.recipient_code,
+      data: data.data,
+    }
+  } catch (error) {
+    console.error('Recipient creation error:', error)
+    throw error
+  }
+}
+
+/**
+ * Initiate a Transfer on Paystack
+ * @param options - Transfer options
+ * @returns Transfer details
+ */
+export async function initiatePaystackTransfer({
+  amount, // Amount in pesewas
+  recipient, // Recipient code
+  reason,
+  reference,
+}: {
+  amount: number
+  recipient: string
+  reason?: string
+  reference?: string
+}) {
+  if (!PAYSTACK_SECRET_KEY) {
+    throw new Error('PAYSTACK_SECRET_KEY is not configured')
+  }
+
+  const payload = {
+    source: 'balance',
+    amount,
+    recipient,
+    reason: reason || 'Campaign Payout',
+    reference,
+    currency: 'GHS',
+  }
+
+  try {
+    const response = await fetch(`${PAYSTACK_BASE_URL}/transfer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+      },
+      body: JSON.stringify(payload),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.error('Transfer initiation error:', data)
+      throw new Error(`Transfer failed: ${data.message}`)
+    }
+
+    return {
+      success: true,
+      transferCode: data.data.transfer_code,
+      id: data.data.id,
+      status: data.data.status,
+      data: data.data,
+    }
+  } catch (error) {
+    console.error('Transfer error:', error)
+    throw error
+  }
+}
 
 /**
  * Generate unique transaction reference

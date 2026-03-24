@@ -506,6 +506,64 @@ export class NotificationService {
   }
 
   /**
+   * Send payout setup prompt to fundraiser
+   */
+  static async sendPayoutSetupPrompt(
+    fundraiserEmail: string,
+    fundraiserName: string,
+    campaignTitle: string,
+    currentAmount: number
+  ) {
+    const formattedAmount = `GHS ${(currentAmount / 100).toFixed(2)}`
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
+    const payoutLink = `${baseUrl}/dashboard/payout-setup`
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1A2B3C; line-height: 1.6; background: #F5F5F0; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .content { background: white; border-radius: 12px; padding: 40px; margin: 20px 0; }
+          .header { color: #02A95C; margin-bottom: 20px; }
+          .header h1 { margin: 0 0 10px 0; font-size: 24px; }
+          .milestone-box { background: #E6F7EF; border-left: 4px solid #02A95C; padding: 20px; border-radius: 8px; margin: 20px 0; }
+          .cta { display: inline-block; background: #02A95C; color: white; padding: 12px 28px; text-decoration: none; border-radius: 8px; margin-top: 20px; font-weight: 500; }
+          .footer { text-align: center; color: #8A8A82; font-size: 12px; margin-top: 40px; border-top: 1px solid #E8E4DC; padding-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="content">
+            <div class="header">
+              <h1>You've reached a milestone! 🎉</h1>
+            </div>
+            <p>Hi ${fundraiserName},</p>
+            <div class="milestone-box">
+              <p>Congratulations! Your campaign "<strong>${campaignTitle}</strong>" has raised <strong>${formattedAmount}</strong>.</p>
+            </div>
+            <p>To receive these funds, you now need to set up your payout method (Bank Account or Mobile Money).</p>
+            <p><a href="${payoutLink}" class="cta">👉 Set Up Payout Method</a></p>
+            <p>Once set up, you can withdraw your funds securely. Well done on your progress!</p>
+            <p style="margin-top: 30px;">Best regards,<br><strong>The EveryGiving Team</strong></p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} EveryGiving. Ghana's trusted crowdfunding platform.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
+
+    return this.sendEmail({
+      to: fundraiserEmail,
+      subject: `Milestone Reached: Set up your payout for ${campaignTitle}`,
+      htmlContent,
+    })
+  }
+
+  /**
    * Check campaign milestone and send alerts
    */
   static async checkAndSendMilestoneAlerts(campaignId: string) {
@@ -514,7 +572,16 @@ export class NotificationService {
 
       const { data: campaign, error: campaignError } = await supabase
         .from('campaigns')
-        .select('title, raised_amount, goal_amount')
+        .select(`
+          title, 
+          raised_amount, 
+          goal_amount, 
+          milestone_reached,
+          payout_method_set,
+          milestone_percentage,
+          available_payout_balance,
+          profiles:user_id (full_name, email)
+        `)
         .eq('id', campaignId)
         .single()
 
@@ -523,13 +590,47 @@ export class NotificationService {
       const totalRaised = Number(campaign.raised_amount || 0)
       const goalAmount = Number(campaign.goal_amount)
       const currentPercentage = Math.floor((totalRaised / goalAmount) * 100)
+      const fundraiser = (campaign.profiles as any)
+      
+      const milestonePct = Number(campaign.milestone_percentage || 100)
+      const unlockedPercentage = Math.min(100, Math.floor(currentPercentage / milestonePct) * milestonePct)
+      
+      let newAvailableBalance = 0;
+      if (unlockedPercentage >= 100) {
+        newAvailableBalance = totalRaised;
+      } else {
+        newAvailableBalance = (goalAmount * unlockedPercentage) / 100;
+      }
+      
+      // Ensure we don't artificially inflate the balance above what's raised
+      newAvailableBalance = Math.min(newAvailableBalance, totalRaised);
 
-      // Determine which milestones have been reached
+      // Check if unlocked balance increased
+      if (newAvailableBalance > Number(campaign.available_payout_balance || 0)) {
+        await supabase
+          .from('campaigns')
+          .update({ 
+            available_payout_balance: newAvailableBalance,
+            milestone_reached: true 
+          })
+          .eq('id', campaignId)
+
+        // Send prompt to fundraiser if payout not set bono.
+        if (!campaign.payout_method_set && fundraiser?.email) {
+          await this.sendPayoutSetupPrompt(
+            fundraiser.email,
+            fundraiser.full_name || 'Fundraiser',
+            campaign.title,
+            newAvailableBalance
+          )
+        }
+      }
+
+      // 2. Existing Donor Percentage Milestones bono.
       const milestonesToCheck = [25, 50, 100]
 
       for (const milestone of milestonesToCheck) {
         if (currentPercentage >= milestone) {
-          // Check if alert already sent
           const { data: existingAlert } = await supabase
             .from('milestone_alerts_sent')
             .select('id')
@@ -538,14 +639,12 @@ export class NotificationService {
             .single()
 
           if (!existingAlert) {
-            // Get all unique donors for this campaign
             const { data: donations } = await supabase
               .from('donations')
               .select('donor_email, donor_name')
               .eq('campaign_id', campaignId)
-              .eq('status', 'completed')
+              .eq('status', 'success') // Updated to 'success' match payout system bono.
 
-            // Send alerts to all donors
             if (donations) {
               for (const donation of donations) {
                 await this.sendMilestoneAlert(
@@ -559,7 +658,6 @@ export class NotificationService {
               }
             }
 
-            // Record that alert was sent
             await supabase.from('milestone_alerts_sent').insert({
               campaign_id: campaignId,
               milestone,
@@ -570,7 +668,6 @@ export class NotificationService {
       }
     } catch (error) {
       console.error('Milestone check failed:', error)
-      throw error
     }
   }
 }

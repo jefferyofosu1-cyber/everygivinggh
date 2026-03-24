@@ -30,42 +30,21 @@ export async function POST(request: NextRequest) {
     if (event.event === 'charge.success') {
       const data = event.data
       const reference = data.reference
-      const status = data.status // 'success'
-      const amountPesewas = data.amount
       const metadata = data.metadata || {}
+      const campaignId = metadata.campaign_id
 
       const supabase = await getAdminClient()
 
-      // Update donation status
-      const { data: donation, error: updateError } = await supabase
+      // Update donation status (only if still pending — idempotent)
+      await supabase
         .from('donations')
         .update({ status: 'completed' })
         .eq('paystack_reference', reference)
-        .eq('status', 'pending') // Only update if still pending (idempotent)
-        .select('id, campaign_id, amount_paid')
-        .single()
+        .eq('status', 'pending')
 
-      if (updateError) {
-        // Could be already completed by callback — not necessarily an error
-        console.log('[Webhook] Donation update skipped (may already be completed):', updateError.message)
-      }
-
-      // Update campaign raised_amount if donation was updated
-      if (donation?.campaign_id) {
-        const { data: campaign } = await supabase
-          .from('campaigns')
-          .select('raised_amount')
-          .eq('id', donation.campaign_id)
-          .single()
-
-        if (campaign) {
-          await supabase
-            .from('campaigns')
-            .update({
-              raised_amount: (campaign.raised_amount || 0) + (donation.amount_paid || amountPesewas),
-            })
-            .eq('id', donation.campaign_id)
-        }
+      // Recompute campaign raised_amount from completed donations
+      if (campaignId) {
+        await syncCampaignRaisedAmount(supabase, campaignId)
       }
 
       console.log('[Webhook] Payment confirmed:', reference)
@@ -78,4 +57,33 @@ export async function POST(request: NextRequest) {
     // Still return 200 to prevent Paystack from retrying
     return NextResponse.json({ received: true })
   }
+}
+
+/**
+ * Recompute raised_amount by summing all completed donations for a campaign.
+ * This is idempotent — safe even if both callback and webhook fire.
+ */
+async function syncCampaignRaisedAmount(supabase: any, campaignId: string) {
+  const { data: donations, error } = await supabase
+    .from('donations')
+    .select('amount')
+    .eq('campaign_id', campaignId)
+    .in('status', ['completed', 'confirmed'])
+
+  if (error) {
+    console.error('[syncCampaignRaisedAmount] Error fetching donations:', error)
+    return
+  }
+
+  const totalGHS = (donations || []).reduce(
+    (sum: number, d: { amount: number }) => sum + (d.amount || 0),
+    0
+  )
+
+  const donorCount = (donations || []).length
+
+  await supabase
+    .from('campaigns')
+    .update({ raised_amount: totalGHS, donor_count: donorCount })
+    .eq('id', campaignId)
 }

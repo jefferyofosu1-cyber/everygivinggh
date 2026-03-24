@@ -3,7 +3,8 @@
  * GET /api/paystack/callback
  *
  * Paystack redirects here after payment. We verify the transaction,
- * update the donation status, then redirect to the success page.
+ * update the donation status, recompute campaign raised_amount,
+ * then redirect to the success page.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -41,21 +42,9 @@ export async function GET(request: NextRequest) {
         console.error('[Paystack Callback] Failed to update donation:', updateError)
       }
 
-      // 3. Update campaign raised_amount
+      // 3. Recompute campaign raised_amount from completed donations
       if (campaignId) {
-        const amountPesewas = verification.amount || 0
-        const { data: campaign } = await supabase
-          .from('campaigns')
-          .select('raised_amount')
-          .eq('id', campaignId)
-          .single()
-
-        if (campaign) {
-          await supabase
-            .from('campaigns')
-            .update({ raised_amount: (campaign.raised_amount || 0) + amountPesewas })
-            .eq('id', campaignId)
-        }
+        await syncCampaignRaisedAmount(supabase, campaignId)
       }
 
       // 4. Redirect to success page
@@ -84,4 +73,33 @@ export async function GET(request: NextRequest) {
       `${baseUrl}/donate?error=verification_failed&campaign=${campaignId}`
     )
   }
+}
+
+/**
+ * Recompute raised_amount by summing all completed donations for a campaign.
+ * This is idempotent — safe even if both callback and webhook fire.
+ */
+async function syncCampaignRaisedAmount(supabase: any, campaignId: string) {
+  const { data: donations, error } = await supabase
+    .from('donations')
+    .select('amount')
+    .eq('campaign_id', campaignId)
+    .in('status', ['completed', 'confirmed'])
+
+  if (error) {
+    console.error('[syncCampaignRaisedAmount] Error fetching donations:', error)
+    return
+  }
+
+  const totalGHS = (donations || []).reduce(
+    (sum: number, d: { amount: number }) => sum + (d.amount || 0),
+    0
+  )
+
+  const donorCount = (donations || []).length
+
+  await supabase
+    .from('campaigns')
+    .update({ raised_amount: totalGHS, donor_count: donorCount })
+    .eq('id', campaignId)
 }

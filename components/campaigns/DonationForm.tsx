@@ -185,7 +185,7 @@ export default function DonationForm({ campaign }: { campaign: any }) {
             <div className="text-[10px] font-black border border-current px-2 py-0.5 rounded">MoMo</div>
           </div>
           <p className="text-[9px] text-primary/60 text-center font-bold">
-            🛡️ Funds go directly to the verified fundraiser
+            Funds go directly to the verified fundraiser
           </p>
         </div>
       </form>

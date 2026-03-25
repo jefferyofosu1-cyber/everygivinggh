@@ -14,9 +14,9 @@ import type { Campaign } from '@/types'
 export const dynamic = 'force-dynamic'
 
 const EMOJI: Record<string, string> = {
-  medical: '🏥', emergency: '🆘', education: '🎓', charity: '🤲', faith: '⛪',
-  community: '🏘', environment: '🌿', business: '💼', family: '👨‍👩',
-  sports: '⚽', events: '🎉', wishes: '🌟', competition: '🏆', travel: '✈️', volunteer: '🙌',
+  medical: '', emergency: '', education: '', charity: '', faith: '',
+  community: '', environment: '', business: '', family: '',
+  sports: '', events: '', wishes: '', competition: '', travel: '', volunteer: '',
 }
 
 async function getCampaign(id: string) {
@@ -85,7 +85,7 @@ export default async function CampaignPage({ params }: { params: { id: string } 
       <>
         <Navbar />
         <div className="min-h-screen bg-surface-alt flex flex-col items-center justify-center p-5" style={{ background: 'var(--surface-alt)' }}>
-          <div className="text-6xl mb-4">🔦</div>
+          <div className="text-6xl mb-4"></div>
           <h1 className="font-nunito font-black text-navy text-2xl mb-2" style={{ color: 'var(--navy)' }}>Campaign not found</h1>
           <p className="text-muted mb-2 text-center text-xs font-mono bg-border p-2 rounded" style={{ color: 'var(--text-muted)', background: 'var(--border)' }}>Looking for ID: {params.id}</p>
           <p className="text-muted mb-6 text-center" style={{ color: 'var(--text-muted)' }}>The campaign you are looking for might have been closed or moved.</p>
@@ -99,9 +99,9 @@ export default async function CampaignPage({ params }: { params: { id: string } 
   const raised = campaign.raised_amount || 0
   const goal = campaign.goal_amount || 0
   const pct = goal > 0 ? Math.min(Math.round((raised / goal) * 100), 100) : 0
-  const emoji = campaign.category ? EMOJI[campaign.category.toLowerCase()] || '💚' : '💚'
+  const emoji = campaign.category ? EMOJI[campaign.category.toLowerCase()] || '' : ''
   const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL || ''}/campaigns/${campaign.id}`
-  const shareText = `Help support "${campaign.title}" on EveryGiving 💚`
+  const shareText = `Help support "${campaign.title}" on EveryGiving`
 
   // Get successful donations bono.
   const successfulDonations = (campaign.donations || []).filter((d: any) => d.status === 'success')
@@ -137,7 +137,7 @@ export default async function CampaignPage({ params }: { params: { id: string } 
                 </h1>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 bg-primary-light text-primary rounded-full flex items-center justify-center text-[10px] font-bold">
-                    {campaign.profiles?.full_name?.[0] || '👤'}
+                    {campaign.profiles?.full_name?.[0] || 'U'}
                   </div>
                   <span className="text-sm font-bold text-navy" style={{ color: 'var(--navy)' }}>
                     {campaign.profiles?.full_name || 'Anonymous Organiser'}
@@ -188,7 +188,7 @@ export default async function CampaignPage({ params }: { params: { id: string } 
               </div>
 
               <div className="bg-navy rounded-3xl p-8 text-white" style={{ background: 'var(--navy)' }}>
-                <div className="text-2xl mb-4">🛡️</div>
+                <div className="text-2xl mb-4"></div>
                 <h3 className="font-nunito font-black text-lg mb-2">Our Safety Policy bono.</h3>
                 <p className="text-white/60 text-xs leading-relaxed mb-6">
                   EveryGiving identity-verifies fundraisers using the Ghana Card. We use industry-standard encryption to protect your data and payments. bono.

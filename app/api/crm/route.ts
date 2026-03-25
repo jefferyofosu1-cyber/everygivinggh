@@ -245,7 +245,7 @@ function donorWelcomeEmail(name: string) {
 
     <div style="background:#f8fafc;padding:20px 40px;text-align:center;border-top:1px solid #f1f5f9;">
       <p style="margin:0;color:#94a3b8;font-size:12px;">
-        Every Giving · Built in Ghana 🇬🇭 ·
+        Every Giving · Built in Ghana ·
         <a href="${process.env.NEXT_PUBLIC_APP_URL}" style="color:#02A95C;text-decoration:none;">everygivinggh.vercel.app</a>
       </p>
     </div>

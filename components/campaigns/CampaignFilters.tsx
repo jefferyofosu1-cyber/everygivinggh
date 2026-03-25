@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react'
 const CATEGORIES = ['All', 'Medical', 'Education', 'Church & Faith', 'Emergency', 'Business', 'Memorial', 'Community', 'Events']
 
 const EMOJI: Record<string, string> = {
-  Medical: '🏥', Education: '🎓', 'Church & Faith': '⛪', Emergency: '🆘',
-  Business: '💼', Memorial: '🕯️', Community: '🏘️', Events: '🎉', Other: '💚',
+  Medical: '', Education: '', 'Church & Faith': '', Emergency: '',
+  Business: '', Memorial: '', Community: '', Events: '', Other: '',
 }
 
 export default function CampaignFilters({ 
@@ -83,7 +83,7 @@ export default function CampaignFilters({
               }`}
               style={activeCategory === cat ? { background: 'var(--primary)' } : { background: 'var(--surface-alt)', color: 'var(--text-muted)' }}
             >
-              {cat !== 'All' && <span className="mr-1">{EMOJI[cat]}</span>} {cat}
+              {cat}
             </button>
           ))}
         </div>

@@ -128,7 +128,7 @@ export default function CreatePage() {
           <div className="max-w-lg w-full text-center">
             <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
               <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-              <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">🎉</div>
+              <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">!</div>
             </div>
             <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
             <p className="text-sm mb-2" style={{ color: 'var(--text-muted)' }}>Your campaign and identity documents are being reviewed.</p>
@@ -137,10 +137,10 @@ export default function CreatePage() {
               <div className="font-nunito font-black text-navy text-sm mb-4">What happens next</div>
               <div className="flex flex-col gap-3">
                 {[
-                  { icon: '📧', text: 'Check your email for a verification confirmation' },
-                  { icon: '✅', text: `Your ${tier.name} verification will be processed` },
-                  { icon: '🚀', text: 'Your campaign goes live with your Verified badge' },
-                  { icon: '📱', text: 'Share on WhatsApp to start receiving donations' },
+                   { icon: '', text: 'Check your email for a verification confirmation' },
+                  { icon: '', text: `Your ${tier.name} verification will be processed` },
+                  { icon: '', text: 'Your campaign goes live with your Verified badge' },
+                  { icon: '', text: 'Share on WhatsApp to start receiving donations' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm" style={{ color: 'var(--text-main)' }}>
                     <span>{item.icon}</span><span>{item.text}</span>
@@ -261,13 +261,13 @@ export default function CreatePage() {
                     className={`w-full border-2 border-dashed rounded-xl py-8 text-center transition-all ${campaign.photo ? 'border-primary bg-primary-light' : 'border-[var(--border)] hover:border-[var(--text-muted)] bg-[var(--surface-alt)]'}`}>
                     {campaign.photo ? (
                       <div>
-                        <div className="text-2xl mb-1">🖼️</div>
+                        <div className="text-2xl mb-1"></div>
                         <div className="text-primary font-bold text-sm">{campaign.photo.name}</div>
                         <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Click to change</div>
                       </div>
                     ) : (
                       <div>
-                        <div className="text-3xl mb-2">📷</div>
+                        <div className="text-3xl mb-2"></div>
                         <div className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Upload a photo</div>
                         <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>JPG or PNG. Campaigns with photos raise more.</div>
                       </div>
@@ -371,9 +371,9 @@ export default function CreatePage() {
                   <button type="button" onClick={() => idFrontRef.current?.click()}
                     className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idFront ? 'border-primary bg-primary-light' : 'border-[var(--border)] hover:border-primary/40 bg-[var(--surface-alt)]'}`}>
                     {identity.idFront ? (
-                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Click to change</div></div>
+                      <div><div className="text-2xl mb-1"></div><div className="text-primary font-bold text-sm">{identity.idFront.name}</div><div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Click to change</div></div>
                     ) : (
-                      <div><div className="text-2xl mb-1.5">🪪</div><div className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Upload front of Ghana Card</div><div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>JPG or PNG. Must be clear and in focus.</div></div>
+                      <div><div className="text-2xl mb-1.5"></div><div className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Upload front of Ghana Card</div><div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>JPG or PNG. Must be clear and in focus.</div></div>
                     )}
                   </button>
                 </div>
@@ -388,9 +388,9 @@ export default function CreatePage() {
                   <button type="button" onClick={() => idBackRef.current?.click()}
                     className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.idBack ? 'border-primary bg-primary-light' : 'border-[var(--border)] hover:border-primary/40 bg-[var(--surface-alt)]'}`}>
                     {identity.idBack ? (
-                      <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.idBack.name}</div><div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Click to change</div></div>
+                      <div><div className="text-2xl mb-1"></div><div className="text-primary font-bold text-sm">{identity.idBack.name}</div><div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Click to change</div></div>
                     ) : (
-                      <div><div className="text-2xl mb-1.5">🪪</div><div className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Upload back of Ghana Card</div><div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>JPG or PNG. Must be clear and in focus.</div></div>
+                      <div><div className="text-2xl mb-1.5"></div><div className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Upload back of Ghana Card</div><div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>JPG or PNG. Must be clear and in focus.</div></div>
                     )}
                   </button>
                 </div>
@@ -409,9 +409,9 @@ export default function CreatePage() {
                     <button type="button" onClick={() => selfieRef.current?.click()}
                       className={`w-full border-2 border-dashed rounded-xl py-6 text-center transition-all ${identity.selfie ? 'border-primary bg-primary-light' : 'border-[var(--border)] hover:border-primary/40 bg-[var(--surface-alt)]'}`}>
                       {identity.selfie ? (
-                        <div><div className="text-2xl mb-1">✅</div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Click to change</div></div>
+                        <div><div className="text-2xl mb-1"></div><div className="text-primary font-bold text-sm">{identity.selfie.name}</div><div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Click to change</div></div>
                       ) : (
-                        <div><div className="text-2xl mb-1.5">🤳</div><div className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Take or upload a selfie</div><div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Face forward, good lighting. Used only for ID matching.</div></div>
+                        <div><div className="text-2xl mb-1.5"></div><div className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Take or upload a selfie</div><div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Face forward, good lighting. Used only for ID matching.</div></div>
                       )}
                     </button>
                   </div>

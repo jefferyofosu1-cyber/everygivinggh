@@ -106,7 +106,7 @@ function CampaignCard({ campaign }: { campaign: DashboardCampaign }) {
       onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,.08)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
       onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}>
       <div style={{ position: 'relative', height: 140, background: campaign.image_url ? `url(${campaign.image_url}) center/cover` : 'linear-gradient(135deg,#1A5276,#2E86C1)' }}>
-        {!campaign.image_url && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: .5 }}>📸</div>}
+        {!campaign.image_url && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, opacity: .5, color: '#fff', fontWeight: 600 }}>No image</div>}
         <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, color: st.color, background: st.bg, backdropFilter: 'blur(4px)' }}>{st.label}</div>
       </div>
       <div style={{ padding: 16 }}>
@@ -129,7 +129,7 @@ function CampaignCard({ campaign }: { campaign: DashboardCampaign }) {
 
         {needsUpdate && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#FEF3E2', borderRadius: 7, padding: '7px 10px', marginBottom: 10, border: '1px solid #F5CBA7' }}>
-            <span style={{ fontSize: 14 }}>⚡</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#B85C00' }}>!</span>
             <span style={{ fontSize: 11, color: '#B85C00', lineHeight: 1.4 }}>{campaign.lastUpdateDays} days without an update — post one to keep donors engaged</span>
           </div>
         )}
@@ -283,11 +283,11 @@ export default function DashboardPage() {
   const verif = getVerificationConfig(user?.verificationStatus || '')
 
   const sidebarItems: { id: TabId; label: string; icon: string; badge?: number }[] = [
-    { id: 'overview', label: 'Overview', icon: '📊' },
-    { id: 'campaigns', label: 'Campaigns', icon: '📋', badge: campaigns.length },
-    { id: 'donors', label: 'Donors', icon: '❤️', badge: donations.length },
-    { id: 'notifications', label: 'Notifications', icon: '🔔', badge: unreadCount },
-    { id: 'profile', label: 'My Account', icon: '👤' },
+    { id: 'overview', label: 'Overview', icon: '' },
+    { id: 'campaigns', label: 'Campaigns', icon: '', badge: campaigns.length },
+    { id: 'donors', label: 'Donors', icon: '', badge: donations.length },
+    { id: 'notifications', label: 'Notifications', icon: '', badge: unreadCount },
+    { id: 'profile', label: 'My Account', icon: '' },
   ]
 
   return (
@@ -305,7 +305,7 @@ export default function DashboardPage() {
       {user?.verificationStatus === 'not_submitted' && (
         <div style={{ background: 'linear-gradient(90deg,#FEF3E2,#FAEEDA)', borderBottom: '1px solid #F5CBA7', padding: '12px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 16 }}>🛡️</span>
+            
             <span style={{ fontSize: 13, color: '#B85C00' }}><strong>Verify your identity</strong> to publish campaigns. Verified fundraisers raise 3× more.</span>
           </div>
           <Link href="/verify" style={{ fontSize: 12, fontWeight: 700, color: '#fff', background: '#B85C00', padding: '7px 14px', borderRadius: 7, whiteSpace: 'nowrap' }}>Verify Now →</Link>
@@ -334,7 +334,7 @@ export default function DashboardPage() {
               <button key={item.id} className="eg-sidebar-btn"
                 style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, fontSize: 13, background: tab === item.id ? '#E8F5EF' : 'transparent', color: tab === item.id ? '#0A6B4B' : '#4A4A44', fontWeight: tab === item.id ? 600 : 400 }}
                 onClick={() => setTab(item.id)}>
-                <span style={{ fontSize: 15 }}>{item.icon}</span>
+                {item.icon && <span style={{ fontSize: 15 }}>{item.icon}</span>}
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {(item.badge || 0) > 0 && (
                   <span style={{ fontSize: 10, fontWeight: 700, background: tab === item.id ? '#0A6B4B' : '#E8E4DC', color: tab === item.id ? '#fff' : '#4A4A44', padding: '2px 7px', borderRadius: 10 }}>{item.badge}</span>
@@ -345,7 +345,7 @@ export default function DashboardPage() {
 
           {/* Bottom CTA */}
           <Link href="/create" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: '#fff', background: 'linear-gradient(135deg,#0A6B4B,#27AE60)', padding: '11px 0', borderRadius: 9, marginTop: 16 }}>
-            <span style={{ fontSize: 16, fontWeight: 300 }}>+</span> New Campaign
+            + New Campaign
           </Link>
         </aside>
 
@@ -354,7 +354,7 @@ export default function DashboardPage() {
 
           {/* HEADER */}
           <div style={{ marginBottom: 28 }}>
-            <h1 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 28, color: '#1A1A18', marginBottom: 4 }}>{getGreeting()}, {user?.firstName} 👋</h1>
+            <h1 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 28, color: '#1A1A18', marginBottom: 4 }}>{getGreeting()}, {user?.firstName} </h1>
             <p style={{ fontSize: 14, color: '#8A8A82' }}>Here&apos;s what&apos;s happening with your fundraising campaigns</p>
           </div>
 
@@ -366,15 +366,14 @@ export default function DashboardPage() {
               {/* Stat cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 28 }}>
                 {[
-                  { label: 'Total Raised', value: fmtGHS(totalRaised), sub: 'across all campaigns', color: '#0A6B4B', icon: '💰' },
-                  { label: 'Live Campaigns', value: String(liveCount), sub: `${campaigns.length} total`, color: '#1A1A18', icon: '📋' },
-                  { label: 'Total Donors', value: String(totalDonors), sub: 'unique supporters', color: '#185FA5', icon: '❤️' },
-                  { label: 'Notifications', value: String(unreadCount), sub: unreadCount === 0 ? 'all caught up' : 'unread', color: unreadCount > 0 ? '#B85C00' : '#8A8A82', icon: '🔔' },
+                  { label: 'Total Raised', value: fmtGHS(totalRaised), sub: 'across all campaigns', color: '#0A6B4B', icon: '' },
+                  { label: 'Live Campaigns', value: String(liveCount), sub: `${campaigns.length} total`, color: '#1A1A18', icon: '' },
+                  { label: 'Total Donors', value: String(totalDonors), sub: 'unique supporters', color: '#185FA5', icon: '' },
+                  { label: 'Notifications', value: String(unreadCount), sub: unreadCount === 0 ? 'all caught up' : 'unread', color: unreadCount > 0 ? '#B85C00' : '#8A8A82', icon: '' },
                 ].map(card => (
                   <div key={card.label} className="eg-stat-card" style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 12, padding: '18px 16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#8A8A82', textTransform: 'uppercase', letterSpacing: '.04em' }}>{card.label}</div>
-                      <span style={{ fontSize: 18 }}>{card.icon}</span>
                     </div>
                     <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: 30, color: card.color, marginBottom: 2 }}>{card.value}</div>
                     <div style={{ fontSize: 11, color: '#B0AEA6' }}>{card.sub}</div>
@@ -417,7 +416,7 @@ export default function DashboardPage() {
                   ) : (
                     notifs.slice(0, 4).map((n, i) => (
                       <div key={n.id} style={{ display: 'flex', gap: 10, padding: '12px 16px', borderBottom: i < 3 ? '1px solid #F8F7F5' : 'none', background: n.read ? '#fff' : '#FEFCF8' }}>
-                        <span style={{ fontSize: 16, flexShrink: 0 }}>{n.type === 'donation' ? '💰' : n.type === 'milestone' ? '🏆' : '🔔'}</span>
+                        <span style={{ fontSize: 16, flexShrink: 0 }}>{n.type === 'donation' ? 'GHS' : n.type === 'milestone' ? 'MS' : 'N'}</span>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 12, fontWeight: n.read ? 400 : 600, color: '#1A1A18', lineHeight: 1.4 }}>{n.text}</div>
                           <div style={{ fontSize: 10, color: '#B0AEA6', marginTop: 2 }}>{n.timeRelative}</div>
@@ -440,7 +439,7 @@ export default function DashboardPage() {
                 <Link href="/create" style={{ fontSize: 12, fontWeight: 600, color: '#fff', background: '#0A6B4B', padding: '8px 16px', borderRadius: 7 }}>+ New Campaign</Link>
               </div>
               {campaigns.length === 0 ? (
-                <EmptyState icon="📋" title="No campaigns yet" description="Start your first fundraising campaign and begin accepting donations from supporters." actionLabel="Create Campaign" actionHref="/create" />
+                <EmptyState icon="" title="No campaigns yet" description="Start your first fundraising campaign and begin accepting donations from supporters." actionLabel="Create Campaign" actionHref="/create" />
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
                   {campaigns.map(c => <CampaignCard key={c.id} campaign={c} />)}
@@ -456,7 +455,7 @@ export default function DashboardPage() {
             <div style={{ animation: 'fadeup .25s ease both' }}>
               <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 22, marginBottom: 20 }}>Recent Donors</h2>
               {donations.length === 0 ? (
-                <EmptyState icon="❤️" title="No donations yet" description="When supporters donate to your campaigns, they'll appear here. Share your campaign to get started!" />
+                <EmptyState icon="" title="No donations yet" description="When supporters donate to your campaigns, they'll appear here. Share your campaign to get started!" />
               ) : (
                 <div style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 14, overflow: 'hidden' }}>
                   {/* Table header */}
@@ -495,15 +494,15 @@ export default function DashboardPage() {
                 {unreadCount > 0 && <span style={{ fontSize: 12, fontWeight: 600, color: '#B85C00', background: '#FEF3E2', padding: '4px 10px', borderRadius: 20 }}>{unreadCount} unread</span>}
               </div>
               {notifs.length === 0 ? (
-                <EmptyState icon="🔔" title="No notifications" description="You'll receive alerts when donors contribute to your campaigns and when milestones are reached." />
+                <EmptyState icon="" title="No notifications" description="You'll receive alerts when donors contribute to your campaigns and when milestones are reached." />
               ) : (
                 <div style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 14, overflow: 'hidden' }}>
                   {notifs.map(n => (
                     <div key={n.id} onClick={() => markRead(n.id)} style={{ display: 'flex', gap: 12, padding: '14px 16px', borderBottom: '1px solid #F8F7F5', background: n.read ? '#fff' : '#FEFCF8', cursor: 'pointer', transition: 'background .15s ease' }}
                       onMouseEnter={e => { if (!n.read) e.currentTarget.style.background = '#FEF8F0' }}
                       onMouseLeave={e => { e.currentTarget.style.background = n.read ? '#fff' : '#FEFCF8' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0, background: n.type === 'donation' ? '#E8F5EF' : n.type === 'milestone' ? '#E6F1FB' : '#FEF3E2' }}>
-                        {n.type === 'donation' ? '💰' : n.type === 'milestone' ? '🏆' : '🔔'}
+                      <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0, color: n.type === 'donation' ? '#0A6B4B' : n.type === 'milestone' ? '#185FA5' : '#B85C00', background: n.type === 'donation' ? '#E8F5EF' : n.type === 'milestone' ? '#E6F1FB' : '#FEF3E2' }}>
+                        {n.type === 'donation' ? 'GHS' : n.type === 'milestone' ? 'MS' : 'N'}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: n.read ? 400 : 600, color: '#1A1A18', lineHeight: 1.5 }}>{n.text}</div>
@@ -544,12 +543,11 @@ export default function DashboardPage() {
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
                     {[
-                      { label: 'Campaigns', value: String(user?.campaignCount || 0), icon: '📋' },
-                      { label: 'Total Raised', value: fmtGHS(user?.totalRaised || 0), icon: '💰' },
-                      { label: 'Total Donors', value: String(user?.totalDonors || 0), icon: '❤️' },
+                      { label: 'Campaigns', value: String(user?.campaignCount || 0), icon: '' },
+                      { label: 'Total Raised', value: fmtGHS(user?.totalRaised || 0), icon: '' },
+                      { label: 'Total Donors', value: String(user?.totalDonors || 0), icon: '' },
                     ].map(s => (
                       <div key={s.label} style={{ background: '#FAFAF8', borderRadius: 10, padding: '14px 16px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 18, marginBottom: 4 }}>{s.icon}</div>
                         <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: 22, color: '#1A1A18' }}>{s.value}</div>
                         <div style={{ fontSize: 11, color: '#8A8A82' }}>{s.label}</div>
                       </div>
@@ -563,13 +561,12 @@ export default function DashboardPage() {
                 <div style={{ fontSize: 15, fontWeight: 600, color: '#1A1A18', marginBottom: 20, paddingBottom: 12, borderBottom: '1px solid #F2F0EB' }}>Account Details</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
                   {[
-                    { label: 'Full Name', value: user?.fullName, icon: '👤' },
-                    { label: 'Email Address', value: user?.email || 'Not provided', icon: '✉️' },
-                    { label: 'Phone Number', value: user?.phone || 'Not provided', icon: '📱' },
-                    { label: 'Member Since', value: user?.joinedDate, icon: '📅' },
+                    { label: 'Full Name', value: user?.fullName, icon: '' },
+                    { label: 'Email Address', value: user?.email || 'Not provided', icon: '' },
+                    { label: 'Phone Number', value: user?.phone || 'Not provided', icon: '' },
+                    { label: 'Member Since', value: user?.joinedDate, icon: '' },
                   ].map(field => (
                     <div key={field.label} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 16, marginTop: 2 }}>{field.icon}</span>
                       <div>
                         <div style={{ fontSize: 10, fontWeight: 700, color: '#B0AEA6', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 3 }}>{field.label}</div>
                         <div style={{ fontSize: 14, fontWeight: 500, color: '#1A1A18' }}>{field.value}</div>

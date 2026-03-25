@@ -108,7 +108,7 @@ export default function AdminSupportPage() {
             <div style={{ display: 'flex', gap: 8 }}>
               <Link href="/admin/support/disputes"
                 style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.2)', borderRadius: 8, color: '#F87171', fontSize: 12, fontWeight: 600, padding: '8px 14px', textDecoration: 'none' }}>
-                ⚖️ Disputes
+                Disputes
               </Link>
               <button onClick={() => setShowNew(!showNew)}
                 style={{ background: '#6366F1', border: 'none', borderRadius: 8, color: '#fff', fontSize: 12, fontWeight: 700, padding: '8px 14px', cursor: 'pointer' }}>

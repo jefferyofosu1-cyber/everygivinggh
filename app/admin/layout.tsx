@@ -11,21 +11,21 @@ interface AdminUser {
 }
 
 const NAV = [
-  { href: '/admin',            label: 'Dashboard',    icon: '📊', exact: true  },
-  { href: '/admin/campaigns',  label: 'Campaigns',    icon: '📋', exact: false },
-  { href: '/admin/donations',  label: 'Donations',    icon: '💰', exact: false },
-  { href: '/admin/users',      label: 'Users',        icon: '👥', exact: false },
-  { href: '/admin/roles',      label: 'Roles',        icon: '🛡️', exact: false },
-  { href: '/admin/audit-logs', label: 'Audit Logs',   icon: '📜', exact: false },
-  { href: '/admin/verification', label: 'Verification', icon: '✅', exact: false },
-  { href: '/admin/payouts',    label: 'Payouts',      icon: '🏦', exact: false },
-  { href: '/admin/payments',   label: 'Payments',     icon: '💳', exact: false },
-  { href: '/admin/support',    label: 'Support',      icon: '🎫', exact: false },
-  { href: '/admin/disputes',   label: 'Disputes',     icon: '⚖️', exact: false },
-  { href: '/admin/reports',    label: 'Reports',      icon: '📈', exact: false },
-  { href: '/admin/settings',   label: 'Settings',     icon: '⚙️', exact: false },
-  { href: '/admin/media',      label: 'Media',        icon: '🖼', exact: false },
-  { href: '/admin/content',    label: 'Content',      icon: '📝', exact: false },
+  { href: '/admin',            label: 'Dashboard',    icon: '', exact: true  },
+  { href: '/admin/campaigns',  label: 'Campaigns',    icon: '', exact: false },
+  { href: '/admin/donations',  label: 'Donations',    icon: '', exact: false },
+  { href: '/admin/users',      label: 'Users',        icon: '', exact: false },
+  { href: '/admin/roles',      label: 'Roles',        icon: '', exact: false },
+  { href: '/admin/audit-logs', label: 'Audit Logs',   icon: '', exact: false },
+  { href: '/admin/verification', label: 'Verification', icon: '', exact: false },
+  { href: '/admin/payouts',    label: 'Payouts',      icon: '', exact: false },
+  { href: '/admin/payments',   label: 'Payments',     icon: '', exact: false },
+  { href: '/admin/support',    label: 'Support',      icon: '', exact: false },
+  { href: '/admin/disputes',   label: 'Disputes',     icon: '', exact: false },
+  { href: '/admin/reports',    label: 'Reports',      icon: '', exact: false },
+  { href: '/admin/settings',   label: 'Settings',     icon: '', exact: false },
+  { href: '/admin/media',      label: 'Media',        icon: '', exact: false },
+  { href: '/admin/content',    label: 'Content',      icon: '', exact: false },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -11,9 +11,9 @@ const NETWORKS = [
   { id:'airtel', name:'AirtelTigo',   color:'#CC0033', textColor:'#fff'    },
 ];
 const CURRENCIES = [
-  { code:'GBP', symbol:'£', rate: 18.5, flag:'🇬🇧' },
-  { code:'USD', symbol:'$', rate: 14.2, flag:'🇺🇸' },
-  { code:'EUR', symbol:'€', rate: 15.8, flag:'🇪🇺' },
+  { code:'GBP', symbol:'£', rate: 18.5, flag:'GBP' },
+  { code:'USD', symbol:'$', rate: 14.2, flag:'USD' },
+  { code:'EUR', symbol:'€', rate: 15.8, flag:'EUR' },
 ];
 function getImpact(amt: number): string {
   if (amt >= 1000) return 'covers the first surgical milestone';
@@ -260,7 +260,7 @@ function StepProcessing({
         </>
       ) : (
         <>
-          <div style={{fontSize:48,marginBottom:16}}>❌</div>
+          <div style={{fontSize:48,marginBottom:16}}></div>
           <div style={{fontFamily:"'DM Serif Display',serif",fontSize:22,color:'#C0392B',marginBottom:12}}>Payment failed to start</div>
           <div style={{fontSize:14,color:'#4A4A44',lineHeight:1.6,marginBottom:24,maxWidth:320,margin:'0 auto'}}>{error}</div>
           <button 
@@ -338,7 +338,7 @@ function StepConfirmation({ amount, mode, campaign, currency, paymentData }: {
       </div>
 
       <div style={{background:'var(--primary-light)',border:'1px solid var(--primary)',borderRadius:9,padding:'11px 14px',fontSize:12,color:'var(--primary)',lineHeight:1.65}}>
-        🛡 Your donation is milestone-protected. Funds are released in stages — only after the organiser proves each step was completed.
+                Your donation is milestone-protected. Funds are released in stages — only after the organiser proves each step was completed.
       </div>
     </div>
   );
@@ -434,9 +434,9 @@ export default function DonatePage({ params }: { params: { id: string } }) {
 
             <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 14px',marginBottom:10}}>
               {[
-                {icon:'✅',label:'Verified campaign'},
-                {icon:'🛡',label:'Milestone-protected'},
-                {icon:'🔒',label:'Secure payment'},
+                {icon:'',label:'Verified campaign'},
+                {icon:'',label:'Milestone-protected'},
+                {icon:'',label:'Secure payment'},
               ].map((t,i)=>(
                 <div key={i} style={{display:'flex',gap:8,alignItems:'center',marginBottom:i<2?8:0}}>
                   <div style={{fontSize:14}}>{t.icon}</div>

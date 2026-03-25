@@ -118,23 +118,23 @@ export const CATEGORIES = [
 ] as const
 
 export const EMOJI: Record<string, string> = {
-  medical: '🏥', Medical: '🏥',
-  emergency: '🆘', Emergency: '🆘',
-  education: '🎓', Education: '🎓',
-  charity: '🤲',
-  faith: '⛪', 'Church & Faith': '⛪',
-  community: '🏘', Community: '🏘',
-  environment: '🌿',
-  business: '💼', Business: '💼',
-  family: '👨‍👩‍👧',
-  sports: '⚽',
-  events: '🎉', Events: '🎉',
-  wishes: '🌟',
-  competition: '🏆',
-  travel: '✈️',
-  volunteer: '🙌',
-  memorial: '🕊', Memorial: '🕊',
-  other: '💚', Other: '💚',
+  medical: '', Medical: '',
+  emergency: '', Emergency: '',
+  education: '', Education: '',
+  charity: '',
+  faith: '', 'Church & Faith': '',
+  community: '', Community: '',
+  environment: '',
+  business: '', Business: '',
+  family: '',
+  sports: '',
+  events: '', Events: '',
+  wishes: '',
+  competition: '',
+  travel: '',
+  volunteer: '',
+  memorial: '', Memorial: '',
+  other: '', Other: '',
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
@@ -162,7 +162,7 @@ export const CATEGORY_GRADIENTS: Record<string, string> = {
 }
 
 export function getEmoji(category: string): string {
-  return EMOJI[category] || EMOJI[category?.toLowerCase()] || '💚'
+  return EMOJI[category] || EMOJI[category?.toLowerCase()] || ''
 }
 
 export function getCategoryGradient(category: string): string {

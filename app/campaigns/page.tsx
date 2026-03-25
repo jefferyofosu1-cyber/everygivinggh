@@ -51,14 +51,14 @@ export default async function CampaignsPage({
     <>
       <Navbar />
       <main>
-        <Suspense fallback={<div className="h-40 bg-navy animate-pulse" />}>
+        <Suspense fallback={<div className="h-40 skeleton animate-pulse" />}>
           <CampaignFilters 
             initialCategory={searchParams.category} 
             initialSearch={searchParams.q} 
           />
         </Suspense>
 
-        <section className="py-12 bg-surface-alt min-h-[400px]" style={{ background: 'var(--surface-alt)' }}>
+        <section className="py-12 min-h-[400px]" style={{ background: 'var(--surface-alt)' }}>
           <div className="max-w-5xl mx-auto px-5">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 text-center text-sm text-red-700">

@@ -55,7 +55,7 @@ export default function NavDropdowns() {
         <button 
           onClick={() => setOpenDropdown(openDropdown === 'about' ? null : 'about')}
           style={{ 
-            fontSize: 14, fontWeight: 500, color: '#4A4A44', 
+            fontSize: 14, fontWeight: 500, color: 'var(--text-muted)', 
             background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
             display: 'flex', alignItems: 'center', gap: 4
           }}
@@ -67,11 +67,11 @@ export default function NavDropdowns() {
         </button>
 
         {openDropdown === 'about' && (
-          <div style={{ position: 'absolute', top: '100%', transform: 'translateX(-50%)', background: '#fff', border: '1px solid #E8E4DC', borderRadius: 12, padding: 8, minWidth: 200, boxShadow: '0 12px 32px rgba(0,0,0,0.08)', zIndex: 10 }}>
+          <div style={{ position: 'absolute', top: '100%', transform: 'translateX(-50%)', background: 'var(--dropdown-bg)', border: '1px solid var(--border)', borderRadius: 12, padding: 8, minWidth: 200, boxShadow: '0 12px 32px rgba(0,0,0,0.15)', zIndex: 10 }}>
             {ABOUT_MENU.map(item => (
               <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)}
-                style={{ display: 'block', padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#1A1A18', borderRadius: 8, transition: 'background 0.1s' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#F9F8F6'}
+                style={{ display: 'block', padding: '10px 14px', fontSize: 13, fontWeight: 500, color: 'var(--text-main)', borderRadius: 8, transition: 'background 0.1s' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-hover)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
               >
                 {item.label}
@@ -90,7 +90,7 @@ export default function NavDropdowns() {
         <button 
           onClick={() => setOpenDropdown(openDropdown === 'fundraise' ? null : 'fundraise')}
           style={{ 
-            fontSize: 14, fontWeight: 500, color: '#4A4A44', 
+            fontSize: 14, fontWeight: 500, color: 'var(--text-muted)', 
             background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
             display: 'flex', alignItems: 'center', gap: 4
           }}
@@ -102,16 +102,18 @@ export default function NavDropdowns() {
         </button>
 
         {openDropdown === 'fundraise' && (
-          <div style={{ position: 'absolute', top: '100%', right: 0, width: 800, background: '#fff', border: '1px solid #E8E4DC', borderRadius: 16, padding: 32, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 40, boxShadow: '0 16px 48px rgba(0,0,0,0.1)', zIndex: 10 }}>
+          <div style={{ position: 'absolute', top: '100%', right: 0, width: 800, background: 'var(--dropdown-bg)', border: '1px solid var(--border)', borderRadius: 16, padding: 32, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 40, boxShadow: '0 16px 48px rgba(0,0,0,0.15)', zIndex: 10 }}>
             
             {/* Get Started Col */}
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#8A8A82', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>Get Started</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>Get Started</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {FUNDRAISE_MENU.getStarted.map(item => (
-                  <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)} style={{ display: 'block' }} className="nav-item-hover">
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A18', marginBottom: 3 }}>{item.label}</div>
-                    <div style={{ fontSize: 12, color: '#8A8A82', lineHeight: 1.4 }}>{item.desc}</div>
+                  <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)} style={{ display: 'block', padding: '8px', borderRadius: '8px', transition: 'background 0.2s' }} 
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-hover)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-main)', marginBottom: 3 }}>{item.label}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>{item.desc}</div>
                   </Link>
                 ))}
               </div>
@@ -119,12 +121,14 @@ export default function NavDropdowns() {
 
             {/* Resources Col */}
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#8A8A82', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>Resources</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>Resources</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {FUNDRAISE_MENU.resources.map(item => (
-                  <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)} style={{ display: 'block' }} className="nav-item-hover">
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A18', marginBottom: 3 }}>{item.label}</div>
-                    <div style={{ fontSize: 12, color: '#8A8A82', lineHeight: 1.4 }}>{item.desc}</div>
+                  <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)} style={{ display: 'block', padding: '8px', borderRadius: '8px', transition: 'background 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-hover)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-main)', marginBottom: 3 }}>{item.label}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>{item.desc}</div>
                   </Link>
                 ))}
               </div>
@@ -132,12 +136,14 @@ export default function NavDropdowns() {
 
             {/* More Col */}
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#8A8A82', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>More</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>More</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {FUNDRAISE_MENU.more.map(item => (
-                  <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)} style={{ display: 'block' }} className="nav-item-hover">
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A18', marginBottom: 3 }}>{item.label}</div>
-                    <div style={{ fontSize: 12, color: '#8A8A82', lineHeight: 1.4 }}>{item.desc}</div>
+                  <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)} style={{ display: 'block', padding: '8px', borderRadius: '8px', transition: 'background 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-hover)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-main)', marginBottom: 3 }}>{item.label}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>{item.desc}</div>
                   </Link>
                 ))}
               </div>

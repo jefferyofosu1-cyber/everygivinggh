@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center gap-4 group">
             <div className="w-16 h-16 rounded-2xl shadow-sm border flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <Image src="/logo.jpeg" alt="EveryGiving" width={64} height={64} />
+              <Image src="/logo.png" alt="EveryGiving" width={64} height={64} />
             </div>
             <span className="font-nunito font-black text-3xl tracking-tight text-navy">
               <span className="text-primary">Every</span>Giving

@@ -31,13 +31,25 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-5 py-12" style={{ background: 'var(--surface-alt)' }}>
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center px-5 py-12 relative overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src="/images/auth-bg.jpg" 
+          alt="Accra Skyline" 
+          fill 
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-navy/70 to-navy/40 backdrop-blur-[2px]" />
+      </div>
+
+      <div className="w-full max-w-md relative z-20">
 
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center gap-4 group">
             <div className="w-16 h-16 rounded-2xl shadow-sm border flex items-center justify-center overflow-hidden transition-transform group-hover:-translate-y-1" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <Image src="/logo.jpeg" alt="EveryGiving" width={64} height={64} />
+              <Image src="/logo.png" alt="EveryGiving" width={64} height={64} />
             </div>
             <span className="font-nunito font-black text-3xl tracking-tight text-navy">
               <span className="text-primary">Every</span>Giving

@@ -99,7 +99,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="px-5 py-5 border-b border-white/5">
           <Link href="/admin" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
-            <NextImage src="/logo.jpeg" alt="EveryGiving" width={28} height={28} className="rounded-md" />
+            <NextImage src="/logo.png" alt="EveryGiving" width={28} height={28} className="rounded-md" />
             <span className="font-nunito font-black text-lg"><span className="text-[#02A95C]">Every</span><span className="text-white">Giving</span></span>
           </Link>
           <p className="text-white/20 text-[10px] mt-0.5 tracking-widest font-mono">ADMIN</p>

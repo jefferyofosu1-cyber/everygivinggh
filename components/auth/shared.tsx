@@ -19,48 +19,48 @@ export function AuthLayout({ children, title, sub, showBack = true }: {
       `}</style>
 
       {/* LEFT PANEL */}
-      <div className="auth-left" style={{ background:'#1A1A18', display:'flex', flexDirection:'column' as const, padding:'32px 36px', position:'sticky' as const, top:0, height:'100vh', overflow:'hidden' }}>
-        <Link href="/" style={{ fontFamily:"'DM Serif Display',serif", fontSize:22, color:'#fff', marginBottom:'auto', display:'block' }}>
-          Every<span style={{ color:'#B7DEC9' }}>Giving</span>
+      <div className="auth-left" style={{ background: 'var(--surface-alt)', display: 'flex', flexDirection: 'column' as const, padding: '32px 36px', position: 'sticky' as const, top: 0, height: '100vh', overflow: 'hidden', borderRight: '1px solid var(--border)' }}>
+        <Link href="/" style={{ fontFamily: "'DM Serif Display',serif", fontSize: 22, color: 'var(--text-main)', marginBottom: 'auto', display: 'block' }}>
+          Every<span style={{ color: 'var(--primary)' }}>Giving</span>
         </Link>
-        <div style={{ flex:1, display:'flex', flexDirection:'column' as const, justifyContent:'center', paddingBottom:24 }}>
-          <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:30, color:'#fff', lineHeight:1.2, marginBottom:28 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' as const, justifyContent: 'center', paddingBottom: 24 }}>
+          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 30, color: 'var(--text-main)', lineHeight: 1.2, marginBottom: 28 }}>
             Ghana's most<br />
-            <em style={{ color:'#B7DEC9', fontStyle:'italic' }}>trusted giving platform</em>
+            <em style={{ color: 'var(--primary)', fontStyle: 'italic' }}>trusted giving platform</em>
           </h2>
-          <div style={{ display:'flex', flexDirection:'column' as const, gap:10, marginBottom:32 }}>
-            {['Every campaign identity-verified','Funds held in milestones until proof submitted','MTN · Vodafone · AirtelTigo built in','2.5% + ₵0.50 — transparent fees always'].map((t,i) => (
-              <div key={i} style={{ display:'flex', alignItems:'flex-start', gap:10 }}>
-                <span style={{ color:'#B7DEC9', fontWeight:700, fontSize:13, flexShrink:0 }}>✓</span>
-                <span style={{ fontSize:13, color:'rgba(255,255,255,.65)', lineHeight:1.5 }}>{t}</span>
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 10, marginBottom: 32 }}>
+            {['Every campaign identity-verified', 'Funds held in milestones until proof submitted', 'MTN · Vodafone · AirtelTigo built in', '2.5% + ₵0.50 — transparent fees always'].map((t, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>✓</span>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{t}</span>
               </div>
             ))}
           </div>
-          <div style={{ background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', borderRadius:12, padding:'18px 16px' }}>
-            <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:14, color:'#fff', lineHeight:1.65, fontStyle:'italic', marginBottom:14 }}>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '18px 16px' }}>
+            <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: 14, color: 'var(--text-main)', lineHeight: 1.65, fontStyle: 'italic', marginBottom: 14 }}>
               "I raised ₵18,500 in three weeks. Strangers donated because they could see my identity was verified."
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-              <div style={{ width:32, height:32, borderRadius:'50%', background:'#0A6B4B', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'#fff', flexShrink:0 }}>AK</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0 }}>AK</div>
               <div>
-                <div style={{ fontSize:12, fontWeight:600, color:'#fff' }}>Ama Korantema</div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,.4)', marginTop:1 }}>Accra · Medical campaign</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>Ama Korantema</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>Accra · Medical campaign</div>
               </div>
             </div>
           </div>
         </div>
-        <div style={{ fontSize:11, color:'rgba(255,255,255,.25)', paddingTop:16 }}>© 2026 EveryGiving · Built in Ghana 🇬🇭</div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', paddingTop: 16 }}>© 2026 EveryGiving · Built in Ghana 🇬🇭</div>
       </div>
 
       {/* RIGHT PANEL */}
-      <div style={{ background:'#FDFAF5', display:'flex', alignItems:'center', justifyContent:'center', padding:'40px 24px', minHeight:'100vh' }}>
-        <div style={{ width:'100%', maxWidth:420 }}>
+      <div style={{ background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', minHeight: '100vh' }}>
+        <div style={{ width: '100%', maxWidth: 420 }}>
           {showBack && (
-            <Link href="/" style={{ fontSize:13, color:'#8A8A82', display:'inline-block', marginBottom:28 }}>← Back to EveryGiving</Link>
+            <Link href="/" style={{ fontSize: 13, color: 'var(--text-muted)', display: 'inline-block', marginBottom: 28 }}>← Back to EveryGiving</Link>
           )}
-          <div style={{ marginBottom:28 }}>
-            <h1 style={{ fontFamily:"'DM Serif Display',serif", fontSize:28, color:'#1A1A18', marginBottom:6 }}>{title}</h1>
-            {sub && <p style={{ fontSize:14, color:'#8A8A82', lineHeight:1.6 }}>{sub}</p>}
+          <div style={{ marginBottom: 28 }}>
+            <h1 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 28, color: 'var(--text-main)', marginBottom: 6 }}>{title}</h1>
+            {sub && <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6 }}>{sub}</p>}
           </div>
           {children}
         </div>
@@ -73,11 +73,11 @@ export function AuthLayout({ children, title, sub, showBack = true }: {
 
 export function Field({ label, error, hint, children }: { label?: string; error?: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom:16 }}>
-      {label && <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#4A4A44', marginBottom:6 }}>{label}</label>}
+    <div style={{ marginBottom: 16 }}>
+      {label && <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-main)', opacity: 0.8, marginBottom: 6 }}>{label}</label>}
       {children}
-      {error && <div style={{ fontSize:11, color:'#C0392B', marginTop:5 }}>{error}</div>}
-      {hint && !error && <div style={{ fontSize:11, color:'#8A8A82', marginTop:5, lineHeight:1.5 }}>{hint}</div>}
+      {error && <div style={{ fontSize: 11, color: '#C0392B', marginTop: 5 }}>{error}</div>}
+      {hint && !error && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 5, lineHeight: 1.5 }}>{hint}</div>}
     </div>
   )
 }
@@ -87,11 +87,11 @@ export function Field({ label, error, hint, children }: { label?: string; error?
 export function Input({ prefix, suffix, error, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { prefix?: React.ReactNode; suffix?: React.ReactNode; error?: string }) {
   const [focused, setFocused] = useState(false)
   return (
-    <div style={{ display:'flex', alignItems:'center', gap:8, background:'#fff', border:`1.5px solid ${focused?'#0A6B4B':error?'#C0392B':'#E8E4DC'}`, borderRadius:10, padding:'10px 12px', transition:'all .15s', boxShadow:focused?'0 0 0 3px rgba(10,107,75,.08)':'none' }}>
-      {prefix && <span style={{ fontSize:13, color:'#8A8A82', flexShrink:0 }}>{prefix}</span>}
-      <input {...props} style={{ flex:1, border:'none', outline:'none', fontSize:14, fontFamily:"'DM Sans',sans-serif", color:'#1A1A18', background:'transparent', minWidth:0 }}
-        onFocus={e=>{setFocused(true);props.onFocus?.(e)}} onBlur={e=>{setFocused(false);props.onBlur?.(e)}} />
-      {suffix && <span style={{ flexShrink:0 }}>{suffix}</span>}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--surface)', border: `1.5px solid ${focused ? 'var(--primary)' : error ? '#C0392B' : 'var(--border)'}`, borderRadius: 10, padding: '10px 12px', transition: 'all .15s', boxShadow: focused ? '0 0 0 3px var(--primary-light)' : 'none' }}>
+      {prefix && <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0 }}>{prefix}</span>}
+      <input {...props} style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14, fontFamily: "'DM Sans',sans-serif", color: 'var(--text-main)', background: 'transparent', minWidth: 0 }}
+        onFocus={e => { setFocused(true); props.onFocus?.(e) }} onBlur={e => { setFocused(false); props.onBlur?.(e) }} />
+      {suffix && <span style={{ flexShrink: 0 }}>{suffix}</span>}
     </div>
   )
 }
@@ -100,10 +100,10 @@ export function Input({ prefix, suffix, error, ...props }: React.InputHTMLAttrib
 
 export function Divider({ text }: { text: string }) {
   return (
-    <div style={{ display:'flex', alignItems:'center', gap:12, margin:'20px 0' }}>
-      <div style={{ flex:1, height:1, background:'#E8E4DC' }} />
-      <span style={{ fontSize:12, color:'#8A8A82', flexShrink:0 }}>{text}</span>
-      <div style={{ flex:1, height:1, background:'#E8E4DC' }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
+      <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+      <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>{text}</span>
+      <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
     </div>
   )
 }
@@ -150,11 +150,11 @@ export function OTPInput({ length=6, onComplete }: { length?: number; onComplete
     if (pasted.length===length) onComplete(pasted)
   }
   return (
-    <div style={{ display:'flex', gap:8, justifyContent:'center' }}>
-      {Array(length).fill(null).map((_,i) => (
-        <input key={i} ref={el=>{ inputs.current[i]=el }} type="text" inputMode="numeric" maxLength={1} value={values[i]}
-          onChange={e=>handleChange(i,e.target.value)} onKeyDown={e=>handleKeyDown(i,e)} onPaste={handlePaste}
-          style={{ width:44, height:52, textAlign:'center' as const, fontSize:20, fontWeight:700, fontFamily:"'DM Sans',sans-serif", border:`1.5px solid ${values[i]?'#0A6B4B':'#E8E4DC'}`, borderRadius:10, background:values[i]?'#E8F5EF':'#fff', color:'#1A1A18', outline:'none', transition:'all .15s' }} />
+    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+      {Array(length).fill(null).map((_, i) => (
+        <input key={i} ref={el => { inputs.current[i] = el }} type="text" inputMode="numeric" maxLength={1} value={values[i]}
+          onChange={e => handleChange(i, e.target.value)} onKeyDown={e => handleKeyDown(i, e)} onPaste={handlePaste}
+          style={{ width: 44, height: 52, textAlign: 'center' as const, fontSize: 20, fontWeight: 700, fontFamily: "'DM Sans',sans-serif", border: `1.5px solid ${values[i] ? 'var(--primary)' : 'var(--border)'}`, borderRadius: 10, background: values[i] ? 'var(--primary-light)' : 'var(--surface)', color: 'var(--text-main)', outline: 'none', transition: 'all .15s' }} />
       ))}
     </div>
   )
@@ -164,8 +164,10 @@ export function OTPInput({ length=6, onComplete }: { length?: number; onComplete
 
 export function PrimaryBtn({ children, loading, disabled, onClick, type='button' }: { children: React.ReactNode; loading?: boolean; disabled?: boolean; onClick?: ()=>void; type?: 'button'|'submit' }) {
   return (
-    <button type={type} style={{ display:'block', width:'100%', padding:13, background:'#0A6B4B', color:'#fff', borderRadius:10, fontSize:14, fontWeight:600, border:'none', cursor:loading||disabled?'default':'pointer', textAlign:'center' as const, fontFamily:"'DM Sans',sans-serif", transition:'background .15s', opacity:loading||disabled?.7:1 }}
-      onClick={onClick} disabled={!!(loading||disabled)}>
+    <button type={type} style={{ display: 'block', width: '100%', padding: 13, background: 'var(--primary)', color: '#fff', borderRadius: 10, fontSize: 14, fontWeight: 600, border: 'none', cursor: loading || disabled ? 'default' : 'pointer', textAlign: 'center' as const, fontFamily: "'DM Sans',sans-serif", transition: 'all .15s', opacity: loading || disabled ? .7 : 1 }}
+      onMouseEnter={e => !disabled && !loading && (e.currentTarget.style.background = 'var(--primary-dark)')}
+      onMouseLeave={e => !disabled && !loading && (e.currentTarget.style.background = 'var(--primary)')}
+      onClick={onClick} disabled={!!(loading || disabled)}>
       {children}
     </button>
   )

@@ -4,11 +4,11 @@ import type { Campaign } from '@/types'
 
 const CATEGORY_COLORS: Record<string, string> = {
   medical: 'bg-primary-light',
-  education: 'bg-blue-50 dark:bg-blue-900/20',
-  church: 'bg-indigo-50 dark:bg-indigo-900/20',
-  emergency: 'bg-red-50 dark:bg-red-900/20',
-  business: 'bg-amber-50 dark:bg-amber-900/20',
-  community: 'bg-purple-50 dark:bg-purple-900/20',
+  education: 'bg-blue-50 dark:bg-blue-900/10',
+  church: 'bg-indigo-50 dark:bg-indigo-900/10',
+  emergency: 'bg-red-50 dark:bg-red-900/10',
+  business: 'bg-amber-50 dark:bg-amber-900/10',
+  community: 'bg-purple-50 dark:bg-purple-900/10',
 }
 
 const CATEGORY_EMOJI: Record<string, string> = {

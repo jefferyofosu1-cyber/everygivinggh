@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
 
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex flex-col items-center gap-3">
-            <NextImage src="/logo.jpeg" alt="EveryGiving" width={56} height={56} className="rounded-xl" />
+            <NextImage src="/logo.png" alt="EveryGiving" width={56} height={56} className="rounded-xl" />
             <span className="font-nunito font-black text-2xl"><span className="text-[#02A95C]">Every</span><span className="text-white">Giving</span></span>
           </Link>
           <p className="text-white/30 text-xs mt-1 tracking-widest font-mono uppercase">Admin Access</p>

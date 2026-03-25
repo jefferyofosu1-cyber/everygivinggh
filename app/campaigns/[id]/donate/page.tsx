@@ -60,7 +60,7 @@ function StepAmount({ mode, setMode, amount, setAmount, currency, setCurrency, o
 
       {mode==='diaspora' && (
         <div style={{marginBottom:16}}>
-          <label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:8}}>Currency</label>
+          <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:8}}>Currency</label>
           <div style={{display:'flex',gap:6}}>
             {CURRENCIES.map(c=>(
               <button key={c.code} style={{flex:1,padding:'9px 4px',borderRadius:8,border:`1.5px solid ${currency.code===c.code?'var(--primary)':'var(--border)'}`,background:currency.code===c.code?'var(--primary-light)':'var(--surface)',cursor:'pointer',fontSize:13,fontWeight:currency.code===c.code?700:400,color:currency.code===c.code?'var(--primary)':'var(--text-main)',transition:'all .15s'}} onClick={()=>setCurrency(c)}>
@@ -72,7 +72,7 @@ function StepAmount({ mode, setMode, amount, setAmount, currency, setCurrency, o
       )}
 
       <div style={{marginBottom:6}}>
-        <label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:8}}>
+        <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:8}}>
           {mode==='local'?'Choose amount (₵)':(`Amount (${currency.symbol})`)}
         </label>
         {mode==='local' ? (
@@ -99,12 +99,15 @@ function StepAmount({ mode, setMode, amount, setAmount, currency, setCurrency, o
       </div>
 
       {amount >= 50 && (
-        <div style={{fontSize:13,color:'#0A6B4B',fontWeight:500,fontStyle:'italic',lineHeight:1.6,padding:'10px 0 0',animation:'fadeup .3s ease both'}}>
+        <div style={{fontSize:13,color:'var(--primary)',fontWeight:500,fontStyle:'italic',lineHeight:1.6,padding:'10px 0 0',animation:'fadeup .3s ease both'}}>
           {mode==='local'?'₵':currency.symbol}{amount} {getImpact(mode==='local'?amount:ghs)}
         </div>
       )}
 
-      <button style={{display:'block',width:'100%',padding:14,background:'#0A6B4B',color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:700,cursor:'pointer',opacity:amount>=50?1:.4,transition:'opacity .15s',marginTop:20}} disabled={amount<50} onClick={onNext}>
+      <button style={{display:'block',width:'100%',padding:14,background:'var(--primary)',color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:700,cursor:'pointer',opacity:amount>=50?1:.4,transition:'all .15s',marginTop:20}} 
+        onMouseEnter={e => amount >= 50 && (e.currentTarget.style.background = 'var(--primary-dark)')}
+        onMouseLeave={e => amount >= 50 && (e.currentTarget.style.background = 'var(--primary)')}
+        disabled={amount<50} onClick={onNext}>
         Continue →
       </button>
       {amount>0 && amount<50 && <div style={{fontSize:11,color:'#B85C00',textAlign:'center',marginTop:7}}>Minimum donation is {mode==='local'?'₵':currency.symbol}50</div>}
@@ -129,12 +132,12 @@ function StepPayment({ mode, amount, currency, onNext, onBack, paymentData, setP
 
   return (
     <div>
-      <button style={{fontSize:12,color:'#8A8A82',background:'transparent',border:'none',padding:0,cursor:'pointer',marginBottom:16}} onClick={onBack}>← Back</button>
+      <button style={{fontSize:12,color:'var(--text-muted)',background:'transparent',border:'none',padding:0,cursor:'pointer',marginBottom:16}} onClick={onBack}>← Back</button>
 
       {mode==='local' ? (
         <div>
           <div style={{marginBottom:16}}>
-            <label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:8}}>Mobile money network</label>
+            <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:8}}>Mobile money network</label>
             <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:7}}>
               {NETWORKS.map(n=>(
                 <button key={n.id} style={{padding:11,borderRadius:9,border:`2px solid ${network.id===n.id?n.color:'var(--border)'}`,background:network.id===n.id?n.color+'18':'var(--surface)',cursor:'pointer',fontSize:12,fontWeight:network.id===n.id?700:400,color:network.id===n.id?n.color:'var(--text-main)',transition:'all .15s'}} onClick={()=>setNetwork(n)}>
@@ -144,12 +147,12 @@ function StepPayment({ mode, amount, currency, onNext, onBack, paymentData, setP
             </div>
           </div>
           <div style={{marginBottom:12}}>
-            <label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:6}}>Email address (for receipt)</label>
-            <input style={{width:'100%',padding:'11px 13px',border:'1.5px solid #E8E4DC',borderRadius:9,fontSize:15,background:'#fff',outline:'none',fontFamily:"'DM Sans',sans-serif"}} type="email" placeholder="kofi@example.com" value={paymentData.email || ''} onChange={e=>setPaymentData({...paymentData, email: e.target.value})}/>
+            <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:6}}>Email address (for receipt)</label>
+            <input style={{width:'100%',padding:'11px 13px',border:'1.5px solid var(--border)',borderRadius:9,fontSize:15,background:'var(--surface)',color:'var(--text-main)',outline:'none',fontFamily:"'DM Sans',sans-serif"}} type="email" placeholder="kofi@example.com" value={paymentData.email || ''} onChange={e=>setPaymentData({...paymentData, email: e.target.value})}/>
           </div>
           <div style={{marginBottom:20}}>
-            <label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:6}}>Your {network.name} number</label>
-            <input style={{width:'100%',padding:'11px 13px',border:'1.5px solid #E8E4DC',borderRadius:9,fontSize:15,background:'#fff',outline:'none',fontFamily:"'DM Sans',sans-serif"}} type="tel" placeholder="024 XXX XXXX" value={phone} onChange={e=>setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}/>
+            <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:6}}>Your {network.name} number</label>
+            <input style={{width:'100%',padding:'11px 13px',border:'1.5px solid var(--border)',borderRadius:9,fontSize:15,background:'var(--surface)',color:'var(--text-main)',outline:'none',fontFamily:"'DM Sans',sans-serif"}} type="tel" placeholder="024 XXX XXXX" value={phone} onChange={e=>setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}/>
             {phone.length>0 && !validLocal && <div style={{fontSize:11,color:'#C0392B',marginTop:4}}>Enter a valid 10-digit Ghana number starting with 0</div>}
           </div>
           <div style={{background:'var(--surface-alt)',borderRadius:9,padding:'11px 13px',marginBottom:20}}>
@@ -160,7 +163,10 @@ function StepPayment({ mode, amount, currency, onNext, onBack, paymentData, setP
               <span style={{color:'var(--text-muted)'}}>Via</span><span style={{fontWeight:600}}>{network.name}</span>
             </div>
           </div>
-          <button style={{display:'block',width:'100%',padding:13,background:'#0A6B4B',color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:700,cursor:'pointer',opacity:validLocal && paymentData.email ? 1 : .4,transition:'opacity .15s'}} disabled={!validLocal || !paymentData.email} onClick={()=>onNext({...paymentData, network:network.id, phone})}>
+          <button style={{display:'block',width:'100%',padding:13,background:'var(--primary)',color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:700,cursor:'pointer',opacity:validLocal && paymentData.email ? 1 : .4,transition:'all .15s'}} 
+            onMouseEnter={e => validLocal && paymentData.email && (e.currentTarget.style.background = 'var(--primary-dark)')}
+            onMouseLeave={e => validLocal && paymentData.email && (e.currentTarget.style.background = 'var(--primary)')}
+            disabled={!validLocal || !paymentData.email} onClick={()=>onNext({...paymentData, network:network.id, phone})}>
             Donate ₵{amount.toLocaleString()} →
           </button>
         </div>
@@ -171,14 +177,17 @@ function StepPayment({ mode, amount, currency, onNext, onBack, paymentData, setP
             <div style={{fontSize:12,color:'#4A4A44',lineHeight:1.65}}>You'll be charged {currency.symbol}{amount} {currency.code}. The organiser receives the GHS equivalent same day after our team processes it.</div>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:12}}>
-            <div><label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:5}}>First name</label><input style={{width:'100%',padding:'10px 12px',border:'1.5px solid #E8E4DC',borderRadius:9,fontSize:13,outline:'none'}} value={firstName} onChange={e=>setFirstName(e.target.value)}/></div>
-            <div><label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:5}}>Last name</label><input style={{width:'100%',padding:'10px 12px',border:'1.5px solid #E8E4DC',borderRadius:9,fontSize:13,outline:'none'}} value={lastName} onChange={e=>setLastName(e.target.value)}/></div>
+            <div><label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:5}}>First name</label><input style={{width:'100%',padding:'10px 12px',border:'1.5px solid var(--border)',borderRadius:9,fontSize:13,background:'var(--surface)',color:'var(--text-main)',outline:'none'}} value={firstName} onChange={e=>setFirstName(e.target.value)}/></div>
+            <div><label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:5}}>Last name</label><input style={{width:'100%',padding:'10px 12px',border:'1.5px solid var(--border)',borderRadius:9,fontSize:13,background:'var(--surface)',color:'var(--text-main)',outline:'none'}} value={lastName} onChange={e=>setLastName(e.target.value)}/></div>
           </div>
           <div style={{marginBottom:20}}>
-            <label style={{display:'block',fontSize:12,fontWeight:600,color:'#4A4A44',marginBottom:5}}>International phone number (with country code)</label>
-            <input style={{width:'100%',padding:'10px 12px',border:'1.5px solid #E8E4DC',borderRadius:9,fontSize:13,outline:'none'}} placeholder="+44 7700 000000" value={intlPhone} onChange={e=>setIntlPhone(e.target.value)}/>
+            <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-main)',opacity:0.8,marginBottom:5}}>International phone number (with country code)</label>
+            <input style={{width:'100%',padding:'10px 12px',border:'1.5px solid var(--border)',borderRadius:9,fontSize:13,background:'var(--surface)',color:'var(--text-main)',outline:'none'}} placeholder="+44 7700 000000" value={intlPhone} onChange={e=>setIntlPhone(e.target.value)}/>
           </div>
-          <button style={{display:'block',width:'100%',padding:13,background:'#0A6B4B',color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:700,cursor:'pointer',opacity:validDiaspora?1:.4,transition:'opacity .15s'}} disabled={!validDiaspora} onClick={()=>onNext({firstName,lastName,intlPhone})}>
+          <button style={{display:'block',width:'100%',padding:13,background:'var(--primary)',color:'#fff',border:'none',borderRadius:10,fontSize:15,fontWeight:700,cursor:'pointer',opacity:validDiaspora?1:.4,transition:'all .15s'}} 
+            onMouseEnter={e => validDiaspora && (e.currentTarget.style.background = 'var(--primary-dark)')}
+            onMouseLeave={e => validDiaspora && (e.currentTarget.style.background = 'var(--primary)')}
+            disabled={!validDiaspora} onClick={()=>onNext({firstName,lastName,intlPhone})}>
             Pay {currency.symbol}{amount} via Zeepay →
           </button>
         </div>
@@ -254,17 +263,19 @@ function StepProcessing({
       ` }} />
       {isInitializing ? (
         <>
-          <div style={{width:48,height:48,margin:'0 auto 24px',borderRadius:'50%',border:'3px solid #E8E4DC',borderTopColor:'#0A6B4B',animation:'spin 1s linear infinite'}}/>
-          <div style={{fontFamily:"'DM Serif Display',serif",fontSize:24,color:'#1A1A18',marginBottom:8}}>Securing your donation...</div>
-          <div style={{fontSize:14,color:'#8A8A82'}}>You are being redirected to our secure payment partner, Paystack.</div>
+          <div style={{width:48,height:48,margin:'0 auto 24px',borderRadius:'50%',border:'3px solid var(--border)',borderTopColor:'var(--primary)',animation:'spin 1s linear infinite'}}/>
+          <div style={{fontFamily:"'DM Serif Display',serif",fontSize:24,color:'var(--text-main)',marginBottom:8}}>Securing your donation...</div>
+          <div style={{fontSize:14,color:'var(--text-muted)'}}>You are being redirected to our secure payment partner, Paystack.</div>
         </>
       ) : (
         <>
           <div style={{fontSize:48,marginBottom:16}}></div>
           <div style={{fontFamily:"'DM Serif Display',serif",fontSize:22,color:'#C0392B',marginBottom:12}}>Payment failed to start</div>
-          <div style={{fontSize:14,color:'#4A4A44',lineHeight:1.6,marginBottom:24,maxWidth:320,margin:'0 auto'}}>{error}</div>
+          <div style={{fontSize:14,color:'var(--text-main)',lineHeight:1.6,marginBottom:24,maxWidth:320,margin:'0 auto'}}>{error}</div>
           <button 
-            style={{padding:'12px 24px',background:'#F5F4F0',border:'1px solid #E8E4DC',borderRadius:10,fontSize:14,fontWeight:600,cursor:'pointer'}}
+            style={{padding:'12px 24px',background:'var(--surface-alt)',border:'1px solid var(--border)',color:'var(--text-main)',borderRadius:10,fontSize:14,fontWeight:600,cursor:'pointer',transition:'background .15s'}}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--border)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'var(--surface-alt)'}
             onClick={() => window.location.reload()}
           >
             Try again
@@ -399,10 +410,10 @@ export default function DonatePage({ params }: { params: { id: string } }) {
             <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:22}}>
               {[{n:1,l:'Amount'},{n:2,l:'Payment'},{n:3,l:'Confirm'}].map((s,i)=>(
                 <div key={s.n} style={{display:'flex',alignItems:'center',gap:8}}>
-                  {i > 0 ? <div style={{height:1,width:18,background:step>i?'#0A6B4B':'#E8E4DC'}}/> : null}
+                  {i > 0 ? <div style={{height:1,width:18,background:step>i?'var(--primary)':'var(--border)'}}/> : null}
                   <div style={{display:'flex',alignItems:'center',gap:5}}>
-                    <div style={{width:22,height:22,borderRadius:'50%',background:step===s.n?'#0A6B4B':step>s.n?'#B7DEC9':'#E8E4DC',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,color:step>=s.n?'#fff':'#8A8A82',transition:'all .2s'}}>{step>s.n?'✓':s.n}</div>
-                    <div style={{fontSize:11,fontWeight:step===s.n?700:400,color:step===s.n?'#1A1A18':'#8A8A82'}}>{s.l}</div>
+                    <div style={{width:22,height:22,borderRadius:'50%',background:step===s.n?'var(--primary)':step>s.n?'var(--primary-light)':'var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,color:step>=s.n?'var(--text-main)':'var(--text-muted)',transition:'all .2s'}}>{step>s.n?'✓':s.n}</div>
+                    <div style={{fontSize:11,fontWeight:step===s.n?700:400,color:step===s.n?'var(--text-main)':'var(--text-muted)'}}>{s.l}</div>
                   </div>
                 </div>
               ))}
@@ -445,7 +456,7 @@ export default function DonatePage({ params }: { params: { id: string } }) {
               ))}
             </div>
 
-            <div style={{fontSize:10,color:'#C8C4BC',textAlign:'center',lineHeight:1.5}}>Payments powered by Paystack and Zeepay</div>
+            <div style={{fontSize:10,color:'var(--text-muted)',textAlign:'center',lineHeight:1.5}}>Payments powered by Paystack and Zeepay</div>
           </div>
         )}
       </div>

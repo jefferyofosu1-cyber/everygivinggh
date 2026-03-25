@@ -7,7 +7,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <>
       <Navbar />
-      <div style={{ background: '#F5F4F0', minHeight: 'calc(100vh - 64px)' }}>
+      <div style={{ background: 'var(--surface-alt)', minHeight: 'calc(100vh - 64px)' }}>
         {children}
       </div>
       <Footer />

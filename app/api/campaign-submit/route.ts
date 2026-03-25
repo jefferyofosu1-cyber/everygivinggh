@@ -33,7 +33,7 @@ function confirmEmail(name: string, title: string, tier: string, feeAmount: numb
     <div style="color:rgba(255,255,255,.4);font-size:11px;margin-top:4px;text-transform:uppercase;letter-spacing:.1em">Ghana's verified crowdfunding platform</div>
   </div>
   <div style="background:#02A95C;padding:24px 40px;text-align:center">
-    <div style="font-size:32px;margin-bottom:8px">🎉</div>
+    <div style="font-size:32px;margin-bottom:8px"></div>
     <div style="color:white;font-size:22px;font-weight:900">Campaign submitted, ${name}!</div>
   </div>
   <div style="background:white;padding:40px">
@@ -42,15 +42,15 @@ function confirmEmail(name: string, title: string, tier: string, feeAmount: numb
     </p>
     <div style="background:#F0FDF6;border:1.5px solid rgba(2,169,92,.2);border-radius:16px;padding:20px;margin-bottom:24px">
       <div style="font-size:12px;font-weight:800;color:#1A2B3C;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">What happens next</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px"><span>🔍</span><span style="font-size:13px;color:#475569">Our team reviews your campaign and identity documents</span></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px"><span>✅</span><span style="font-size:13px;color:#475569">Once approved, your campaign goes live and you get a confirmation email</span></div>
-      <div style="display:flex;gap:10px"><span>📱</span><span style="font-size:13px;color:#475569">Share on WhatsApp to start receiving donations</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px"><span></span><span style="font-size:13px;color:#475569">Our team reviews your campaign and identity documents</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px"><span></span><span style="font-size:13px;color:#475569">Once approved, your campaign goes live and you get a confirmation email</span></div>
+      <div style="display:flex;gap:10px"><span></span><span style="font-size:13px;color:#475569">Share on WhatsApp to start receiving donations</span></div>
     </div>
     <div style="background:#F8FAFC;border-radius:12px;padding:16px;margin-bottom:24px">
       <div style="font-size:12px;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Campaign details</div>
       <div style="font-size:14px;color:#1A2B3C;font-weight:700">${title}</div>
       <div style="font-size:12px;color:#64748B;margin-top:4px">Verification tier: ${tier}</div>
-      ${feeDeferred && feeAmount > 0 ? `<div style="font-size:12px;color:#D97706;margin-top:8px;padding:8px 12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A">💡 Your verification fee of ₵${feeAmount} will be deducted from your first donations  -  you pay nothing today.</div>` : ''}
+      ${feeDeferred && feeAmount > 0 ? `<div style="font-size:12px;color:#D97706;margin-top:8px;padding:8px 12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A">Your verification fee of ₵${feeAmount} will be deducted from your first donations  -  you pay nothing today.</div>` : ''}
     </div>
     <p style="font-size:13px;color:#94A3B8;text-align:center">Questions? Reply to this email  -  we are here to help.<br>
       <a href="${APP_URL}/help" style="color:#02A95C;text-decoration:none;font-weight:600">Visit Help Centre</a></p>
@@ -72,7 +72,7 @@ function adminAlertEmail(name: string, email: string, title: string, category: s
 <div style="max-width:540px;margin:32px auto;padding:0 16px">
   <div style="background:#1E293B;border-radius:20px;overflow:hidden">
     <div style="background:#02A95C;padding:20px 32px">
-      <div style="color:white;font-size:18px;font-weight:900">🚨 New campaign to review</div>
+      <div style="color:white;font-size:18px;font-weight:900">New campaign to review</div>
       <div style="color:rgba(255,255,255,.7);font-size:12px;margin-top:2px">EveryGiving Admin · Action required</div>
     </div>
     <div style="padding:28px 32px">
@@ -207,7 +207,7 @@ export async function POST(req: NextRequest) {
 
     sendEmail({ to: user.email!, subject: `Campaign received  -  "${title}" is under review`, html: confirmEmail(name, title, tier || 'Basic', feeAmount, feeDeferred) })
     if (ADMIN_EMAIL) {
-      sendEmail({ to: ADMIN_EMAIL, subject: `🚨 New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, String(goalAmount), tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign.id) })
+      sendEmail({ to: ADMIN_EMAIL, subject: `New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, String(goalAmount), tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign.id) })
     }
 
     return NextResponse.json({ success: true, campaignId: campaign.id })

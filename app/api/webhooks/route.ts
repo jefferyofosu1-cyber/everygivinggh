@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { getAdminClient } from '@/lib/supabase-admin'
+import { NotificationService } from '@/lib/notifications'
 
 // EveryGiving Paystack Webhook Handler
 // Listens for 'charge.success', 'transfer.success', 'transfer.failed' Events
@@ -97,9 +98,20 @@ export async function POST(req: NextRequest) {
           .eq('event_type', event)
       }
 
-      // Step 3: Send receipt email here via Brevo or Resend (optional)
+      // Step 3: Send donation receipt email
       if (data.customer?.email && process.env.BREVO_API_KEY) {
-        // e.g. await sendDonorReceipt(data.customer.email, amountGHS, data.metadata?.campaign_title)
+        try {
+          await NotificationService.sendDonationConfirmation(
+            data.customer.email,
+            data.customer.first_name || data.customer.last_name || 'Valued Supporter',
+            campaignId,
+            data.metadata?.campaign_title || 'Campaign',
+            data.amount || 0,
+            data.reference || '',
+          )
+        } catch (emailErr) {
+          console.error('Donation receipt email failed:', emailErr)
+        }
       }
 
     // ━━━━━ DONATION FAILED ━━━━━

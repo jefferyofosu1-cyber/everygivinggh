@@ -63,17 +63,68 @@ export async function PATCH(req: NextRequest) {
         if (fundraiserEmail) {
           const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
           if (BREVO_API_KEY) {
-            try {
+          try {
+              const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://everygiving.org'
+              const isApproved = body.status === 'approved'
+              const emailSubject = isApproved
+                ? `Your campaign "${campaign.title}" is live!`
+                : `Your campaign "${campaign.title}" — update from EveryGiving`
+
+              const emailHtml = isApproved
+                ? `<!DOCTYPE html><html><body style="margin:0;background:#F1F5F9;font-family:'Helvetica Neue',Arial,sans-serif;">
+<div style="max-width:580px;margin:32px auto;padding:0 16px;">
+  <div style="background:#1A2B3C;border-radius:20px 20px 0 0;padding:32px 40px;text-align:center;">
+    <div style="font-size:28px;font-weight:900;"><span style="color:#02A95C;">Every</span><span style="color:white;">Giving</span></div>
+  </div>
+  <div style="background:#02A95C;padding:28px 40px;text-align:center;">
+    <div style="color:white;font-size:24px;font-weight:900;">Your campaign is live, ${fundraiserName}!</div>
+  </div>
+  <div style="background:white;padding:40px;">
+    <p style="font-size:15px;color:#475569;line-height:1.7;margin-bottom:24px;">
+      Great news — your campaign <strong style="color:#1A2B3C;">"${campaign.title}"</strong> has been <strong style="color:#02A95C;">approved</strong> and is now live on EveryGiving.
+    </p>
+    ${note ? `<div style="background:#F8FAFC;border-radius:12px;padding:16px;margin-bottom:24px;"><div style="font-size:12px;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Note from our team</div><div style="font-size:14px;color:#475569;">${note}</div></div>` : ''}
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${APP_URL}/campaigns" style="display:inline-block;background:#02A95C;color:white;font-weight:900;font-size:15px;padding:16px 44px;border-radius:9999px;text-decoration:none;">View your campaign</a>
+    </div>
+  </div>
+  <div style="background:#1A2B3C;border-radius:0 0 20px 20px;padding:20px 40px;text-align:center;">
+    <div style="font-size:18px;font-weight:900;"><span style="color:#02A95C;">Every</span><span style="color:white;">Giving</span></div>
+  </div>
+</div></body></html>`
+                : `<!DOCTYPE html><html><body style="margin:0;background:#F1F5F9;font-family:'Helvetica Neue',Arial,sans-serif;">
+<div style="max-width:580px;margin:32px auto;padding:0 16px;">
+  <div style="background:#1A2B3C;border-radius:20px 20px 0 0;padding:32px 40px;text-align:center;">
+    <div style="font-size:28px;font-weight:900;"><span style="color:#02A95C;">Every</span><span style="color:white;">Giving</span></div>
+  </div>
+  <div style="background:#EF4444;padding:28px 40px;text-align:center;">
+    <div style="color:white;font-size:22px;font-weight:900;">Campaign not approved — ${fundraiserName}</div>
+  </div>
+  <div style="background:white;padding:40px;">
+    <p style="font-size:15px;color:#475569;line-height:1.7;margin-bottom:24px;">
+      We reviewed your campaign <strong style="color:#1A2B3C;">"${campaign.title}"</strong> and unfortunately we were not able to approve it at this time.
+    </p>
+    <div style="background:#FEF2F2;border:1.5px solid rgba(239,68,68,0.2);border-radius:16px;padding:20px;margin-bottom:24px;">
+      <div style="font-size:12px;font-weight:800;color:#1A2B3C;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Reason</div>
+      <div style="font-size:14px;color:#475569;line-height:1.6;">${note || 'Please contact us at business@everygiving.org for more details.'}</div>
+    </div>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="mailto:business@everygiving.org" style="display:inline-block;background:#1A2B3C;color:white;font-weight:900;font-size:14px;padding:14px 36px;border-radius:9999px;text-decoration:none;">Reply to appeal</a>
+    </div>
+  </div>
+  <div style="background:#1A2B3C;border-radius:0 0 20px 20px;padding:20px 40px;text-align:center;">
+    <div style="font-size:18px;font-weight:900;"><span style="color:#02A95C;">Every</span><span style="color:white;">Giving</span></div>
+  </div>
+</div></body></html>`
+
               await fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: { 'api-key': BREVO_API_KEY, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   sender: { name: 'EveryGiving', email: 'business@everygiving.org' },
                   to: [{ email: fundraiserEmail, name: fundraiserName }],
-                  subject: body.status === 'approved'
-                    ? `Your campaign "${campaign.title}" is live!`
-                    : `Your campaign "${campaign.title}" — update from EveryGiving`,
-                  htmlContent: `<p>Your campaign "${sanitiseString(campaign.title)}" has been ${body.status}.</p>${note ? `<p>Note: ${note}</p>` : ''}`,
+                  subject: emailSubject,
+                  htmlContent: emailHtml,
                 }),
               })
             } catch (e) {

@@ -222,7 +222,7 @@ export class NotificationService {
             </div>
 
             <p>You can view the campaign and follow progress here:</p>
-            <p><a href="${campaignLink}" class="cta">👉 View Campaign</a></p>
+            <p><a href="${campaignLink}" class="cta">View Campaign</a></p>
 
             <p>If you'd like to do even more, consider sharing this campaign with your network.</p>
 
@@ -392,7 +392,7 @@ export class NotificationService {
         <div class="container">
           <div class="content">
             <div class="header">
-              <h1>${isFulFilled ? '🎉 Goal reached — thank you for making it happen' : `${campaignTitle} has reached ${milestone}%`}</h1>
+              <h1>${isFulFilled ? 'Goal reached — thank you for making it happen' : `${campaignTitle} has reached ${milestone}%`}</h1>
             </div>
 
             <p>Hi ${donorName},</p>
@@ -415,7 +415,7 @@ export class NotificationService {
               </div>
             </div>
 
-            ${!isFulFilled ? `<p><a href="${campaignLink}" class="cta">👉 View Campaign</a></p>` : ''}
+            ${!isFulFilled ? `<p><a href="${campaignLink}" class="cta">View Campaign</a></p>` : ''}
 
             <p style="margin-top: 30px;">Warm regards,<br><strong>The EveryGiving Team</strong></p>
           </div>
@@ -488,7 +488,7 @@ export class NotificationService {
             ${totalRaisedText}
 
             <p>You can view the latest progress here:</p>
-            <p><a href="${campaignLink}" class="cta">👉 View Campaign</a></p>
+            <p><a href="${campaignLink}" class="cta">View Campaign</a></p>
 
             <p>Your support continues to make a difference. Thank you for being part of this journey.</p>
 
@@ -560,7 +560,7 @@ export class NotificationService {
             <p>This may be due to a temporary issue with your payment method.</p>
 
             <p>If you'd still like to support this campaign, you can try again here:</p>
-            <p><a href="${retryUrl}" class="cta">👉 Retry Payment</a></p>
+            <p><a href="${retryUrl}" class="cta">Retry Payment</a></p>
 
             <p>If the issue persists, please check your payment details or try a different method.</p>
 
@@ -630,14 +630,14 @@ export class NotificationService {
         <div class="container">
           <div class="content">
             <div class="header">
-              <h1>You've reached a milestone! 🎉</h1>
+              <h1>You've reached a milestone!</h1>
             </div>
             <p>Hi ${fundraiserName},</p>
             <div class="milestone-box">
               <p>Congratulations! Your campaign "<strong>${campaignTitle}</strong>" has raised <strong>${formattedAmount}</strong>.</p>
             </div>
             <p>To receive these funds, you now need to set up your payout method (Bank Account or Mobile Money).</p>
-            <p><a href="${payoutLink}" class="cta">👉 Set Up Payout Method</a></p>
+            <p><a href="${payoutLink}" class="cta">Set Up Payout Method</a></p>
             <p>Once set up, you can withdraw your funds securely. Well done on your progress!</p>
             <p style="margin-top: 30px;">Best regards,<br><strong>The EveryGiving Team</strong></p>
           </div>

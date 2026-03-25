@@ -17,7 +17,7 @@ function approvedEmailHtml(name: string, title: string, note: string, appUrl: st
   </div>
 
   <div style="background:#02A95C;padding:28px 40px;text-align:center;">
-    <div style="font-size:40px;margin-bottom:8px;">🎉</div>
+    <div style="font-size:40px;margin-bottom:8px;"></div>
     <div style="color:white;font-size:24px;font-weight:900;">Your campaign is live, ${name}!</div>
   </div>
 
@@ -28,9 +28,9 @@ function approvedEmailHtml(name: string, title: string, note: string, appUrl: st
 
     <div style="background:#F0FDF6;border:1.5px solid rgba(2,169,92,0.2);border-radius:16px;padding:20px;margin-bottom:24px;">
       <div style="font-size:12px;font-weight:800;color:#1A2B3C;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">What to do now</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><span>📲</span><span style="font-size:13px;color:#475569;">Share your campaign link on WhatsApp, Facebook, and Instagram  -  the more you share, the more you raise</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><span></span><span style="font-size:13px;color:#475569;">Share your campaign link on WhatsApp, Facebook, and Instagram  -  the more you share, the more you raise</span></div>
       <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><span></span><span style="font-size:13px;color:#475569;">Message friends and family directly first  -  they are your best first donors</span></div>
-      <div style="display:flex;gap:10px;align-items:flex-start;"><span>📝</span><span style="font-size:13px;color:#475569;">Post updates as your campaign progresses  -  donors give more to campaigns that communicate</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><span></span><span style="font-size:13px;color:#475569;">Post updates as your campaign progresses  -  donors give more to campaigns that communicate</span></div>
     </div>
 
     ${note ? `

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth, sanitiseString, sanitiseEmail } from '@/lib/api-security'
+import { sanitiseString, sanitiseEmail } from '@/lib/api-security'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
 const BASE_URL = 'https://api.brevo.com/v3'
@@ -107,7 +107,7 @@ function fundraiserWelcomeEmail(name: string) {
   </div>
 
   <div class="hero-band">
-    <div style="font-size:36px;margin-bottom:10px;">🎉</div>
+    <div style="font-size:36px;margin-bottom:10px;"></div>
     <div style="color:white;font-size:24px;font-weight:900;letter-spacing:-0.5px;line-height:1.2;">
       Welcome, ${name}.<br>You're in the right place.
     </div>
@@ -151,7 +151,7 @@ function fundraiserWelcomeEmail(name: string) {
       </tr>
     </table>
 
-    <div style="font-size:15px;font-weight:800;color:#1A2B3C;margin-bottom:16px;">Your next 3 steps to go live 🚀</div>
+    <div style="font-size:15px;font-weight:800;color:#1A2B3C;margin-bottom:16px;">Your next 3 steps to go live</div>
 
     ${[
       ['1', 'Verify your identity', 'Upload your Ghana Card and take a quick selfie. The system confirms you automatically.', 'Under 10 minutes'],
@@ -271,10 +271,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'BREVO_API_KEY not set' }, { status: 500 })
     }
 
-    // Require authentication to prevent bot abuse
-    const auth = await requireAuth()
-    if (auth.error) return auth.error
-
     const body = await req.json()
     const type = sanitiseString(body.type)
     
@@ -283,11 +279,6 @@ export async function POST(req: NextRequest) {
     const firstName = sanitiseString(body.user?.firstName || body.firstName || body.name)
     const lastName = sanitiseString(body.user?.lastName || body.lastName || '')
     const phone = sanitiseString(body.user?.phone || body.phone || '')
-
-    // Verify the email matches the authenticated user to prevent spoofing
-    if (auth.user?.email && email !== auth.user.email) {
-      return NextResponse.json({ error: 'Unauthorised email subscription' }, { status: 403 })
-    }
 
     if (!email || !firstName) {
       return NextResponse.json({ error: 'Missing email or name' }, { status: 400 })

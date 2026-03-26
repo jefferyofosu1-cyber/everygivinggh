@@ -144,11 +144,11 @@ export default function HomePage() {
           <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: 'var(--text-main)', opacity: 0.8, lineHeight: 1.6, marginBottom: 40, maxWidth: 680, marginInline: 'auto' }}>
             Create a fundraiser in minutes and get support from people who care across Ghana and beyond. 100% verified. Fast & secure.
           </p>
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/create" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: 'var(--primary-dark)', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(10,107,75,0.25)', transition: 'transform 0.2s' }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/create" className="w-full sm:w-auto inline-flex items-center justify-center fontSize-15 fontWeight-700 text-white bg-primary-dark px-8 py-4 rounded-xl shadow-lg shadow-primary/25 transition-transform hover:-translate-y-px" style={{ textDecoration: 'none' }}>
               Start a fundraiser
             </Link>
-            <Link href="/donate" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: '#fff', background: 'var(--primary)', padding: '16px 32px', borderRadius: 12, textDecoration: 'none', boxShadow: '0 8px 24px rgba(2,169,92,0.25)', transition: 'transform 0.2s' }}>
+            <Link href="/donate" className="w-full sm:w-auto inline-flex items-center justify-center fontSize-15 fontWeight-700 text-white bg-primary px-8 py-4 rounded-xl shadow-lg shadow-primary/25 transition-transform hover:-translate-y-px" style={{ textDecoration: 'none' }}>
               Donate now →
             </Link>
           </div>

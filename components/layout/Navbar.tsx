@@ -207,22 +207,22 @@ export default function Navbar() {
           <ThemeSwitcher />
           {user ? (
             <>
-              <Link href="/dashboard" className="hidden md:block px-4 py-2 rounded-full text-sm font-bold transition-colors" style={{ color: 'var(--text-main)', border: '1px solid var(--border)' }}>
+              <Link href="/dashboard" className="hidden lg:block px-4 py-2 rounded-full text-sm font-bold transition-colors" style={{ color: 'var(--text-main)', border: '1px solid var(--border)' }}>
                 Dashboard
               </Link>
-              <button onClick={signOut} className="hidden md:block text-sm font-bold px-3 py-2 transition-colors" style={{ color: 'var(--text-muted)' }}>
+              <button onClick={signOut} className="hidden lg:block text-sm font-bold px-3 py-2 transition-colors" style={{ color: 'var(--text-muted)' }}>
                 Sign out
               </button>
             </>
           ) : (
-            <Link href="/auth/login" className="hidden md:block px-4 py-2 rounded-full text-sm font-bold transition-colors" style={{ color: 'var(--text-main)', border: '1px solid var(--border)' }}>
+            <Link href="/auth/login" className="hidden lg:block px-4 py-2 rounded-full text-sm font-bold transition-colors" style={{ color: 'var(--text-main)', border: '1px solid var(--border)' }}>
               Sign in
             </Link>
           )}
-          <Link href="/create" className="px-4 py-2 rounded-full text-sm font-bold text-white bg-primary hover:bg-primary-dark transition-all hover:-translate-y-px shadow-sm hover:shadow-md whitespace-nowrap">
+          <Link href="/create" className="hidden sm:inline-flex px-4 py-2 rounded-full text-sm font-bold text-white bg-primary hover:bg-primary-dark transition-all hover:-translate-y-px shadow-sm hover:shadow-md whitespace-nowrap">
             Start a campaign
           </Link>
-          <button className="md:hidden p-2 rounded-lg" style={{ color: 'var(--text-muted)' }} onClick={() => setMenuOpen(!menuOpen)}>
+          <button className="md:hidden p-2 rounded-lg ml-1" style={{ color: 'var(--text-muted)' }} onClick={() => setMenuOpen(!menuOpen)}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
             </svg>
@@ -232,26 +232,54 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden px-5 py-3 flex flex-col gap-0.5 max-h-[80vh] overflow-y-auto" style={{ borderTop: '1px solid var(--border)', background: 'var(--header-bg)' }}>
-          <Link href="/campaigns" className="flex items-center gap-2 py-2.5 text-sm font-semibold text-gray-700 border-b border-gray-50" onClick={() => setMenuOpen(false)}>
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            Search
+        <div className="md:hidden fixed inset-x-0 top-16 bottom-0 z-50 px-5 py-6 flex flex-col gap-1 overflow-y-auto animate-in slide-in-from-top duration-300" style={{ background: 'var(--header-bg)' }}>
+          <div className="flex flex-col gap-4 mb-8">
+            <Link href="/create" className="w-full py-4 rounded-2xl text-center text-white bg-primary font-nunito font-black text-sm shadow-lg shadow-primary/20" onClick={() => setMenuOpen(false)}>
+              Start a campaign
+            </Link>
+            {!user && (
+              <Link href="/auth/login" className="w-full py-4 rounded-2xl text-center font-bold text-sm border-2 border-[var(--border)]" style={{ color: 'var(--text-main)', background: 'var(--surface)' }} onClick={() => setMenuOpen(false)}>
+                Sign in to your account
+              </Link>
+            )}
+          </div>
+
+          <div className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8] mb-2 px-2">Navigation</div>
+          
+          <Link href="/campaigns" className="flex items-center justify-between p-4 rounded-2xl transition-all" style={{ background: 'var(--surface-alt)' }} onClick={() => setMenuOpen(false)}>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-lg">🔍</div>
+              <span className="text-sm font-bold text-navy dark:text-white">Search Campaigns</span>
+            </div>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
           </Link>
-          <Link href="/donate" className="py-2.5 text-sm font-semibold text-gray-700 border-b border-gray-50" onClick={() => setMenuOpen(false)}>Donate</Link>
+
+          <Link href="/donate" className="flex items-center justify-between p-4 rounded-2xl transition-all" style={{ background: 'var(--surface-alt)' }} onClick={() => setMenuOpen(false)}>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-lg">❤️</div>
+              <span className="text-sm font-bold text-navy dark:text-white">Donate Now</span>
+            </div>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </Link>
+
+          <div className="my-4 border-t border-[var(--border)]" />
 
           {/* About mobile */}
-          <div className="border-b border-gray-50">
-            <button className="w-full flex items-center justify-between py-2.5 text-sm font-semibold text-gray-700" onClick={() => toggle('about-mobile')}>
-              About
-              <svg className={`w-4 h-4 text-gray-400 transition-transform ${openDropdown === 'about-mobile' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          <div className="mb-2">
+            <button className="w-full flex items-center justify-between p-4 rounded-2xl" style={{ background: 'var(--surface-alt)' }} onClick={() => toggle('about-mobile')}>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-lg">ℹ️</div>
+                <span className="text-sm font-bold text-navy dark:text-white">About EveryGiving</span>
+              </div>
+              <svg className={`w-4 h-4 text-gray-400 transition-transform ${openDropdown === 'about-mobile' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m6 9 6 6 6-6"/></svg>
             </button>
             {openDropdown === 'about-mobile' && (
-              <div className="pb-2 flex flex-col gap-0.5">
+              <div className="mt-2 ml-4 flex flex-col gap-1 border-l-2 border-[var(--border)] pl-4">
                 {ABOUT_MENU.map((item, i) => (
                   <Link key={i} href={item.href} onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-gray-50 transition-all">
-                    <span>{item.icon}</span>
-                    <span className="text-sm text-gray-600 font-medium">{item.label}</span>
+                    className="p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all">
+                    <div className="font-bold text-sm text-navy dark:text-white">{item.label}</div>
+                    <div className="text-[10px] text-gray-400">{item.sub}</div>
                   </Link>
                 ))}
               </div>
@@ -259,31 +287,36 @@ export default function Navbar() {
           </div>
 
           {/* Fundraise mobile */}
-          <div className="border-b border-gray-50">
-            <button className="w-full flex items-center justify-between py-2.5 text-sm font-semibold text-gray-700" onClick={() => toggle('fundraise-mobile')}>
-              Fundraise
-              <svg className={`w-4 h-4 text-gray-400 transition-transform ${openDropdown === 'fundraise-mobile' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          <div className="mb-2">
+            <button className="w-full flex items-center justify-between p-4 rounded-2xl" style={{ background: 'var(--surface-alt)' }} onClick={() => toggle('fundraise-mobile')}>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-lg">🚀</div>
+                <span className="text-sm font-bold text-navy dark:text-white">Fundraising Tools</span>
+              </div>
+              <svg className={`w-4 h-4 text-gray-400 transition-transform ${openDropdown === 'fundraise-mobile' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m6 9 6 6 6-6"/></svg>
             </button>
             {openDropdown === 'fundraise-mobile' && (
-              <div className="pb-2 flex flex-col gap-0.5">
+              <div className="mt-2 ml-4 flex flex-col gap-1 border-l-2 border-[var(--border)] pl-4">
                 {FUNDRAISE_MENU.flatMap(col => col.items).map((item, i) => (
                   <Link key={i} href={item.href} onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-gray-50 transition-all">
-                    <span>{item.icon}</span>
-                    <span className="text-sm text-gray-600 font-medium">{item.label}</span>
+                    className="p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all">
+                    <div className="font-bold text-sm text-navy dark:text-white">{item.label}</div>
+                    <div className="text-[10px] text-gray-400">{item.sub}</div>
                   </Link>
                 ))}
               </div>
             )}
           </div>
 
-          {user ? (
-            <>
-              <Link href="/dashboard" className="py-2.5 text-sm font-semibold text-gray-700" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-              <button onClick={() => { signOut(); setMenuOpen(false) }} className="py-2.5 text-left text-sm font-semibold text-red-500">Sign out</button>
-            </>
-          ) : (
-            <Link href="/auth/login" className="py-2.5 text-sm font-semibold text-gray-700" onClick={() => setMenuOpen(false)}>Sign in</Link>
+          {user && (
+            <div className="mt-4 pt-6 flex flex-col gap-2">
+              <Link href="/dashboard" className="w-full p-4 rounded-2xl bg-navy text-white text-center font-bold text-sm" onClick={() => setMenuOpen(false)}>
+                Go to Dashboard
+              </Link>
+              <button onClick={() => { signOut(); setMenuOpen(false) }} className="w-full p-4 text-center text-sm font-bold text-red-500">
+                Sign out
+              </button>
+            </div>
           )}
         </div>
       )}

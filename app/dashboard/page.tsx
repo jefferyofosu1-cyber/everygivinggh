@@ -298,7 +298,26 @@ export default function DashboardPage() {
         .eg-sidebar-btn:hover{background:#F5F4F0!important}
         .eg-stat-card{transition:transform .2s ease,box-shadow .2s ease}
         .eg-stat-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+        .eg-mobile-nav-btn{border:none;background:none;cursor:pointer;font-family:inherit;padding:12px 16px;font-size:13px;font-weight:600;color:#8A8A82;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s ease}
+        .eg-mobile-nav-btn.active{color:#0A6B4B;border-bottom-color:#0A6B4B}
         a{color:inherit;text-decoration:none}
+        
+        @media (max-width: 1024px) {
+          .eg-main-layout { grid-template-columns: 1fr !important; }
+          .eg-sidebar { display: none !important; }
+          .eg-mobile-nav { display: flex !important; }
+          .eg-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .eg-activity-grid { grid-template-columns: 1fr !important; }
+          .eg-header { padding: 24px 20px !important; }
+          .eg-main-content { padding: 16px 20px 80px !important; }
+        }
+        
+        @media (max-width: 640px) {
+          .eg-stats-grid { grid-template-columns: 1fr !important; }
+          .eg-profile-stats { grid-template-columns: 1fr !important; }
+          .eg-donor-table-header { display: none !important; }
+          .eg-donor-row { grid-template-columns: 1fr !important; gap: 8px !important; }
+        }
       ` }} />
 
       {/* CONTEXTUAL BANNERS */}
@@ -312,9 +331,23 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', minHeight: 'calc(100vh - 64px)' }}>
-        {/* ─── SIDEBAR ──────────────────────────────────────────────── */}
-        <aside style={{ background: '#fff', borderRight: '1px solid #E8E4DC', padding: '24px 16px', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column' }}>
+      <div className="eg-main-layout" style={{ display: 'grid', gridTemplateColumns: '260px 1fr', minHeight: 'calc(100vh - 64px)' }}>
+        {/* ─── MOBILE NAVIGATION ────────────────────────────────────── */}
+        <div className="eg-mobile-nav" style={{ display: 'none', background: '#fff', borderBottom: '1px solid #E8E4DC', position: 'sticky', top: 64, zIndex: 40, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          {sidebarItems.map(item => (
+            <button key={item.id} 
+              className={`eg-mobile-nav-btn ${tab === item.id ? 'active' : ''}`}
+              onClick={() => setTab(item.id)}>
+              {item.label}
+              {(item.badge || 0) > 0 && item.id !== 'overview' && (
+                <span style={{ marginLeft: 6, fontSize: 10, opacity: 0.6 }}>({item.badge})</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* ─── SIDEBAR (Desktop) ────────────────────────────────────── */}
+        <aside className="eg-sidebar" style={{ background: '#fff', borderRight: '1px solid #E8E4DC', padding: '24px 16px', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column' }}>
           {/* Profile card */}
           <div onClick={() => setTab('profile')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, padding: '12px', marginBottom: 8, borderRadius: 10, background: '#FAFAF8', border: '1px solid #F0EDE8' }}>
             {user?.avatarUrl ? (
@@ -350,10 +383,10 @@ export default function DashboardPage() {
         </aside>
 
         {/* ─── MAIN CONTENT ─────────────────────────────────────────── */}
-        <main style={{ padding: '28px 32px 56px', background: '#F5F4F0' }}>
+        <main className="eg-main-content" style={{ padding: '28px 32px 56px', background: '#F5F4F0' }}>
 
           {/* HEADER */}
-          <div style={{ marginBottom: 28 }}>
+          <div className="eg-header" style={{ marginBottom: 28 }}>
             <h1 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 28, color: '#1A1A18', marginBottom: 4 }}>{getGreeting()}, {user?.firstName} </h1>
             <p style={{ fontSize: 14, color: '#8A8A82' }}>Here&apos;s what&apos;s happening with your fundraising campaigns</p>
           </div>
@@ -364,7 +397,7 @@ export default function DashboardPage() {
           {tab === 'overview' && (
             <div style={{ animation: 'fadeup .25s ease both' }}>
               {/* Stat cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 28 }}>
+              <div className="eg-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 28 }}>
                 {[
                   { label: 'Total Raised', value: fmtGHS(totalRaised), sub: 'across all campaigns', color: '#0A6B4B', icon: '' },
                   { label: 'Live Campaigns', value: String(liveCount), sub: `${campaigns.length} total`, color: '#1A1A18', icon: '' },
@@ -382,7 +415,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Quick glance: Recent activity */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="eg-activity-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 {/* Recent donations */}
                 <div style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 14, overflow: 'hidden' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', borderBottom: '1px solid #F2F0EB' }}>
@@ -459,13 +492,13 @@ export default function DashboardPage() {
               ) : (
                 <div style={{ background: '#fff', border: '1px solid #E8E4DC', borderRadius: 14, overflow: 'hidden' }}>
                   {/* Table header */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr 1fr', padding: '10px 16px', background: '#FAFAF8', borderBottom: '1px solid #E8E4DC', fontSize: 10, fontWeight: 700, color: '#8A8A82', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+                  <div className="eg-donor-table-header" style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr 1fr', padding: '10px 16px', background: '#FAFAF8', borderBottom: '1px solid #E8E4DC', fontSize: 10, fontWeight: 700, color: '#8A8A82', textTransform: 'uppercase', letterSpacing: '.06em' }}>
                     <span>Donor</span><span>Campaign</span><span>Amount</span><span>Date</span>
                   </div>
                   {donations.map((d: any, i) => {
                     const camp = campaigns.find(c => c.id === d.campaign_id)
                     return (
-                      <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr 1fr', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #F8F7F5' }}>
+                      <div key={i} className="eg-donor-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr 1fr', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #F8F7F5' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#E8F5EF,#B7DEC9)', color: '#0A6B4B', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12, flexShrink: 0 }}>{(d.donor_name || 'A')[0].toUpperCase()}</div>
                           <div>
@@ -541,7 +574,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+                  <div className="eg-profile-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
                     {[
                       { label: 'Campaigns', value: String(user?.campaignCount || 0), icon: '' },
                       { label: 'Total Raised', value: fmtGHS(user?.totalRaised || 0), icon: '' },

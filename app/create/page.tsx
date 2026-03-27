@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { createClient } from '@/lib/supabase'
+import { useEffect } from 'react'
 
 const CATEGORIES = ['Medical', 'Emergency', 'Education', 'Charity', 'Faith', 'Community', 'Environment', 'Business', 'Family', 'Sports', 'Events', 'Competition', 'Travel', 'Volunteer', 'Wishes', 'Memorial', 'Other']
 
@@ -81,6 +83,18 @@ export default function CreatePage() {
   const idBackRef = useRef<HTMLInputElement>(null)
   const selfieRef = useRef<HTMLInputElement>(null)
 
+  // Sync Tier with Goal Amount
+  useEffect(() => {
+    const goal = parseFloat(campaign.goal) || 0
+    if (goal > 50000) {
+      setTierId('premium')
+    } else if (goal >= 5000) {
+      setTierId('standard')
+    } else {
+      setTierId('basic')
+    }
+  }, [campaign.goal])
+
   // Payment (simulate)
   const [paid, setPaid] = useState(false)
 
@@ -114,56 +128,88 @@ export default function CreatePage() {
 
   const handleSubmit = async () => {
     setSubmitting(true)
-    // Simulate API call
-    await new Promise(r => setTimeout(r, 1500))
-    setStep('done')
-    setSubmitting(false)
+    const supabase = createClient()
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push('/auth/login?returnUrl=/create')
+        return
+      }
+
+      // 1. Upload Images
+      const uploadFile = async (file: File, bucket: string) => {
+        const ext = file.name.split('.').pop()
+        const path = `${user.id}/${Date.now()}.${ext}`
+        const { data, error } = await supabase.storage.from(bucket).upload(path, file)
+        if (error) throw error
+        const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(data.path)
+        return publicUrl
+      }
+
+      let imageUrl = null
+      if (campaign.photo) imageUrl = await uploadFile(campaign.photo, 'campaign-photos')
+      
+      const idFrontUrl = await uploadFile(identity.idFront!, 'verification-docs')
+      const idBackUrl = await uploadFile(identity.idBack!, 'verification-docs')
+      let selfieUrl = null
+      if (identity.selfie) selfieUrl = await uploadFile(identity.selfie, 'verification-docs')
+
+      // 2. Create Campaign
+      const slug = campaign.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      const initialStatus = tier.priceNum > 0 ? 'payment_pending' : 'pending'
+
+      const { data: newCampaign, error: insertError } = await supabase
+        .from('campaigns')
+        .insert({
+          organizer_id: user.id,
+          title: campaign.title,
+          slug,
+          category: campaign.category,
+          goal_amount: parseFloat(campaign.goal),
+          story: campaign.story,
+          image_url: imageUrl,
+          status: initialStatus,
+          verification_tier: tierId,
+          id_number: identity.idNumber,
+          id_front_url: idFrontUrl,
+          id_back_url: idBackUrl,
+          selfie_url: selfieUrl
+        })
+        .select()
+        .single()
+
+      if (insertError) throw insertError
+
+      // 3. Handle Payment if required
+      if (tier.priceNum > 0) {
+        const res = await fetch('/api/verifications/initialize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            campaignId: newCampaign.id,
+            email: user.email
+          })
+        })
+        const payData = await res.json()
+        if (payData.authorizationUrl) {
+          window.location.href = payData.authorizationUrl
+          return
+        } else {
+          throw new Error(payData.error || 'Failed to initialize payment')
+        }
+      }
+
+      // 4. Redirect to Success
+      router.push(`/create/success?title=${encodeURIComponent(campaign.title)}&slug=${slug}`)
+    } catch (error: any) {
+      console.error('Creation error:', error)
+      alert(`Error creating campaign: ${error.message}`)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
-  // ── DONE SCREEN ──────────────────────────────────────────────────────────
-  if (step === 'done') {
-    return (
-      <>
-        <div className="min-h-screen flex items-center justify-center px-5 py-16" style={{ background: 'linear-gradient(to bottom right, var(--primary-light), var(--surface), var(--surface-alt))' }}>
-          <div className="max-w-lg w-full text-center">
-            <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6">
-              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-              <div className="relative w-24 h-24 bg-primary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-primary/30">!</div>
-            </div>
-            <h1 className="font-nunito font-black text-navy text-3xl mb-3">Campaign submitted!</h1>
-            <p className="text-sm mb-2" style={{ color: 'var(--text-muted)' }}>Your campaign and identity documents are being reviewed.</p>
-            <p className="text-xs mb-8" style={{ color: 'var(--text-muted)' }}>You'll receive an email once your campaign is live. This usually takes under 10 minutes.</p>
-            <div className="rounded-2xl border shadow-sm p-6 mb-6 text-left" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <div className="font-nunito font-black text-navy text-sm mb-4">What happens next</div>
-              <div className="flex flex-col gap-3">
-                {[
-                   { icon: '', text: 'Check your email for a verification confirmation' },
-                  { icon: '', text: `Your ${tier.name} verification will be processed` },
-                  { icon: '', text: 'Your campaign goes live with your Verified badge' },
-                  { icon: '', text: 'Share on WhatsApp to start receiving donations' },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm" style={{ color: 'var(--text-main)' }}>
-                    <span>{item.icon}</span><span>{item.text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex gap-3 justify-center">
-              <Link href="/campaigns"
-                className="px-7 py-3 bg-primary text-white font-nunito font-black rounded-full text-sm hover:-translate-y-0.5 transition-all shadow-lg shadow-primary/20">
-                Browse campaigns
-              </Link>
-              <Link href="/"
-                className="px-7 py-3 border-2 border-[var(--border)] text-[var(--text-main)] font-bold rounded-full text-sm hover:border-primary hover:text-primary transition-all">
-                Go home
-              </Link>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </>
-    )
-  }
 
   return (
     <>

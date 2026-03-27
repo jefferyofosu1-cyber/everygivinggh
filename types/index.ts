@@ -7,8 +7,10 @@ export type Campaign = {
   goal_amount: number
   raised_amount: number
   image_url: string | null
-  status: 'pending' | 'approved' | 'rejected'
+  status: 'draft' | 'payment_pending' | 'pending' | 'approved' | 'active' | 'live' | 'funded' | 'closed' | 'rejected'
   verification_tier: 'basic' | 'standard' | 'premium'
+  verification_paid?: boolean
+  verification_reference?: string | null
   verified: boolean
   deadline: string | null
   location: string | null

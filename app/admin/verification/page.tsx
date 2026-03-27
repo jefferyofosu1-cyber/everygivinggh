@@ -6,8 +6,10 @@ import { createClient } from '@/lib/supabase'
 // ─── INDIVIDUAL VERIFICATION TYPES ────────────────────────────────────────────
 
 type VerifyItem = {
-  id: string; name: string; phone: string; campaign: string; category: string;
-  submitted: string; status: string; rejectReason?: string; front: string; back: string;
+  id: string; name: string; email: string; phone: string; campaign: string; category: string;
+  submitted: string; status: string; rejectReason?: string; adminNote?: string;
+  front: string; back: string; story?: string; goalAmount?: number;
+  momoNumber?: string; momoName?: string;
 }
 
 
@@ -32,23 +34,30 @@ export default function AdminVerificationPage() {
   const [selected, setSelected] = useState<string|null>(null)
   const [rejectReason, setRejectReason] = useState('')
   const [showReject, setShowReject] = useState(false)
+  const [rejectAction, setRejectAction] = useState<'reject'|'more_info'>('reject')
   const [filter, setFilter] = useState('pending')
 
   const fetchIndividuals = useCallback(async () => {
     setIndivLoading(true)
     const supabase = createClient()
-    const { data } = await supabase.from('campaigns').select('id, title, category, created_at, id_front_url, selfie_url, verified, status, profiles(full_name, phone)').not('id_front_url', 'is', null).order('created_at', { ascending: false })
+    const { data } = await supabase.from('campaigns').select('id, title, category, created_at, id_front_url, selfie_url, verified, status, admin_note, story, goal_amount, profiles(full_name, email, phone, momo_number, momo_name)').not('id_front_url', 'is', null).order('created_at', { ascending: false })
     if (data) {
       setQueue(data.map((c: any) => ({
         id: c.id,
         name: c.profiles?.full_name || 'Unknown',
+        email: c.profiles?.email || '',
         phone: c.profiles?.phone || 'No phone',
         campaign: c.title,
         category: c.category || 'General',
         submitted: new Date(c.created_at).toLocaleDateString(),
-        status: c.verified ? 'approved' : c.status === 'rejected' ? 'rejected' : 'pending',
+        status: c.verified ? 'approved' : c.status === 'rejected' ? 'rejected' : c.status === 'more_info' ? 'more_info' : 'pending',
+        adminNote: c.admin_note || '',
         front: c.id_front_url || '',
-        back: c.selfie_url || c.id_front_url || ''
+        back: c.selfie_url || c.id_front_url || '',
+        story: c.story || '',
+        goalAmount: c.goal_amount || 0,
+        momoNumber: c.profiles?.momo_number || '',
+        momoName: c.profiles?.momo_name || ''
       })))
     }
     setIndivLoading(false)
@@ -82,17 +91,58 @@ export default function AdminVerificationPage() {
   const filteredIndivid = queue.filter(q => filter==='all' || q.status===filter)
   const item = queue.find(q => q.id===selected) || null
 
-  async function approveIndividual(id: string) {
+  async function approveIndividual(item: VerifyItem) {
     const supabase = createClient()
-    await supabase.from('campaigns').update({ verified: true, status: 'approved' }).eq('id', id)
-    setQueue(prev => prev.map(q => q.id===id ? {...q,status:'approved'} : q))
+    await supabase.from('campaigns').update({ 
+      verified: true, 
+      status: 'approved',
+      activated_at: new Date().toISOString()
+    }).eq('id', item.id)
+    
+    // Trigger Activation Notifications
+    const slug = item.campaign.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    import('@/lib/notifications').then(({ NotificationService }) => {
+      NotificationService.sendCampaignLiveSMS(item.phone, item.campaign, slug).catch(console.error)
+      if (item.email) {
+        NotificationService.sendCampaignLiveEmail(item.email, item.name, item.campaign, slug).catch(console.error)
+      }
+    })
+
+    setQueue(prev => prev.map(q => q.id===item.id ? {...q,status:'approved'} : q))
     setSelected(null)
   }
-  async function rejectIndividual(id: string) {
+
+  async function rejectIndividual(item: VerifyItem) {
     if (!rejectReason.trim()) return
     const supabase = createClient()
-    await supabase.from('campaigns').update({ verified: false, status: 'rejected' }).eq('id', id)
-    setQueue(prev => prev.map(q => q.id===id ? {...q,status:'rejected',rejectReason} : q))
+    await supabase.from('campaigns').update({ verified: false, status: 'rejected', admin_note: rejectReason }).eq('id', item.id)
+    
+    // Soft communication even on reject (matches supportive goal)
+    import('@/lib/notifications').then(({ NotificationService }) => {
+      // For hard reject, still use the "Action Required" template as it's more encouraging
+      if (item.email) {
+        NotificationService.sendCampaignActionRequiredEmail(item.email, item.name, item.campaign, rejectReason).catch(console.error)
+      }
+    })
+
+    setQueue(prev => prev.map(q => q.id===item.id ? {...q,status:'rejected',adminNote:rejectReason} : q))
+    setSelected(null); setRejectReason(''); setShowReject(false)
+  }
+
+  async function requestMoreInfoIndividual(item: VerifyItem) {
+    if (!rejectReason.trim()) return
+    const supabase = createClient()
+    await supabase.from('campaigns').update({ status: 'more_info', admin_note: rejectReason }).eq('id', item.id)
+    
+    // Trigger Info Request Notifications
+    import('@/lib/notifications').then(({ NotificationService }) => {
+      NotificationService.sendCampaignMoreInfoSMS(item.phone, rejectReason).catch(console.error)
+      if (item.email) {
+        NotificationService.sendCampaignActionRequiredEmail(item.email, item.name, item.campaign, rejectReason).catch(console.error)
+      }
+    })
+
+    setQueue(prev => prev.map(q => q.id===item.id ? {...q,status:'more_info',adminNote:rejectReason} : q))
     setSelected(null); setRejectReason(''); setShowReject(false)
   }
 
@@ -187,37 +237,54 @@ export default function AdminVerificationPage() {
                     </div>
                     <div style={statusStyle(item.status)}>{item.status}</div>
                   </div>
-                  <div style={{ background:'#F5F4F0',borderRadius:8,padding:'10px 12px',marginBottom:14 }}>
-                    <div style={{ fontSize:11,fontWeight:600,color:'#8A8A82',marginBottom:4 }}>Campaign</div>
-                    <div style={{ fontSize:13,fontWeight:600,color:'#1A1A18' }}>{item.campaign}</div>
+                   <div style={{ background:'#F5F4F0',borderRadius:8,padding:'10px 12px',marginBottom:14 }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                      <div style={{ fontSize:11,fontWeight:600,color:'#8A8A82' }}>Campaign</div>
+                      <div style={{ fontSize:11,fontWeight:700,color:'#0A6B4B' }}>GH₵ {item.goalAmount?.toLocaleString()}</div>
+                    </div>
+                    <div style={{ fontSize:13,fontWeight:600,color:'#1A1A18',marginBottom:6 }}>{item.campaign}</div>
+                    <div style={{ fontSize:11,color:'#4A4A44',lineHeight:1.6,maxHeight:80,overflowY:'auto',background:'rgba(255,255,255,0.5)',padding:8,borderRadius:6 }}>{item.story}</div>
                   </div>
+
+                  <div style={{ background:'#E6F1FB',borderRadius:8,padding:'10px 12px',marginBottom:14 }}>
+                    <div style={{ fontSize:10,fontWeight:700,color:'#185FA5',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:4 }}>MoMo Payout Details</div>
+                    <div style={{ display:'flex',justifyContent:'space-between',fontSize:12 }}>
+                      <div style={{ color:'#4A4A44' }}>Number: <strong>{item.momoNumber || 'Not set'}</strong></div>
+                      <div style={{ color:'#4A4A44' }}>Name: <strong>{item.momoName || 'Not set'}</strong></div>
+                    </div>
+                  </div>
+
                   <div style={{ marginBottom:16 }}>
                     <div style={{ fontSize:11,fontWeight:600,color:'#8A8A82',marginBottom:8 }}>ID document</div>
                     <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10 }}>
-                      <div><div style={{ fontSize:10,color:'#8A8A82',marginBottom:4 }}>Front</div><img src={item.front} style={{ width:'100%',height:110,objectFit:'cover',borderRadius:7 }} alt="Front"/></div>
-                      <div><div style={{ fontSize:10,color:'#8A8A82',marginBottom:4 }}>Back</div><img src={item.back} style={{ width:'100%',height:110,objectFit:'cover',borderRadius:7 }} alt="Back"/></div>
+                      <a href={item.front} target="_blank" rel="noreferrer"><div><div style={{ fontSize:10,color:'#8A8A82',marginBottom:4 }}>Front</div><img src={item.front} style={{ width:'100%',height:110,objectFit:'cover',borderRadius:7 }} alt="Front"/></div></a>
+                      <a href={item.back} target="_blank" rel="noreferrer"><div><div style={{ fontSize:10,color:'#8A8A82',marginBottom:4 }}>Back/Selfie</div><img src={item.back} style={{ width:'100%',height:110,objectFit:'cover',borderRadius:7 }} alt="Back"/></div></a>
                     </div>
                   </div>
-                  {item.status==='pending' && !showReject && (
-                    <div style={{ display:'flex',gap:8 }}>
-                      <button style={{ ...BTN, flex:2, background:'#0A6B4B', color:'#fff' }} onClick={() => approveIndividual(item.id)}>Approve ✓</button>
-                      <button style={{ ...BTN, flex:1, background:'transparent', color:'#C0392B', border:'1px solid #C0392B' }} onClick={() => setShowReject(true)}>Reject</button>
-                    </div>
-                  )}
+                    {item.status==='pending' && !showReject && (
+                      <div style={{ display:'flex',gap:8 }}>
+                        <button style={{ ...BTN, flex:2, background:'#0A6B4B', color:'#fff' }} onClick={() => approveIndividual(item)}>Approve ✓</button>
+                        <button style={{ ...BTN, flex:1, background:'#EEF2FF', color:'#3730A3' }} onClick={() => { setShowReject(true); setRejectAction('more_info') }}>Request Info</button>
+                        <button style={{ ...BTN, background:'transparent', color:'#C0392B', border:'1px solid #C0392B' }} onClick={() => { setShowReject(true); setRejectAction('reject') }}>Correction Required</button>
+                      </div>
+                    )}
                   {showReject && (
                     <div>
-                      <label style={{ fontSize:12,fontWeight:600,color:'#4A4A44',display:'block',marginBottom:6 }}>Reason for rejection</label>
-                      <textarea style={{ width:'100%',padding:'10px 12px',border:'1.5px solid #C0392B',borderRadius:8,fontSize:13,minHeight:80,resize:'vertical',marginBottom:8 }}
-                        placeholder="e.g. Photo too blurry — please retake with better lighting"
+                      <label style={{ fontSize:12,fontWeight:600,color:'#4A4A44',display:'block',marginBottom:6 }}>{rejectAction === 'reject' ? 'Reason for rejection' : 'What additional information is needed?'}</label>
+                      <textarea style={{ width:'100%',padding:'10px 12px',border:`1.5px solid ${rejectAction==='reject'?'#C0392B':'#185FA5'}`,borderRadius:8,fontSize:13,minHeight:80,resize:'vertical',marginBottom:8 }}
+                        placeholder={rejectAction === 'reject' ? "e.g. Campaign violates terms..." : "e.g. Photo too blurry — please retake with better lighting"}
                         value={rejectReason} onChange={e => setRejectReason(e.target.value)}/>
                       <div style={{ display:'flex',gap:8 }}>
-                        <button style={{ ...BTN, flex:1, background:'#C0392B', color:'#fff', opacity: rejectReason.trim()?1:.45 }} disabled={!rejectReason.trim()} onClick={() => rejectIndividual(item.id)}>Send rejection</button>
+                        <button style={{ ...BTN, flex:1, background:rejectAction==='reject'?'#C0392B':'#185FA5', color:'#fff', opacity: rejectReason.trim()?1:.45 }} disabled={!rejectReason.trim()} onClick={() => rejectAction === 'reject' ? rejectIndividual(item) : requestMoreInfoIndividual(item)}>
+                          {rejectAction === 'reject' ? 'Submit Correction' : 'Send Info Request'}
+                        </button>
                         <button style={{ ...BTN, background:'transparent', border:'1px solid #E8E4DC' }} onClick={() => setShowReject(false)}>Cancel</button>
                       </div>
                     </div>
                   )}
-                  {item.status==='approved' && <div style={{ fontSize:13,color:'#0A6B4B',background:'#E8F5EF',padding:'10px 12px',borderRadius:8,textAlign:'center' }}>✓ Approved</div>}
-                  {item.status==='rejected' && <div style={{ fontSize:13,color:'#C0392B',background:'#FCEBEB',padding:'10px 12px',borderRadius:8 }}>Rejected: {item.rejectReason}</div>}
+                  {item.status==='approved' && <div style={{ fontSize:13,color:'#0A6B4B',background:'#E8F5EF',padding:'10px 12px',borderRadius:8,textAlign:'center' }}>✓ Live</div>}
+                  {item.status==='rejected' && <div style={{ fontSize:13,color:'#C0392B',background:'#FCEBEB',padding:'10px 12px',borderRadius:8 }}>Correction Required: {item.adminNote}</div>}
+                  {item.status==='more_info' && <div style={{ fontSize:13,color:'#185FA5',background:'#E6F1FB',padding:'10px 12px',borderRadius:8 }}>Information Requested: {item.adminNote}</div>}
                 </div>
               ) : (
                 <div style={{ background:'#fff',border:'1px solid #E8E4DC',borderRadius:12,padding:40,textAlign:'center',color:'#8A8A82',fontSize:13 }}>Select a submission to review</div>

@@ -80,6 +80,11 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function CampaignPage({ params }: { params: { id: string } }) {
   const campaign = await getCampaign(params.id)
 
+  if (campaign) {
+    const supabase = await createServerSupabaseClient()
+    supabase.rpc('increment_campaign_view', { c_id: params.id }).then(() => {}).catch(() => {})
+  }
+
   if (!campaign) {
     return (
       <>

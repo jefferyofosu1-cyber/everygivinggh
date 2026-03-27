@@ -1,0 +1,54 @@
+name: EverywhereGiving Platform Cron Jobs
+
+on:
+  schedule:
+    # Every 5 minutes: Urgent tasks (Milestones, Notifications)
+    - cron: '*/5 * * * *'
+    # Every 1 hour: General automation (Reminders/Nudges)
+    - cron: '0 * * * *'
+    # Once daily: Cleanup & reports
+    - cron: '0 0 * * *'
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  automation-jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --- 5 MINUTE JOBS ---
+      - name: Trigger Milestones Check (5m)
+        if: github.event.schedule == '*/5 * * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -X POST "${{ secrets.BASE_URL }}/api/cron/milestones" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -H "Content-Type: application/json" \
+          --fail-with-body
+
+      - name: Trigger Notification Queue (5m)
+        if: github.event.schedule == '*/5 * * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -X POST "${{ secrets.BASE_URL }}/api/cron/notifications" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -H "Content-Type: application/json" \
+          --fail-with-body
+
+      # --- HOURLY JOBS ---
+      - name: Trigger Reminders & Nudges (1h)
+        if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -X POST "${{ secrets.BASE_URL }}/api/cron/reminders" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -H "Content-Type: application/json" \
+          --fail-with-body
+
+      # --- DAILY JOBS ---
+      - name: Trigger Daily Cleanup (Daily)
+        if: github.event.schedule == '0 0 * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -X POST "${{ secrets.BASE_URL }}/api/cron/cleanup" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -H "Content-Type: application/json" \
+          --fail-with-body

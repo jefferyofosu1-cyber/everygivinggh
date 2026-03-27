@@ -84,6 +84,7 @@ function getVerificationConfig(status: string) {
 
 const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
   draft: { label: 'Draft', color: '#8A8A82', bg: '#F2F3F4' },
+  payment_pending: { label: 'Awaiting Payment', color: '#B85C00', bg: '#FEF3E2' },
   pending: { label: 'Pending', color: '#B85C00', bg: '#FEF3E2' },
   pending_verification: { label: 'Under Review', color: '#B85C00', bg: '#FEF3E2' },
   approved: { label: 'Live', color: '#0A6B4B', bg: '#E8F5EF' },

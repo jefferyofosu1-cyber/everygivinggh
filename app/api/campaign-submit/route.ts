@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { sanitiseString, sanitiseNumber } from '@/lib/api-security'
+import { NotificationService } from '@/lib/notifications'
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || ''
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || ''
@@ -205,9 +206,16 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
     const name = profile?.full_name || user.email?.split('@')[0] || 'Fundraiser'
 
-    sendEmail({ to: user.email!, subject: `Campaign received  -  "${title}" is under review`, html: confirmEmail(name, title, tier || 'Basic', feeAmount, feeDeferred) })
+    NotificationService.sendCampaignSubmissionEmail(user.email!, name, title, campaign.id)
     if (ADMIN_EMAIL) {
       sendEmail({ to: ADMIN_EMAIL, subject: `New campaign: "${title}"`, html: adminAlertEmail(name, user.email!, title, category, String(goalAmount), tier || 'Basic', feeAmount, feeDeferred, idType || 'Unknown', campaign.id) })
+    }
+
+    // ── STEP 4: SMS confirmation (non-blocking) ──
+    if (fundraiserPhone) {
+      NotificationService.sendCampaignSubmissionConfirmation(fundraiserPhone).catch(e => {
+        console.error('Submission SMS failed:', e)
+      })
     }
 
     return NextResponse.json({ success: true, campaignId: campaign.id })

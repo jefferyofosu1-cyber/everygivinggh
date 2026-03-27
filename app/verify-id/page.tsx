@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase';
 
 const BASE_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
@@ -13,14 +14,15 @@ const BASE_CSS = `
   @keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 `;
 
-type VerifyStatus = 'not_submitted' | 'submitted' | 'pending' | 'approved' | 'rejected';
+type VerifyStatus = 'not_submitted' | 'submitted' | 'pending' | 'approved' | 'rejected' | 'more_info';
 
 const STATUS_CFG: Record<string, { label: string; color: string; bg: string } | null> = {
   not_submitted: null,
   submitted:  { label: 'Submitted', color: '#185FA5', bg: '#E6F1FB' },
-  pending:    { label: 'Under review', color: '#B85C00', bg: '#FEF3E2' },
+  pending:    { label: 'Under review', color: '#B85FA5', bg: '#F5F3FF' }, // Purple-ish for review
   approved:   { label: 'Approved', color: '#0A6B4B', bg: '#E8F5EF' },
-  rejected:   { label: 'Rejected — resubmit', color: '#C0392B', bg: '#FCEBEB' },
+  rejected:   { label: 'Rejected', color: '#C0392B', bg: '#FCEBEB' },
+  more_info:  { label: 'Action Required', color: '#185FA5', bg: '#E6F1FB' },
 };
 
 function IDUpload({ label, hint, value, onChange, inputId }: {
@@ -57,14 +59,63 @@ export default function VerifyIdPage() {
   const [front, setFront] = useState<File | null>(null);
   const [back, setBack] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [campaign, setCampaign] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getStatus() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: campaigns } = await supabase
+        .from('campaigns')
+        .select('id, status, verified, admin_note')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (campaigns?.[0]) {
+        const c = campaigns[0];
+        setCampaign(c);
+        setStatus(c.verified ? 'approved' : c.status || 'not_submitted');
+      }
+      setLoading(false);
+    }
+    getStatus();
+  }, []);
 
   async function handleSubmit() {
-    if (!front || !back) return;
+    if (!front || !back || !campaign) return;
     setSubmitting(true);
-    // TODO: POST /api/verify with front + back files
-    await new Promise(r => setTimeout(r, 1000));
+    
+    const supabase = createClient();
+    
+    // 1. Upload files to storage (Simplified for this example, assuming bucket 'verification')
+    const fileExtFront = front.name.split('.').pop();
+    const fileNameFront = `${campaign.id}_front_${Math.random()}.${fileExtFront}`;
+    const { data: uploadFront } = await supabase.storage.from('verification').upload(fileNameFront, front);
+    
+    const fileExtBack = back.name.split('.').pop();
+    const fileNameBack = `${campaign.id}_back_${Math.random()}.${fileExtBack}`;
+    const { data: uploadBack } = await supabase.storage.from('verification').upload(fileNameBack, back);
+
+    if (uploadFront && uploadBack) {
+      const frontUrl = supabase.storage.from('verification').getPublicUrl(uploadFront.path).data.publicUrl;
+      const backUrl = supabase.storage.from('verification').getPublicUrl(uploadBack.path).data.publicUrl;
+
+      // 2. Update campaign record
+      await supabase.from('campaigns').update({
+        status: 'pending',
+        id_front_url: frontUrl,
+        selfie_url: backUrl, // Reusing selfie_url as back of card for now
+        admin_note: null // Clear the note on resubmission
+      }).eq('id', campaign.id);
+
+      setStatus('submitted');
+    }
+
     setSubmitting(false);
-    setStatus('submitted');
   }
 
   const cfg = STATUS_CFG[status];
@@ -76,14 +127,34 @@ export default function VerifyIdPage() {
       <div style={{maxWidth:900,margin:'0 auto',padding:'28px 24px 64px',display:'grid',gridTemplateColumns:'1fr 260px',gap:24,alignItems:'start'}}>
         <div>
           {cfg && (
-            <div style={{padding:'12px 16px',borderRadius:9,marginBottom:16,fontSize:13,lineHeight:1.6,background:cfg.bg,color:cfg.color}}>
-              <strong>{cfg.label}</strong>
-              {status==='pending' && ' — our team is reviewing your submission. Usually within 24 hours.'}
-              {status==='approved' && ' — your identity has been verified. Your campaign can now go live.'}
-              {status==='rejected' && ' — please resubmit with a clearer photo. See guidance below.'}
-              {status==='submitted' && " — received. You'll get an SMS when we've reviewed it."}
+            <div style={{padding:'16px 20px',borderRadius:12,marginBottom:20,fontSize:14,lineHeight:1.6,background:cfg.bg,color:cfg.color,border:`1px solid ${cfg.color}15`}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:status==='more_info'?10:0}}>
+                <span style={{fontSize:18}}>{status==='approved'?'✅':status==='more_info'?'⚠️':'⏳'}</span>
+                <strong>{cfg.label}</strong>
+              </div>
+              
+              {status==='pending' && 'Our team is reviewing your submission. This usually takes less than 24 hours.'}
+              {status==='approved' && 'Your identity has been verified. Your campaign is now active or ready to launch.'}
+              {status==='submitted' && "We've received your documents. You'll get an SMS as soon as we've reviewed them."}
+              
+              {status==='more_info' && (
+                <div style={{marginTop:8,background:'rgba(255,255,255,0.6)',padding:'12px 14px',borderRadius:8,borderLeft:`4px solid ${cfg.color}`}}>
+                  <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:4,opacity:0.8}}>Request from EveryGiving Team</div>
+                  <div style={{fontWeight:600,fontSize:15}}>{campaign?.admin_note || 'Please resubmit with clearer photos.'}</div>
+                </div>
+              )}
+              
+              {status==='rejected' && (
+                <div style={{marginTop:8}}>
+                  Reason: <strong>{campaign?.admin_note || 'Guidelines not met.'}</strong>
+                </div>
+              )}
             </div>
           )}
+
+          {loading ? (
+            <div style={{padding:60,textAlign:'center',color:'#8A8A82'}}>Loading your status…</div>
+          ) : (
 
           <div style={{background:'#fff',border:'1px solid #E8E4DC',borderRadius:14,padding:'24px 22px'}}>
             <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:24,color:'#1A1A18',marginBottom:6}}>Verify your identity</h2>
@@ -112,13 +183,13 @@ export default function VerifyIdPage() {
               ))}
             </div>
 
-            {(status==='not_submitted'||status==='rejected') ? (
+            {(status === 'not_submitted' || status === 'rejected' || status === 'more_info') ? (
               <button
                 style={{display:'block',width:'100%',padding:13,background:'#0A6B4B',color:'#fff',border:'none',borderRadius:9,fontSize:14,fontWeight:700,cursor:'pointer',opacity:front&&back&&!submitting?1:.45,transition:'opacity .15s'}}
                 disabled={!front||!back||submitting}
                 onClick={handleSubmit}
               >
-                {submitting?'Uploading…':status==='rejected'?'Resubmit verification →':'Submit for verification →'}
+                {submitting?'Uploading…':(status==='rejected' || status === 'more_info')?'Resubmit verification →':'Submit for verification →'}
               </button>
             ) : status==='approved' ? (
               <Link href="/dashboard" style={{display:'block',padding:13,background:'#185FA5',color:'#fff',borderRadius:9,fontSize:14,fontWeight:700,textAlign:'center'}}>
@@ -130,7 +201,8 @@ export default function VerifyIdPage() {
               </div>
             )}
           </div>
-        </div>
+        )}
+      </div>
 
         <div style={{position:'sticky',top:72}}>
           <div style={{background:'#fff',border:'1px solid #E8E4DC',borderRadius:12,padding:16,marginBottom:10}}>

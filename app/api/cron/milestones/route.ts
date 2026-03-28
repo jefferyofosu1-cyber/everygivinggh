@@ -1,11 +1,8 @@
 import { validateCronAuth, cronSuccess, cronError } from '@/lib/cron-auth'
 
-/**
- * POST /api/cron/milestones
- * Triggered every 5 minutes by GitHub Actions.
- * Handles: Real-time milestone verification if webhooks missed any.
- */
-export async function POST(request: Request) {
+export const dynamic = 'force-dynamic'
+
+async function handle(request: Request) {
   const auth = validateCronAuth(request)
   if (!auth.isValid) return cronError(auth.error!, auth.status)
 
@@ -17,3 +14,6 @@ export async function POST(request: Request) {
     return cronError(error.message)
   }
 }
+
+export async function POST(request: Request) { return handle(request) }
+export async function GET(request: Request) { return handle(request) }

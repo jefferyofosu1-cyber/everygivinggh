@@ -1,12 +1,9 @@
 import { validateCronAuth, cronSuccess, cronError } from '@/lib/cron-auth'
 import { NudgeService } from '@/lib/nudges'
 
-/**
- * POST /api/cron/reminders
- * Triggered every hour by GitHub Actions.
- * Handles: 6h, 24h, 48h nudges and inactivity prompts.
- */
-export async function POST(request: Request) {
+export const dynamic = 'force-dynamic'
+
+async function handle(request: Request) {
   const auth = validateCronAuth(request)
   if (!auth.isValid) return cronError(auth.error!, auth.status)
 
@@ -18,3 +15,6 @@ export async function POST(request: Request) {
     return cronError(error.message)
   }
 }
+
+export async function POST(request: Request) { return handle(request) }
+export async function GET(request: Request) { return handle(request) }

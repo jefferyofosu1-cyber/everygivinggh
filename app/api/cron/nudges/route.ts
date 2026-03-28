@@ -1,18 +1,20 @@
-import { NextResponse } from 'next/server'
+import { validateCronAuth, cronSuccess, cronError } from '@/lib/cron-auth'
 import { NudgeService } from '@/lib/nudges'
 
-/**
- * GET /api/cron/nudges
- * Trigger the 48-hour fundraiser nudge sequence.
- * In a production environment, this should be protected by a CRON_SECRET header.
- */
-export async function GET(request: Request) {
+export const dynamic = 'force-dynamic'
+
+async function handle(request: Request) {
+  const auth = validateCronAuth(request)
+  if (!auth.isValid) return cronError(auth.error!, auth.status)
+
   try {
-    console.log('[Cron] Starting fundraiser nudge processing...')
+    console.log('[Cron] Processing nudges...')
     await NudgeService.processNudges()
-    return NextResponse.json({ success: true, message: 'Nudges processed successfully' })
+    return cronSuccess('Nudges processed successfully')
   } catch (error: any) {
-    console.error('[Cron] Nudge processing failed:', error)
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+    return cronError(error.message)
   }
 }
+
+export async function POST(request: Request) { return handle(request) }
+export async function GET(request: Request) { return handle(request) }
